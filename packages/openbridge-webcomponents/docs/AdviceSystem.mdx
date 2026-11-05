@@ -1,132 +1,125 @@
-import {Meta} from '@storybook/addon-docs/blocks';
+import {Meta, Canvas, Controls, Markdown} from '@storybook/addon-docs/blocks';
+import * as AdviceStories from '../src/building-blocks/advice/advice.stories';
+import * as GaugeTrendStories from '../src/navigation-instruments/gauge-trend/gauge-trend.stories';
+import categories from './advice-system/categories.md?raw';
+import states from './advice-system/states.md?raw';
+import properties from './advice-system/properties.md?raw';
+import adviceEntry from './advice-system/advice-entry.md?raw';
+import instruments from './advice-system/instruments.md?raw';
 
 <Meta title="Introduction/Advice System" />
 
 # Advice System
 
-An advice marks a part of an instrument's scale the operator should steer into or stay out of: a range, a point, or an area over the bar or the chart behind it. Every instrument that draws one takes the same list, resolves it against its own readings and draws it with the same design layer, so an optimal range looks the same on a compass, a bar and a chart, and the triggered state means the same thing on each.
+An advice marks part of an instrument's scale: a range or a single value the operator should steer into, or one to keep out of. Every instrument takes the same list and draws it with the same shapes and colours, so an optimal range looks alike on a compass, a bar and a chart.
 
-This page is the vocabulary and the API. The [Advice stories](?path=/story/building-blocks-advice--advice-comparison) put every category in every state side by side; [Migrating from 2.1 to 2.2](?path=/docs/introduction-migration-guide-2-1-to-2-2--docs) lists the names earlier releases used and what changed on screen.
+<Canvas of={AdviceStories.AdviceComparison} sourceState="none" />
 
-## Contents
+## Quick start
 
-1. [Categories](#categories)
-2. [States](#states)
-3. [Shapes](#shapes)
-4. [When to show an advice](#when-to-show-an-advice)
-5. [The API](#the-api)
-6. [Instruments and units](#instruments-and-units)
-7. [Areas on a chart](#areas-on-a-chart)
-8. [Stories](#stories)
+Give the instrument a list. Each entry names its category and a range, or a single value for a point:
+
+```js
+const gauge = document.querySelector('obc-gauge-radial');
+gauge.advices = [
+  {min: 40, max: 70, category: 'optimal'},
+  {min: 85, max: 100, category: 'caution'},
+  {value: 95, category: 'alarm'},
+];
+```
+
+The instrument does the rest: a band turns triggered while the instrument's value or setpoint is inside it.
+
+In a Lit template the list is a property binding:
+
+```js
+html`<obc-gauge-radial
+  minValue="0"
+  maxValue="100"
+  .value=${55}
+  .advices=${advices}
+></obc-gauge-radial>`;
+```
+
+## When to use
+
+- **Show advices while they apply.** An advice comes from a decision-support, assistance or planning mode. Show the list while that mode is on and clear it when the mode ends. The vue demo, for one, shows its advices only while the A key is held.
+- **Keep permanent limits on the scale.** A limit that is always there belongs to the scale's tick marks and labels.
+- **Pick the category by intent.** A go-to category marks a value to follow, a no-go category a value to avoid.
 
 ## Categories
 
-Two groups. A **go-to** advice is a value to follow; a **no-go** advice is a value to avoid. The alert categories carry their alert colours when triggered, so an alarm limit on a gauge reads as the alarm it is.
+The alert categories take their alert colours when triggered, so an alarm limit reads as the alarm it is.
 
-| Category    | Group | What it marks                              | Triggered colour              |
-| ----------- | ----- | ------------------------------------------ | ----------------------------- |
-| `optimal`   | go-to | the suggested value or range               | enhanced blue                 |
-| `running`   | go-to | the range the system normally runs in      | running green                 |
-| `eco`       | go-to | the economical range                       | mint                          |
-| `caution`   | no-go | high or low, needs attention               | caution yellow, hatched       |
-| `warning`   | no-go | a warning limit                            | warning orange                |
-| `alarm`     | no-go | high-high or low-low, an alarm limit       | alarm red                     |
-| `exclusion` | no-go | a range the equipment must not be used in  | grey hairline hatch           |
+<Markdown>{categories}</Markdown>
 
-`advice` and `safe` are read as `optimal` and `running` for lists written against earlier releases. An `ai` category for simulated or analysed suggestions is planned and waits for its colour token.
-
-The readout block shares the list: `obc-readout-block`'s `category` takes the same names, plus `regular` for a value with no advice.
+Lists written for earlier releases keep working: `advice` is read as `optimal` and `safe` as `running`. `obc-readout-block` takes the same category names. An `ai` category for simulated or analysed suggestions waits for its colour token.
 
 ## States
 
-Every category has four appearances. A band is drawn in the state the list gives it, and turns `triggered` while a reading is inside it.
+Every category has four looks. The list sets the state a band rests in, and the instrument switches a band to `triggered` while a reading is inside it.
 
-| State       | Appearance                                   | Meaning                                       |
-| ----------- | -------------------------------------------- | --------------------------------------------- |
-| `hinted`    | white or light grey, faint outline            | present, not in play                          |
-| `enabled`   | solid grey, or grey hatch                     | visible, the resting state when none is given |
-| `active`    | the category's tint with its outline          | the band the operator is guided towards       |
-| `triggered` | the category's full colour, primary tick marks | a reading is inside the band                 |
+<Markdown>{states}</Markdown>
 
-`regular`, the name the instruments used for the solid grey, is read as `enabled`.
+### Emphasis
 
-**Emphasis.** The design describes one way of choosing the resting states: nothing triggered, the go-to bands are `active` and the no-go bands `enabled`; a go-to band triggered, the no-go bands fade to `hinted`; a no-go band triggered, the go-to bands fade. That is a configuration of the application's alert philosophy rather than a property of the band, so it is an opt-in on every instrument, `adviceEmphasis`. Off, each band keeps the state it was given until its own range is hit. The [State Change Flow](?path=/story/building-blocks-advice--advice-state-change-flow) story walks a value through both bands with it on.
+`adviceEmphasis` chooses the resting states for you, the way the design describes. With nothing triggered, go-to bands are `active` and no-go bands `enabled`. When a go-to band triggers, the no-go bands fade to `hinted`, and the other way round. It is off by default, because how strongly an advice should stand out is part of the application's alert philosophy.
+
+The three gauges below share one list, with emphasis on, and read 40, 75 and 95:
+
+<Canvas of={AdviceStories.AdviceResolutionStack} sourceState="none" />
 
 ## Shapes
 
-- **Range** (`min`, `max`): a band outside the bar on the tick side, or on the ring. A go-to range is a pill with its tips inset from the limits; a no-go range is square with a small corner. Two bands that meet are cut flat at the join. With a tick mark at the end the no-go band is cut flush and the go-to band inset; `hideMinTickmark` / `hideMaxTickmark` leave the end rounded instead.
-- **Point** (`value`): one value instead of a range. A go-to point is a dot on the band's centreline; a no-go point is a short thick tick, the way a limit is drawn.
-- **Area** (`showArea: true` on either): the limit lines across the bar, the face or the chart in the category's line style, dotted for a go-to advice, dashed for caution, solid for the rest, with the category's tint while triggered.
+- **Range** (`min`, `max`): a band beside the bar on the tick side, or on the ring. A go-to range is a pill, a no-go range is square with a small corner, and two bands that meet are cut flat where they join.
+- **Point** (`value`): a go-to point is a dot, a no-go point is a short thick tick, the way a limit is drawn.
+- **Area** (`showArea: true` on a range or a point): limit lines across the bar, the face or the chart, dotted for go-to and dashed or solid for no-go, tinted while triggered.
 
-Positions on the linear scale are what the bar and gauge components already expose as `advicePosition`: `inner` (on the tick band, the default), `outer` (the far side of the frame) and `center` (over the bar, as a transparent overlay).
+<Canvas of={AdviceStories.AdviceRangeAndPoint} sourceState="none" />
 
-## When to show an advice
+A tick mark at a band's end cuts a no-go band flush and insets a go-to pill. `hideMinTickmark` and `hideMaxTickmark` leave that end rounded instead.
 
-An advice is temporary. An application shows the list while a decision-support, assistance or planning mode is on, and clears it when the mode ends, so the band is a message from that mode rather than a permanent marking of the scale. Permanent limits belong to the scale's own ticks and labels. The vue demo follows this rule: its views carry an empty list and fill it while a key is held.
+## Try it
 
-## The API
+Change the category, the state and the readings to see how one band responds on a bar and on a radial gauge.
 
-Every instrument that draws advices exposes the same three properties:
+<Canvas of={AdviceStories.Playground} sourceState="none" />
 
-```html
-<obc-gauge-radial
-  minValue="0"
-  maxValue="100"
-  value="55"
-  .advices=${[
-    {min: 40, max: 70, category: 'optimal'},
-    {min: 85, max: 100, category: 'caution'},
-    {value: 95, category: 'alarm', showArea: true},
-  ]}
-  adviceTrigger="both"
-  adviceEmphasis
-></obc-gauge-radial>
-```
+<Controls of={AdviceStories.Playground} />
 
-| Property         | Type                            | Default | Description                                                                                                       |
-| ---------------- | ------------------------------- | ------- | ----------------------------------------------------------------------------------------------------------------- |
-| `advices`        | `AdviceInput[]`                 | `[]`    | ranges and points in the instrument's unit                                                                        |
-| `adviceTrigger`  | `both` \| `value` \| `setpoint` | `both`  | which readings trigger a band: the instrument's value, its setpoint, or either                                    |
-| `adviceEmphasis` | `boolean`                       | `false` | the resting rules above                                                                                           |
+## API
 
-An `AdviceInput` entry:
+### Properties
 
-| Field                                  | Description                                                                                 |
-| -------------------------------------- | ------------------------------------------------------------------------------------------- |
-| `category`                             | one of the names above; required                                                            |
-| `min`, `max`                           | the range, in the instrument's unit; `value` for a point                                   |
-| `state`                                | `hinted`, `enabled`, `active` or `triggered`; `enabled` when left out                       |
-| `hideMinTickmark`, `hideMaxTickmark`   | leaves out the boundary tick and rounds that end                                            |
-| `showArea`                             | draws the area layer as well as the band                                                    |
+Every instrument that draws advices has these three properties.
 
-The types are exported from `svghelpers/advice.js`: `AdviceCategory`, `AdviceState`, `AdviceTrigger`, `AdviceInput` and `ResolvedAdvice`, the shape a renderer receives after the instrument has resolved the list.
+<Markdown>{properties}</Markdown>
 
-On an angular instrument a range runs clockwise from `min` to `max` and may cross north: `{min: 350, max: 10}` is a 20° band over north. A pair written the other way round whose clockwise span would exceed 180° is drawn the short way, so `{min: 200, max: 100}` is the band from 100 to 200. A deliberate band longer than 180° is written with the smaller angle first.
+### Advice entries
 
-## Instruments and units
+<Markdown>{adviceEntry}</Markdown>
 
-| Instruments                                                                                                                          | Unit                        | Notes                                                                                   |
-| ------------------------------------------------------------------------------------------------------------------------------------ | --------------------------- | --------------------------------------------------------------------------------------- |
-| `obc-compass`, `obc-heading`, `obc-compass-sector`, `obc-rudder`, `obc-wind-propulsion`                                               | degrees                     | angular, wrap-aware; `headingAdvices` and `sailAngleAdvices` are deprecated aliases     |
-| `obc-speed-gauge`                                                                                                                    | the gauge's speed unit      | `speedAdvices` is a deprecated alias                                                    |
-| `obc-instrument-radial`, `obc-gauge-radial`, `obc-rot-sector`, `obc-gauge-proportional`, `obc-gauge-generator`, `obc-gauge-motors-and-pumps` | the gauge's value           |                                                                                         |
-| `obc-azimuth-thruster`                                                                                                               | degrees / percent of thrust | two lists, `angleAdvices` and `thrustAdvices`, one trigger and emphasis for both        |
-| `obc-thruster`, `obc-main-engine`                                                                                                     | percent of thrust           | a band across zero is split at zero; `thrustAdvices` on the engine is a deprecated alias |
-| `obc-bar-vertical`, `obc-bar-horizontal`, `obc-gauge-vertical`, `obc-gauge-horizontal`, `obc-instrument-linear`                      | the scale's value           | `advicePosition` picks inner, outer or center                                           |
-| `obc-gauge-trend`, `obc-automation-tank`, `obc-depth`, `obc-depth-actual`, `obc-draft-trim`, `obc-heave`                              | the scale's value           | `advice` is a deprecated alias; the trend instruments resolve against the trend band    |
-| `obc-pitch-roll-heave`                                                                                                               | metres                      | `heaveAdvice` is the heave column's list; pitch and roll limits are `maxPitchAdvice` / `maxRollAdvice` |
-| `obc-line-graph`, `obc-area-graph`                                                                                                    | the y axis                  | areas only, see below                                                                   |
-| `obc-watch`                                                                                                                          | degrees                     | the building block draws the list as given, with no reading                             |
+The types come from `@oicl/openbridge-webcomponents/dist/svghelpers/advice.js`: `AdviceCategory`, `AdviceState`, `AdviceTrigger`, `AdviceInput`, and `ResolvedAdvice` for an entry after the instrument has resolved it.
+
+### Angular ranges
+
+On a compass or any other angular instrument, a range runs clockwise from `min` to `max` and may cross north: `{min: 350, max: 10}` is a 20° band. A pair written the other way round, whose clockwise span would exceed 180°, is drawn the short way, so `{min: 200, max: 100}` is the band from 100 to 200. Write a band longer than 180° with the smaller angle first.
+
+## Instruments
+
+<Markdown>{instruments}</Markdown>
 
 ## Areas on a chart
 
-`obc-line-graph`, `obc-area-graph` and `obc-gauge-trend` draw an advice with `showArea` as a layer on the canvas: the tint between the limits under the datasets, the limit lines over them, following the y scale so that fixed-aspect scaling and page zoom need no second alignment. `obc-gauge-trend` resolves the list against its value and setpoint and draws the bands on its side bar as well; a plain line graph has no reading, so the states stay as configured. [With Advice Areas](?path=/story/instruments-gauge-trend--gauge-trend-with-advice-area) and [Historical Advice Areas](?path=/story/bars-and-graphs-line-graph--historical-advice) show both.
+`obc-line-graph`, `obc-area-graph` and `obc-gauge-trend` draw an entry with `showArea` on the chart: the tint between the limits under the data, the limit lines over it. `obc-gauge-trend` also draws the bands on its side bar and triggers them on its value and setpoint. A plain line graph has no reading, so its bands keep the state the list gives them.
 
-## Stories
+<Canvas of={GaugeTrendStories.GaugeTrendWithAdviceArea} sourceState="none" />
 
-- [Visual State Comparison](?path=/story/building-blocks-advice--advice-comparison), and the [radial twin](?path=/story/building-blocks-advice--advice-comparison-radial): every category in every state
-- [State Change Flow](?path=/story/building-blocks-advice--advice-state-change-flow): a value moving through the bands with emphasis on
-- [Resolution Stack](?path=/story/building-blocks-advice--advice-resolution-stack): chained bands resolved against three readings
-- [Range and Point](?path=/story/building-blocks-advice--advice-range-and-point): both shapes with the area layer on a horizontal bar
-- [Watch: categories](?path=/story/building-blocks-watch--advice-categories), [states](?path=/story/building-blocks-watch--advice-states), [point and area](?path=/story/building-blocks-watch--advice-point-and-area), [chained](?path=/story/building-blocks-watch--advice-chained)
-- Use cases: [a course advice point on the compass](?path=/story/instruments-compass--course-advice-point), [a limit point on the radial gauge](?path=/story/instruments-gauge-radial--limit-point), [categories and an area on a tank](?path=/story/automation-tanks-tank--advice-use-case)
+## More examples
+
+- [Every category in every state on the watch face](?path=/story/building-blocks-advice--advice-comparison-radial)
+- [A value moving through the bands](?path=/story/building-blocks-advice--advice-state-change-flow)
+- On the watch: [categories](?path=/story/building-blocks-watch--advice-categories), [states](?path=/story/building-blocks-watch--advice-states), [point and area](?path=/story/building-blocks-watch--advice-point-and-area), [chained bands](?path=/story/building-blocks-watch--advice-chained)
+- Use cases: [a course point on the compass](?path=/story/instruments-compass--course-advice-point), [a limit point on the radial gauge](?path=/story/instruments-gauge-radial--limit-point), [categories and an area on a tank](?path=/story/automation-tanks-tank--advice-use-case), [a history on a line graph](?path=/story/bars-and-graphs-line-graph--historical-advice)
+
+Upgrading from 2.1? [Migrating from 2.1 to 2.2](?path=/docs/introduction-migration-guide-2-1-to-2-2--docs) lists the names earlier releases used and what changed on screen.

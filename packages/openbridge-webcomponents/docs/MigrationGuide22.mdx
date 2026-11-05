@@ -1,4 +1,7 @@
-import {Meta} from '@storybook/addon-docs/blocks';
+import {Meta, Markdown} from '@storybook/addon-docs/blocks';
+import adviceInput from './migration-guide-2-2/advice-input.md?raw';
+import renamedProperties from './migration-guide-2-2/renamed-properties.md?raw';
+import renamedTypes from './migration-guide-2-2/renamed-types.md?raw';
 
 <Meta title="Introduction/Migration Guide 2.1 to 2.2" />
 
@@ -20,14 +23,7 @@ Coming from 2.0? Read [Migrating from 2.0 to 2.1](?path=/docs/introduction-migra
 
 Every instrument takes `advices`, a list of `{min, max}` ranges or `{value}` points with a `category` and an optional `state`. The field names the instruments read before are still read and mapped:
 
-| 2.1                                                                   | 2.2                                                                                     |
-| --------------------------------------------------------------------- | --------------------------------------------------------------------------------------- |
-| `type: AdviceType.advice` / `'advice'`                                | `category: 'optimal'`                                                                   |
-| `type: 'safe'`                                                        | `category: 'running'`                                                                   |
-| `type: AdviceType.caution` / `.warning` / `.alarm`                    | `category: 'caution'` / `'warning'` / `'alarm'`                                         |
-| `hinted: true`                                                        | `state: 'hinted'`                                                                       |
-| `state: 'regular'`                                                    | `state: 'enabled'`                                                                      |
-| `minAngle` / `maxAngle`, `minSpeed` / `maxSpeed`, `minValue` / `maxValue` | `min` / `max`                                                                       |
+<Markdown>{adviceInput}</Markdown>
 
 ```ts
 // 2.1
@@ -45,13 +41,7 @@ New on every entry: `category: 'running' | 'eco' | 'exclusion'`, `value` for a p
 
 Each instrument's list is `advices`; the old name keeps working as a deprecated alias of it. Two properties arrived alongside on every one of them: `adviceTrigger` (`both`, `value`, `setpoint`) and `adviceEmphasis`.
 
-| Element                                                                                  | 2.1                | 2.2        |
-| ---------------------------------------------------------------------------------------- | ------------------ | ---------- |
-| `obc-compass`, `obc-heading`, `obc-compass-sector`                                        | `headingAdvices`   | `advices`  |
-| `obc-speed-gauge`                                                                        | `speedAdvices`     | `advices`  |
-| `obc-wind-propulsion`                                                                    | `sailAngleAdvices` | `advices`  |
-| `obc-main-engine`                                                                        | `thrustAdvices`    | `advices`  |
-| `obc-gauge-trend`, `obc-automation-tank`, `obc-depth`, `obc-depth-actual`, `obc-draft-trim`, `obc-heave` | `advice`           | `advices`  |
+<Markdown>{renamedProperties}</Markdown>
 
 Unchanged: `advices` on the watch, the bars and gauges, the thruster, the radial gauges and the rudder; `angleAdvices` and `thrustAdvices` on `obc-azimuth-thruster`, which has two axes; `heaveAdvice` on `obc-pitch-roll-heave`, the heave column's own list. New: `advices` on `obc-line-graph` and `obc-area-graph`, which draw the area layer only.
 
@@ -59,12 +49,7 @@ Unchanged: `advices` on the watch, the bars and gauges, the thruster, the radial
 
 The instrument-specific types are aliases of the two shared ones and are deprecated. Deep imports keep resolving.
 
-| 2.1                                                                                                                          | 2.2                                            |
-| ---------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------- |
-| `AdviceType` (`navigation-instruments/watch/advice.js`)                                                                      | `AdviceCategory` (`svghelpers/advice.js`)      |
-| `AdviceState.regular`                                                                                                        | `AdviceState.enabled`                          |
-| `AngleAdvice`, `ExternalScaleAdvice`, `LinearAdvice`, `SpeedAdvice`, `GaugeRadialAdvice`, `GaugeProportionalAdvice`          | `AdviceInput`                                  |
-| `AngleAdviceRaw`, `ExternalScaleAdviceRaw`, `LinearAdviceRaw`                                                                | `ResolvedAdvice`                               |
+<Markdown>{renamedTypes}</Markdown>
 
 ## Behaviour Changes
 

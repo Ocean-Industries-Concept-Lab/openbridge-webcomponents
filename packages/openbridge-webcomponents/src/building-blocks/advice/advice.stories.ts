@@ -73,15 +73,50 @@ Source: \`packages/openbridge-webcomponents/src/svghelpers/advice.ts\``,
     },
   },
   argTypes: {
-    category: {control: 'select', options: CATEGORIES},
-    state: {control: 'select', options: STATES},
-    min: {control: {type: 'range', min: 0, max: 100, step: 1}},
-    max: {control: {type: 'range', min: 0, max: 100, step: 1}},
-    showArea: {control: 'boolean'},
-    value: {control: {type: 'range', min: 0, max: 100, step: 1}},
-    setpoint: {control: {type: 'range', min: 0, max: 100, step: 1}},
-    adviceTrigger: {control: 'select', options: Object.values(AdviceTrigger)},
-    adviceEmphasis: {control: 'boolean'},
+    category: {
+      control: 'select',
+      options: CATEGORIES,
+      description:
+        'What the advice is for: go-to (optimal, running, eco) or no-go (caution, warning, alarm, exclusion)',
+    },
+    state: {
+      control: 'select',
+      options: STATES,
+      description:
+        'The state the band rests in; a reading inside the band turns it triggered',
+    },
+    min: {
+      control: {type: 'range', min: 0, max: 100, step: 1},
+      description: 'Range start',
+    },
+    max: {
+      control: {type: 'range', min: 0, max: 100, step: 1},
+      description: 'Range end',
+    },
+    showArea: {
+      control: 'boolean',
+      description:
+        'Also draws the limit lines across the bar and the face, tinted while triggered',
+    },
+    value: {
+      control: {type: 'range', min: 0, max: 100, step: 1},
+      description: "The instruments' value",
+    },
+    setpoint: {
+      control: {type: 'range', min: 0, max: 100, step: 1},
+      description: "The instruments' setpoint; leave it unset for none",
+    },
+    adviceTrigger: {
+      control: 'select',
+      options: Object.values(AdviceTrigger),
+      description:
+        'Which reading triggers the band: the value, the setpoint, or either',
+    },
+    adviceEmphasis: {
+      control: 'boolean',
+      description:
+        'Go-to bands rest active and no-go bands enabled; a hit on one group fades the other to hinted',
+    },
   },
   args: {
     category: AdviceCategory.optimal,
