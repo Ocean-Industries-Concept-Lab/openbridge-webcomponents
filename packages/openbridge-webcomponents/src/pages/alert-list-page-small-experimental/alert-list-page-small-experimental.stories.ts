@@ -14,17 +14,13 @@ import {
   type Iec62923Alert,
 } from '../../alert-system/iec-62923-alert-standard.js';
 import {
-  isa182AlertStandard,
-  type Isa182Alert,
-} from '../../alert-system/isa-18-2-alert-standard.js';
-import type {StandardAlert} from '../../alert-system/standard-alert.js';
-import {
+  applyActionToPageAlerts,
   iec62923AlertAfterAction,
-  isa182AlertAfterAction,
 } from '../../alert-system/stories/state-after-action.js';
+import {componentDocsWithSetAlertStandardCall} from '../../alert-system/stories/alert-standard-docs.js';
+import {classDocs} from '../../../.storybook/manifest-docs.js';
 
 type Iec62923PageAlert = Iec62923Alert & AlertAcknowledgedByField;
-type Isa182PageAlert = Isa182Alert & AlertAcknowledgedByField;
 
 const iec62923Alerts: Iec62923PageAlert[] = [
   {
@@ -86,135 +82,51 @@ const iec62923Alerts: Iec62923PageAlert[] = [
   },
 ];
 
-const isa182Alerts: Isa182PageAlert[] = [
-  {
-    id: 'unacknowledged',
-    criticality: 'high',
-    state: 'unacknowledged',
-    tagName: 'TAG-01',
-    alarmDescription: 'Unacknowledged',
-    alarmType: 'High',
-    timeAlarmBecameActive: new Date('2024-01-15T14:39:00Z'),
-  },
-  {
-    id: 'acknowledged',
-    criticality: 'high',
-    state: 'acknowledged',
-    tagName: 'TAG-02',
-    alarmDescription: 'Acknowledged',
-    alarmType: 'High',
-    timeAlarmBecameActive: new Date('2024-01-15T14:38:00Z'),
-    acknowledgedBy: 'John Doe',
-  },
-  {
-    id: 'returned-to-normal',
-    criticality: 'high',
-    state: 'returned-to-normal-unacknowledged',
-    tagName: 'TAG-03',
-    alarmDescription: 'Returned to normal, unacknowledged',
-    alarmType: 'High',
-    timeAlarmBecameActive: new Date('2024-01-15T14:37:00Z'),
-  },
-  {
-    id: 'normal',
-    criticality: 'high',
-    state: 'normal',
-    tagName: 'TAG-04',
-    alarmDescription: 'Normal',
-    alarmType: 'High',
-  },
-  {
-    id: 'shelved',
-    criticality: 'medium',
-    state: 'shelved-active',
-    tagName: 'TAG-05',
-    alarmDescription: 'Shelved, active',
-    alarmType: 'Deviation',
-    timeAlarmWasShelved: new Date('2024-01-15T14:34:00Z'),
-  },
-  {
-    id: 'suppressed',
-    criticality: 'critical',
-    state: 'suppressed-by-design-not-active',
-    tagName: 'TAG-06',
-    alarmDescription: 'Suppressed by design, not active',
-    alarmType: 'High-high',
-    timeAlarmWasSuppressed: new Date('2024-01-15T14:33:00Z'),
-  },
-  {
-    id: 'out-of-service',
-    criticality: 'low',
-    state: 'out-of-service-active',
-    tagName: 'TAG-07',
-    alarmDescription: 'Out of service, active',
-    alarmType: 'Low',
-    timeAlarmWasPlacedOutOfService: new Date('2024-01-15T14:32:00Z'),
-  },
-];
-
-/** Your application moves the alerts to their next state and hands the page the result. */
-function applyActionToPageAlerts<
-  Alert extends StandardAlert & AlertAcknowledgedByField,
->(
-  page: ObcAlertListPageSmallExperimental,
-  alertsActedOn: StandardAlert[],
-  actionId: string,
-  alertAfterAction: (alert: Alert, actionId: string) => Alert
-) {
-  const idsOfAlertsActedOn = new Set(alertsActedOn.map((alert) => alert.id));
-  page.alerts = (page.alerts as Alert[]).map((alert) => {
-    if (!idsOfAlertsActedOn.has(alert.id)) {
-      return alert;
-    }
-    const acknowledgedBy =
-      actionId === ALERT_ACTION_ID_APPLIED_BY_ACK_VISIBLE_BUTTON
-        ? 'John Doe'
-        : alert.acknowledgedBy;
-    return {...alertAfterAction(alert, actionId), acknowledgedBy};
-  });
-}
-
-function renderPage<Alert extends StandardAlert & AlertAcknowledgedByField>(
-  args: ObcAlertListPageSmallExperimental,
-  alerts: Alert[],
-  alertAfterAction: (alert: Alert, actionId: string) => Alert
-) {
-  return html`<obc-alert-list-page-small-experimental
-    .filterId=${args.filterId}
-    .showTime=${args.showTime}
-    .alerts=${alerts}
-    @action-click=${(
-      event: ObcAlertListPageSmallExperimentalActionClickEvent
-    ) =>
-      applyActionToPageAlerts(
-        event.currentTarget as ObcAlertListPageSmallExperimental,
-        [event.detail.alert],
-        event.detail.actionId,
-        alertAfterAction
-      )}
-    @ack-all-visible-click=${(
-      event: ObcAlertListPageSmallExperimentalAckAllClickEvent
-    ) =>
-      applyActionToPageAlerts(
-        event.currentTarget as ObcAlertListPageSmallExperimental,
-        event.detail.alerts,
-        ALERT_ACTION_ID_APPLIED_BY_ACK_VISIBLE_BUTTON,
-        alertAfterAction
-      )}
-    style="height: 100vh; display: block; max-height: 100%;"
-  ></obc-alert-list-page-small-experimental>`;
-}
-
 const meta: Meta<ObcAlertListPageSmallExperimental> = {
-  title: 'Pages/Alert List Small Experimental',
+  title: 'Pages/Alert List Small Experimental/IEC 62923',
   tags: ['6.0', 'experimental'],
   component: 'obc-alert-list-page-small-experimental',
-  beforeEach: () => setAlertStandard(iec62923AlertStandard),
   args: {
     filterId: 'active',
     showTime: true,
   },
-  render: (args) => renderPage(args, iec62923Alerts, iec62923AlertAfterAction),
+  parameters: {
+    docs: {
+      description: {
+        component: componentDocsWithSetAlertStandardCall(
+          classDocs('ObcAlertListPageSmallExperimental'),
+          'iec62923AlertStandard'
+        ),
+      },
+    },
+  },
+  render: (args) => {
+    setAlertStandard(iec62923AlertStandard);
+    return html`<obc-alert-list-page-small-experimental
+      .filterId=${args.filterId}
+      .showTime=${args.showTime}
+      .alerts=${iec62923Alerts}
+      @action-click=${(
+        event: ObcAlertListPageSmallExperimentalActionClickEvent
+      ) =>
+        applyActionToPageAlerts(
+          event.currentTarget as ObcAlertListPageSmallExperimental,
+          [event.detail.alert],
+          event.detail.actionId,
+          iec62923AlertAfterAction<Iec62923PageAlert>
+        )}
+      @ack-all-visible-click=${(
+        event: ObcAlertListPageSmallExperimentalAckAllClickEvent
+      ) =>
+        applyActionToPageAlerts(
+          event.currentTarget as ObcAlertListPageSmallExperimental,
+          event.detail.alerts,
+          ALERT_ACTION_ID_APPLIED_BY_ACK_VISIBLE_BUTTON,
+          iec62923AlertAfterAction<Iec62923PageAlert>
+        )}
+      style="height: 100vh; display: block; max-height: 100%;"
+    ></obc-alert-list-page-small-experimental>`;
+  },
 };
 
 export default meta;
@@ -222,29 +134,15 @@ type Story = StoryObj<ObcAlertListPageSmallExperimental>;
 
 export const Regular: Story = {};
 
-export const Automation: Story = {
-  beforeEach: () => setAlertStandard(isa182AlertStandard),
-  parameters: {
-    docs: {
-      description: {
-        story:
-          'ISA-18.2 lets several alarms be acknowledged at once, so the page offers ACK visible, and its dropdown lists the five filters the standard declares. Under IEC 62923, as in the other stories, there is no ACK visible: MSC.302 9.9 asks for one alarm at a time.',
-      },
-    },
-  },
-  render: (args) =>
-    renderPage(args, isa182Alerts, (alarm: Isa182PageAlert, actionId) =>
-      isa182AlertAfterAction(alarm, actionId)
-    ),
-};
-
 export const Unacked: Story = {
   args: {filterId: 'unacked'},
 };
 
 export const Empty: Story = {
-  render: () =>
-    html`<obc-alert-list-page-small-experimental
+  render: () => {
+    setAlertStandard(iec62923AlertStandard);
+    return html`<obc-alert-list-page-small-experimental
       style="height: 100vh; display: block;"
-    ></obc-alert-list-page-small-experimental>`,
+    ></obc-alert-list-page-small-experimental>`;
+  },
 };

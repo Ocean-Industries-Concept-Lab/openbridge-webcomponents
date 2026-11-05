@@ -8,11 +8,9 @@ import {
 import {ObcMessageMenuItemSize} from '../message-menu-item/message-menu-item.js';
 import {setAlertStandard} from '../../alert-system/configured-alert-standard.js';
 import {iec62923AlertStandard} from '../../alert-system/iec-62923-alert-standard.js';
-import {isa182AlertStandard} from '../../alert-system/isa-18-2-alert-standard.js';
-import {
-  iec62923StateAfterAction,
-  isa182StateAfterAction,
-} from '../../alert-system/stories/state-after-action.js';
+import {iec62923StateAfterAction} from '../../alert-system/stories/state-after-action.js';
+import {componentDocsWithSetAlertStandardCall} from '../../alert-system/stories/alert-standard-docs.js';
+import {classDocs} from '../../../.storybook/manifest-docs.js';
 
 function moveIec62923ItemToStateAfterAction(
   event: ObcAlertMenuItemExperimentalActionClickEvent
@@ -21,18 +19,10 @@ function moveIec62923ItemToStateAfterAction(
   item.state = iec62923StateAfterAction(item.state, event.detail.actionId);
 }
 
-function moveIsa182ItemToStateAfterAction(
-  event: ObcAlertMenuItemExperimentalActionClickEvent
-) {
-  const item = event.currentTarget as ObcAlertMenuItemExperimental;
-  item.state = isa182StateAfterAction(item.state, event.detail.actionId);
-}
-
 const meta: Meta<ObcAlertMenuItemExperimental> = {
-  title: 'Application Components/Alerts/Alert Menu Item Experimental',
+  title: 'Application Components/Alerts/Alert Menu Item Experimental/IEC 62923',
   tags: ['6.0', 'experimental'],
   component: 'obc-alert-menu-item-experimental',
-  beforeEach: () => setAlertStandard(iec62923AlertStandard),
   args: {
     criticality: 'alarm',
     state: 'active-unacknowledged',
@@ -47,8 +37,19 @@ const meta: Meta<ObcAlertMenuItemExperimental> = {
       options: Object.values(ObcMessageMenuItemSize),
     },
   },
-  render: (args) =>
-    html`<obc-alert-menu-item-experimental
+  parameters: {
+    docs: {
+      description: {
+        component: componentDocsWithSetAlertStandardCall(
+          classDocs('ObcAlertMenuItemExperimental'),
+          'iec62923AlertStandard'
+        ),
+      },
+    },
+  },
+  render: (args) => {
+    setAlertStandard(iec62923AlertStandard);
+    return html`<obc-alert-menu-item-experimental
       .criticality=${args.criticality}
       .state=${args.state}
       .title=${args.title}
@@ -57,7 +58,8 @@ const meta: Meta<ObcAlertMenuItemExperimental> = {
       .size=${args.size}
       @action-click=${moveIec62923ItemToStateAfterAction}
       style="width: 480px"
-    ></obc-alert-menu-item-experimental>`,
+    ></obc-alert-menu-item-experimental>`;
+  },
 };
 
 export default meta;
@@ -78,27 +80,4 @@ export const AcknowledgeNotAllowed: Story = {
       },
     },
   },
-};
-
-export const TwoActions: Story = {
-  beforeEach: () => setAlertStandard(isa182AlertStandard),
-  parameters: {
-    docs: {
-      description: {
-        story:
-          'An unacknowledged ISA-18.2 alarm offers two actions, so the item shows a button for each.',
-      },
-    },
-  },
-  render: (args) =>
-    html`<obc-alert-menu-item-experimental
-      criticality="high"
-      state="unacknowledged"
-      .title=${args.title}
-      .description=${args.description}
-      .time=${args.time}
-      .size=${args.size}
-      @action-click=${moveIsa182ItemToStateAfterAction}
-      style="width: 480px"
-    ></obc-alert-menu-item-experimental>`,
 };

@@ -96,7 +96,8 @@ A standard's `display` names the fields a list shows, by the names its
 document gives them, so the list stays generic: `statusColumn()`,
 `timeColumn()` and `typeColumn()` read text, label, time and type through it.
 A standard without `display` shows the alert's own `text`, `source` and
-`time`, as the Custom Standard story does. Each built-in standard requires
+`time`; the Custom Standard story of the details list names them in a
+`display` of its own and shows the time as hours and minutes. Each built-in standard requires
 its fields in its alert type:
 
 | Type            | Text                                   | Label         | Time                                      | Type        |
@@ -141,10 +142,13 @@ in `iec-62923-alert-glyphs.ts`, apart from the IEC 62923 standard.
   changes, also one that was disconnected while it changed, and reports the
   change in `changedProperties` under `ALERT_STANDARD_CHANGE_KEY` so a list
   filters again.
-- A story sets its standard with the call an application makes,
-  `beforeEach: () => setAlertStandard(iec62923AlertStandard)`; the global
-  `beforeEach` in `.storybook/preview.tsx` clears it first. Two standards
-  cannot meet in one story.
+- A story calls `setAlertStandard()` at the top of its `render`, next to the
+  markup, so a reader copying the story copies the call too; the global
+  `beforeEach` in `.storybook/preview.tsx` clears it first. A Docs page
+  renders every story of its file in one frame and the standard is global,
+  so a story file demonstrates one standard: each component has a file per
+  standard (`…-isa-18-2.stories.ts`, `…-custom-standard.stories.ts`) and one
+  for No Alert Standard.
 - Stories are usage documentation: alerts are plain object literals typed
   with `StandardAlertOf`, menu items are plain markup, and what the
   application does on an action is `alert-system/stories/state-after-action.ts`.

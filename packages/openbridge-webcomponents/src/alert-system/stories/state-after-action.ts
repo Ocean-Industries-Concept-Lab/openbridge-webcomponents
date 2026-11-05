@@ -5,10 +5,19 @@
  * The components only report the click. Moving the alert to its next state
  * is the application's job, since the alert system behind it owns the alert.
  */
-import {ownEntryOf} from '../alert-standard.js';
+import {
+  ALERT_ACTION_ID_APPLIED_BY_ACK_VISIBLE_BUTTON,
+  ownEntryOf,
+} from '../alert-standard.js';
 import type {Iec62923AlertFields} from '../iec-62923-alert-standard.js';
 import {ISA_18_2_TIME_FIELD_EACH_STATE_SHOWS} from '../isa-18-2-alert-standard.js';
 import type {StandardAlert} from '../standard-alert.js';
+import type {
+  AlertAcknowledgedByField,
+  ObcAlertListCellClickEvent,
+  ObcAlertListDetailsExperimental,
+} from '../../components/alert-list-details-experimental/alert-list-details-experimental.js';
+import type {ObcAlertListPageSmallExperimental} from '../../pages/alert-list-page-small-experimental/alert-list-page-small-experimental.js';
 
 const IEC_62923_STATE_AFTER_ACTION: Record<string, Record<string, string>> = {
   acknowledge: {
@@ -110,4 +119,44 @@ export function isa182AlertAfterAction<Alert extends StandardAlert>(
   return timeField === undefined || keepsTheTimeItBecameActive
     ? {...alarm, state}
     : {...alarm, state, [timeField]: new Date()};
+}
+
+/** Moves the clicked alert of a details list to its next state and hands the list the result. */
+export function moveClickedAlertToStateAfterAction<
+  Alert extends StandardAlert & AlertAcknowledgedByField,
+>(alertAfterAction: (alert: Alert, actionId: string) => Alert) {
+  return (event: ObcAlertListCellClickEvent) => {
+    const {alert: clickedAlert, actionId} = event.detail;
+    if (actionId === undefined) {
+      return;
+    }
+    const list = event.currentTarget as ObcAlertListDetailsExperimental;
+    list.alerts = (list.alerts as Alert[]).map((alert) =>
+      alert.id === clickedAlert.id
+        ? {...alertAfterAction(alert, actionId), acknowledgedBy: 'John Doe'}
+        : alert
+    );
+  };
+}
+
+/** Moves the alerts acted on in the small list page to their next state and hands the page the result. */
+export function applyActionToPageAlerts<
+  Alert extends StandardAlert & AlertAcknowledgedByField,
+>(
+  page: ObcAlertListPageSmallExperimental,
+  alertsActedOn: StandardAlert[],
+  actionId: string,
+  alertAfterAction: (alert: Alert, actionId: string) => Alert
+) {
+  const idsOfAlertsActedOn = new Set(alertsActedOn.map((alert) => alert.id));
+  page.alerts = (page.alerts as Alert[]).map((alert) => {
+    if (!idsOfAlertsActedOn.has(alert.id)) {
+      return alert;
+    }
+    const acknowledgedBy =
+      actionId === ALERT_ACTION_ID_APPLIED_BY_ACK_VISIBLE_BUTTON
+        ? 'John Doe'
+        : alert.acknowledgedBy;
+    return {...alertAfterAction(alert, actionId), acknowledgedBy};
+  });
 }

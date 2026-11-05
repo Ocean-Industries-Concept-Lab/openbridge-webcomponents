@@ -10,6 +10,8 @@ import type {
 import {setAlertStandard} from '../../alert-system/configured-alert-standard.js';
 import {iec62923AlertStandard} from '../../alert-system/iec-62923-alert-standard.js';
 import {iec62923StateAfterAction} from '../../alert-system/stories/state-after-action.js';
+import {componentDocsWithSetAlertStandardCall} from '../../alert-system/stories/alert-standard-docs.js';
+import {classDocs} from '../../../.storybook/manifest-docs.js';
 
 function moveItemToStateAfterAction(
   event: ObcAlertMenuItemExperimentalActionClickEvent
@@ -19,18 +21,28 @@ function moveItemToStateAfterAction(
 }
 
 const meta: Meta<ObcAlertListExperimental> = {
-  title: 'Application Components/Alerts/Alert List Experimental',
+  title: 'Application Components/Alerts/Alert List Experimental/IEC 62923',
   tags: ['6.0', 'experimental'],
   component: 'obc-alert-list-experimental',
-  beforeEach: () => setAlertStandard(iec62923AlertStandard),
+  parameters: {
+    docs: {
+      description: {
+        component: componentDocsWithSetAlertStandardCall(
+          classDocs('ObcAlertListExperimental'),
+          'iec62923AlertStandard'
+        ),
+      },
+    },
+  },
   argTypes: {
     filterId: {
       control: {type: 'select'},
       options: [undefined, 'unacked', 'active'],
     },
   },
-  render: (args) =>
-    html`<obc-alert-list-experimental
+  render: (args) => {
+    setAlertStandard(iec62923AlertStandard);
+    return html`<obc-alert-list-experimental
       .filterId=${args.filterId}
       style="height: 480px; display: block;"
     >
@@ -90,7 +102,8 @@ const meta: Meta<ObcAlertListExperimental> = {
         time="14:33:00"
         @action-click=${moveItemToStateAfterAction}
       ></obc-alert-menu-item-experimental>
-    </obc-alert-list-experimental>`,
+    </obc-alert-list-experimental>`;
+  },
 };
 
 export default meta;
@@ -111,21 +124,11 @@ export const Empty: Story = {
       },
     },
   },
-  render: () =>
-    html`<obc-alert-list-experimental
+  render: () => {
+    setAlertStandard(iec62923AlertStandard);
+    return html`<obc-alert-list-experimental
       filterId="unacked"
       style="height: 480px; display: block;"
-    ></obc-alert-list-experimental>`,
-};
-
-export const NoAlertStandard: Story = {
-  beforeEach: () => setAlertStandard(undefined),
-  parameters: {
-    docs: {
-      description: {
-        story:
-          'Until the application calls `setAlertStandard()`, the list shows none of its items and says that no alert standard is set. The console says how to set one.',
-      },
-    },
+    ></obc-alert-list-experimental>`;
   },
 };
