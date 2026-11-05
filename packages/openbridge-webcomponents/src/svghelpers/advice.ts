@@ -467,6 +467,9 @@ const NO_GO: Record<
  * tertiary (hinted) and secondary (enabled) tokens; a hatched no-go band keeps
  * the frame fill under its pattern, a solid one (warning, alarm) fills with
  * the grey itself so it occludes the tick marks behind it.
+ *
+ * TODO(designer): every triggered element takes the primary tick colour and
+ * the alarm band the alarm outline token; the sets still vary per category.
  */
 export function adviceStyle(
   category: AdviceCategory,

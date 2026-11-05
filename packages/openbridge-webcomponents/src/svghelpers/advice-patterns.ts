@@ -4,6 +4,9 @@
  * geometry `advice.ts` fixes. Each tile is in user space so it reads the same
  * at any band length; the caller references it by id.
  *
+ * TODO(designer): the tiles are drawn at every size, as every set draws
+ * them; the size below which a hatch stops reading is not decided (#1062).
+ *
  * @module
  */
 
