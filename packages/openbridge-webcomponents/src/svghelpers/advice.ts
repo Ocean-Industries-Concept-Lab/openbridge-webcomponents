@@ -297,7 +297,7 @@ export function resolveAdvices(
   });
   const goToHit = resolved.some((a) => a.hit && isGoToCategory(a.category));
   const noGoHit = resolved.some((a) => a.hit && !isGoToCategory(a.category));
-  return resolved.map(({hit, ...advice}) => {
+  const withStates = resolved.map(({hit, ...advice}) => {
     if (hit) return {...advice, state: AdviceState.triggered};
     if (!opts.emphasis) return advice;
     const goTo = isGoToCategory(advice.category);
@@ -307,4 +307,251 @@ export function resolveAdvices(
     if (advice.state === AdviceState.hinted) return advice;
     return {...advice, state: goTo ? AdviceState.active : AdviceState.enabled};
   });
+  return chainAdvices(withStates);
+}
+
+// ---- Geometry ----
+
+/** Band thickness in canvas units; the radial band spans r 164–172, the linear band sits 4 off the tick base. */
+export const ADVICE_BAND_THICKNESS = 8;
+/** How far a rounded cap's tip sits inside the range limit; its centre sits one band thickness inside. */
+export const ADVICE_CAP_INSET = 4;
+/** Corner radius of a no-go band's square cap. */
+export const ADVICE_ALERT_CORNER_RADIUS = 2;
+/** Diameter of a go-to point's dot, on the band centreline. */
+export const ADVICE_POINT_DOT_DIAMETER = 9;
+/** A no-go point: a thick tick across the band, rounded. */
+export const ADVICE_POINT_TICK = {length: 9, thickness: 5, radius: 2.5};
+/** The caution stripe on a linear band: 45° lines, 3 wide, 5.66 apart (an 8 × 8 tile). */
+export const ADVICE_STRIPE = {width: 3, pitch: 5.66, angleDeg: 45};
+/** The exclusion hatch: the stripe tile drawn as a hairline. */
+export const ADVICE_HAIRLINE_WIDTH = 0.5;
+/** The alarm area lattice: 2-unit dots on an 8-unit pitch, every other row offset by half. */
+export const ADVICE_DOT = {size: 2, pitch: 8, rowOffset: 4};
+/** Dash arrays of the area limit lines, in canvas units. */
+export const ADVICE_AREA_DASH = {dotted: '1 1', dashed: '4 4'} as const;
+
+// ---- Style ----
+
+/** The tokens and pattern a band, its ticks and its area take in one state. */
+export interface AdviceStyle {
+  fill: string;
+  stroke: string;
+  pattern: 'none' | 'stripes' | 'hairline';
+  patternColor: string;
+  /** `enhanced` while triggered, the tick colour the boundary marks take. */
+  tickStyle: 'regular' | 'enhanced';
+  areaOutline: 'dotted' | 'dashed' | 'solid';
+  /** The area tint while triggered; `none` otherwise. */
+  areaFill: string;
+  areaPattern: 'none' | 'dots' | 'hairline';
+}
+
+const v = (token: string) => `var(--${token})`;
+const FRAME = v('instrument-frame-primary-color');
+const TERTIARY = v('instrument-tick-mark-tertiary-color');
+const SECONDARY = v('instrument-tick-mark-secondary-color');
+const PRIMARY = v('instrument-tick-mark-primary-color');
+
+interface GoToPalette {
+  activeFill: string;
+  activeStroke: string;
+  triggeredFill: string;
+  triggeredStroke: string;
+  areaFill: string;
+}
+
+const GO_TO: Record<'optimal' | 'running' | 'eco', GoToPalette> = {
+  optimal: {
+    activeFill: v('base-blue-100'),
+    activeStroke: v('element-neutral-enhanced-color'),
+    triggeredFill: v('instrument-enhanced-secondary-color'),
+    triggeredStroke: v('instrument-enhanced-secondary-color'),
+    areaFill: v('base-blue-050-tint'),
+  },
+  running: {
+    activeFill: v('alert-running-container-background-color'),
+    activeStroke: v('alert-running-outline-color'),
+    triggeredFill: v('alert-running-color'),
+    triggeredStroke: v('alert-running-outline-color'),
+    areaFill: v('alert-running-tint-color'),
+  },
+  eco: {
+    activeFill: v('base-mint-100'),
+    activeStroke: v('base-mint-400'),
+    triggeredFill: v('base-mint-400'),
+    triggeredStroke: v('base-mint-500'),
+    areaFill: v('base-mint-050-tint'),
+  },
+};
+
+interface NoGoPalette {
+  /** A hatched band keeps the frame fill under its stripes; a solid one fills with the state's grey. */
+  pattern: 'none' | 'stripes' | 'hairline';
+  activeFill: string;
+  activeStroke: string;
+  triggeredFill: string;
+  triggeredStroke: string;
+  areaOutline: 'dashed' | 'solid';
+  areaFill: string;
+  areaPattern: 'none' | 'dots' | 'hairline';
+}
+
+const NO_GO: Record<
+  'caution' | 'warning' | 'alarm' | 'exclusion',
+  NoGoPalette
+> = {
+  caution: {
+    pattern: 'stripes',
+    activeFill: v('alert-caution-container-background-color'),
+    activeStroke: v('alert-caution-inactive-border-color'),
+    triggeredFill: v('alert-caution-color'),
+    triggeredStroke: v('on-caution-color'),
+    areaOutline: 'dashed',
+    areaFill: v('alert-caution-tint-color'),
+    areaPattern: 'none',
+  },
+  warning: {
+    pattern: 'none',
+    activeFill: v('alert-warning-inactive-background-color'),
+    activeStroke: v('alert-warning-inactive-border-color'),
+    triggeredFill: v('alert-warning-color'),
+    triggeredStroke: v('alert-warning-outline-color'),
+    areaOutline: 'solid',
+    areaFill: v('alert-warning-tint-color'),
+    areaPattern: 'none',
+  },
+  alarm: {
+    pattern: 'none',
+    activeFill: v('alert-alarm-inactive-background-color'),
+    activeStroke: v('alert-alarm-inactive-border-color'),
+    triggeredFill: v('alert-alarm-color'),
+    triggeredStroke: v('alert-alarm-outline-color'),
+    areaOutline: 'solid',
+    areaFill: 'none',
+    areaPattern: 'dots',
+  },
+  exclusion: {
+    pattern: 'hairline',
+    activeFill: FRAME,
+    activeStroke: SECONDARY,
+    triggeredFill: FRAME,
+    triggeredStroke: PRIMARY,
+    areaOutline: 'solid',
+    areaFill: 'none',
+    areaPattern: 'hairline',
+  },
+};
+
+/**
+ * The style of one category in one state. The greys are the tick-mark
+ * tertiary (hinted) and secondary (enabled) tokens; a hatched no-go band keeps
+ * the frame fill under its pattern, a solid one (warning, alarm) fills with
+ * the grey itself so it occludes the tick marks behind it.
+ */
+export function adviceStyle(
+  category: AdviceCategory,
+  state: AdviceState
+): AdviceStyle {
+  const s = state === AdviceState.regular ? AdviceState.enabled : state;
+  const triggered = s === AdviceState.triggered;
+  const grey = s === AdviceState.hinted ? TERTIARY : SECONDARY;
+  if (isGoToCategory(category)) {
+    const p = GO_TO[category as keyof typeof GO_TO];
+    const [fill, stroke] = triggered
+      ? [p.triggeredFill, p.triggeredStroke]
+      : s === AdviceState.active
+        ? [p.activeFill, p.activeStroke]
+        : [FRAME, grey];
+    return {
+      fill,
+      stroke,
+      pattern: 'none',
+      patternColor: 'none',
+      tickStyle: triggered ? 'enhanced' : 'regular',
+      areaOutline: 'dotted',
+      areaFill: triggered ? p.areaFill : 'none',
+      areaPattern: 'none',
+    };
+  }
+  const p = NO_GO[category as keyof typeof NO_GO];
+  const hatched = p.pattern !== 'none';
+  const [fill, stroke] = triggered
+    ? [p.triggeredFill, p.triggeredStroke]
+    : s === AdviceState.active && category !== AdviceCategory.exclusion
+      ? [p.activeFill, p.activeStroke]
+      : [hatched ? FRAME : grey, grey];
+  return {
+    fill,
+    stroke,
+    pattern: p.pattern,
+    patternColor: hatched ? stroke : 'none',
+    tickStyle: triggered ? 'enhanced' : 'regular',
+    areaOutline: p.areaOutline,
+    areaFill: triggered ? p.areaFill : 'none',
+    areaPattern: p.areaPattern,
+  };
+}
+
+// ---- Caps and chaining ----
+
+/** How one end of a band is drawn: the rounded go-to cap, the square no-go cap, or a flat cut where bands meet. */
+export enum AdviceCap {
+  pill = 'pill',
+  square = 'square',
+  flat = 'flat',
+}
+
+/**
+ * The caps of a band. A go-to band is rounded; a no-go band is square where
+ * its boundary tick stands and rounded where the tick is hidden, since the
+ * end then need not meet a tick; a chained end is cut flat.
+ */
+export function adviceCaps(advice: ResolvedAdvice): {
+  start: AdviceCap;
+  end: AdviceCap;
+} {
+  const goTo = isGoToCategory(advice.category);
+  const cap = (flat: boolean, tickHidden: boolean): AdviceCap =>
+    flat
+      ? AdviceCap.flat
+      : goTo || tickHidden
+        ? AdviceCap.pill
+        : AdviceCap.square;
+  return {
+    start: cap(advice.flatStart, advice.hideMinTickmark),
+    end: cap(advice.flatEnd, advice.hideMaxTickmark),
+  };
+}
+
+/** Marks the ends where one band's `max` is another's `min`, so both are cut flat there. */
+export function chainAdvices(
+  advices: readonly ResolvedAdvice[],
+  epsilon = 1e-6
+): ResolvedAdvice[] {
+  const out = advices.map((a) => ({...a}));
+  for (const a of out) {
+    if (a.point) continue;
+    for (const b of out) {
+      if (a === b || b.point) continue;
+      if (Math.abs(a.max - b.min) <= epsilon) {
+        a.flatEnd = true;
+        b.flatStart = true;
+      }
+    }
+  }
+  return out;
+}
+
+// ---- Mask ids ----
+
+let maskCounter = 0;
+
+/**
+ * A mask id no other advice in the document uses. Ids are document-scoped,
+ * so two instruments naming a mask after the same range would share one.
+ */
+export function nextAdviceMaskId(prefix = 'advice'): string {
+  maskCounter += 1;
+  return `${prefix}-${maskCounter}`;
 }

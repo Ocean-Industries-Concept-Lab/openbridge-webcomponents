@@ -9,6 +9,10 @@ import {
   adviceTriggerReadings,
   isAdviceHit,
   resolveAdvices,
+  adviceStyle,
+  adviceCaps,
+  chainAdvices,
+  nextAdviceMaskId,
 } from './advice.js';
 
 describe('normalizeAdvice', () => {
@@ -220,5 +224,114 @@ describe('resolveAdvices', () => {
       AdviceState.hinted,
       AdviceState.triggered,
     ]);
+  });
+});
+
+describe('adviceStyle', () => {
+  it('colours a triggered caution band in the alert tokens', () => {
+    const s = adviceStyle(AdviceCategory.caution, AdviceState.triggered);
+    expect(s.fill).toBe('var(--alert-caution-color)');
+    expect(s.stroke).toBe('var(--on-caution-color)');
+    expect(s.pattern).toBe('stripes');
+    expect(s.patternColor).toBe('var(--on-caution-color)');
+    expect(s.tickStyle).toBe('enhanced');
+    expect(s.areaOutline).toBe('dashed');
+    expect(s.areaFill).toBe('var(--alert-caution-tint-color)');
+  });
+
+  it('draws a hinted alarm band solid in the tertiary grey', () => {
+    const s = adviceStyle(AdviceCategory.alarm, AdviceState.hinted);
+    expect(s.fill).toBe('var(--instrument-tick-mark-tertiary-color)');
+    expect(s.stroke).toBe('var(--instrument-tick-mark-tertiary-color)');
+    expect(s.pattern).toBe('none');
+    expect(s.tickStyle).toBe('regular');
+    expect(s.areaPattern).toBe('dots');
+  });
+
+  it('tints an active optimal band and fills a triggered one', () => {
+    expect(
+      adviceStyle(AdviceCategory.optimal, AdviceState.active)
+    ).toMatchObject({
+      fill: 'var(--base-blue-100)',
+      stroke: 'var(--element-neutral-enhanced-color)',
+    });
+    const t = adviceStyle(AdviceCategory.optimal, AdviceState.triggered);
+    expect(t.fill).toBe('var(--instrument-enhanced-secondary-color)');
+    expect(t.tickStyle).toBe('enhanced');
+    expect(t.areaOutline).toBe('dotted');
+  });
+
+  it('hatches an exclusion band as a hairline and uses the alarm outline token', () => {
+    expect(
+      adviceStyle(AdviceCategory.exclusion, AdviceState.triggered)
+    ).toMatchObject({
+      fill: 'var(--instrument-frame-primary-color)',
+      stroke: 'var(--instrument-tick-mark-primary-color)',
+      pattern: 'hairline',
+    });
+    expect(
+      adviceStyle(AdviceCategory.alarm, AdviceState.triggered).stroke
+    ).toBe('var(--alert-alarm-outline-color)');
+  });
+
+  it('reads the legacy regular state as enabled', () => {
+    expect(adviceStyle(AdviceCategory.caution, AdviceState.regular)).toEqual(
+      adviceStyle(AdviceCategory.caution, AdviceState.enabled)
+    );
+  });
+});
+
+describe('adviceCaps and chainAdvices', () => {
+  it('caps a go-to band as a pill and a no-go band square where a tick stands', () => {
+    expect(
+      adviceCaps(normalizeAdvice({min: 0, max: 1, category: 'optimal'}))
+    ).toEqual({start: 'pill', end: 'pill'});
+    expect(
+      adviceCaps(normalizeAdvice({min: 0, max: 1, category: 'caution'}))
+    ).toEqual({start: 'square', end: 'square'});
+    expect(
+      adviceCaps(
+        normalizeAdvice({
+          min: 0,
+          max: 1,
+          category: 'caution',
+          hideMaxTickmark: true,
+        })
+      )
+    ).toEqual({start: 'square', end: 'pill'});
+  });
+
+  it('cuts both bands flat where they meet', () => {
+    const [a, b] = chainAdvices(
+      resolveAdvices(
+        [
+          {min: 60, max: 80, category: 'caution'},
+          {min: 80, max: 100, category: 'alarm'},
+        ],
+        []
+      )
+    );
+    expect(adviceCaps(a)).toEqual({start: 'square', end: 'flat'});
+    expect(adviceCaps(b)).toEqual({start: 'flat', end: 'square'});
+  });
+
+  it('is applied by resolveAdvices', () => {
+    const [a] = resolveAdvices(
+      [
+        {min: 60, max: 80, category: 'optimal'},
+        {min: 80, max: 100, category: 'alarm'},
+      ],
+      []
+    );
+    expect(a.flatEnd).toBe(true);
+  });
+});
+
+describe('nextAdviceMaskId', () => {
+  it('hands out distinct ids with the given prefix', () => {
+    const a = nextAdviceMaskId('watch');
+    const b = nextAdviceMaskId('watch');
+    expect(a).not.toBe(b);
+    expect(a.startsWith('watch-')).toBe(true);
   });
 });
