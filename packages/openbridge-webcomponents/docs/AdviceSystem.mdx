@@ -91,7 +91,7 @@ Change the category, the state and the readings to see how one band responds on 
 
 ### Properties
 
-Every instrument that draws advices has these three properties.
+Every instrument that draws advices has these three properties, with two exceptions listed under [Instruments](#instruments): `obc-azimuth-thruster` has two lists, `angleAdvices` and `thrustAdvices`, that share one trigger and emphasis, and `obc-pitch-roll-heave` has `heaveAdvice` alone. `obc-gauge-trend`, `obc-automation-tank` and `obc-depth` also keep the whole layer behind `hasAdvice`, which is off by default.
 
 <Markdown>{properties}</Markdown>
 
@@ -111,7 +111,7 @@ On a compass or any other angular instrument, a range runs clockwise from `min` 
 
 ## Areas on a chart
 
-`obc-line-graph`, `obc-area-graph` and `obc-gauge-trend` draw an entry with `showArea` on the chart: the tint between the limits under the data, the limit lines over it. `obc-gauge-trend` also draws the bands on its side bar and triggers them on its value and setpoint. A plain line graph has no reading, so its bands keep the state the list gives them.
+`obc-line-graph`, `obc-area-graph` and `obc-gauge-trend` draw an entry with `showArea` on the chart: the tint between the limits under the data, the limit lines over it. `obc-gauge-trend` also draws the bands on its side bar and triggers them on its value and setpoint, and shows neither until `hasAdvice` is on. A plain line graph has no reading and no such gate, so its bands keep the state the list gives them.
 
 <Canvas of={GaugeTrendStories.GaugeTrendWithAdviceArea} sourceState="none" />
 
