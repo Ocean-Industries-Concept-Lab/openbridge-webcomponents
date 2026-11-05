@@ -485,14 +485,10 @@ WatchCircleType.triple; // Three rings (compass)
 
 ### 5. Advice/Caution Zones
 
-Location: `advice.ts` → `renderAdvice()` and `adviceMask()` functions
-
-```typescript
-// Colors based on state:
-AdviceState.hinted    → 'var(--instrument-frame-tertiary-color)'
-AdviceState.regular   → 'var(--instrument-tick-mark-tertiary-color)'
-AdviceState.triggered → 'var(--on-caution-active-color)'
-```
+Location: `advice.ts` → `renderAdvice()`, `renderAdvicePoint()` and
+`renderAdviceArea()` place what `svghelpers/advice.ts` resolved; the colours,
+caps and patterns are that layer's ([`advice.md`](advice.md)). `obc-watch`
+draws the list as given and names its ids with `nextAdviceMaskId('watch')`.
 
 ### 6. Adding a New Overlay Element
 
@@ -587,17 +583,15 @@ The offset flows through the rendering pipeline:
 
 1. `watch.ts` computes `_rOff` via `computeZoomToFitArcFrame()`
 2. All `watch.ts` render methods add `_rOff` to radius constants (e.g. `OUTER_RING_RADIUS + this._rOff`)
-3. Helper functions (`tickmark()`, `renderAdvice()`, `adviceMask()`) accept an optional `radiusOffset` parameter
+3. Helper functions (`tickmark()`, `renderAdvice()`, `adviceMask()`) accept an optional `radiusOffset` parameter; `renderAdvice()` resolves nothing, see [`advice.md`](advice.md)
 4. Consumer instruments read back `_radiusOffset` for overlay adjustments (needle translation)
 
-### Advice hatch pattern: two code paths
+### Advice bands under zoom
 
-`advice.ts` uses two different hatch-pattern strategies depending on `radiusOffset`:
-
-- **`radiusOffset === 0`** (original): Pre-baked tile approach — works at design radius only.
-- **`radiusOffset > 0`** (zoom): Direct `<line>` segments with dynamic line count to maintain consistent arc spacing at any enlarged radius. The mask also switches to `maskUnits="userSpaceOnUse"` with dynamic extent.
-
-> **⚠️ Do not unify** the two code paths. The non-zoom path must produce output identical to `main` to avoid regenerating snapshots for all advice-using instruments.
+`renderAdvice()` takes the `radiusOffset`, so a band, its caps and its
+pattern follow the enlarged ring; the caution tile is laid every 4° at any
+radius. The one hatch implementation is `svghelpers/advice-patterns.ts`
+([`advice.md`](advice.md)); the former zoom-only line path is gone.
 
 ### Adding `zoomToFitArc` to a new instrument
 
@@ -820,7 +814,7 @@ verify that before retuning any of the constants.
 
 - [ ] Is the feature visual/rendering? → Add to `watch.ts`
 - [ ] Is it tickmark-related? → Add to `tickmark.ts`
-- [ ] Is it advice/alert-related? → Add to `advice.ts`
+- [ ] Is it advice/alert-related? → The rule goes in `svghelpers/advice.ts`, the placement in `advice.ts` ([`advice.md`](advice.md))
 - [ ] Is it a new instrument? → Create thin wrapper using `obc-watch`
 - [ ] Does it need an overlay SVG? → Match viewBox calculation exactly
 - [ ] Does it use absolute coordinates? → Use `translate(-256, -256)` pattern

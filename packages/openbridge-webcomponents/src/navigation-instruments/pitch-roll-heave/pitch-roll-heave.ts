@@ -32,11 +32,8 @@ import {
   linearTickInterval,
   watchfaceLinear,
 } from '../../building-blocks/instrument-linear/instrument-linear.js';
-import {
-  resolveLinearAdvice,
-  type LinearAdvice,
-} from '../../building-blocks/instrument-linear/advice.js';
-import type {ResolvedAdvice} from '../../svghelpers/advice.js';
+import {resolveLinearAdvice} from '../../building-blocks/instrument-linear/advice.js';
+import type {AdviceInput, ResolvedAdvice} from '../../svghelpers/advice.js';
 import {degToRad, radToDeg, clamp} from '../../svghelpers/math.js';
 
 export enum ObcPitchRollHeaveType {
@@ -146,6 +143,7 @@ function distanceToRect(
  * @element obc-pitch-roll-heave
  *
  * @property heaveRange - Half-extent of the heave scale in metres; the column spans `±heaveRange`.
+ * @property heaveAdvice - Advice ranges and points on the heave column, in metres; see `svghelpers/advice.ts` for the shape.
  * @property pitchArcAngle - Half-extent of the pitch arc in degrees. Also drives the heave column
  *   height, which is `2 · outerRadius · sin(pitchArcAngle)` so the column's
  *   edges stay level with the pitch arc's end caps.
@@ -219,7 +217,7 @@ export class ObcPitchRollHeave extends LitElement {
   @property({type: Number}) maxRollAdvice: number | undefined = undefined;
   @property({type: Boolean}) triggerPitchAdvice = false;
   @property({type: Boolean}) triggerRollAdvice = false;
-  @property({type: Array}) heaveAdvice: LinearAdvice[] = [];
+  @property({type: Array}) heaveAdvice: AdviceInput[] = [];
 
   @property({type: String}) priority: Priority = Priority.regular;
   @property({type: Array, attribute: false})

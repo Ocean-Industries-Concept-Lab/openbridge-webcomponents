@@ -141,6 +141,7 @@ The table below is generated too. Edit `docs/agents/*.md`, never this block.
 | Doc | Scope (globs) | Description |
 | --- | --- | --- |
 | [a11y](docs/agents/a11y.md) | `packages/openbridge-webcomponents/src/{components,automation,internal}/**` | Accessibility (WCAG 2.1 AA + 2.2 § 2.5.8 target size) — keyboard nav, ARIA, focus |
+| [advice](docs/agents/advice.md) | `packages/openbridge-webcomponents/src/svghelpers/{advice.ts,advice-linear.ts,advice-patterns.ts,advice-mixin.ts,advice-bundle.ts}`<br>`packages/openbridge-webcomponents/src/charthelpers/advice-area-plugin.ts`<br>`packages/openbridge-webcomponents/src/building-blocks/advice/**` | Advice design layer, mixin/bundle, the four renderers and the area plugin |
 | [ar](docs/agents/ar.md) | `packages/openbridge-webcomponents/src/ar/**` | Augmented-reality POI overlay — controller, layer stack, overlap resolution, and the POI composition chain |
 | [automation-components](docs/agents/automation-components.md) | `packages/openbridge-webcomponents/src/automation/**` | Automation devices, valves, lines, tanks, badges |
 | [building-blocks](docs/agents/building-blocks.md) | `packages/openbridge-webcomponents/src/{building-blocks,svghelpers}/**` | SVG-based building block components and shared utilities |
