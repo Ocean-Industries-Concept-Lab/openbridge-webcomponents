@@ -13,8 +13,12 @@ import {
   type VesselImageSrc,
 } from '../watch/vessel.js';
 import {PaletteController} from '../../charthelpers/theme.js';
-import {LinearAdvice} from '../../building-blocks/instrument-linear/advice.js';
-import {resolveAdvices, type ResolvedAdvice} from '../../svghelpers/advice.js';
+import {AdviceMixin} from '../../svghelpers/advice-mixin.js';
+import {
+  resolveAdvices,
+  type AdviceInput,
+  type ResolvedAdvice,
+} from '../../svghelpers/advice.js';
 import {Priority} from '../types.js';
 import {
   DEPTH_RANGES,
@@ -70,10 +74,17 @@ const VESSEL_ART_HALF = 80;
  * @stable
  */
 @customElement('obc-depth-actual')
-export class ObcDepthActual extends LitElement {
+export class ObcDepthActual extends AdviceMixin(LitElement) {
   @property({type: Number}) depth = 0;
   @property({type: Number}) draft = 0;
-  @property({type: Array}) advice: LinearAdvice[] = [];
+  /** @deprecated Alias of `advices`. Ranges in depth units. */
+  @property({type: Array})
+  get advice(): AdviceInput[] {
+    return this.advices;
+  }
+  set advice(value: AdviceInput[]) {
+    this.advices = value;
+  }
   @property({type: Number}) vesselScale = 1;
   @property({type: String}) vesselImage: VesselImage = VesselImage.psvFore;
   @property({type: Object, attribute: false})
@@ -131,7 +142,9 @@ export class ObcDepthActual extends LitElement {
   private _getAdvice(): ResolvedAdvice[] {
     // Scale space is positive-up and depth grows downward, so a resolved
     // range is negated and its ends swap.
-    return resolveAdvices(this.advice, [this.depth]).map((a) => ({
+    return resolveAdvices(this.advices, [this.depth], {
+      emphasis: this.adviceEmphasis,
+    }).map((a) => ({
       ...a,
       min: this._toValue(a.max),
       max: this._toValue(a.min),

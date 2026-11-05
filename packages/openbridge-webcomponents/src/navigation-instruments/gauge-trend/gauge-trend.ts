@@ -14,7 +14,8 @@ import {
   BarContainerStyle,
   ScaleType,
 } from '../../building-blocks/bar-vertical/bar-vertical.js';
-import type {LinearAdvice} from '../../building-blocks/instrument-linear/advice.js';
+import {AdviceMixin} from '../../svghelpers/advice-mixin.js';
+import type {AdviceInput} from '../../svghelpers/advice.js';
 import {SetpointMixin} from '../../svghelpers/setpoint-mixin.js';
 import '../../building-blocks/bar-vertical/bar-vertical.js';
 import type {ObcBarVertical} from '../../building-blocks/bar-vertical/bar-vertical.js';
@@ -203,7 +204,9 @@ export {FillMode, ScaleType};
  * @stable
  */
 @customElement('obc-gauge-trend')
-export class ObcGaugeTrend extends SetpointMixin(ObcChartLineBase) {
+export class ObcGaugeTrend extends AdviceMixin(
+  SetpointMixin(ObcChartLineBase)
+) {
   private _barVerticalElement?: ObcBarVertical;
   private _isFirstUpdate = false;
   private _explicitXAxisType = false;
@@ -335,8 +338,9 @@ export class ObcGaugeTrend extends SetpointMixin(ObcChartLineBase) {
     barVertical.setpointOverride = this.setpointOverride;
     // Advice position is always 'inner' for gauge-trend
     barVertical.advicePosition = AdvicePosition.inner;
-    // obc-bar-vertical uses 'advices' (plural), not 'advice' or 'hasAdvice'
-    barVertical.advices = this.hasAdvice ? this.advice : [];
+    barVertical.advices = this.hasAdvice ? this.advices : [];
+    barVertical.adviceTrigger = this.adviceTrigger;
+    barVertical.adviceEmphasis = this.adviceEmphasis;
     barVertical.primaryTickmarkInterval = this.primaryTickmarkInterval;
     barVertical.secondaryTickmarkInterval = this.secondaryTickmarkInterval;
     barVertical.tertiaryTickmarkInterval = this.tertiaryTickmarkInterval;
@@ -413,8 +417,14 @@ export class ObcGaugeTrend extends SetpointMixin(ObcChartLineBase) {
   @property({type: Number})
   fillMax?: number = undefined;
 
+  /** @deprecated Alias of `advices`. Ranges in scale units. */
   @property({type: Array, attribute: false})
-  advice: LinearAdvice[] = [];
+  get advice(): AdviceInput[] {
+    return this.advices;
+  }
+  set advice(value: AdviceInput[]) {
+    this.advices = value;
+  }
 
   @property({type: Number})
   primaryTickmarkInterval?: number = undefined;
@@ -560,7 +570,9 @@ export class ObcGaugeTrend extends SetpointMixin(ObcChartLineBase) {
       changed.has('fillMode') ||
       changed.has('fillMin') ||
       changed.has('fillMax') ||
-      changed.has('advice') ||
+      changed.has('advices') ||
+      changed.has('adviceTrigger') ||
+      changed.has('adviceEmphasis') ||
       changed.has('primaryTickmarkInterval') ||
       changed.has('secondaryTickmarkInterval') ||
       changed.has('tertiaryTickmarkInterval') ||

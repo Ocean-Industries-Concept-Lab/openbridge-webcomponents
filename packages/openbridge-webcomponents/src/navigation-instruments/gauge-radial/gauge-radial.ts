@@ -4,7 +4,6 @@ import componentStyle from './gauge-radial.css?inline';
 import {customElement} from '../../decorator.js';
 import {property, query} from 'lit/decorators.js';
 import type {RadialFrame} from '../../svghelpers/radial-frame.js';
-import {AdviceType} from '../watch/advice.js';
 import {InstrumentState, Priority} from '../types.js';
 import {SetpointMixin} from '../../svghelpers/setpoint-mixin.js';
 import '../../building-blocks/instrument-radial/instrument-radial.js';
@@ -37,12 +36,8 @@ export enum GaugeRadialVerticalAlignment {
   bottom = 'bottom',
 }
 
-export interface GaugeRadialAdvice {
-  minValue: number;
-  maxValue: number;
-  type: AdviceType;
-  hinted: boolean;
-}
+export type {GaugeRadialAdvice} from '../../building-blocks/instrument-radial/instrument-radial.js';
+import {AdviceMixin} from '../../svghelpers/advice-mixin.js';
 
 /**
  * Readout meta-row anchors in SVG units, derived from the legacy CSS
@@ -146,7 +141,7 @@ const READOUT_META_Y_180 = -73.472;
  * @stable
  */
 @customElement('obc-gauge-radial')
-export class ObcGaugeRadial extends SetpointMixin(LitElement) {
+export class ObcGaugeRadial extends AdviceMixin(SetpointMixin(LitElement)) {
   @property({type: Number}) value = 0;
   @property({type: Number}) maxValue = 100;
   @property({type: Number}) minValue = 0;
@@ -162,7 +157,6 @@ export class ObcGaugeRadial extends SetpointMixin(LitElement) {
   @property({type: Boolean}) tickmarksInside: boolean = false;
   @property({type: String}) tickmarkStyle: TickmarkStyle =
     TickmarkStyle.regular;
-  @property({type: Array, attribute: false}) advices: GaugeRadialAdvice[] = [];
   @property({type: String, reflect: true}) sector: GaugeRadialSector =
     GaugeRadialSector.deg270;
   @property({type: String})
@@ -384,6 +378,8 @@ export class ObcGaugeRadial extends SetpointMixin(LitElement) {
           .tickmarksInside=${this.tickmarksInside}
           .tickmarkStyle=${this.tickmarkStyle}
           .advices=${this.isSector90 ? [] : this.advices}
+          .adviceTrigger=${this.adviceTrigger}
+          .adviceEmphasis=${this.adviceEmphasis}
           .clipTop=${clips.top}
           .clipBottom=${clips.bottom}
           .clipLeft=${clips.left}

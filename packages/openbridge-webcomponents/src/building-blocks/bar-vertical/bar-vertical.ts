@@ -10,11 +10,9 @@ import {
   BorderRadiusPosition,
   Priority,
 } from '../../navigation-instruments/types.js';
-import type {LinearAdvice} from '../instrument-linear/advice.js';
-import type {
-  ExternalScaleAdvice,
-  ExternalScaleConfig,
-} from '../external-scale/external-scale.js';
+import {AdviceMixin} from '../../svghelpers/advice-mixin.js';
+import {nextAdviceMaskId} from '../../svghelpers/advice.js';
+import type {ExternalScaleConfig} from '../external-scale/external-scale.js';
 import {
   computeExternalScaleViewBox,
   computeFixedAspectRatioScale,
@@ -129,9 +127,11 @@ export {
  * @beta
  */
 @customElement('obc-bar-vertical')
-export class ObcBarVertical extends SetpointMixin(LitElement, {
-  defaultDeadband: 1,
-}) {
+export class ObcBarVertical extends AdviceMixin(
+  SetpointMixin(LitElement, {
+    defaultDeadband: 1,
+  })
+) {
   @property({type: Number}) minValue = 0;
   @property({type: Number}) maxValue = 100;
   @property({type: Boolean}) reverse = false;
@@ -235,7 +235,8 @@ export class ObcBarVertical extends SetpointMixin(LitElement, {
   // Advice
   @property({type: String}) advicePosition: AdvicePosition =
     AdvicePosition.inner;
-  @property({type: Array, attribute: false}) advices?: LinearAdvice[] = [];
+  // Mask ids are document-scoped, so each scale names its own.
+  private readonly _adviceMaskPrefix = nextAdviceMaskId('bar');
 
   @property({type: Boolean}) highlightCurrentValue = false;
 
@@ -296,7 +297,10 @@ export class ObcBarVertical extends SetpointMixin(LitElement, {
       state: this.state,
       touching: this.touching,
       advicePosition: this.advicePosition,
-      advices: this.advices as ExternalScaleAdvice[],
+      advices: this.advices,
+      adviceTrigger: this.adviceTrigger,
+      adviceEmphasis: this.adviceEmphasis,
+      adviceMaskPrefix: this._adviceMaskPrefix,
       fixedAspectRatio: this.fixedAspectRatio,
       instrumentMode: this.instrumentMode,
       highlightCurrentValue: this.highlightCurrentValue,

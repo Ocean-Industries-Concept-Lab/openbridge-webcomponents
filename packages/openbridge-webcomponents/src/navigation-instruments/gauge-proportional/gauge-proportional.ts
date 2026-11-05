@@ -14,7 +14,8 @@ import componentStyle from './gauge-proportional.css?inline';
 import {customElement} from '../../decorator.js';
 import {InstrumentState, Priority} from '../types.js';
 import {SetpointMixin} from '../../svghelpers/setpoint-mixin.js';
-import {AdviceState, AdviceType, AngleAdviceRaw} from '../watch/advice.js';
+import {AdviceMixin} from '../../svghelpers/advice-mixin.js';
+import type {AdviceInput, ResolvedAdvice} from '../../svghelpers/advice.js';
 import '../watch/watch.js';
 import {OUTER_RING_RADIUS, WatchCircleType} from '../watch/watch.js';
 import {
@@ -79,12 +80,11 @@ export enum GaugeProportionalPriority {
   off = 'off',
 }
 
-export interface GaugeProportionalAdvice {
+/** @deprecated Use {@link AdviceInput}; `minValue` / `maxValue` are still read. */
+export type GaugeProportionalAdvice = AdviceInput & {
   minValue: number;
   maxValue: number;
-  type: AdviceType;
-  hinted: boolean;
-}
+};
 
 /* Band geometry: the value band fills the 112..160 track annulus, like the
    watch bar areas. The primary-secondary frame renders through the watch's
@@ -244,7 +244,9 @@ const FULL_CIRCLE_EPSILON_DEG = 0.05;
  * @slot secondary-icon - Device-specific icon on the compact stack's secondary value row
  */
 @customElement('obc-gauge-proportional')
-export class ObcGaugeProportional extends SetpointMixin(LitElement) {
+export class ObcGaugeProportional extends AdviceMixin(
+  SetpointMixin(LitElement)
+) {
   @property({type: Number}) value = 0;
   @property({type: Number}) maxValue = 100;
   @property({type: Number}) minValue = 0;
@@ -261,8 +263,6 @@ export class ObcGaugeProportional extends SetpointMixin(LitElement) {
   @property({type: Number}) secondaryTickmarkInterval: number | undefined = 10;
   @property({type: String}) tickmarkStyle: TickmarkStyle =
     TickmarkStyle.regular;
-  @property({type: Array, attribute: false})
-  advices: GaugeProportionalAdvice[] = [];
   @property({type: Boolean}) hasReadout = false;
   @property({type: String}) label = '';
   @property({type: String}) unit = '';
@@ -490,24 +490,14 @@ export class ObcGaugeProportional extends SetpointMixin(LitElement) {
     });
   }
 
-  private get _advices(): AngleAdviceRaw[] {
-    const value = this.clampedValue;
-    return this.advices.map((advice) => {
-      const minAngle = this.mapAngle(advice.minValue);
-      const maxAngle = this.mapAngle(advice.maxValue);
-      let state = advice.hinted ? AdviceState.hinted : AdviceState.regular;
-      if (value >= advice.minValue && value <= advice.maxValue) {
-        state = AdviceState.triggered;
-      }
-      return {
-        minAngle,
-        maxAngle,
-        type: advice.type,
-        state,
-        hideMinTickmark: advice.minValue === this.minValue,
-        hideMaxTickmark: advice.maxValue === this.maxValue,
-      };
-    });
+  private get _advices(): ResolvedAdvice[] {
+    return this.resolveAdvices(this.clampedValue, this.setpoint).map((a) => ({
+      ...a,
+      min: this.mapAngle(a.min),
+      max: this.mapAngle(a.max),
+      hideMinTickmark: a.hideMinTickmark || a.min === this.minValue,
+      hideMaxTickmark: a.hideMaxTickmark || a.max === this.maxValue,
+    }));
   }
 
   /**

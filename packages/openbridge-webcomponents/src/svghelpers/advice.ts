@@ -298,8 +298,18 @@ export function resolveAdvices(
 ): ResolvedAdvice[] {
   const resolved = inputs.map((input) => {
     const advice = normalizeAdvice(input);
-    if (opts.angularWraparound && !advice.point) {
-      Object.assign(advice, normalizeAngularRange(advice.min, advice.max));
+    if (!advice.point) {
+      // A linear range has one order; an angular one keeps its clockwise
+      // meaning unless the pair would run the long way round.
+      Object.assign(
+        advice,
+        opts.angularWraparound
+          ? normalizeAngularRange(advice.min, advice.max)
+          : {
+              min: Math.min(advice.min, advice.max),
+              max: Math.max(advice.min, advice.max),
+            }
+      );
     }
     const hit = readings.some((r) => isAdviceHit(advice, r, opts));
     return {...advice, hit};

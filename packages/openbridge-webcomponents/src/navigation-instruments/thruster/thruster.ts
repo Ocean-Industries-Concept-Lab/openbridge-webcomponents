@@ -1,10 +1,12 @@
 import {LitElement, svg, html, css, nothing, SVGTemplateResult} from 'lit';
 import {property} from 'lit/decorators.js';
 import {InstrumentState, Priority} from '../types.js';
-import {LinearAdvice, renderAdvice} from './advice.js';
+import {renderAdvice} from './advice.js';
+import {AdviceMixin} from '../../svghelpers/advice-mixin.js';
 import {
   AdviceTrigger,
   adviceTriggerReadings,
+  nextAdviceMaskId,
   resolveAdvices,
   type AdviceInput,
   type AdviceReading,
@@ -33,9 +35,11 @@ import {customElement} from '../../decorator.js';
  * @stable
  */
 @customElement('obc-thruster')
-export class ObcThruster extends SetpointMixin(LitElement, {
-  defaultDeadband: 1,
-}) {
+export class ObcThruster extends AdviceMixin(
+  SetpointMixin(LitElement, {
+    defaultDeadband: 1,
+  })
+) {
   private _setpointId = `thruster-sp-${Math.random().toString(36).slice(2, 9)}`;
 
   @property({type: Number}) thrust: number = 0;
@@ -45,7 +49,8 @@ export class ObcThruster extends SetpointMixin(LitElement, {
   @property({type: Boolean}) singleSided: boolean = false;
   @property({type: Boolean}) singleDirection: boolean = false;
   @property({type: Boolean}) singleDirectionHalfSize: boolean = false;
-  @property({type: Array}) advices: LinearAdvice[] = [];
+  // Mask ids are document-scoped, so each thruster names its own.
+  private readonly _adviceMaskPrefix = nextAdviceMaskId('thruster');
   @property({type: String}) topPropeller: PropellerType = PropellerType.none;
   @property({type: String}) bottomPropeller: PropellerType = PropellerType.none;
 
@@ -60,6 +65,9 @@ export class ObcThruster extends SetpointMixin(LitElement, {
         touching: this.touching,
         singleSided: this.singleSided,
         advices: this.advices,
+        adviceTrigger: this.adviceTrigger,
+        adviceEmphasis: this.adviceEmphasis,
+        adviceMaskPrefix: this._adviceMaskPrefix,
         singleDirection: this.singleDirection,
         singleDirectionHalfSize: this.singleDirectionHalfSize,
         topPropeller: this.topPropeller,

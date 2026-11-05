@@ -1,5 +1,7 @@
 import {LitElement, html, css, nothing, svg, type SVGTemplateResult} from 'lit';
 import {customElement} from '../../decorator.js';
+import {AdviceMixin} from '../../svghelpers/advice-mixin.js';
+import type {AdviceInput} from '../../svghelpers/advice.js';
 import {
   verticalScaleTickmarks,
   watchfaceLinear,
@@ -12,10 +14,7 @@ import {
   type VesselImageSrc,
 } from '../watch/vessel.js';
 import {PaletteController} from '../../charthelpers/theme.js';
-import {
-  LinearAdvice,
-  resolveLinearAdvice,
-} from '../../building-blocks/instrument-linear/advice.js';
+import {resolveLinearAdvice} from '../../building-blocks/instrument-linear/advice.js';
 import {Priority} from '../types.js';
 
 export enum ObcHeaveType {
@@ -56,13 +55,20 @@ const BAR_VIEW_BOX = '-64 -192 128 384';
  * @stable
  */
 @customElement('obc-heave')
-export class ObcHeave extends LitElement {
+export class ObcHeave extends AdviceMixin(LitElement) {
   @property({type: Number}) heave = 0;
   @property({type: Number}) gainScale = 10;
   @property({type: Number}) minTrendHeave = 0;
   @property({type: Number}) maxTrendHeave = 0;
   @property({type: Number}) draftOffset = 0;
-  @property({type: Array}) advice: LinearAdvice[] = [];
+  /** @deprecated Alias of `advices`. Ranges in heave units. */
+  @property({type: Array})
+  get advice(): AdviceInput[] {
+    return this.advices;
+  }
+  set advice(value: AdviceInput[]) {
+    this.advices = value;
+  }
 
   @property({type: Number}) instrumentRange = 10;
   @property({type: String}) vesselImage: VesselImage = VesselImage.psvFore;
@@ -161,7 +167,7 @@ export class ObcHeave extends LitElement {
               {hideContainer: false, off: false, priority: this.priority},
               verticalScaleTickmarks(this.instrumentRange),
               resolveLinearAdvice(
-                this.advice,
+                this.advices,
                 this.minTrendHeave,
                 this.maxTrendHeave
               )

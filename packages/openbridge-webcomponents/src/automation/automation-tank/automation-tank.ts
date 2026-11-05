@@ -37,7 +37,8 @@ import {
 } from '../../components/alert-frame/alert-frame.js';
 import {AlertType} from '../../types.js';
 import type {ChartLineDataItem} from '../../building-blocks/chart-line/chart-line-base.js';
-import type {LinearAdvice} from '../../building-blocks/instrument-linear/advice.js';
+import {AdviceMixin} from '../../svghelpers/advice-mixin.js';
+import type {AdviceInput} from '../../svghelpers/advice.js';
 import {
   AdvicePosition,
   ExternalScaleSide,
@@ -185,7 +186,7 @@ export enum TankChartMode {
  * @beta
  */
 @customElement('obc-automation-tank')
-export class ObcAutomationTank extends SetpointMixin(LitElement) {
+export class ObcAutomationTank extends AdviceMixin(SetpointMixin(LitElement)) {
   @property({type: String}) medium: LineMedium = LineMedium.water;
   @property({type: Number}) value: number = 0;
   @property({type: Number}) max: number = 100;
@@ -209,8 +210,14 @@ export class ObcAutomationTank extends SetpointMixin(LitElement) {
 
   @property({type: String}) priority: Priority = Priority.regular;
 
+  /** @deprecated Alias of `advices`. Ranges in tank units. */
   @property({type: Array, attribute: false})
-  advice: LinearAdvice[] = [];
+  get advice(): AdviceInput[] {
+    return this.advices;
+  }
+  set advice(value: AdviceInput[]) {
+    this.advices = value;
+  }
 
   @property({type: Boolean}) hasAdvice = false;
 
@@ -789,7 +796,9 @@ export class ObcAutomationTank extends SetpointMixin(LitElement) {
                   .hasLabelPadding=${false}
                   .chartFill=${true}
                   .hasAdvice=${this.hasAdvice}
-                  .advice=${this.advice}
+                  .advices=${this.advices}
+                  .adviceTrigger=${this.adviceTrigger}
+                  .adviceEmphasis=${this.adviceEmphasis}
                   .width=${this._cellWidth}
                   .height=${this._cellHeight}
                   .setpoint=${this.setpoint}
@@ -857,7 +866,9 @@ export class ObcAutomationTank extends SetpointMixin(LitElement) {
         .fillMode=${FillMode.tint}
         .instrumentMode=${true}
         .borderRadius=${2}
-        .advices=${this.hasAdvice ? this.advice : []}
+        .advices=${this.hasAdvice ? this.advices : []}
+        .adviceTrigger=${this.adviceTrigger}
+        .adviceEmphasis=${this.adviceEmphasis}
         .advicePosition=${AdvicePosition.inner}
         .setpoint=${this.setpoint}
         .newSetpoint=${this.newSetpoint}

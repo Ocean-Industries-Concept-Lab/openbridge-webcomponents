@@ -10,10 +10,7 @@ import {
   BorderRadiusPosition,
   Priority,
 } from '../types.js';
-import type {
-  ExternalScaleAdvice,
-  ExternalScaleConfig,
-} from '../../building-blocks/external-scale/external-scale.js';
+import type {ExternalScaleConfig} from '../../building-blocks/external-scale/external-scale.js';
 import {
   computeExternalScaleViewBox,
   computeFixedAspectRatioScale,
@@ -29,7 +26,8 @@ import {
   ExternalScaleSide,
 } from '../../building-blocks/external-scale/external-scale.js';
 import {SetpointMixin} from '../../svghelpers/setpoint-mixin.js';
-import type {LinearAdvice} from '../../building-blocks/instrument-linear/advice.js';
+import {AdviceMixin} from '../../svghelpers/advice-mixin.js';
+import {nextAdviceMaskId} from '../../svghelpers/advice.js';
 
 // Re-export shared enums for convenience
 export {
@@ -149,9 +147,11 @@ export {
  * @stable
  */
 @customElement('obc-gauge-horizontal')
-export class ObcGaugeHorizontal extends SetpointMixin(LitElement, {
-  defaultDeadband: 1,
-}) {
+export class ObcGaugeHorizontal extends AdviceMixin(
+  SetpointMixin(LitElement, {
+    defaultDeadband: 1,
+  })
+) {
   @property({type: Number}) minValue = 0;
   @property({type: Number}) maxValue = 100;
   @property({type: Boolean}) reverse = false;
@@ -253,7 +253,8 @@ export class ObcGaugeHorizontal extends SetpointMixin(LitElement, {
   @property({type: Boolean}) focused = false;
 
   private readonly advicePosition: AdvicePosition = AdvicePosition.inner;
-  @property({type: Array, attribute: false}) advices?: LinearAdvice[] = [];
+  // Mask ids are document-scoped, so each gauge names its own.
+  private readonly _adviceMaskPrefix = nextAdviceMaskId('gauge');
 
   @property({type: Boolean}) highlightCurrentValue = false;
 
@@ -299,7 +300,10 @@ export class ObcGaugeHorizontal extends SetpointMixin(LitElement, {
       touching: this.touching,
       setpointOverride: this.setpointOverride,
       advicePosition: this.advicePosition,
-      advices: this.advices as ExternalScaleAdvice[],
+      advices: this.advices,
+      adviceTrigger: this.adviceTrigger,
+      adviceEmphasis: this.adviceEmphasis,
+      adviceMaskPrefix: this._adviceMaskPrefix,
       fixedAspectRatio: this.fixedAspectRatio,
       // Gauges are always in instrument mode - they use fixed borderRadius (8px)
       // and don't respond to .obc-component-size-* CSS classes for border radius

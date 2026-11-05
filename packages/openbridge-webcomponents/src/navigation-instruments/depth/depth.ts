@@ -23,7 +23,8 @@ import {
   observeThemeChanges,
 } from '../../charthelpers/index.js';
 import {normalizeXValue, XValueMode} from '../../charthelpers/x-value.js';
-import type {LinearAdvice} from '../../building-blocks/instrument-linear/advice.js';
+import {AdviceMixin} from '../../svghelpers/advice-mixin.js';
+import type {AdviceInput} from '../../svghelpers/advice.js';
 import {InstrumentState, Priority} from '../types.js';
 import {VesselImage, type VesselImageSrc} from '../watch/watch.js';
 import {
@@ -133,7 +134,7 @@ function deepest(...series: (number | undefined)[][]): number {
  * @experimental
  */
 @customElement('obc-depth')
-export class ObcDepth extends LitElement {
+export class ObcDepth extends AdviceMixin(LitElement) {
   @property({type: String}) type: DepthType = DepthType.regular;
   @property({type: Array, attribute: false}) data: DepthDataItem[] = [];
   @property({type: Array, attribute: false}) prediction: ChartLineDataItem[] =
@@ -158,7 +159,14 @@ export class ObcDepth extends LitElement {
   @property({type: Object, attribute: false})
   vesselImageSrc: VesselImageSrc | undefined;
   @property({type: Boolean}) hasAdvice = false;
-  @property({type: Array, attribute: false}) advice: LinearAdvice[] = [];
+  /** @deprecated Alias of `advices`. Ranges in depth units. */
+  @property({type: Array, attribute: false})
+  get advice(): AdviceInput[] {
+    return this.advices;
+  }
+  set advice(value: AdviceInput[]) {
+    this.advices = value;
+  }
   @property({type: String}) priority: Priority = Priority.regular;
   @property({type: String}) state: InstrumentState = InstrumentState.active;
 
@@ -456,7 +464,9 @@ export class ObcDepth extends LitElement {
                     : 0
                 }
                 .hasAdvice=${this.hasAdvice}
-                .advice=${this.advice}
+                .advices=${this.advices}
+                .adviceTrigger=${this.adviceTrigger}
+                .adviceEmphasis=${this.adviceEmphasis}
                 .xMarker=${this.xMarker}
                 .yMarker=${this.yMarker}
                 .priority=${this.priority}

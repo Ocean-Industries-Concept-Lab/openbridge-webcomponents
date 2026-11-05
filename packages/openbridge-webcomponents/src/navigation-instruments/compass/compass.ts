@@ -15,7 +15,8 @@ import {
   renderCenterReadouts,
   resolveCompassCenterReadouts,
 } from '../readout/center-readout.js';
-import {AdviceState, AngleAdvice, AngleAdviceRaw} from '../watch/advice.js';
+import {AdviceMixin} from '../../svghelpers/advice-mixin.js';
+import type {AdviceInput, ResolvedAdvice} from '../../svghelpers/advice.js';
 import {ResizeController} from '@lit-labs/observers/resize-controller.js';
 import {
   applyPinnedHostSize,
@@ -145,7 +146,7 @@ export enum CompassPriorityElement {
  * @availableWhen animateSetpoint headingSetpoint!=null
  * @property touching - Indicates if the compass is being touched.
  * @availableWhen touching headingSetpoint!=null
- * @property headingAdvices - An array of angle advices for the compass.
+ * @property headingAdvices - Alias of `advices`, kept from earlier releases. The advice list, `adviceTrigger` and `adviceEmphasis` come from the advice mixin (`svghelpers/advice-mixin.ts`).
  * @property currentWindSpeedKnots - The wind speed in knots.
  * @availableWhen currentWindSpeedKnots windFromDirection!=null
  * @property windFromDirection - The direction the wind is coming from in degrees.
@@ -196,7 +197,9 @@ export enum CompassPriorityElement {
  * @stable
  */
 @customElement('obc-compass')
-export class ObcCompass extends LitElement {
+export class ObcCompass extends AdviceMixin(LitElement, {
+  angularWraparound: true,
+}) {
   @property({type: Number}) heading = 0;
   @property({type: Number}) courseOverGround = 0;
 
@@ -210,7 +213,14 @@ export class ObcCompass extends LitElement {
   @property({type: Number}) autoAtHeadingSetpointDeadband: number = 2;
   @property({type: Boolean}) animateSetpoint: boolean = false;
   @property({type: Boolean}) touching: boolean = false;
-  @property({type: Array, attribute: false}) headingAdvices: AngleAdvice[] = [];
+  /** @deprecated Alias of `advices`. Angle ranges in degrees. */
+  @property({type: Array, attribute: false})
+  get headingAdvices(): AdviceInput[] {
+    return this.advices;
+  }
+  set headingAdvices(value: AdviceInput[]) {
+    this.advices = value;
+  }
   @property({type: Number}) currentWindSpeedKnots: number | null = null;
   @property({type: Number}) windFromDirection: number | null = null;
   @property({type: Number}) currentSpeed: number | null = null;
@@ -320,16 +330,8 @@ export class ObcCompass extends LitElement {
     );
   }
 
-  private get angleAdviceRaw(): AngleAdviceRaw[] {
-    return this.headingAdvices.map(({minAngle, maxAngle, hinted, type}) => {
-      const state =
-        this.heading >= minAngle && this.heading <= maxAngle
-          ? AdviceState.triggered
-          : hinted
-            ? AdviceState.hinted
-            : AdviceState.regular;
-      return {minAngle, maxAngle, type, state};
-    });
+  private get angleAdviceRaw(): ResolvedAdvice[] {
+    return this.resolveAdvices(this.heading, this.headingSetpoint);
   }
 
   private priorityFor(element: CompassPriorityElement): Priority {

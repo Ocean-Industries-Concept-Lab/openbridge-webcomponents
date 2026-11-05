@@ -184,6 +184,14 @@ describe('resolveAdvices', () => {
     expect(optimal.state).toBe(AdviceState.enabled);
   });
 
+  it('orders a reversed linear pair', () => {
+    const [band] = resolveAdvices(
+      [{min: 40, max: 20, category: 'caution'}],
+      [30]
+    );
+    expect(band).toMatchObject({min: 20, max: 40, state: 'triggered'});
+  });
+
   it('never triggers without a reading', () => {
     const [caution] = resolveAdvices(list, []);
     expect(caution.state).toBe(AdviceState.hinted);
