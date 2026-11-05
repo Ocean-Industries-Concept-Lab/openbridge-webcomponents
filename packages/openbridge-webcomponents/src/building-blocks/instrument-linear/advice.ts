@@ -13,7 +13,9 @@ import {
 } from '../../navigation-instruments/watch/tickmark.js';
 import {valueToY} from './instrument-linear.js';
 import {
+  AdviceTrigger,
   adviceStyle,
+  adviceTriggerReadings,
   asResolvedAdvice,
   nextAdviceMaskId,
   resolveAdvices,
@@ -42,9 +44,16 @@ export type LinearAdvice = AdviceInput & {min: number; max: number};
 export function resolveLinearAdvice(
   advice: readonly AdviceInput[],
   trendMin: number,
-  trendMax: number
+  trendMax: number,
+  opts: {trigger?: AdviceTrigger; emphasis?: boolean} = {}
 ): ResolvedAdvice[] {
-  return resolveAdvices(advice, [{min: trendMin, max: trendMax}]);
+  // The band is the instrument's value; these scales have no setpoint.
+  const readings = adviceTriggerReadings(
+    opts.trigger ?? AdviceTrigger.both,
+    {min: trendMin, max: trendMax},
+    undefined
+  );
+  return resolveAdvices(advice, readings, {emphasis: opts.emphasis});
 }
 
 export function singleSidedTickmark({

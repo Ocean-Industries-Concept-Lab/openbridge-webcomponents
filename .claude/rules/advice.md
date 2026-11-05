@@ -108,30 +108,40 @@ The mixin adds `advices`, `adviceTrigger` (default `both`), `adviceEmphasis`
 (default `false`) and `resolveAdvices(value, setpoint?)`. A prefixed or
 singular public name an instrument used before (`headingAdvices`,
 `speedAdvices`, `sailAngleAdvices`, `thrustAdvices` on the main engine,
-`advice` on the gauges, tank and depth instruments) is a **deprecated
-accessor alias** of `advices`:
+`advice` on the gauges, tank and depth instruments) is a **deprecated plain
+field with no default**, synced first in `willUpdate()`:
 
 ```ts
 /** @deprecated Alias of `advices`. Angle ranges in degrees. */
-@property({type: Array})
-get headingAdvices(): AdviceInput[] { return this.advices; }
-set headingAdvices(value: AdviceInput[]) { this.advices = value; }
+@property({type: Array, attribute: false}) headingAdvices?: AdviceInput[];
+
+override willUpdate(changed: PropertyValues) {
+  super.willUpdate(changed);
+  syncAdviceAlias(this, this.headingAdvices);
+}
 ```
 
-An accessor, not a `willUpdate()` copy: Lit reports a list default as
-changed on the first update, so a copy overwrites an `advices` set directly.
-`lint:slots` reads the accessor as the manifest member. `pitch-roll-heave`
-keeps `heaveAdvice` as the column's own list; its pitch and roll advices come
-from `maxPitchAdvice` / `maxRollAdvice`, so the generic name would be
-ambiguous there. `obc-watch` keeps `advices` as a plain property with no
-trigger or emphasis: it draws the given state.
+Neither an accessor nor a change-gated copy survives the generated Vue
+wrapper, which reads every property at creation and writes those values
+back on its second render: an accessor hands back `[]` and clears a list set
+through `advices`; a copy made only when the alias changes lets the
+write-back of `advices` clear a list set through the alias.
+`syncAdviceAlias()` keeps the alias in charge while it is set and leaves
+`advices` alone while it is not. `pitch-roll-heave` keeps `heaveAdvice` as
+the column's own list; its pitch and roll advices come from `maxPitchAdvice`
+/ `maxRollAdvice`, so the generic name would be ambiguous there. `obc-watch`
+keeps `advices` as a plain property with no trigger or emphasis: it draws
+the given state, and the chaining is the instrument's.
 
 A derived reading goes through the same step. `instrument-linear`'s
 `resolveLinearAdvice(advices, trendMin, trendMax)` resolves against the
 trend band as an interval; `draft-trim` negates and swaps the bounds before
 resolving (`building-blocks.md`, scale space is positive-up); `thruster`'s
-`convertThrustAdvices()` splits a zero-spanning band at zero with a flat end
-and mirrors the bottom half.
+`convertThrustAdvices()` splits a zero-spanning band at zero with a flat,
+tickless end and mirrors the bottom half with `negateAdvice()`, which swaps
+a range's ends, caps and tick flags and leaves a point's own; `depth-actual`
+and `draft-trim` negate with the same helper. The thruster's bottom half is
+drawn under a reflection, so its hatch is mirrored back (`mirrorPattern`).
 
 ## Geometry
 
@@ -139,17 +149,17 @@ Canvas units, the 8-unit band on every path; the responsive sets' 4-unit
 band is read for its styles, not as a second sizing tier (the instruments keep
 `faceDiameter`, `zoomToFitArc`, `fixedAspectRatio` and the size classes).
 
-| Constant                     | Value                      | Where                                                                          |
-| ---------------------------- | -------------------------- | ------------------------------------------------------------------------------ |
-| `ADVICE_BAND_THICKNESS`      | 8                          | radial r 164–172 (Figma 168–176 under the −4 rule); linear 4 off the tick base |
-| `ADVICE_CAP_INSET`           | 4                          | go-to pill tip inside the limit; cap centre 8 inside                           |
-| `ADVICE_ALERT_CORNER_RADIUS` | 2                          | free end of a no-go band                                                       |
-| `ADVICE_POINT_DOT_DIAMETER`  | 9                          | go-to point, a dot on the band centreline                                      |
-| `ADVICE_POINT_TICK`          | 9 × 5, rx 2.5              | no-go point, a thick tick                                                      |
-| `ADVICE_STRIPE`              | 3 wide, 5.66 pitch, 45°    | linear caution; radial caution is the pre-baked tile every 4°                  |
-| `ADVICE_HAIRLINE_WIDTH`      | 0.5                        | exclusion hatch; radial: 1-unit lines every 9°                                 |
-| `ADVICE_DOT`                 | 2 on 8, rows offset 4      | alarm area lattice                                                             |
-| `ADVICE_AREA_DASH`           | dotted `1 1`, dashed `4 4` | area limit lines; warning, alarm, exclusion are solid                          |
+| Constant                     | Value                      | Where                                                                                                                             |
+| ---------------------------- | -------------------------- | --------------------------------------------------------------------------------------------------------------------------------- |
+| `ADVICE_BAND_THICKNESS`      | 8                          | radial r 164–172 (Figma 168–176 under the −4 rule); linear 4 off the tick base                                                    |
+| `ADVICE_CAP_INSET`           | 4                          | go-to pill tip inside the limit; cap centre 8 inside                                                                              |
+| `ADVICE_ALERT_CORNER_RADIUS` | 2                          | free end of a no-go band                                                                                                          |
+| `ADVICE_POINT_DOT_DIAMETER`  | 9                          | go-to point, a dot on the band centreline                                                                                         |
+| `ADVICE_POINT_TICK`          | 9 × 5, rx 2.5              | no-go point, a thick tick                                                                                                         |
+| `ADVICE_STRIPE`              | 3 wide, 5.66 pitch, 45°    | linear caution; radial caution is `radialStripes()`: the pre-baked tile every 4° at the design radius, generated lines under zoom |
+| `ADVICE_HAIRLINE_WIDTH`      | 0.5                        | exclusion hatch; radial: 1-unit lines every 9°                                                                                    |
+| `ADVICE_DOT`                 | 2 on 8, rows offset 4      | alarm area lattice                                                                                                                |
+| `ADVICE_AREA_DASH`           | dotted `1 1`, dashed `4 4` | area limit lines; warning, alarm, exclusion are solid                                                                             |
 
 End caps (`adviceCaps()`): a go-to band is a pill, a no-go band is square
 with the 2-unit corner, a chained end is cut flat. The free ends follow the
@@ -221,8 +231,9 @@ use cases. The Storybook page is `docs/AdviceSystem.mdx`.
 - [ ] A geometry change: run the snapshot filters of all four paths
       (`watch`, `external-scale`, `bar-vertical`, `thruster`, `gauge-trend`,
       `line-graph` at least) and crop the pairs before accepting
-- [ ] A new consumer: the mixin or a bundle, an accessor alias for any old
-      name, `@property` tags for the three properties, its own mask prefix
+- [ ] A new consumer: the mixin or a bundle, a plain-field alias synced by
+      `syncAdviceAlias()` for any old name, `@property` tags for the three
+      properties, its own mask prefix
 - [ ] A Figma value the code does not follow: `TODO(designer)` at the site
 
 ## Open

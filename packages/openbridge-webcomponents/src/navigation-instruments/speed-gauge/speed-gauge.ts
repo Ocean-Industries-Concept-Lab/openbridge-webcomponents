@@ -11,7 +11,7 @@ import {
 } from '../../svghelpers/radial-frame.js';
 import {Tickmark, TickmarkStyle, TickmarkType} from '../watch/tickmark.js';
 import {WatchCircleType} from '../watch/watch.js';
-import {AdviceMixin} from '../../svghelpers/advice-mixin.js';
+import {AdviceMixin, syncAdviceAlias} from '../../svghelpers/advice-mixin.js';
 import type {AdviceInput, ResolvedAdvice} from '../../svghelpers/advice.js';
 import {SetpointMixin} from '../../svghelpers/setpoint-mixin.js';
 import {Priority} from '../types.js';
@@ -114,13 +114,7 @@ export class ObcSpeedGauge extends AdviceMixin(SetpointMixin(LitElement)) {
   @property({type: String}) needleType: ObcSpeedGaugeNeedleType =
     ObcSpeedGaugeNeedleType.full;
   /** @deprecated Alias of `advices`. Speed ranges in the instrument unit. */
-  @property({type: Array, attribute: false})
-  get speedAdvices(): AdviceInput[] {
-    return this.advices;
-  }
-  set speedAdvices(value: AdviceInput[]) {
-    this.advices = value;
-  }
+  @property({type: Array, attribute: false}) speedAdvices?: AdviceInput[];
   @property({type: String}) tickmarkStyle: TickmarkStyle =
     TickmarkStyle.regular;
   @property({type: Boolean}) hasReadout: boolean = false;
@@ -160,6 +154,11 @@ export class ObcSpeedGauge extends AdviceMixin(SetpointMixin(LitElement)) {
   }
 
   maxAngle = 180 - 45;
+
+  override willUpdate(changed: PropertyValues) {
+    super.willUpdate(changed);
+    syncAdviceAlias(this, this.speedAdvices);
+  }
 
   override render() {
     const barColor =

@@ -10,7 +10,7 @@
  * @module
  */
 
-import {svg, type SVGTemplateResult} from 'lit';
+import {nothing, svg, type SVGTemplateResult} from 'lit';
 import {ADVICE_DOT, ADVICE_HAIRLINE_WIDTH, ADVICE_STRIPE} from './advice.js';
 
 const STRIPE_TILE = ADVICE_STRIPE.pitch * Math.SQRT2;
@@ -25,17 +25,25 @@ const STRIPE_TILE = ADVICE_STRIPE.pitch * Math.SQRT2;
 export function stripePattern(
   id: string,
   color: string,
-  width: number = ADVICE_STRIPE.width
+  width: number = ADVICE_STRIPE.width,
+  mirrored = false
 ): SVGTemplateResult {
   const t = STRIPE_TILE;
-  return svg`<pattern id=${id} patternUnits="userSpaceOnUse" width=${t} height=${t}>
+  // A group drawn under a reflection shows the stripe sloping the other way;
+  // mirroring the tile back keeps every band on the same slope.
+  const transform = mirrored ? 'scale(-1 1)' : nothing;
+  return svg`<pattern id=${id} patternUnits="userSpaceOnUse" width=${t} height=${t} patternTransform=${transform}>
     <path d="M 0 0 L ${t} ${t} M ${t / 2} ${-t / 2} L ${(3 * t) / 2} ${t / 2} M ${-t / 2} ${t / 2} L ${t / 2} ${(3 * t) / 2}" stroke=${color} stroke-width=${width} stroke-linecap="square"/>
   </pattern>`;
 }
 
 /** The exclusion hatch: the stripe tile as a hairline. */
-export function hairlinePattern(id: string, color: string): SVGTemplateResult {
-  return stripePattern(id, color, ADVICE_HAIRLINE_WIDTH);
+export function hairlinePattern(
+  id: string,
+  color: string,
+  mirrored = false
+): SVGTemplateResult {
+  return stripePattern(id, color, ADVICE_HAIRLINE_WIDTH, mirrored);
 }
 
 /** The alarm lattice: square dots on a grid, every other row shifted by half a pitch. */

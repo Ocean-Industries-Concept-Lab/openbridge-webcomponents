@@ -546,6 +546,24 @@ export function adviceCaps(advice: ResolvedAdvice): {
   };
 }
 
+/**
+ * The advice mirrored about zero, for a scale that grows the other way. A
+ * range's ends swap, and their caps and tick flags with them; a point keeps
+ * its own, since its tick is its `min`.
+ */
+export function negateAdvice(a: ResolvedAdvice): ResolvedAdvice {
+  if (a.point) return {...a, min: -a.min, max: -a.max};
+  return {
+    ...a,
+    min: -a.max,
+    max: -a.min,
+    flatStart: a.flatEnd,
+    flatEnd: a.flatStart,
+    hideMinTickmark: a.hideMaxTickmark,
+    hideMaxTickmark: a.hideMinTickmark,
+  };
+}
+
 /** Marks the ends where one band's `max` is another's `min`, so both are cut flat there. */
 export function chainAdvices(
   advices: readonly ResolvedAdvice[],

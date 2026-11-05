@@ -1,6 +1,14 @@
-import {LitElement, html, css, nothing, svg, type SVGTemplateResult} from 'lit';
+import {
+  LitElement,
+  html,
+  css,
+  nothing,
+  svg,
+  type SVGTemplateResult,
+  PropertyValues,
+} from 'lit';
 import {customElement} from '../../decorator.js';
-import {AdviceMixin} from '../../svghelpers/advice-mixin.js';
+import {AdviceMixin, syncAdviceAlias} from '../../svghelpers/advice-mixin.js';
 import type {AdviceInput} from '../../svghelpers/advice.js';
 import {
   verticalScaleTickmarks,
@@ -62,13 +70,7 @@ export class ObcHeave extends AdviceMixin(LitElement) {
   @property({type: Number}) maxTrendHeave = 0;
   @property({type: Number}) draftOffset = 0;
   /** @deprecated Alias of `advices`. Ranges in heave units. */
-  @property({type: Array})
-  get advice(): AdviceInput[] {
-    return this.advices;
-  }
-  set advice(value: AdviceInput[]) {
-    this.advices = value;
-  }
+  @property({type: Array}) advice?: AdviceInput[];
 
   @property({type: Number}) instrumentRange = 10;
   @property({type: String}) vesselImage: VesselImage = VesselImage.psvFore;
@@ -137,6 +139,11 @@ export class ObcHeave extends AdviceMixin(LitElement) {
     `;
   }
 
+  override willUpdate(changed: PropertyValues) {
+    super.willUpdate(changed);
+    syncAdviceAlias(this, this.advice);
+  }
+
   override render() {
     const isBar = this.type === ObcHeaveType.bar;
     const gaugeOffset = isBar ? 0 : this._boxWidth / 2 - this._gaugeWidth / 2;
@@ -169,7 +176,8 @@ export class ObcHeave extends AdviceMixin(LitElement) {
               resolveLinearAdvice(
                 this.advices,
                 this.minTrendHeave,
-                this.maxTrendHeave
+                this.maxTrendHeave,
+                {trigger: this.adviceTrigger, emphasis: this.adviceEmphasis}
               )
             )}
           </g>

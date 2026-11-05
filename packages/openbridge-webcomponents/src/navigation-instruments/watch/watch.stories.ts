@@ -13,6 +13,7 @@ import {
   widthDecorator,
 } from '../../storybook-util.js';
 import {AdviceState, AdviceType} from './advice.js';
+import {resolveAdvices} from '../../svghelpers/advice.js';
 import {InstrumentState, Priority} from '../types.js';
 import {TickmarkType} from './tickmark.js';
 import {html, svg} from 'lit';
@@ -362,15 +363,20 @@ export const AdvicePointAndArea: Story = {
   },
 };
 
+// The watch draws what it is given; the instrument around it resolves the
+// list, which is where bands that meet are cut flat.
 export const AdviceChained: Story = {
   args: {
-    advices: [
-      {min: 20, max: 60, category: 'optimal', state: 'active'},
-      {min: 60, max: 90, category: 'caution'},
-      {min: 90, max: 120, category: 'alarm', state: 'triggered'},
-      {min: 200, max: 240, category: 'eco', state: 'triggered'},
-      {min: 240, max: 270, category: 'warning', hideMaxTickmark: true},
-    ],
+    advices: resolveAdvices(
+      [
+        {min: 20, max: 60, category: 'optimal', state: 'active'},
+        {min: 60, max: 90, category: 'caution'},
+        {min: 90, max: 120, category: 'alarm', state: 'triggered'},
+        {min: 200, max: 240, category: 'eco', state: 'triggered'},
+        {min: 240, max: 270, category: 'warning', hideMaxTickmark: true},
+      ],
+      []
+    ),
   },
 };
 

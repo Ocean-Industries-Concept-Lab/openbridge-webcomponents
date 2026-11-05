@@ -20,6 +20,7 @@ import type {
   ResolvedAdvice,
 } from '../../svghelpers/advice.js';
 import {SetpointMixin} from '../../svghelpers/setpoint-mixin.js';
+import {syncAdviceAlias} from '../../svghelpers/advice-mixin.js';
 import '../../building-blocks/bar-vertical/bar-vertical.js';
 import type {ObcBarVertical} from '../../building-blocks/bar-vertical/bar-vertical.js';
 import {ExternalScaleSide} from '../../building-blocks/external-scale/external-scale.js';
@@ -183,6 +184,7 @@ export {FillMode, ScaleType};
  * @property chartFill - Enable chart area fill.
  *   When true, fills the area under the line with semitransparent color.
  *   When false (default), renders as line-only chart.
+ * @property highlightCurrentValue - Shows the dot at the value on the vertical scale. Left unset, the dot shows while `hasBar` is false.
  * @property hasBar - Show bar on the vertical scale.
  *   When `true`, displays a filled bar indicating the current value.
  *   When `false`, a dot indicator is automatically shown at the value position instead.
@@ -372,9 +374,12 @@ export class ObcGaugeTrend extends SetpointMixin(ObcChartLineBase) {
       ? BorderRadiusPosition.middleChild
       : BorderRadiusPosition.outerLastChild;
 
-    // Auto-derive: show dot indicator when no bar is shown
-    barVertical.highlightCurrentValue = !this.hasBar;
+    barVertical.highlightCurrentValue =
+      this.highlightCurrentValue ?? !this.hasBar;
   }
+
+  @property({type: Boolean, attribute: false})
+  highlightCurrentValue?: boolean;
 
   @property({type: String})
   scaleType: ScaleType = ScaleType.regular;
@@ -419,13 +424,7 @@ export class ObcGaugeTrend extends SetpointMixin(ObcChartLineBase) {
   fillMax?: number = undefined;
 
   /** @deprecated Alias of `advices`. Ranges in scale units. */
-  @property({type: Array, attribute: false})
-  get advice(): AdviceInput[] {
-    return this.advices;
-  }
-  set advice(value: AdviceInput[]) {
-    this.advices = value;
-  }
+  @property({type: Array, attribute: false}) advice?: AdviceInput[];
 
   @property({type: Number})
   primaryTickmarkInterval?: number = undefined;
@@ -488,6 +487,7 @@ export class ObcGaugeTrend extends SetpointMixin(ObcChartLineBase) {
   }
 
   override willUpdate(changed: Map<PropertyKey, unknown>) {
+    syncAdviceAlias(this, this.advice);
     // Auto axis detection: {x, value} data switches to time spacing, {label,
     // value} stays category. An explicit xAxisType assignment (anything we
     // did not auto-apply) permanently disables auto-detection. The
@@ -581,6 +581,7 @@ export class ObcGaugeTrend extends SetpointMixin(ObcChartLineBase) {
       changed.has('fillMode') ||
       changed.has('fillMin') ||
       changed.has('fillMax') ||
+      changed.has('highlightCurrentValue') ||
       changed.has('advices') ||
       changed.has('adviceTrigger') ||
       changed.has('adviceEmphasis') ||

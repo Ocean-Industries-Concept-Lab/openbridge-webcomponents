@@ -23,7 +23,7 @@ import {
   observeThemeChanges,
 } from '../../charthelpers/index.js';
 import {normalizeXValue, XValueMode} from '../../charthelpers/x-value.js';
-import {AdviceMixin} from '../../svghelpers/advice-mixin.js';
+import {AdviceMixin, syncAdviceAlias} from '../../svghelpers/advice-mixin.js';
 import type {AdviceInput} from '../../svghelpers/advice.js';
 import {InstrumentState, Priority} from '../types.js';
 import {VesselImage, type VesselImageSrc} from '../watch/watch.js';
@@ -160,13 +160,7 @@ export class ObcDepth extends AdviceMixin(LitElement) {
   vesselImageSrc: VesselImageSrc | undefined;
   @property({type: Boolean}) hasAdvice = false;
   /** @deprecated Alias of `advices`. Ranges in depth units. */
-  @property({type: Array, attribute: false})
-  get advice(): AdviceInput[] {
-    return this.advices;
-  }
-  set advice(value: AdviceInput[]) {
-    this.advices = value;
-  }
+  @property({type: Array, attribute: false}) advice?: AdviceInput[];
   @property({type: String}) priority: Priority = Priority.regular;
   @property({type: String}) state: InstrumentState = InstrumentState.active;
 
@@ -203,6 +197,7 @@ export class ObcDepth extends AdviceMixin(LitElement) {
   }
 
   override willUpdate(changed: PropertyValues) {
+    syncAdviceAlias(this, this.advice);
     if (
       changed.has('type') ||
       changed.has('data') ||
@@ -442,11 +437,8 @@ export class ObcDepth extends AdviceMixin(LitElement) {
                 .minValue=${0}
                 .maxValue=${range.maxDepth}
                 .reverse=${true}
-                .value=${
-                  this.type === DepthType.regular
-                    ? this.currentDepth
-                    : undefined
-                }
+                .value=${this.currentDepth}
+                .highlightCurrentValue=${this.type === DepthType.regular}
                 .hasBar=${false}
                 .hasScale=${true}
                 .hasLabelPadding=${false}

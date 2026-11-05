@@ -11,7 +11,7 @@ import {ReadoutSize} from '../readout/readout.js';
 import instrumentReadoutStyle from '../readout/instrument-readout.css?inline';
 import {Tickmark, TickmarkType, TickmarkStyle} from '../watch/tickmark.js';
 import {arrow, ArrowStyle} from '../compass/arrow.js';
-import {AdviceMixin} from '../../svghelpers/advice-mixin.js';
+import {AdviceMixin, syncAdviceAlias} from '../../svghelpers/advice-mixin.js';
 import type {AdviceInput, ResolvedAdvice} from '../../svghelpers/advice.js';
 import {
   WatchCircleType,
@@ -175,13 +175,7 @@ export class ObcCompassSector extends AdviceMixin(LitElement, {
   @property({type: Boolean}) animateSetpoint: boolean = false;
   @property({type: Boolean}) touching: boolean = false;
   /** @deprecated Alias of `advices`. Angle ranges in degrees. */
-  @property({type: Array, attribute: false})
-  get headingAdvices(): AdviceInput[] {
-    return this.advices;
-  }
-  set headingAdvices(value: AdviceInput[]) {
-    this.advices = value;
-  }
+  @property({type: Array, attribute: false}) headingAdvices?: AdviceInput[];
 
   @property({type: Number}) minFOV: number = 30;
 
@@ -239,6 +233,7 @@ export class ObcCompassSector extends AdviceMixin(LitElement, {
 
   override willUpdate(changed: PropertyValues): void {
     super.willUpdate(changed);
+    syncAdviceAlias(this, this.headingAdvices);
     this._headingSp.sync({
       setpoint: this.headingSetpoint ?? undefined,
       newSetpoint: this.newHeadingSetpoint,

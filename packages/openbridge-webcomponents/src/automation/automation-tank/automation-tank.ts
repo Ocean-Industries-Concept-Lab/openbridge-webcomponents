@@ -5,6 +5,7 @@ import {
   nothing,
   svg,
   unsafeCSS,
+  PropertyValues,
 } from 'lit';
 import {property, state} from 'lit/decorators.js';
 import compentStyle from './automation-tank.css?inline';
@@ -37,7 +38,7 @@ import {
 } from '../../components/alert-frame/alert-frame.js';
 import {AlertType} from '../../types.js';
 import type {ChartLineDataItem} from '../../building-blocks/chart-line/chart-line-base.js';
-import {AdviceMixin} from '../../svghelpers/advice-mixin.js';
+import {AdviceMixin, syncAdviceAlias} from '../../svghelpers/advice-mixin.js';
 import type {AdviceInput} from '../../svghelpers/advice.js';
 import {
   AdvicePosition,
@@ -211,13 +212,7 @@ export class ObcAutomationTank extends AdviceMixin(SetpointMixin(LitElement)) {
   @property({type: String}) priority: Priority = Priority.regular;
 
   /** @deprecated Alias of `advices`. Ranges in tank units. */
-  @property({type: Array, attribute: false})
-  get advice(): AdviceInput[] {
-    return this.advices;
-  }
-  set advice(value: AdviceInput[]) {
-    this.advices = value;
-  }
+  @property({type: Array, attribute: false}) advice?: AdviceInput[];
 
   @property({type: Boolean}) hasAdvice = false;
 
@@ -616,6 +611,11 @@ export class ObcAutomationTank extends AdviceMixin(SetpointMixin(LitElement)) {
     }
     // battery, start only
     return html`<div class="cap cap-battery cap-${side}"></div>`;
+  }
+
+  override willUpdate(changed: PropertyValues) {
+    super.willUpdate(changed);
+    syncAdviceAlias(this, this.advice);
   }
 
   override render() {

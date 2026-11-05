@@ -32,9 +32,10 @@
  *
  * An angular instrument passes `{angularWraparound: true}` so a band across
  * north hits and a reversed pair is ordered. An instrument that keeps a
- * prefixed public name (`headingAdvices`) maps it onto `advices` in
- * `willUpdate()`, as the setpoint mixin's consumers do. An instrument with
- * two advice axes uses one `AdviceBundle` (`advice-bundle.ts`) per axis.
+ * prefixed public name (`headingAdvices`) declares it as a plain optional
+ * field and calls {@link syncAdviceAlias} first in `willUpdate()`. An
+ * instrument with two advice axes uses one `AdviceBundle`
+ * (`advice-bundle.ts`) per axis.
  */
 
 import {LitElement} from 'lit';
@@ -50,6 +51,22 @@ import {
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any -- TypeScript requires any[] in a mixin constructor (TS2545)
 type Constructor<T = object> = new (...args: any[]) => T;
+
+/**
+ * Keeps a deprecated alias of `advices` in charge while a consumer sets it;
+ * call it first in `willUpdate()`. The alias is a plain field with no
+ * default because the generated Vue wrapper reads every property at creation
+ * and writes those values back on its second render: an accessor alias would
+ * hand back `[]` and clear a list set through `advices`, and a copy made only
+ * when the alias changes would let that write-back clear a list set through
+ * the alias.
+ */
+export function syncAdviceAlias(
+  host: {advices: AdviceInput[]},
+  alias: AdviceInput[] | undefined
+): void {
+  if (alias !== undefined) host.advices = alias;
+}
 
 /** The properties and the method {@link AdviceMixin} adds. */
 export declare class AdviceMixinInterface {

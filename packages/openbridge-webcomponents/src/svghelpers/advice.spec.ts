@@ -13,6 +13,7 @@ import {
   adviceCaps,
   chainAdvices,
   nextAdviceMaskId,
+  negateAdvice,
 } from './advice.js';
 
 describe('normalizeAdvice', () => {
@@ -332,6 +333,30 @@ describe('adviceCaps and chainAdvices', () => {
       []
     );
     expect(a.flatEnd).toBe(true);
+  });
+});
+
+describe('negateAdvice', () => {
+  it('swaps a range and keeps a point', () => {
+    const [range, point] = resolveAdvices(
+      [
+        {min: 10, max: 20, category: 'caution', hideMinTickmark: true},
+        {value: 5, category: 'alarm', hideMinTickmark: true},
+      ],
+      []
+    );
+    expect(negateAdvice(range)).toMatchObject({
+      min: -20,
+      max: -10,
+      hideMinTickmark: false,
+      hideMaxTickmark: true,
+    });
+    expect(negateAdvice(point)).toMatchObject({
+      min: -5,
+      max: -5,
+      point: true,
+      hideMinTickmark: true,
+    });
   });
 });
 

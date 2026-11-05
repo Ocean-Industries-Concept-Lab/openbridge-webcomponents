@@ -1,8 +1,20 @@
-import {LitElement, html, css, nothing, svg, type SVGTemplateResult} from 'lit';
+import {
+  LitElement,
+  html,
+  css,
+  nothing,
+  svg,
+  type SVGTemplateResult,
+  PropertyValues,
+} from 'lit';
 import {property} from 'lit/decorators.js';
 import {customElement} from '../../decorator.js';
-import {AdviceMixin} from '../../svghelpers/advice-mixin.js';
-import type {AdviceInput, ResolvedAdvice} from '../../svghelpers/advice.js';
+import {AdviceMixin, syncAdviceAlias} from '../../svghelpers/advice-mixin.js';
+import {
+  negateAdvice,
+  type AdviceInput,
+  type ResolvedAdvice,
+} from '../../svghelpers/advice.js';
 import {
   verticalScaleTickmarks,
   watchfaceLinear,
@@ -76,13 +88,7 @@ export class ObcDraftTrim extends AdviceMixin(LitElement) {
   @property({type: Number}) draftAft = 0;
   @property({type: Number}) instrumentRange = 10;
   /** @deprecated Alias of `advices`. Ranges in draught units, positive below the waterline. */
-  @property({type: Array})
-  get advice(): AdviceInput[] {
-    return this.advices;
-  }
-  set advice(value: AdviceInput[]) {
-    this.advices = value;
-  }
+  @property({type: Array}) advice?: AdviceInput[];
   @property({type: String}) vesselImage: VesselImage = VesselImage.psvSide;
   @property({type: Object, attribute: false})
   vesselImageSrc: VesselImageSrc | undefined;
@@ -106,16 +112,9 @@ export class ObcDraftTrim extends AdviceMixin(LitElement) {
     return resolveLinearAdvice(
       this.advices,
       Math.min(0, draft),
-      Math.max(0, draft)
-    ).map((a) => ({
-      ...a,
-      min: -a.max,
-      max: -a.min,
-      flatStart: a.flatEnd,
-      flatEnd: a.flatStart,
-      hideMinTickmark: a.hideMaxTickmark,
-      hideMaxTickmark: a.hideMinTickmark,
-    }));
+      Math.max(0, draft),
+      {trigger: this.adviceTrigger, emphasis: this.adviceEmphasis}
+    ).map(negateAdvice);
   }
 
   private renderScale(draft: number, mirrored: boolean): SVGTemplateResult {
@@ -170,6 +169,11 @@ export class ObcDraftTrim extends AdviceMixin(LitElement) {
         ${this.vesselImage ? renderVesselArt(vesselArt(this.vesselImage, this.vesselImageSrc), this._palette.current) : nothing}
       </g>
     `;
+  }
+
+  override willUpdate(changed: PropertyValues) {
+    super.willUpdate(changed);
+    syncAdviceAlias(this, this.advice);
   }
 
   override render() {

@@ -555,12 +555,14 @@ The offset flows through the rendering pipeline:
 3. Helper functions (`tickmark()`, `renderAdvice()`, `adviceMask()`) accept an optional `radiusOffset` parameter; `renderAdvice()` resolves nothing, see [`advice.md`](../../docs/agents/advice.md)
 4. Consumer instruments read back `_radiusOffset` for overlay adjustments (needle translation)
 
-### Advice bands under zoom
+### Advice hatch under zoom
 
-`renderAdvice()` takes the `radiusOffset`, so a band, its caps and its
-pattern follow the enlarged ring; the caution tile is laid every 4° at any
-radius. The one hatch implementation is `svghelpers/advice-patterns.ts`
-([`advice.md`](../../docs/agents/advice.md)); the former zoom-only line path is gone.
+`radialStripes()` in `advice.ts` is the radial hatch: at the design radius
+it lays the file's own caution tile every 4°, and under zoom it lays the same
+count of crossings as generated lines, since a rotated tile's centre orbits
+the origin and would cross the enlarged band at drifting angles. A zoom fix
+goes there; the linear tiles are `svghelpers/advice-patterns.ts`
+([`advice.md`](../../docs/agents/advice.md)).
 
 ### Adding `zoomToFitArc` to a new instrument
 

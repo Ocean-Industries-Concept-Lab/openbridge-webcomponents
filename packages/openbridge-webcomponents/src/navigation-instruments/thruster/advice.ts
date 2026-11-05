@@ -32,13 +32,13 @@ const BAND_PERP_START = 12;
 const yOf = (percent: number, height: number) => (-percent * height) / 100 - 2;
 
 /**
- * One advice on the column. `flipDirection` is kept for the callers that
- * mirror the bottom half; the pattern tile reads the same either way.
+ * One advice on the column. The bottom half is drawn under a reflection, so
+ * `flipDirection` mirrors the hatch back onto the top half's slope.
  */
 export function renderAdvice(
   height: number,
   input: AdviceInput | ResolvedAdvice,
-  _flipDirection = false,
+  flipDirection = false,
   maskId: string = nextAdviceMaskId('thruster')
 ): SVGTemplateResult {
   const advice = asResolvedAdvice(input);
@@ -58,6 +58,7 @@ export function renderAdvice(
         perpStart: BAND_PERP_START,
         advice,
         maskId,
+        mirrorPattern: flipDirection,
       });
   return svg`
     ${marker}

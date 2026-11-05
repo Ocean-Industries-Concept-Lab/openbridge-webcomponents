@@ -1,4 +1,4 @@
-import {LitElement, html, unsafeCSS, svg, nothing} from 'lit';
+import {LitElement, html, unsafeCSS, svg, nothing, PropertyValues} from 'lit';
 import {property} from 'lit/decorators.js';
 import compentStyle from './main-engine.css?inline';
 import {InstrumentState, Priority} from '../types.js';
@@ -9,7 +9,7 @@ import {
   thrusterTopSingleSided,
   renderThrusterSetpoint,
 } from '../thruster/thruster.js';
-import {AdviceMixin} from '../../svghelpers/advice-mixin.js';
+import {AdviceMixin, syncAdviceAlias} from '../../svghelpers/advice-mixin.js';
 import {
   adviceTriggerReadings,
   nextAdviceMaskId,
@@ -44,16 +44,15 @@ export class ObcMainEngine extends AdviceMixin(LitElement) {
   @property({type: String}) state: InstrumentState = InstrumentState.active;
   @property({type: String}) priority: Priority = Priority.regular;
   /** @deprecated Alias of `advices`. Ranges in percent of thrust. */
-  @property({type: Array})
-  get thrustAdvices(): AdviceInput[] {
-    return this.advices;
-  }
-  set thrustAdvices(value: AdviceInput[]) {
-    this.advices = value;
-  }
+  @property({type: Array}) thrustAdvices?: AdviceInput[];
 
   // Mask ids are document-scoped, so each engine names its own.
   private readonly _adviceMaskPrefix = nextAdviceMaskId('engine');
+
+  override willUpdate(changed: PropertyValues) {
+    super.willUpdate(changed);
+    syncAdviceAlias(this, this.thrustAdvices);
+  }
 
   override render() {
     const thrustAtSetpoint = atSetpoint(this.thrust, this.thrustSetpoint, {
@@ -122,7 +121,7 @@ export class ObcMainEngine extends AdviceMixin(LitElement) {
        {
          hideContainer: true,
          hideTicks: cThrust.hideTicks,
-         flipAdicePattern: false,
+         flipAdicePattern: true,
          narrow: false,
          off: this.state === InstrumentState.off,
          adviceMaskPrefix: `${this._adviceMaskPrefix}-bottom`,

@@ -8,7 +8,7 @@ import '../watch/watch.js';
 import {WatchCircleType} from '../watch/watch.js';
 import {SailType, sailTypeImages} from '../watch/sail-type.js';
 import componentStyle from './wind-propulsion.css?inline';
-import {AdviceMixin} from '../../svghelpers/advice-mixin.js';
+import {AdviceMixin, syncAdviceAlias} from '../../svghelpers/advice-mixin.js';
 import type {AdviceInput, ResolvedAdvice} from '../../svghelpers/advice.js';
 import {Tickmark, TickmarkStyle, TickmarkType} from '../watch/tickmark.js';
 import {renderForceBar} from './force-bar.js';
@@ -93,13 +93,7 @@ export class ObcWindPropulsion extends AdviceMixin(LitElement, {
   @property({type: Number}) currentWindFromDirection: number | null = null;
 
   /** @deprecated Alias of `advices`. Sail angle ranges in degrees. */
-  @property({type: Array, attribute: false})
-  get sailAngleAdvices(): AdviceInput[] {
-    return this.advices;
-  }
-  set sailAngleAdvices(value: AdviceInput[]) {
-    this.advices = value;
-  }
+  @property({type: Array, attribute: false}) sailAngleAdvices?: AdviceInput[];
 
   private _forceBarMaskId = `wp-fb-${Math.random().toString(36).slice(2, 9)}`;
 
@@ -110,6 +104,7 @@ export class ObcWindPropulsion extends AdviceMixin(LitElement, {
 
   override willUpdate(changed: PropertyValues): void {
     super.willUpdate(changed);
+    syncAdviceAlias(this, this.sailAngleAdvices);
     this._sailAngleSp.sync({
       setpoint: this.sailAngleSetpoint,
       newSetpoint: this.newSailAngleSetpoint,

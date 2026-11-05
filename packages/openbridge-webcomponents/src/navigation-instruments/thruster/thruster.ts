@@ -6,6 +6,7 @@ import {AdviceMixin} from '../../svghelpers/advice-mixin.js';
 import {
   AdviceTrigger,
   adviceTriggerReadings,
+  negateAdvice,
   nextAdviceMaskId,
   resolveAdvices,
   type AdviceInput,
@@ -832,25 +833,25 @@ export function convertThrustAdvices(
   const resolved = resolveAdvices(advices, list, opts);
   const topAdvices: ResolvedAdvice[] = [];
   const bottomAdvices: ResolvedAdvice[] = [];
-  const mirror = (a: ResolvedAdvice): ResolvedAdvice => ({
+  // The cut at zero is not a limit: no boundary tick there.
+  const cut = (a: ResolvedAdvice): ResolvedAdvice => ({
     ...a,
-    min: -a.max,
-    max: -a.min,
-    flatStart: a.flatEnd,
-    flatEnd: a.flatStart,
+    min: 0,
+    flatStart: true,
+    hideMinTickmark: true,
   });
   for (const a of resolved) {
     if (a.point) {
       (a.min >= 0 ? topAdvices : bottomAdvices).push(
-        a.min >= 0 ? a : mirror(a)
+        a.min >= 0 ? a : negateAdvice(a)
       );
     } else if (a.min >= 0) {
       topAdvices.push(a);
     } else if (a.max <= 0) {
-      bottomAdvices.push(mirror(a));
+      bottomAdvices.push(negateAdvice(a));
     } else {
-      topAdvices.push({...a, min: 0, flatStart: true});
-      bottomAdvices.push({...mirror(a), min: 0, flatStart: true});
+      topAdvices.push(cut(a));
+      bottomAdvices.push(cut(negateAdvice(a)));
     }
   }
   return {topAdvices, bottomAdvices};

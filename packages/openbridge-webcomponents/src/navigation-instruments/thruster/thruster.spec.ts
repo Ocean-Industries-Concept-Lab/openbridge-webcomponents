@@ -54,6 +54,38 @@ describe('convertThrustAdvices', () => {
     expect(bottomAdvices[1]).toMatchObject({flatStart: false, flatEnd: true});
   });
 
+  it('swaps the tick flags with the ends when mirroring, and hides the cut', () => {
+    const {topAdvices, bottomAdvices} = convertThrustAdvices(
+      [
+        {min: -60, max: -40, category: 'caution', hideMaxTickmark: true},
+        {min: -10, max: 30, category: 'optimal', hideMinTickmark: true},
+      ],
+      undefined
+    );
+    // The -40 end, near zero, becomes the 40 end of the mirrored band.
+    expect(bottomAdvices[0]).toMatchObject({
+      min: 40,
+      max: 60,
+      hideMinTickmark: true,
+      hideMaxTickmark: false,
+    });
+    expect(topAdvices[0]).toMatchObject({
+      min: 0,
+      max: 30,
+      flatStart: true,
+      hideMinTickmark: true,
+      hideMaxTickmark: false,
+    });
+    // The hidden -10 end is the mirrored part's max end.
+    expect(bottomAdvices[1]).toMatchObject({
+      min: 0,
+      max: 10,
+      flatStart: true,
+      hideMinTickmark: true,
+      hideMaxTickmark: true,
+    });
+  });
+
   it('places a point on the side of its sign', () => {
     const {topAdvices, bottomAdvices} = convertThrustAdvices(
       [

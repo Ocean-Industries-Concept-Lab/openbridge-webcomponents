@@ -18,6 +18,7 @@ import {
   ADVICE_POINT_DOT_DIAMETER,
   ADVICE_POINT_TICK,
   AdviceCap,
+  ADVICE_STRIPE,
   AdviceCategory,
   AdviceState,
   adviceCaps,
@@ -43,6 +44,8 @@ export interface LinearAdviceBandOptions {
   advice: AdviceInput | ResolvedAdvice;
   /** Unique in the document; only a hatched band uses it. */
   maskId: string;
+  /** The band is drawn under a reflection, so the hatch is mirrored back. */
+  mirrorPattern?: boolean;
 }
 
 const point = (vertical: boolean, main: number, perp: number) =>
@@ -121,10 +124,16 @@ export function renderLinearAdviceBand(
   const lo = Math.min(o.mainStart, o.mainEnd);
   const hi = Math.max(o.mainStart, o.mainEnd);
   const patternId = `${o.maskId}-pattern`;
+  const mirrored = o.mirrorPattern ?? false;
   const pattern =
     style.pattern === 'hairline'
-      ? hairlinePattern(patternId, style.patternColor)
-      : stripePattern(patternId, style.patternColor);
+      ? hairlinePattern(patternId, style.patternColor, mirrored)
+      : stripePattern(
+          patternId,
+          style.patternColor,
+          ADVICE_STRIPE.width,
+          mirrored
+        );
   const cover = o.vertical
     ? svg`<rect x=${o.perpStart} y=${lo} width=${t} height=${hi - lo} fill=${style.fill}/><rect x=${o.perpStart} y=${lo} width=${t} height=${hi - lo} fill="url(#${patternId})"/>`
     : svg`<rect x=${lo} y=${o.perpStart} width=${hi - lo} height=${t} fill=${style.fill}/><rect x=${lo} y=${o.perpStart} width=${hi - lo} height=${t} fill="url(#${patternId})"/>`;

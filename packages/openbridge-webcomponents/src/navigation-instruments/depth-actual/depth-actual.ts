@@ -13,9 +13,9 @@ import {
   type VesselImageSrc,
 } from '../watch/vessel.js';
 import {PaletteController} from '../../charthelpers/theme.js';
-import {AdviceMixin} from '../../svghelpers/advice-mixin.js';
+import {AdviceMixin, syncAdviceAlias} from '../../svghelpers/advice-mixin.js';
 import {
-  resolveAdvices,
+  negateAdvice,
   type AdviceInput,
   type ResolvedAdvice,
 } from '../../svghelpers/advice.js';
@@ -78,13 +78,7 @@ export class ObcDepthActual extends AdviceMixin(LitElement) {
   @property({type: Number}) depth = 0;
   @property({type: Number}) draft = 0;
   /** @deprecated Alias of `advices`. Ranges in depth units. */
-  @property({type: Array})
-  get advice(): AdviceInput[] {
-    return this.advices;
-  }
-  set advice(value: AdviceInput[]) {
-    this.advices = value;
-  }
+  @property({type: Array}) advice?: AdviceInput[];
   @property({type: Number}) vesselScale = 1;
   @property({type: String}) vesselImage: VesselImage = VesselImage.psvFore;
   @property({type: Object, attribute: false})
@@ -113,6 +107,7 @@ export class ObcDepthActual extends AdviceMixin(LitElement) {
   private readonly _palette = new PaletteController(this);
 
   override willUpdate(changed: PropertyValues) {
+    syncAdviceAlias(this, this.advice);
     if (
       changed.has('depth') ||
       changed.has('maxDepth') ||
@@ -140,17 +135,8 @@ export class ObcDepthActual extends AdviceMixin(LitElement) {
   }
 
   private _getAdvice(): ResolvedAdvice[] {
-    // Scale space is positive-up and depth grows downward, so a resolved
-    // range is negated and its ends swap.
-    return resolveAdvices(this.advices, [this.depth], {
-      emphasis: this.adviceEmphasis,
-    }).map((a) => ({
-      ...a,
-      min: this._toValue(a.max),
-      max: this._toValue(a.min),
-      flatStart: a.flatEnd,
-      flatEnd: a.flatStart,
-    }));
+    // Scale space is positive-up and depth grows downward.
+    return this.resolveAdvices(this.depth).map(negateAdvice);
   }
 
   override render() {

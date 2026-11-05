@@ -15,7 +15,7 @@ import {
   renderCenterReadouts,
   resolveCompassCenterReadouts,
 } from '../readout/center-readout.js';
-import {AdviceMixin} from '../../svghelpers/advice-mixin.js';
+import {AdviceMixin, syncAdviceAlias} from '../../svghelpers/advice-mixin.js';
 import type {AdviceInput, ResolvedAdvice} from '../../svghelpers/advice.js';
 import {ResizeController} from '@lit-labs/observers/resize-controller.js';
 import {
@@ -214,13 +214,7 @@ export class ObcCompass extends AdviceMixin(LitElement, {
   @property({type: Boolean}) animateSetpoint: boolean = false;
   @property({type: Boolean}) touching: boolean = false;
   /** @deprecated Alias of `advices`. Angle ranges in degrees. */
-  @property({type: Array, attribute: false})
-  get headingAdvices(): AdviceInput[] {
-    return this.advices;
-  }
-  set headingAdvices(value: AdviceInput[]) {
-    this.advices = value;
-  }
+  @property({type: Array, attribute: false}) headingAdvices?: AdviceInput[];
   @property({type: Number}) currentWindSpeedKnots: number | null = null;
   @property({type: Number}) windFromDirection: number | null = null;
   @property({type: Number}) currentSpeed: number | null = null;
@@ -270,6 +264,7 @@ export class ObcCompass extends AdviceMixin(LitElement, {
 
   override willUpdate(changed: PropertyValues): void {
     super.willUpdate(changed);
+    syncAdviceAlias(this, this.headingAdvices);
     this._headingSp.sync({
       setpoint: this.headingSetpoint ?? undefined,
       newSetpoint: this.newHeadingSetpoint,
