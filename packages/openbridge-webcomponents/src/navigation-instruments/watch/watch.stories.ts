@@ -341,7 +341,10 @@ export const AdviceStates: Story = {
   },
 };
 
+// The exclusion wedge's hairline hatch rasterises differently under load;
+// watch/advice.spec.ts pins what the story shows.
 export const AdvicePointAndArea: Story = {
+  tags: ['!snapshot'],
   args: {
     advices: [
       {value: 30, category: 'optimal', state: 'active', showArea: true},

@@ -109,6 +109,15 @@ describe('renderAdviceArea (radial)', () => {
     expect(out).toContain('M 0 0 L');
   });
 
+  it('hatches an exclusion wedge with the hairline', () => {
+    const out = toSvg(
+      renderAdviceArea({min: 320, max: 350, category: 'exclusion'}, 0, 'p3')
+    );
+    expect(out).toContain('id="p3"');
+    expect(out).toContain('stroke-width="0.5"');
+    expect(out).toContain('fill="url(#p3)"');
+  });
+
   it('lays the alarm dot lattice over the wedge', () => {
     const out = toSvg(
       renderAdviceArea({min: 20, max: 60, category: 'alarm'}, 0, 'p2')
