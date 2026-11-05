@@ -219,3 +219,92 @@ export function normalizeAngularRange(
   }
   return {min, max};
 }
+
+/**
+ * One reading an advice is checked against: a value, a trend interval, or
+ * nothing. A missing reading never triggers.
+ */
+export type AdviceReading =
+  number | {min: number; max: number} | undefined | null;
+
+/** The readings the trigger mode selects, missing ones left out. */
+export function adviceTriggerReadings(
+  trigger: AdviceTrigger,
+  value: AdviceReading,
+  setpoint: AdviceReading
+): AdviceReading[] {
+  const picked =
+    trigger === AdviceTrigger.value
+      ? [value]
+      : trigger === AdviceTrigger.setpoint
+        ? [setpoint]
+        : [value, setpoint];
+  return picked.filter((r) => r !== undefined && r !== null);
+}
+
+/** Options shared by the resolve step and the hit test. */
+export interface AdviceResolveOptions {
+  /** Ranges are angles: a band runs clockwise from `min` to `max` and may cross north. */
+  angularWraparound?: boolean;
+  /**
+   * The design's emphasis rules: at rest a go-to band is `active` and a no-go
+   * band `enabled`; a hit on one group turns the other `hinted`. Off, every
+   * band keeps its configured state until its own range is hit.
+   */
+  emphasis?: boolean;
+}
+
+/**
+ * Whether a reading lies inside the advice. A number hits inside the range,
+ * bounds included; an interval hits when it overlaps the range; a point hits
+ * on equality.
+ */
+export function isAdviceHit(
+  advice: Pick<ResolvedAdvice, 'min' | 'max' | 'point'>,
+  reading: AdviceReading,
+  opts: AdviceResolveOptions = {}
+): boolean {
+  if (reading === undefined || reading === null) return false;
+  if (typeof reading === 'number') {
+    if (!Number.isFinite(reading)) return false;
+    if (opts.angularWraparound) {
+      const offset = normalizeAngle(reading - advice.min);
+      return advice.point
+        ? offset === 0
+        : offset <= normalizeAngle(advice.max - advice.min);
+    }
+    return reading >= advice.min && reading <= advice.max;
+  }
+  return reading.max >= advice.min && reading.min <= advice.max;
+}
+
+/**
+ * The advice list an instrument draws: every entry normalised, `triggered`
+ * where a reading hits it, and the emphasis rules applied when asked.
+ */
+export function resolveAdvices(
+  inputs: readonly AdviceInput[],
+  readings: readonly AdviceReading[],
+  opts: AdviceResolveOptions = {}
+): ResolvedAdvice[] {
+  const resolved = inputs.map((input) => {
+    const advice = normalizeAdvice(input);
+    if (opts.angularWraparound && !advice.point) {
+      Object.assign(advice, normalizeAngularRange(advice.min, advice.max));
+    }
+    const hit = readings.some((r) => isAdviceHit(advice, r, opts));
+    return {...advice, hit};
+  });
+  const goToHit = resolved.some((a) => a.hit && isGoToCategory(a.category));
+  const noGoHit = resolved.some((a) => a.hit && !isGoToCategory(a.category));
+  return resolved.map(({hit, ...advice}) => {
+    if (hit) return {...advice, state: AdviceState.triggered};
+    if (!opts.emphasis) return advice;
+    const goTo = isGoToCategory(advice.category);
+    if ((goTo && noGoHit) || (!goTo && goToHit)) {
+      return {...advice, state: AdviceState.hinted};
+    }
+    if (advice.state === AdviceState.hinted) return advice;
+    return {...advice, state: goTo ? AdviceState.active : AdviceState.enabled};
+  });
+}

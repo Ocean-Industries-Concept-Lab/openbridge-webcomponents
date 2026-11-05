@@ -5,6 +5,10 @@ import {
   normalizeAdvice,
   normalizeAngularRange,
   isGoToCategory,
+  AdviceTrigger,
+  adviceTriggerReadings,
+  isAdviceHit,
+  resolveAdvices,
 } from './advice.js';
 
 describe('normalizeAdvice', () => {
@@ -114,5 +118,107 @@ describe('isGoToCategory', () => {
     expect(isGoToCategory(AdviceCategory.eco)).toBe(true);
     expect(isGoToCategory(AdviceCategory.caution)).toBe(false);
     expect(isGoToCategory(AdviceCategory.exclusion)).toBe(false);
+  });
+});
+
+describe('adviceTriggerReadings', () => {
+  it('picks the readings the trigger mode names and drops missing ones', () => {
+    expect(adviceTriggerReadings(AdviceTrigger.both, 5, 7)).toEqual([5, 7]);
+    expect(adviceTriggerReadings(AdviceTrigger.value, 5, 7)).toEqual([5]);
+    expect(adviceTriggerReadings(AdviceTrigger.setpoint, 5, 7)).toEqual([7]);
+    expect(adviceTriggerReadings(AdviceTrigger.both, 5, undefined)).toEqual([
+      5,
+    ]);
+    expect(adviceTriggerReadings(AdviceTrigger.setpoint, 5, null)).toEqual([]);
+  });
+});
+
+describe('isAdviceHit', () => {
+  const band = normalizeAdvice({min: 20, max: 40, category: 'caution'});
+
+  it('hits a number inside the range, bounds included', () => {
+    expect(isAdviceHit(band, 20)).toBe(true);
+    expect(isAdviceHit(band, 40)).toBe(true);
+    expect(isAdviceHit(band, 41)).toBe(false);
+    expect(isAdviceHit(band, undefined)).toBe(false);
+    expect(isAdviceHit(band, NaN)).toBe(false);
+  });
+
+  it('hits an interval that overlaps the range', () => {
+    expect(isAdviceHit(band, {min: 2, max: 25})).toBe(true);
+    expect(isAdviceHit(band, {min: 41, max: 50})).toBe(false);
+  });
+
+  it('hits an angular range across north', () => {
+    const north = normalizeAdvice({
+      minAngle: 350,
+      maxAngle: 10,
+      category: 'caution',
+    });
+    expect(isAdviceHit(north, 0, {angularWraparound: true})).toBe(true);
+    expect(isAdviceHit(north, 355, {angularWraparound: true})).toBe(true);
+    expect(isAdviceHit(north, 20, {angularWraparound: true})).toBe(false);
+    expect(isAdviceHit(north, 0)).toBe(false);
+  });
+
+  it('hits a point on equality only', () => {
+    const point = normalizeAdvice({value: 30, category: 'optimal'});
+    expect(isAdviceHit(point, 30)).toBe(true);
+    expect(isAdviceHit(point, 30.5)).toBe(false);
+  });
+});
+
+describe('resolveAdvices', () => {
+  const list = [
+    {min: 20, max: 40, category: 'caution', hinted: true},
+    {min: 60, max: 80, category: 'optimal'},
+  ];
+
+  it('triggers on a hit and keeps the configured state otherwise', () => {
+    const [caution, optimal] = resolveAdvices(list, [30]);
+    expect(caution.state).toBe(AdviceState.triggered);
+    expect(optimal.state).toBe(AdviceState.enabled);
+  });
+
+  it('never triggers without a reading', () => {
+    const [caution] = resolveAdvices(list, []);
+    expect(caution.state).toBe(AdviceState.hinted);
+  });
+
+  it('orders a reversed angular pair and tests across north', () => {
+    const [band] = resolveAdvices(
+      [{minAngle: 350, maxAngle: 10, type: 'caution', hinted: true}],
+      [0],
+      {angularWraparound: true}
+    );
+    expect(band).toMatchObject({min: 350, max: 10, state: 'triggered'});
+    const [swapped] = resolveAdvices(
+      [{minAngle: -40, maxAngle: -57, type: 'caution'}],
+      [],
+      {angularWraparound: true}
+    );
+    expect(swapped).toMatchObject({min: -57, max: -40});
+  });
+
+  it('applies the emphasis rules when asked', () => {
+    const rest = resolveAdvices(list, [50], {emphasis: true});
+    expect(rest.map((a) => a.state)).toEqual([
+      AdviceState.hinted,
+      AdviceState.active,
+    ]);
+    const noGoHit = resolveAdvices(list, [30], {emphasis: true});
+    expect(noGoHit.map((a) => a.state)).toEqual([
+      AdviceState.triggered,
+      AdviceState.hinted,
+    ]);
+    const goToHit = resolveAdvices(
+      [{min: 20, max: 40, category: 'caution'}, list[1]],
+      [70],
+      {emphasis: true}
+    );
+    expect(goToHit.map((a) => a.state)).toEqual([
+      AdviceState.hinted,
+      AdviceState.triggered,
+    ]);
   });
 });
