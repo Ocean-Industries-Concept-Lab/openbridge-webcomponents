@@ -21,6 +21,7 @@ function findComponentFiles(
       '**/*.spec.ts',
       '**/*.test.ts',
       '**/_test-utils.ts',
+      '**/stories/**',
     ],
   });
 
@@ -54,6 +55,15 @@ function generateBundleFile() {
 
 // Types
 export * from './src/types.js';
+
+// The alert standard the experimental alert components draw by, which a page
+// using the bundle sets through the bundle's own copy of the setting
+export * from './src/alert-system/alert-standard.js';
+export * from './src/alert-system/configured-alert-standard.js';
+export * from './src/alert-system/iec-62923-alert-standard.js';
+export * from './src/alert-system/isa-18-2-alert-standard.js';
+export * from './src/alert-system/read-standard-alert.js';
+export * from './src/alert-system/standard-alert.js';
 
 `;
   const folders = fs

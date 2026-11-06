@@ -70,7 +70,7 @@ list shows (§ The alert).
 - A standard's name is used to say what the states follow, never more:
   "supports the alert states of ANSI/ISA-18.2", not "compliant" or
   "certified". The library is not affiliated with or endorsed by a
-  standard's publisher, and the package README says so. The standard's own
+  standard's publisher, and the consumer documentation has to say so. The standard's own
   text is copyrighted: describe its states in your own words, and paste no
   definition, table or figure from it.
 
@@ -139,6 +139,9 @@ in `iec-62923-alert-glyphs.ts`, apart from the IEC 62923 standard.
   drawn or listed, the lists, the menu and the page say "No alert standard
   is set", and the console says once how to set one. Nothing throws, so an
   application may set the standard after the elements connect.
+- The bundle carries its own copy of the setting, so `bundle.ts` exports the
+  `alert-system/` modules (`script/generate-bundle-entry.ts`) and a page
+  using the bundle imports `setAlertStandard()` from it.
 - `AlertStandardController` re-renders a component when the standard
   changes, also one that was disconnected while it changed, and reports the
   change in `changedProperties` under `ALERT_STANDARD_CHANGE_KEY` so a list
@@ -184,3 +187,4 @@ in `iec-62923-alert-glyphs.ts`, apart from the IEC 62923 standard.
 - Designs the standards borrow: the emergency alarm's off frame, glyphs for ISA-18.2 high and medium and for its shelved, suppressed and out-of-service states (#1330).
 - A menu item and a table cell show at most two and one action; a state that offers more needs a design (#1330).
 - IEC 60601-1-8 asks 1.4 to 2.8 Hz for a high priority, faster than the library's fast tempo (#1330).
+- Where consumers read how to set the standard, and the not-affiliated statement (#1406).

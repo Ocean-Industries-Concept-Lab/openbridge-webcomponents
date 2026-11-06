@@ -97,11 +97,12 @@ export class ObcAlertMenuExperimental extends ObcAlertMenu {
     tab: AlertMenuTab,
     content: TemplateResult
   ): TemplateResult {
+    const tabIsAFilterOfTheStandard =
+      ownEntryOf(this.alertStandardController.standard?.filters, tab.name) !==
+      undefined;
     return html`<obc-alert-list-experimental
       class="alert-list"
-      .filterId=${
-        tab.name === NAME_OF_TAB_LISTING_EVERY_ALERT ? undefined : tab.name
-      }
+      .filterId=${tabIsAFilterOfTheStandard ? tab.name : undefined}
       >${content}</obc-alert-list-experimental
     >`;
   }

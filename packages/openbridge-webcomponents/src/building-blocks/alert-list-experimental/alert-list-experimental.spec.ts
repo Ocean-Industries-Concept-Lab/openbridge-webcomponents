@@ -84,6 +84,18 @@ describe('obc-alert-list-experimental', () => {
     expect(shownIds(el)).toEqual(['unacknowledged', 'low-acknowledged']);
   });
 
+  it('hides an item whose state left the filter while the list was detached', async () => {
+    const el = await renderList((l) => (l.filterId = 'active'));
+    el.remove();
+    const item =
+      el.querySelector<ObcAlertMenuItemExperimental>('#acknowledged')!;
+    item.state = 'shelved-active';
+    await item.updateComplete;
+    await new Promise((resolve) => setTimeout(resolve));
+    document.body.append(el);
+    expect(shownIds(el)).toEqual(['unacknowledged', 'low-acknowledged']);
+  });
+
   it('narrows the filter with the custom predicate', async () => {
     const el = await renderList((l) => {
       l.filterId = 'active';

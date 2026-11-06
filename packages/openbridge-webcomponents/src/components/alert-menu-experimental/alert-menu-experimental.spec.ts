@@ -141,4 +141,37 @@ describe('obc-alert-menu-experimental', () => {
     ].filter((item) => item.hidden);
     expect(hiddenItems).toEqual([]);
   });
+
+  it('filters by a declared filter named like the tab that lists every alert', async () => {
+    const el = await setup(
+      defineAlertStandard({
+        filters: {
+          all: {
+            label: () => 'All',
+            titleWhenNoAlertIsIncluded: () => 'No alerts',
+            iconWhenNoAlertIsIncluded: html``,
+          },
+        },
+        actions: {},
+        criticalities: {
+          high: {
+            states: {
+              unacknowledged: {
+                glyph: {frame: html``},
+                sortingRank: 10,
+                includedInFilters: ['all'],
+              },
+              acknowledged: {glyph: {frame: html``}, sortingRank: 20},
+            },
+          },
+        },
+      })
+    );
+    const shownIds = [
+      ...el.querySelectorAll('obc-alert-menu-item-experimental'),
+    ]
+      .filter((item) => !item.hidden)
+      .map((item) => item.id);
+    expect(shownIds).toEqual(['unacknowledged']);
+  });
 });

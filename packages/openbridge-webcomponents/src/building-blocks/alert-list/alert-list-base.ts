@@ -86,6 +86,10 @@ export class ObcAlertListBase extends LitElement {
     this.intersectionObserver = intersectionObserver;
 
     this.setupMutationObserver();
+    if (this.hasUpdated) {
+      // The items may have changed while no observer was watching them.
+      this.applyFilter();
+    }
   }
 
   override disconnectedCallback() {
