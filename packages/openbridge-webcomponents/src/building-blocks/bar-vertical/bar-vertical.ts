@@ -419,6 +419,7 @@ export class ObcBarVertical extends AdviceMixin(
       scaleType: this.scaleType,
       advicePosition: this.advicePosition,
       hasAdvice: !!this.advices && this.advices.length > 0,
+      hasAdviceIcon: !!this.advices?.some((a) => a.showIcon),
       hasSetpoint:
         this.setpoint !== undefined ||
         this.newSetpoint !== undefined ||

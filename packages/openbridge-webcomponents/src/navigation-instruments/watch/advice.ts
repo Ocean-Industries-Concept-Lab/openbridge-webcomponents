@@ -14,6 +14,8 @@ import {
   ADVICE_ALERT_CORNER_RADIUS,
   ADVICE_AREA_DASH,
   ADVICE_BAND_THICKNESS,
+  ADVICE_ICON_GAP,
+  ADVICE_ICON_SIZE,
   ADVICE_POINT_DOT_DIAMETER,
   ADVICE_POINT_TICK,
   AdviceCap,
@@ -29,6 +31,7 @@ import {
   type ResolvedAdvice,
 } from '../../svghelpers/advice.js';
 import {dotPattern, hairlinePattern} from '../../svghelpers/advice-patterns.js';
+import {renderAdviceIcon} from '../../svghelpers/advice-icons.js';
 
 export {AdviceState} from '../../svghelpers/advice.js';
 export type {AdviceInput, ResolvedAdvice} from '../../svghelpers/advice.js';
@@ -58,6 +61,8 @@ const CAP_RADIUS = ADVICE_BAND_THICKNESS / 2;
 const CORNER = ADVICE_ALERT_CORNER_RADIUS;
 /** The face the area wedge fills, 4 units inside the band. */
 const AREA_RADIUS = 320 / 2;
+/** The icon box sits off the outer ring (r 184) by the gap, like the wind and current icons. */
+const ICON_RADIUS = 368 / 2 + ADVICE_ICON_GAP + ADVICE_ICON_SIZE / 2;
 
 // The rounded cap's tip sits 4 units inside the limit and its centre 8, so
 // the arc ends are trimmed by 8 units at the band's mean radius.
@@ -284,6 +289,26 @@ export function renderAdvice(
   const band = renderBand(advice, style, radiusOffset, maskId);
   if (band === nothing) return nothing;
   return svg`${band} ${ticks}`;
+}
+
+/**
+ * The category's icon outside the ring at the advice's mid-angle, upright
+ * whatever the face's rotation, as the tick labels stay upright.
+ */
+export function renderRingAdviceIcon(
+  input: AdviceInput | ResolvedAdvice,
+  radiusOffset = 0,
+  rotation = 0
+): SVGTemplateResult {
+  const advice = asResolvedAdvice(input);
+  const angle = advice.point
+    ? advice.min
+    : advice.min + normalizeAngle(advice.max - advice.min) / 2;
+  const r = ICON_RADIUS + radiusOffset;
+  const rad = degToRad(angle);
+  return svg`<g transform="translate(${Math.sin(rad) * r} ${-Math.cos(rad) * r}) rotate(${-rotation})">${renderAdviceIcon(
+    {category: advice.category, state: advice.state, x: 0, y: 0}
+  )}</g>`;
 }
 
 /**

@@ -99,6 +99,8 @@ export interface AdviceInput {
   hideMaxTickmark?: boolean;
   /** Draws the area layer (tint, limit lines, pattern) over the face, bar or chart as well as the band. */
   showArea?: boolean;
+  /** Draws the category's icon beside the band, on the label side, centred on the range. */
+  showIcon?: boolean;
 }
 
 /** An advice after {@link normalizeAdvice} and {@link resolveAdvices}: what a renderer draws. */
@@ -112,6 +114,7 @@ export interface ResolvedAdvice {
   hideMinTickmark: boolean;
   hideMaxTickmark: boolean;
   showArea: boolean;
+  showIcon: boolean;
   /** The start meets another band: the cap is a flat cut. */
   flatStart: boolean;
   /** The end meets another band: the cap is a flat cut. */
@@ -189,6 +192,7 @@ export function normalizeAdvice(input: AdviceInput): ResolvedAdvice {
     hideMinTickmark: input.hideMinTickmark ?? false,
     hideMaxTickmark: input.hideMaxTickmark ?? false,
     showArea: input.showArea ?? false,
+    showIcon: input.showIcon ?? false,
     flatStart: false,
     flatEnd: false,
   };
@@ -349,6 +353,12 @@ export const ADVICE_HAIRLINE_WIDTH = 0.5;
 export const ADVICE_DOT = {size: 2, pitch: 8, rowOffset: 4};
 /** Dash arrays of the area limit lines, in canvas units. */
 export const ADVICE_AREA_DASH = {dotted: '1 1', dashed: '4 4'} as const;
+/** The icon beside a band on the proportional canvas, the icon set's own 24-unit box. */
+export const ADVICE_ICON_SIZE = 24;
+/** The icon beside a band on a responsive linear scale, one label line-height. */
+export const ADVICE_ICON_SIZE_LINEAR = 16;
+/** Gap between the ring, or the label column's inner edge, and the icon box. */
+export const ADVICE_ICON_GAP = 4;
 
 // ---- Style ----
 
@@ -364,6 +374,8 @@ export interface AdviceStyle {
   /** The area tint while triggered; `none` otherwise. */
   areaFill: string;
   areaPattern: 'none' | 'dots' | 'hairline';
+  /** The outline icon's colour: a triggered go-to band's stroke, the secondary tick colour otherwise. */
+  iconColor: string;
 }
 
 const v = (token: string) => `var(--${token})`;
@@ -494,6 +506,7 @@ export function adviceStyle(
       areaOutline: 'dotted',
       areaFill: triggered ? p.areaFill : 'none',
       areaPattern: 'none',
+      iconColor: triggered ? p.triggeredStroke : SECONDARY,
     };
   }
   const p = NO_GO[category as keyof typeof NO_GO];
@@ -512,6 +525,7 @@ export function adviceStyle(
     areaOutline: p.areaOutline,
     areaFill: triggered ? p.areaFill : 'none',
     areaPattern: p.areaPattern,
+    iconColor: SECONDARY,
   };
 }
 

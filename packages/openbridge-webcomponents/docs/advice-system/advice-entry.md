@@ -6,3 +6,4 @@
 | `state`                              | `AdviceState`    | `hinted`, `enabled`, `active` or `triggered`; `enabled` when left out                 |
 | `hideMinTickmark`, `hideMaxTickmark` | `boolean`        | Leaves out the boundary tick at that end and rounds the end                           |
 | `showArea`                           | `boolean`        | Also draws the area: limit lines across the bar, face or chart, tinted when triggered |
+| `showIcon`                           | `boolean`        | Draws the category's icon beside the band, in the label column, centred on the range  |

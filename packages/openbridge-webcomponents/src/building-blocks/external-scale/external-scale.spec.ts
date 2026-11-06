@@ -9,7 +9,9 @@ import {
   FillMode,
   AdvicePosition,
   EXTERNAL_SCALE_MAX_TICKS,
+  computeExternalScaleLayout,
   type ExternalScaleConfig,
+  type ExternalScaleLayoutConfig,
 } from './external-scale.js';
 import {
   FrameStyle,
@@ -204,6 +206,68 @@ describe('reverse (#1211)', () => {
     );
     expect(parts.barFill).not.toBe(nothing);
     expect(parts.currentValueDot).not.toBe(nothing);
+  });
+});
+
+describe('advice icons', () => {
+  const layout = (overrides: Partial<ExternalScaleLayoutConfig>) =>
+    computeExternalScaleLayout({
+      orientation: ExternalScaleOrientation.vertical,
+      side: ExternalScaleSide.right,
+      length: 200,
+      hasBar: true,
+      hasScale: false,
+      labels: false,
+      barThickness: 24,
+      tickThickness: 24,
+      labelThickness: 60,
+      scaleType: ScaleType.regular,
+      hasAdvice: true,
+      ...overrides,
+    });
+
+  it('reserves the icon box past the pills without a scale, and past the ticks with one', () => {
+    expect(layout({}).viewBoxThickness).toBe(24 + 16);
+    expect(layout({hasAdviceIcon: true}).viewBoxThickness).toBe(24 + 16 + 16);
+    expect(layout({hasAdviceIcon: true, hasScale: true}).viewBoxThickness).toBe(
+      24 + 24 + 8 + 16
+    );
+  });
+
+  it('adds the icon box past the label band when labels are drawn', () => {
+    expect(layout({labels: true}).viewBoxThickness).toBe(24 + 60);
+    expect(layout({labels: true, hasAdviceIcon: true}).viewBoxThickness).toBe(
+      24 + 60 + 16
+    );
+  });
+
+  it('puts the icon after the labels on a labelled scale, and in their place otherwise', () => {
+    const host = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    const icon = (overrides: Partial<ExternalScaleConfig>) => {
+      render(
+        svg`${
+          renderExternalScale({
+            ...bottomScale({
+              advices: [{min: 20, max: 40, category: 'eco', showIcon: true}],
+              hasBar: true,
+              barThickness: 24,
+              hasScale: false,
+              ...overrides,
+            }),
+          }).adviceOverlays
+        }`,
+        host
+      );
+      return host.querySelector('g.advice-icon')!.getAttribute('transform')!;
+    };
+    // Bottom side, outward is +y: the bar ends at 24; the inner pills take
+    // the next 16, the label band 60.
+    const withoutLabels = icon({labels: false});
+    const withLabels = icon({labels: true, labelThickness: 60});
+    const y = (t: string) =>
+      Number(t.match(/translate\([-\d.]+ ([-\d.]+)\)/)![1]);
+    expect(y(withoutLabels)).toBe(24 + 16);
+    expect(y(withLabels)).toBe(24 + 60);
   });
 });
 

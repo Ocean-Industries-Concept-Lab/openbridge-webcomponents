@@ -11,7 +11,7 @@ import {
   tickmarkColor,
   TickmarkStyle,
 } from '../../navigation-instruments/watch/tickmark.js';
-import {valueToY} from './instrument-linear.js';
+import {LINEAR_LABEL_GAP, valueToY} from './instrument-linear.js';
 import {
   AdviceTrigger,
   adviceStyle,
@@ -19,12 +19,14 @@ import {
   asResolvedAdvice,
   nextAdviceMaskId,
   resolveAdvices,
+  ADVICE_ICON_SIZE_LINEAR,
   type AdviceInput,
   type ResolvedAdvice,
 } from '../../svghelpers/advice.js';
 import {
   renderLinearAdviceArea,
   renderLinearAdviceBand,
+  renderLinearAdviceIcon,
   renderLinearAdvicePoint,
 } from '../../svghelpers/advice-linear.js';
 
@@ -81,6 +83,11 @@ export function singleSidedTickmark({
   return svg`<line x1=${x1 - 2} x2=${x1 + scaleWidth} y1=${y}  y2=${y} stroke=${color} stroke-width="1" vector-effect="non-scaling-stroke"/>`;
 }
 
+/**
+ * One advice on the linear gauge. `iconColumn` is where the icon box starts
+ * past the +x edge: after the label column when the scale is labelled, in
+ * the labels' place otherwise.
+ */
 export function renderAdvice(
   height: number,
   minValue: number,
@@ -88,7 +95,8 @@ export function renderAdvice(
   barWidth: number,
   scaleWidth: number,
   input: AdviceInput | ResolvedAdvice,
-  maskId: string = nextAdviceMaskId('linear')
+  maskId: string = nextAdviceMaskId('linear'),
+  iconColumn: number = LINEAR_LABEL_GAP
 ): SVGTemplateResult {
   const advice = asResolvedAdvice(input);
   const style = adviceStyle(advice.category, advice.state);
@@ -148,10 +156,20 @@ export function renderAdvice(
       style: tickmarkStyle,
       x1,
     });
+  const icon = advice.showIcon
+    ? renderLinearAdviceIcon({
+        vertical: true,
+        mainStart: yMin,
+        mainEnd: yMax,
+        perpCenter: barWidth / 2 + iconColumn + ADVICE_ICON_SIZE_LINEAR / 2,
+        advice,
+      })
+    : nothing;
   return svg`
     ${bounds}
     ${marker}
     ${advice.hideMinTickmark ? nothing : tick(advice.min)}
     ${advice.point || advice.hideMaxTickmark ? nothing : tick(advice.max)}
+    ${icon}
   `;
 }

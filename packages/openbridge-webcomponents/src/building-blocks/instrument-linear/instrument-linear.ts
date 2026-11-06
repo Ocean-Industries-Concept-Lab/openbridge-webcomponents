@@ -221,7 +221,8 @@ export function watchfaceLinear(
       width,
       scaleWidth,
       a,
-      `${advicePrefix}-${i}`
+      `${advicePrefix}-${i}`,
+      tickmarks.labels ? LINEAR_LABEL_SPACING : LINEAR_LABEL_GAP
     )
   );
   const barSvg = bar
@@ -246,6 +247,8 @@ export function watchfaceLinear(
 
 /** Gap between a linear gauge's +x edge and the start of its labels. */
 export const LINEAR_LABEL_GAP = 4;
+/** The design's label column outside the +x edge, which a labelled consumer reserves. */
+export const LINEAR_LABEL_SPACING = 20;
 
 /**
  * Label text for a scale value. A ladder is built by repeated addition, so a

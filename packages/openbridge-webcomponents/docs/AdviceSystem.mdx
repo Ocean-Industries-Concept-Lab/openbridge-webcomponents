@@ -79,6 +79,12 @@ The three gauges below share one list, with emphasis on, and read 40, 75 and 95:
 
 A tick mark at a band's end cuts a no-go band flush and insets a go-to pill. `hideMinTickmark` and `hideMaxTickmark` leave that end rounded instead.
 
+## Icons
+
+`showIcon: true` on an entry draws the category's icon beside the band, centred on the range: on a bar in the label column, or past the labels when the scale draws a tick ladder, on a ring outside the frame at the band's mid-angle. A scale that shows icons reserves the column, so a chart or a tank around it insets by it. At rest it is the outline icon in the tick-label grey; triggered, a go-to category keeps the outline in the band's colour and an alert category switches to its IEC icon. The field is per entry, so an application can mark every advice or only the ones it wants explained; the design sets show it on all or none.
+
+<Canvas of={AdviceStories.AdviceIcons} sourceState="none" />
+
 ## Try it
 
 Change the category, the state and the readings to see how one band responds on a bar and on a radial gauge.

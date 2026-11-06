@@ -137,10 +137,12 @@ import {
   resolveAdvices,
   type AdviceInput,
   type ResolvedAdvice,
+  ADVICE_ICON_SIZE_LINEAR,
 } from '../../svghelpers/advice.js';
 import {
   renderLinearAdviceArea,
   renderLinearAdviceBand,
+  renderLinearAdviceIcon,
   renderLinearAdvicePoint,
 } from '../../svghelpers/advice-linear.js';
 import {
@@ -694,6 +696,8 @@ export type ExternalScaleLayoutConfig = Pick<
    * inset correctly to keep the pill visible inside the cell.
    */
   hasAdvice?: boolean;
+  /** An advice shows its icon, which sits past the ticks in the label column. */
+  hasAdviceIcon?: boolean;
   /**
    * Whether a setpoint marker (original, new, or departing) is present.
    *
@@ -730,6 +734,7 @@ export function toExternalScaleLayoutConfig(
     scaleType: config.scaleType,
     advicePosition: config.advicePosition,
     hasAdvice: !!config.advices && config.advices.length > 0,
+    hasAdviceIcon: !!config.advices?.some((a) => a.showIcon),
     hasSetpoint:
       config.setpoint !== undefined ||
       config.newSetpoint !== undefined ||
@@ -855,25 +860,7 @@ export function computeExternalScaleLayout(
   config: ExternalScaleLayoutConfig
 ): ExternalScaleLayout {
   const barSpace = config.hasBar ? config.barThickness : 0;
-  // Use effective tick thickness based on scaleType
-  const effectiveTickThickness =
-    computeExternalScaleEffectiveTickThickness(config);
-  const scaleSpace = config.hasScale ? effectiveTickThickness : 0;
-  const labelSpace = config.labels ? config.labelThickness : 0;
-
-  // Advice pills render outside the bar band. When the scale/label bands
-  // collapse (e.g. hasLabelPadding=false on the parent chart, or hasScale=false),
-  // reserve a minimum perpendicular band so the pill is not clipped. The pill
-  // is 8px wide with a 4px offset from its anchor edge, plus a small visual
-  // buffer so the pill doesn't touch the viewBox edge.
-  const adviceSpace = computeAdviceBandThickness(config);
-  const setpointSpace = computeSetpointBandThickness(config);
-  const outsideBarSpace = Math.max(
-    scaleSpace + labelSpace,
-    adviceSpace,
-    setpointSpace
-  );
-  const thickness = barSpace + outsideBarSpace;
+  const thickness = barSpace + computeOutsideBarThickness(config);
 
   const isOutwardPositive =
     (config.orientation === 'vertical' && config.side === 'right') ||
@@ -919,6 +906,72 @@ function computeAdviceBandThickness(
   if (position === AdvicePosition.center) return 0;
   if (position === AdvicePosition.outer) return 24;
   return 16;
+}
+
+/**
+ * The perpendicular band outside the bar: the tick and label bands, or the
+ * room an advice pill, a setpoint marker or an advice icon needs when those
+ * are off. The icon column follows the labels, so with labels it adds its
+ * box past the label band and without them it takes the labels' place.
+ */
+export function computeOutsideBarThickness(
+  config: Pick<
+    ExternalScaleLayoutConfig,
+    | 'hasBar'
+    | 'hasScale'
+    | 'labels'
+    | 'labelThickness'
+    | 'tickThickness'
+    | 'scaleType'
+    | 'hasAdvice'
+    | 'hasAdviceIcon'
+    | 'advicePosition'
+    | 'hasSetpoint'
+  >
+): number {
+  const scaleSpace = config.hasScale
+    ? computeExternalScaleEffectiveTickThickness(config)
+    : 0;
+  const labelSpace = config.labels ? config.labelThickness : 0;
+  const iconSpace = config.hasAdviceIcon
+    ? adviceIconStart(config) + ADVICE_ICON_SIZE_LINEAR
+    : 0;
+  return Math.max(
+    scaleSpace + labelSpace,
+    computeAdviceBandThickness(config),
+    computeSetpointBandThickness(config),
+    iconSpace
+  );
+}
+
+/**
+ * Where the icon column starts, outward from the tick base: past the label
+ * band when labels are drawn, since a tick ladder's labels would sit under
+ * an icon in the label column; in the labels' place past the ticks
+ * otherwise; and past the advice band when there are no ticks either, where
+ * the labels' place is the pills' own.
+ */
+function adviceIconStart(
+  config: Pick<
+    ExternalScaleLayoutConfig,
+    | 'hasBar'
+    | 'hasScale'
+    | 'labels'
+    | 'labelThickness'
+    | 'tickThickness'
+    | 'scaleType'
+    | 'advicePosition'
+  >
+): number {
+  const scaleSpace = config.hasScale
+    ? computeExternalScaleEffectiveTickThickness(config)
+    : 0;
+  if (config.labels) return scaleSpace + config.labelThickness;
+  if (scaleSpace > 0) return scaleSpace + labelGap();
+  return Math.max(
+    labelGap(),
+    computeAdviceBandThickness({...config, hasAdvice: true})
+  );
 }
 
 /**
@@ -1383,6 +1436,26 @@ function generateTickmarks(config: ExternalScaleConfig): SVGTemplateResult[] {
   return svgs;
 }
 
+/** The perpendicular coordinate the labels start from: past the ticks, or the bar edge without a scale, by the label gap. */
+function labelBasePerp(config: ExternalScaleConfig): number {
+  const base = tickBasePerp(config);
+  // Use effective tick thickness to position labels closer to ticks in condensed mode
+  const effectiveTickThickness =
+    computeExternalScaleEffectiveTickThickness(config);
+  return isOutwardPositive(config)
+    ? base + (config.hasScale ? effectiveTickThickness : 0) + labelGap()
+    : base - (config.hasScale ? effectiveTickThickness : 0) - labelGap();
+}
+
+/** The perpendicular centre of an advice icon's box, see `adviceIconStart()`. */
+function adviceIconPerpCenter(config: ExternalScaleConfig): number {
+  const outward = isOutwardPositive(config) ? 1 : -1;
+  return (
+    tickBasePerp(config) +
+    outward * (adviceIconStart(config) + ADVICE_ICON_SIZE_LINEAR / 2)
+  );
+}
+
 function generateLabels(config: ExternalScaleConfig): SVGTemplateResult[] {
   if (!config.labels) return [];
 
@@ -1391,13 +1464,7 @@ function generateLabels(config: ExternalScaleConfig): SVGTemplateResult[] {
   const fontSize =
     'calc(var(--global-typography-ui-label-font-size) / var(--scale, 1))';
 
-  const base = tickBasePerp(config);
-  // Use effective tick thickness to position labels closer to ticks in condensed mode
-  const effectiveTickThickness =
-    computeExternalScaleEffectiveTickThickness(config);
-  const labelPos = isOutwardPositive(config)
-    ? base + (config.hasScale ? effectiveTickThickness : 0) + labelGap()
-    : base - (config.hasScale ? effectiveTickThickness : 0) - labelGap();
+  const labelPos = labelBasePerp(config);
 
   const labels: SVGTemplateResult[] = [];
 
@@ -2738,11 +2805,22 @@ function renderAdvice(
         maskId,
       });
 
+  const icon = advice.showIcon
+    ? renderLinearAdviceIcon({
+        vertical,
+        mainStart,
+        mainEnd,
+        perpCenter: adviceIconPerpCenter(config),
+        advice,
+      })
+    : nothing;
+
   return svg`
     ${bounds}
     ${marker}
     ${advice.hideMinTickmark ? nothing : (singleSidedTickmark(config, advice.min, tickmarkStyle, tickBase) ?? nothing)}
     ${advice.point || advice.hideMaxTickmark ? nothing : (singleSidedTickmark(config, advice.max, tickmarkStyle, tickBase) ?? nothing)}
+    ${icon}
   `;
 }
 

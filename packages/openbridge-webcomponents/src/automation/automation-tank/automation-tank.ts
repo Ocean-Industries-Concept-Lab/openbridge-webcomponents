@@ -44,7 +44,8 @@ import {
   AdvicePosition,
   ExternalScaleSide,
   FillMode,
-  computeSetpointBandThickness,
+  ScaleType,
+  computeOutsideBarThickness,
 } from '../../building-blocks/external-scale/external-scale.js';
 import {classMap} from 'lit/directives/class-map.js';
 import {customElement} from '../../decorator.js';
@@ -831,17 +832,26 @@ export class ObcAutomationTank extends AdviceMixin(SetpointMixin(LitElement)) {
       // in viewBox units (automation-components.md § Tank rendering).
       const SCALE_REFERENCE_SIZE = 384;
       // The bar's viewBox cross-axis includes an outside-bar band for advice
-      // pills and/or the setpoint marker (see computeExternalScaleLayout).
+      // pills, icons and/or the setpoint marker (see computeExternalScaleLayout).
       // Subtract the same band the bar will reserve so total viewBox width
       // still equals viewBoxCross and the meet-scale fills the cell exactly.
       const hasSetpointMarker =
         this.setpoint !== undefined ||
         this.newSetpoint !== undefined ||
         this.departingNewSetpoint !== undefined;
-      const outsideBarReserveVb = Math.max(
-        this.hasAdvice ? 16 : 0,
-        computeSetpointBandThickness({hasSetpoint: hasSetpointMarker})
-      );
+      const outsideBarReserveVb = computeOutsideBarThickness({
+        hasBar: true,
+        hasScale: false,
+        labels: false,
+        labelThickness: 0,
+        tickThickness: 0,
+        scaleType: ScaleType.regular,
+        hasAdvice: this.hasAdvice,
+        hasAdviceIcon:
+          this.hasAdvice && !!this.advices?.some((a) => a.showIcon),
+        advicePosition: AdvicePosition.inner,
+        hasSetpoint: hasSetpointMarker,
+      });
       const safeCellHeight = Math.max(1, this._cellHeight);
       const viewBoxCross =
         (this._cellWidth * SCALE_REFERENCE_SIZE) / safeCellHeight;

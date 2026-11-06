@@ -32,6 +32,7 @@ interface AdvicePlaygroundArgs {
   min: number;
   max: number;
   showArea: boolean;
+  showIcon: boolean;
   value: number;
   setpoint?: number;
   adviceTrigger: AdviceTrigger;
@@ -98,6 +99,11 @@ Source: \`packages/openbridge-webcomponents/src/svghelpers/advice.ts\``,
       description:
         'Also draws the limit lines across the bar and the face, tinted while triggered',
     },
+    showIcon: {
+      control: 'boolean',
+      description:
+        "Draws the category's icon beside the band, in the label column; an alert category switches to its IEC icon while triggered",
+    },
     value: {
       control: {type: 'range', min: 0, max: 100, step: 1},
       description: "The instruments' value",
@@ -124,6 +130,7 @@ Source: \`packages/openbridge-webcomponents/src/svghelpers/advice.ts\``,
     min: 40,
     max: 70,
     showArea: false,
+    showIcon: false,
     value: 20,
     setpoint: undefined,
     adviceTrigger: AdviceTrigger.both,
@@ -137,6 +144,7 @@ Source: \`packages/openbridge-webcomponents/src/svghelpers/advice.ts\``,
         category: args.category,
         state: args.state,
         showArea: args.showArea,
+        showIcon: args.showIcon,
       },
     ];
     return html`
@@ -431,4 +439,43 @@ export const AdviceRangeAndPoint: Story = {
       ]}
     ></obc-bar-horizontal>
   `,
+};
+
+/**
+ * Every category with its icon, at rest and triggered, on the bar and on the
+ * radial gauge. The icon sits in the label column, centred on the band; a
+ * triggered alert category switches to its IEC icon with that icon's own
+ * colours, a go-to category keeps its outline in the band's colour.
+ */
+export const AdviceIcons: Story = {
+  name: 'Icons',
+  render: () =>
+    grid(
+      CATEGORIES,
+      [
+        {
+          label: 'enabled',
+          cells: CATEGORIES.map((category) =>
+            linearAdvice([{min: 40, max: 70, category, showIcon: true}])
+          ),
+        },
+        {
+          label: 'triggered',
+          cells: CATEGORIES.map((category) =>
+            linearAdvice([{min: 40, max: 70, category, showIcon: true}], {
+              value: 55,
+            })
+          ),
+        },
+        {
+          label: 'radial, triggered',
+          cells: CATEGORIES.map((category) =>
+            radialAdvice([{min: 20, max: 60, category, showIcon: true}], {
+              value: 40,
+            })
+          ),
+        },
+      ],
+      40
+    ),
 };

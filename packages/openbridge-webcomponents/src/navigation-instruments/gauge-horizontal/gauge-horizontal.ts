@@ -394,6 +394,7 @@ export class ObcGaugeHorizontal extends AdviceMixin(
       labelThickness: this.labelThickness,
       length: this.width,
       scaleType: this.scaleType,
+      hasAdviceIcon: !!this.advices?.some((a) => a.showIcon),
       hasSetpoint:
         this.setpoint !== undefined ||
         this.newSetpoint !== undefined ||

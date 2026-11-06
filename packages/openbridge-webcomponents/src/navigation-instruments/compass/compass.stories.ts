@@ -407,3 +407,18 @@ export const SizingPlayground: StoryObj<SizingPlaygroundArgs> = {
     `;
   },
 };
+
+/** Icons outside the ring at each band's mid-angle, upright under the heading-up rotation. */
+export const AdviceIcons: Story = {
+  args: {
+    heading: 40,
+    courseOverGround: 60,
+    direction: CompassDirection.HeadingUp,
+    advices: [
+      {min: 20, max: 60, category: 'optimal', showIcon: true},
+      {min: 100, max: 130, category: 'caution', showIcon: true},
+      {min: 200, max: 240, category: 'alarm', showIcon: true},
+      {value: 300, category: 'eco', showIcon: true},
+    ],
+  },
+};

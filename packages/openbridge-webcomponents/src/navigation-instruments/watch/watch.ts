@@ -24,7 +24,12 @@ import {
 import {InstrumentState, Priority} from '../types.js';
 import compentStyle from './watch.css?inline';
 import {ResizeController} from '@lit-labs/observers/resize-controller.js';
-import {adviceMask, renderAdvice, renderAdviceArea} from './advice.js';
+import {
+  adviceMask,
+  renderAdvice,
+  renderAdviceArea,
+  renderRingAdviceIcon,
+} from './advice.js';
 import {
   asResolvedAdvice,
   nextAdviceMaskId,
@@ -1113,6 +1118,9 @@ export class ObcWatch extends LitElement {
       .map((a, i) =>
         renderAdviceArea(a, rOff, `${this._adviceIdPrefix}-area-${i}`)
       );
+    const adviceIcons = resolvedAdvices
+      .filter((a) => a.showIcon)
+      .map((a) => renderRingAdviceIcon(a, rOff, this.rotation ?? 0));
 
     // NSWE labels are px-fixed outside decor, so they degrade with
     // `labelsHidden` like the tick label texts. The north arrow is exempt:
@@ -1223,7 +1231,7 @@ export class ObcWatch extends LitElement {
             ? svg`<g mask="url(#tickFadeMask)">${labels}</g>`
             : labels
         }
-        ${this.renderVesselImage()} ${this.renderNeedles()}
+        ${adviceIcons} ${this.renderVesselImage()} ${this.renderNeedles()}
       </svg>
     `;
   }

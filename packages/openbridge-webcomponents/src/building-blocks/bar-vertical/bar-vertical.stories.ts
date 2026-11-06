@@ -1328,3 +1328,22 @@ export const Reversed: Story = {
     advices: [{min: 65, max: 75, type: AdviceType.caution, hinted: false}],
   },
 };
+
+/** Each band carries its category's icon in the label column, centred on the range. */
+export const WithAdviceIcons: Story = {
+  args: {
+    minValue: 0,
+    maxValue: 100,
+    height: 370,
+    hasBar: true,
+    value: 55,
+    primaryTickmarkInterval: 25,
+    secondaryTickmarkInterval: 5,
+    advices: [
+      {min: 85, max: 100, category: 'alarm', showIcon: true},
+      {min: 70, max: 85, category: 'caution', showIcon: true},
+      {min: 40, max: 70, category: 'optimal', showIcon: true},
+      {value: 20, category: 'eco', showIcon: true},
+    ],
+  },
+};

@@ -3,6 +3,8 @@ import {customElement} from '../../decorator.js';
 import {
   formatLinearLabel,
   watchfaceLinear,
+  LINEAR_LABEL_GAP,
+  LINEAR_LABEL_SPACING,
 } from '../../building-blocks/instrument-linear/instrument-linear.js';
 import {property, state} from 'lit/decorators.js';
 import type {PropertyValues} from 'lit';
@@ -17,6 +19,7 @@ import {AdviceMixin, syncAdviceAlias} from '../../svghelpers/advice-mixin.js';
 import {
   negateAdvice,
   type AdviceInput,
+  ADVICE_ICON_SIZE_LINEAR,
   type ResolvedAdvice,
 } from '../../svghelpers/advice.js';
 import {Priority} from '../types.js';
@@ -31,7 +34,6 @@ const FRAME = 336;
 const HALF_FRAME = FRAME / 2;
 const BOX = 384;
 /** The design's label spacing: with labels the box grows by this on every side. */
-const LABEL_SPACING = 20;
 const FRAME_RADIUS = 8;
 /** The gauge pill: bar lane plus tick lane, at the frame's right edge. */
 const GAUGE_WIDTH = 72;
@@ -149,7 +151,12 @@ export class ObcDepthActual extends AdviceMixin(LitElement) {
     const toY = (depth: number) => waterTop + depth * unitsPerDepth;
     const dividerX = HALF_FRAME - GAUGE_WIDTH;
     const scaleX = HALF_FRAME - SCALE_WIDTH;
-    const box = BOX + (this.showLabels ? 2 * LABEL_SPACING : 0);
+    // The icon column follows the labels, so the box grows for it too.
+    const iconRoom = this.advices?.some((a) => a.showIcon)
+      ? ADVICE_ICON_SIZE_LINEAR + (this.showLabels ? 0 : LINEAR_LABEL_GAP)
+      : 0;
+    const box =
+      BOX + 2 * ((this.showLabels ? LINEAR_LABEL_SPACING : 0) + iconRoom);
     const primary =
       this.primaryTickmarkInterval ?? range.primaryTickmarkInterval;
     const secondary =

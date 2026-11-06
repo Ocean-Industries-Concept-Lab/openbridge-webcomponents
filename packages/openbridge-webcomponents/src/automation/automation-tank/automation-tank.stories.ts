@@ -443,6 +443,39 @@ export const BarWithAdvice: Story = {
  * The 6.1 categories on a tank: an alarm band with its area on the chart,
  * a caution band above it, and the optimal range the level sits in.
  */
+/** The bar reserves the icon column beside its advice pills, so nothing overlaps the bar fill. */
+export const BarWithAdviceIcons: Story = {
+  args: {
+    type: TankType.atmospheric,
+    chartMode: TankChartMode.bar,
+    hasAdvice: true,
+    advice: [
+      {min: 2_500, max: 4_500, category: 'caution', showIcon: true},
+      {min: 7_500, max: 9_000, category: 'optimal', showIcon: true},
+    ],
+  },
+};
+
+/** The gauge trend inside the tank insets its chart by the bar's reported width, icon column included. */
+export const GraphAndBarWithAdviceIcons: Story = {
+  args: {
+    type: TankType.atmospheric,
+    chartMode: TankChartMode.graphAndBar,
+    hasAdvice: true,
+    advice: [
+      {min: 0, max: 1_500, category: 'alarm', showArea: true, showIcon: true},
+      {min: 1_500, max: 3_000, category: 'caution', showIcon: true},
+      {
+        min: 7_000,
+        max: 9_500,
+        category: 'optimal',
+        state: 'active',
+        showIcon: true,
+      },
+    ],
+  },
+};
+
 export const AdviceUseCase: Story = {
   name: 'Advice Use Case (categories and area)',
   args: {

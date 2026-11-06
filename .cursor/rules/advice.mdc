@@ -49,6 +49,7 @@ svghelpers/advice.ts                     the design layer
   advice-linear.ts         band, point and area on a linear scale (external-scale, instrument-linear, thruster)
   watch/advice.ts          band, point and wedge on the ring (obc-watch)
   advice-patterns.ts       the SVG pattern tiles both share
+  advice-icons.ts          the category glyphs, copied from the icon set, for the icon beside a band
   charthelpers/advice-area-plugin.ts   the area on a Chart.js canvas
 ```
 
@@ -60,7 +61,7 @@ resolved, as it takes the resolved setpoint, and draws the state it is given.
 
 One shape on every instrument (`AdviceInput`): a range is `{min, max}`, a
 point is `{value}`, both carry `category` and an optional `state`,
-`hideMinTickmark`, `hideMaxTickmark` and `showArea`. `normalizeAdvice()`
+`hideMinTickmark`, `hideMaxTickmark`, `showArea` and `showIcon`. `normalizeAdvice()`
 reads the names earlier releases used and maps them: `type` → `category`
 (`advice` → `optimal`, `safe` → `running`), `hinted: true` → `state:
 'hinted'`, `minAngle` / `maxAngle`, `minSpeed` / `maxSpeed`, `minValue` /
@@ -143,17 +144,19 @@ Canvas units, the 8-unit band on every path; the responsive sets' 4-unit
 band is read for its styles, not as a second sizing tier (the instruments keep
 `faceDiameter`, `zoomToFitArc`, `fixedAspectRatio` and the size classes).
 
-| Constant                     | Value                      | Where                                                                                                                             |
-| ---------------------------- | -------------------------- | --------------------------------------------------------------------------------------------------------------------------------- |
-| `ADVICE_BAND_THICKNESS`      | 8                          | radial r 164–172 (Figma 168–176 under the −4 rule); linear 4 off the tick base                                                    |
-| `ADVICE_CAP_INSET`           | 4                          | go-to pill tip inside the limit; cap centre 8 inside                                                                              |
-| `ADVICE_ALERT_CORNER_RADIUS` | 2                          | free end of a no-go band                                                                                                          |
-| `ADVICE_POINT_DOT_DIAMETER`  | 9                          | go-to point, a dot on the band centreline                                                                                         |
-| `ADVICE_POINT_TICK`          | 9 × 5, rx 2.5              | no-go point, a thick tick                                                                                                         |
-| `ADVICE_STRIPE`              | 3 wide, 5.66 pitch, 45°    | linear caution; radial caution is `radialStripes()`: the pre-baked tile every 4° at the design radius, generated lines under zoom |
-| `ADVICE_HAIRLINE_WIDTH`      | 0.5                        | exclusion hatch; radial: 1-unit lines every 9°                                                                                    |
-| `ADVICE_DOT`                 | 2 on 8, rows offset 4      | alarm area lattice                                                                                                                |
-| `ADVICE_AREA_DASH`           | dotted `1 1`, dashed `4 4` | area limit lines; warning, alarm, exclusion are solid                                                                             |
+| Constant                     | Value                      | Where                                                                                                                                                                                                                                                                             |
+| ---------------------------- | -------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `ADVICE_BAND_THICKNESS`      | 8                          | radial r 164–172 (Figma 168–176 under the −4 rule); linear 4 off the tick base                                                                                                                                                                                                    |
+| `ADVICE_CAP_INSET`           | 4                          | go-to pill tip inside the limit; cap centre 8 inside                                                                                                                                                                                                                              |
+| `ADVICE_ALERT_CORNER_RADIUS` | 2                          | free end of a no-go band                                                                                                                                                                                                                                                          |
+| `ADVICE_POINT_DOT_DIAMETER`  | 9                          | go-to point, a dot on the band centreline                                                                                                                                                                                                                                         |
+| `ADVICE_POINT_TICK`          | 9 × 5, rx 2.5              | no-go point, a thick tick                                                                                                                                                                                                                                                         |
+| `ADVICE_STRIPE`              | 3 wide, 5.66 pitch, 45°    | linear caution; radial caution is `radialStripes()`: the pre-baked tile every 4° at the design radius, generated lines under zoom                                                                                                                                                 |
+| `ADVICE_HAIRLINE_WIDTH`      | 0.5                        | exclusion hatch; radial: 1-unit lines every 9°                                                                                                                                                                                                                                    |
+| `ADVICE_DOT`                 | 2 on 8, rows offset 4      | alarm area lattice                                                                                                                                                                                                                                                                |
+| `ADVICE_AREA_DASH`           | dotted `1 1`, dashed `4 4` | area limit lines; warning, alarm, exclusion are solid                                                                                                                                                                                                                             |
+| `ADVICE_ICON_SIZE`           | 24                         | the icon beside a band on the ring, its box 4 (`ADVICE_ICON_GAP`) off the outer ring at the band's mid-angle, upright                                                                                                                                                             |
+| `ADVICE_ICON_SIZE_LINEAR`    | 16                         | the icon on a linear scale, centred on the range: in the labels' place, or past the label band when labels are drawn, since a tick ladder's labels would sit under it; `computeOutsideBarThickness()` reserves the column, and the tank's bar and `depth-actual`'s box grow by it |
 
 End caps (`adviceCaps()`): a go-to band is a pill, a no-go band is square
 with the 2-unit corner, a chained end is cut flat. The free ends follow the
@@ -167,6 +170,14 @@ the dashed guides when `showArea` and `hasBar`); radial, a wedge r ≤ 160;
 chart, the plot width between the two y pixels. The tint is the category's
 `areaFill` while triggered only; the limit lines carry the dash at every
 state, over a 1-unit frame-coloured line.
+
+The icon (`showIcon`) is the category's glyph from the icon set, drawn as
+paths by `advice-icons.ts` because a custom element cannot sit inside the
+renderers' SVG: outline in the tick-label secondary grey at rest, the
+band's colour for a triggered go-to category, and the IEC icon with its own
+tokens for a triggered alert category. `advice-icons.spec.ts` holds every
+copy to its `obi-*` module. The thruster and the chart plugin draw no icon:
+the sets show none there.
 
 Mask and pattern ids are document-scoped. Every element names its own with
 `nextAdviceMaskId(prefix)` (`_adviceIdPrefix` on the watch,
@@ -210,7 +221,8 @@ reading and draws the configured states.
 the setpoint stories: `Visual State Comparison` (every category × state on
 the bar), the radial twin on the watch, `State Change Flow` (a value moving
 through the bands with emphasis on), `Resolution Stack (Radial)` (a chained
-stack against three readings) and `Range and Point`. `watch.stories.ts`
+stack against three readings), `Range and Point` and `Icons` (every category
+with its icon on the bar and the radial gauge). `watch.stories.ts`
 carries the category, state, point-and-area and chained stories; the compass
 (`CourseAdvicePoint`), gauge-radial (`LimitPoint`), tank (`AdviceUseCase`),
 gauge-trend and line-graph (`WithAdviceArea`, `HistoricalAdvice`) carry the
@@ -233,7 +245,11 @@ use cases. The Storybook page is `docs/AdviceSystem.mdx`.
 ## Open
 
 - The `ai` category token, the small-size legibility threshold, the
-  advice-priority labels, historical colouring of chart areas, the variable
-  area and the message dialog (#1402 follow-ups).
+  advice-priority labels and boundary labels, historical colouring of chart
+  areas, the variable area and the message dialog (#1402 follow-ups).
+- The optimal icon is a diamond with a plus in the spec and the triggered
+  warning a filled circle with an exclamation mark; neither is in the icon
+  set, so the readout block's advice icon and the IEC warning stand in
+  (`TODO(designer)` in `advice-icons.ts`).
 - The thruster's double-sided throw still draws both halves of a mirrored
   band; a single-sided advice on it is a follow-up.

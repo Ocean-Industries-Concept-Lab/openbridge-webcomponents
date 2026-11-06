@@ -27,8 +27,10 @@ import {
   isGoToCategory,
   type AdviceInput,
   type ResolvedAdvice,
+  ADVICE_ICON_SIZE_LINEAR,
 } from './advice.js';
 import {dotPattern, hairlinePattern, stripePattern} from './advice-patterns.js';
+import {renderAdviceIcon} from './advice-icons.js';
 
 /** Where a band sits: its range along the main axis and its near edge across it. */
 export interface LinearAdviceBandOptions {
@@ -243,4 +245,31 @@ export function renderLinearAdviceArea(
     ${style.areaFill === 'none' ? nothing : rect(style.areaFill)}
     ${pattern === nothing ? nothing : rect(`url(#${o.patternId})`)}
     ${line(o.mainStart)} ${line(o.mainEnd)}`;
+}
+
+/** Where an icon sits: the advice's midpoint along the main axis, the label column across it. */
+export interface LinearAdviceIconOptions {
+  vertical: boolean;
+  /** Main-axis coordinates of the advice's `min` and `max`; a point gives the same value twice. */
+  mainStart: number;
+  mainEnd: number;
+  /** Perpendicular coordinate of the icon box's centre. */
+  perpCenter: number;
+  advice: AdviceInput | ResolvedAdvice;
+  size?: number;
+}
+
+/** The category's icon beside the band, centred on the range, in the responsive size. */
+export function renderLinearAdviceIcon(
+  o: LinearAdviceIconOptions
+): SVGTemplateResult {
+  const advice = asResolvedAdvice(o.advice);
+  const main = (o.mainStart + o.mainEnd) / 2;
+  return renderAdviceIcon({
+    category: advice.category,
+    state: advice.state,
+    x: o.vertical ? o.perpCenter : main,
+    y: o.vertical ? main : o.perpCenter,
+    size: o.size ?? ADVICE_ICON_SIZE_LINEAR,
+  });
 }
