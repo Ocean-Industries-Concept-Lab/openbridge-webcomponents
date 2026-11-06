@@ -90,9 +90,10 @@ range, throws a `TypeError`: a silent default would draw the wrong thing.
    its configured state until its own range is hit.
 4. `chainAdvices()` cuts the ends of two bands that meet flat.
 
-`isGoToCategory()` splits the categories: `optimal`, `running`, `eco` are
-go-to; `caution`, `warning`, `alarm`, `exclusion` are no-go. The `ai`
-category waits for its colour token and is not in the enum.
+`isGoToCategory()` splits the categories: `optimal`, `running`, `eco`, `ai`
+are go-to; `caution`, `warning`, `alarm`, `exclusion` are no-go. `ai` draws
+from the base indigo ramp, as eco draws from base mint: the advice spec binds
+those primitives and no semantic token exists for either.
 
 ## Mixin, bundle and aliases
 
@@ -193,12 +194,12 @@ column on the main engine); never a literal id.
 `adviceStyle(category, state)` is the one token table (`fill`, `stroke`,
 `pattern`, `tickStyle`, `areaOutline`, `areaFill`, `areaPattern`). In short:
 
-| Category group | hinted                   | enabled                   | active                                                         | triggered                                                            |
-| -------------- | ------------------------ | ------------------------- | -------------------------------------------------------------- | -------------------------------------------------------------------- |
-| go-to          | white + tertiary outline | white + secondary outline | tint (`blue-100`, `mint-100`, running container) + its outline | solid (`instrument-enhanced-secondary`, `mint-400`, `alert-running`) |
-| caution        | tertiary stripes         | secondary stripes         | caution container tint + inactive border                       | `alert-caution` fill, `on-caution` outline and stripes               |
-| warning, alarm | solid tertiary grey      | solid secondary grey      | inactive background + border                                   | `alert-warning` / `alert-alarm` fill, `-outline` stroke              |
-| exclusion      | hairline hatch, tertiary | hairline hatch, secondary | same as enabled                                                | hatch and outline `tick-mark-primary`                                |
+| Category group | hinted                   | enabled                   | active                                                                       | triggered                                                                          |
+| -------------- | ------------------------ | ------------------------- | ---------------------------------------------------------------------------- | ---------------------------------------------------------------------------------- |
+| go-to          | white + tertiary outline | white + secondary outline | tint (`blue-100`, `mint-100`, `indigo-100`, running container) + its outline | solid (`instrument-enhanced-secondary`, `mint-400`, `indigo-400`, `alert-running`) |
+| caution        | tertiary stripes         | secondary stripes         | caution container tint + inactive border                                     | `alert-caution` fill, `on-caution` outline and stripes                             |
+| warning, alarm | solid tertiary grey      | solid secondary grey      | inactive background + border                                                 | `alert-warning` / `alert-alarm` fill, `-outline` stroke                            |
+| exclusion      | hairline hatch, tertiary | hairline hatch, secondary | same as enabled                                                              | hatch and outline `tick-mark-primary`                                              |
 
 Boundary ticks are tertiary at rest and `tick-mark-primary` for every
 triggered element, the caution point included. The solid grey hinted warning
@@ -248,7 +249,7 @@ use cases. The Storybook page is `docs/AdviceSystem.mdx`.
 
 ## Open
 
-- The `ai` category token, the small-size legibility threshold, the
+- The small-size legibility threshold, the
   advice-priority labels and boundary labels, historical colouring of chart
   areas, the variable area and the message dialog (#1402 follow-ups).
 - The optimal icon is a diamond with a plus in the spec and the triggered

@@ -33,6 +33,8 @@ export enum AdviceCategory {
   optimal = 'optimal',
   running = 'running',
   eco = 'eco',
+  /** A suggestion from a simulation or an analysis. */
+  ai = 'ai',
   caution = 'caution',
   warning = 'warning',
   alarm = 'alarm',
@@ -132,6 +134,7 @@ const GO_TO_CATEGORIES = new Set<AdviceCategory>([
   AdviceCategory.optimal,
   AdviceCategory.running,
   AdviceCategory.eco,
+  AdviceCategory.ai,
 ]);
 
 /** Whether a category marks a range to steer towards rather than away from. */
@@ -392,7 +395,7 @@ interface GoToPalette {
   areaFill: string;
 }
 
-const GO_TO: Record<'optimal' | 'running' | 'eco', GoToPalette> = {
+const GO_TO: Record<'optimal' | 'running' | 'eco' | 'ai', GoToPalette> = {
   optimal: {
     activeFill: v('base-blue-100'),
     activeStroke: v('element-neutral-enhanced-color'),
@@ -413,6 +416,14 @@ const GO_TO: Record<'optimal' | 'running' | 'eco', GoToPalette> = {
     triggeredFill: v('base-mint-400'),
     triggeredStroke: v('base-mint-500'),
     areaFill: v('base-mint-050-tint'),
+  },
+  // The advice spec binds the base indigo ramp, as eco binds base mint.
+  ai: {
+    activeFill: v('base-indigo-100'),
+    activeStroke: v('base-indigo-400'),
+    triggeredFill: v('base-indigo-400'),
+    triggeredStroke: v('base-indigo-500'),
+    areaFill: v('base-indigo-050-tint'),
   },
 };
 

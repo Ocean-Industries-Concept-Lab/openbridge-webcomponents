@@ -12,6 +12,7 @@ import '../icons/icon-notification-advice.js';
 import '../icons/icon-running.js';
 import '../icons/icon-running-color-iec.js';
 import '../icons/icon-leaf.js';
+import '../icons/icon-ai-simulation.js';
 import '../icons/icon-caution-google.js';
 import '../icons/icon-caution-color-iec.js';
 import '../icons/icon-warning-google.js';

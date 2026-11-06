@@ -323,6 +323,7 @@ export const AdviceCategories: Story = {
       {min: 190, max: 225, category: 'warning', state: 'triggered'},
       {min: 235, max: 270, category: 'alarm', state: 'triggered'},
       {min: 280, max: 315, category: 'exclusion', state: 'triggered'},
+      {min: 325, max: 360, category: 'ai', state: 'triggered'},
     ],
   },
 };

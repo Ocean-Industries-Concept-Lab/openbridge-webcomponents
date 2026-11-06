@@ -472,6 +472,7 @@ export const AdviceIcons: Story = {
           cells: CATEGORIES.map((category) =>
             radialAdvice([{min: 20, max: 60, category, showIcon: true}], {
               value: 40,
+              size: 140,
             })
           ),
         },
