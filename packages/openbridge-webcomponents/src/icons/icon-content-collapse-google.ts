@@ -6,7 +6,7 @@ import {customElement} from '../decorator.js';
 export class ObiContentCollapseGoogle extends LitElement {
   @property({type: Boolean}) useCssColor = false;
 
-  private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+  private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
 <path d="M10 14V20H8V16H4V14H10ZM16 4V8H20V10H14V4H16Z" fill="currentColor"/>
 </svg>
 `;

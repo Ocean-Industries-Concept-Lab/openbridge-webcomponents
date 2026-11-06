@@ -384,5 +384,7 @@
   "VariableID:fcdf82685406e2fd5689411671980ac76428f6e7/51141:4473": "on-alarm-neutral-color",
   "VariableID:ff20555fd5279f49e178201c3bf33f2dc28983bb/51147:8274": "automation-symbol-static-border-color",
   "VariableID:ff20555fd5279f49e178201c3bf33f2dc28983bb/52052:15": "automation-symbol-static-border-color",
-  "VariableID:23f6e20ac3e2480ffc13727f3c466ab0120de566/52052:12": "automation-symbol-static-background-color"
+  "VariableID:23f6e20ac3e2480ffc13727f3c466ab0120de566/52052:12": "automation-symbol-static-background-color",
+  "VariableID:105491371680412443a79d566fdc0327d7da7a27/52052:7": "on-line-color",
+  "VariableID:f072032b10c627138d2dfabdfe5df41441096d05/52052:9": "automation-symbol-off-line-color"
 }

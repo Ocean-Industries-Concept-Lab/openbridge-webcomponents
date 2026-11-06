@@ -6,7 +6,7 @@ import {customElement} from '../decorator.js';
 export class ObiElectricityBatteryOff extends LitElement {
   @property({type: Boolean}) useCssColor = false;
 
-  private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+  private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
 <rect x="1" y="1" width="22" height="22" rx="2" fill="currentColor"/>
 <path d="M20 13.5C20.2761 13.5 20.5 13.7239 20.5 14C20.5 14.2761 20.2761 14.5 20 14.5H4C3.72386 14.5 3.5 14.2761 3.5 14C3.5 13.7239 3.72386 13.5 4 13.5H20Z" fill="currentColor"/>
 <path d="M17 11H7V9H17V11Z" fill="currentColor"/>

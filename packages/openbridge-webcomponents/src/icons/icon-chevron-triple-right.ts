@@ -6,7 +6,7 @@ import {customElement} from '../decorator.js';
 export class ObiChevronTripleRight extends LitElement {
   @property({type: Boolean}) useCssColor = false;
 
-  private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+  private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
 <path d="M8.59003 16.59L10 18L16 12L10 6L8.59003 7.41L13.17 12L8.59003 16.59Z" fill="currentColor"/>
 <path d="M14.59 16.59L16 18L22 12L16 6L14.59 7.41L19.17 12L14.59 16.59Z" fill="currentColor"/>
 <path d="M2.59003 16.59L4.00003 18L10 12L4.00003 6L2.59003 7.41L7.17003 12L2.59003 16.59Z" fill="currentColor"/>

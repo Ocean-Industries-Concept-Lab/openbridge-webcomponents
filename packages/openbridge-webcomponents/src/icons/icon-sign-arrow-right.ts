@@ -6,7 +6,7 @@ import {customElement} from '../decorator.js';
 export class ObiSignArrowRight extends LitElement {
   @property({type: Boolean}) useCssColor = false;
 
-  private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+  private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
 <path d="M8.34324 4L14.0001 4L22 11.9999L13.9999 20L8.34305 20L14.3431 13.9999L3 13.9999L3 9.99991L14.3431 9.99991L8.34324 4Z" fill="currentColor"/>
 </svg>
 `;

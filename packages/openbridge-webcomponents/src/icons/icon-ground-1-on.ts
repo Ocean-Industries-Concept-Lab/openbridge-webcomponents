@@ -6,17 +6,17 @@ import {customElement} from '../decorator.js';
 export class ObiGround1On extends LitElement {
   @property({type: Boolean}) useCssColor = false;
 
-  private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-<path fill-rule="evenodd" clip-rule="evenodd" d="M12 24C18.6274 24 24 18.6274 24 12C24 5.37258 18.6274 0 12 0C5.37258 0 0 5.37258 0 12C0 18.6274 5.37258 24 12 24ZM12 23C18.0751 23 23 18.0751 23 12C23 5.92487 18.0751 1 12 1C5.92487 1 1 5.92487 1 12C1 18.0751 5.92487 23 12 23Z" fill="currentColor"/>
-<path fill-rule="evenodd" clip-rule="evenodd" d="M13 10V4H11V10H4L12 20L20 10H13ZM15.8387 12L12 16.7984L8.16125 12H15.8387Z" fill="currentColor"/>
-<path fill-rule="evenodd" clip-rule="evenodd" d="M12 23C18.0751 23 23 18.0751 23 12C23 5.92487 18.0751 1 12 1C5.92487 1 1 5.92487 1 12C1 18.0751 5.92487 23 12 23ZM13 4L13 10L20 10L12 20L4 10L11 10L11 4H13ZM12 16.7984L15.8387 12H8.16125L12 16.7984Z" fill="currentColor"/>
+  private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M12 24C18.6274 24 24 18.6274 24 12C24 5.37258 18.6274 0 12 0C5.37258 0 0 5.37258 0 12C0 18.6274 5.37258 24 12 24ZM12 23C18.0751 23 23 18.0751 23 12C23 5.92487 18.0751 1 12 1C5.92487 1 1 5.92487 1 12C1 18.0751 5.92487 23 12 23Z" fill-rule="evenodd" clip-rule="evenodd" fill="currentColor"/>
+<path d="M13 10V4H11V10H4L12 20L20 10H13ZM15.8387 12L12 16.7984L8.16125 12H15.8387Z" fill-rule="evenodd" clip-rule="evenodd" fill="currentColor"/>
+<path d="M12 23C18.0751 23 23 18.0751 23 12C23 5.92487 18.0751 1 12 1C5.92487 1 1 5.92487 1 12C1 18.0751 5.92487 23 12 23ZM13 4L13 10L20 10L12 20L4 10L11 10L11 4H13ZM12 16.7984L15.8387 12H8.16125L12 16.7984Z" fill-rule="evenodd" clip-rule="evenodd" fill="currentColor"/>
 </svg>
 `;
 
   private iconCss = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path fill-rule="evenodd" clip-rule="evenodd" d="M12 24C18.6274 24 24 18.6274 24 12C24 5.37258 18.6274 0 12 0C5.37258 0 0 5.37258 0 12C0 18.6274 5.37258 24 12 24ZM12 23C18.0751 23 23 18.0751 23 12C23 5.92487 18.0751 1 12 1C5.92487 1 1 5.92487 1 12C1 18.0751 5.92487 23 12 23Z" style="fill: var(--automation-symbol-on-border-color)"/>
-<path fill-rule="evenodd" clip-rule="evenodd" d="M13 10V4H11V10H4L12 20L20 10H13ZM15.8387 12L12 16.7984L8.16125 12H15.8387Z" style="fill: var(--automation-symbol-on-border-color)"/>
-<path fill-rule="evenodd" clip-rule="evenodd" d="M12 23C18.0751 23 23 18.0751 23 12C23 5.92487 18.0751 1 12 1C5.92487 1 1 5.92487 1 12C1 18.0751 5.92487 23 12 23ZM13 4L13 10L20 10L12 20L4 10L11 10L11 4H13ZM12 16.7984L15.8387 12H8.16125L12 16.7984Z" style="fill: var(--automation-symbol-on-background-color)"/>
+<path d="M12 24C18.6274 24 24 18.6274 24 12C24 5.37258 18.6274 0 12 0C5.37258 0 0 5.37258 0 12C0 18.6274 5.37258 24 12 24ZM12 23C18.0751 23 23 18.0751 23 12C23 5.92487 18.0751 1 12 1C5.92487 1 1 5.92487 1 12C1 18.0751 5.92487 23 12 23Z" fill-rule="evenodd" clip-rule="evenodd" style="fill: var(--automation-symbol-on-border-color)"/>
+<path d="M13 10V4H11V10H4L12 20L20 10H13ZM15.8387 12L12 16.7984L8.16125 12H15.8387Z" fill-rule="evenodd" clip-rule="evenodd" style="fill: var(--automation-symbol-on-border-color)"/>
+<path d="M12 23C18.0751 23 23 18.0751 23 12C23 5.92487 18.0751 1 12 1C5.92487 1 1 5.92487 1 12C1 18.0751 5.92487 23 12 23ZM13 4L13 10L20 10L12 20L4 10L11 10L11 4H13ZM12 16.7984L15.8387 12H8.16125L12 16.7984Z" fill-rule="evenodd" clip-rule="evenodd" style="fill: var(--automation-symbol-on-background-color)"/>
 </svg>
 `;
 
