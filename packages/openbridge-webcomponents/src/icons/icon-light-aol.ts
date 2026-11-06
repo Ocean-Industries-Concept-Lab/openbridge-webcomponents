@@ -12,7 +12,7 @@ export class ObiLightAol extends LitElement {
 <path d="M23 13H20V11H23V13Z" fill="currentColor"/>
 <path d="M5.63687 7.05026L3.51555 4.92894L4.92976 3.51473L7.05108 5.63605L5.63687 7.05026Z" fill="currentColor"/>
 <path d="M19.0719 3.51473L16.9506 5.63605L18.3648 7.05026L20.4861 4.92894L19.0719 3.51473Z" fill="currentColor"/>
-<path fill-rule="evenodd" clip-rule="evenodd" d="M7 11V17H6V18L8.57143 21H15.4286L18 18V17H17V11C17 8.23858 14.7614 6 12 6C9.23858 6 7 8.23858 7 11ZM15 17V11C15 9.34315 13.6569 8 12 8C10.3431 8 9 9.34315 9 11V17H15Z" fill="currentColor"/>
+<path d="M7 11V17H6V18L8.57143 21H15.4286L18 18V17H17V11C17 8.23858 14.7614 6 12 6C9.23858 6 7 8.23858 7 11ZM15 17V11C15 9.34315 13.6569 8 12 8C10.3431 8 9 9.34315 9 11V17H15Z" fill-rule="evenodd" clip-rule="evenodd" fill="currentColor"/>
 </svg>
 `;
 
@@ -22,7 +22,7 @@ export class ObiLightAol extends LitElement {
 <path d="M23 13H20V11H23V13Z" style="fill: var(--element-active-color)"/>
 <path d="M5.63687 7.05026L3.51555 4.92894L4.92976 3.51473L7.05108 5.63605L5.63687 7.05026Z" style="fill: var(--element-active-color)"/>
 <path d="M19.0719 3.51473L16.9506 5.63605L18.3648 7.05026L20.4861 4.92894L19.0719 3.51473Z" style="fill: var(--element-active-color)"/>
-<path fill-rule="evenodd" clip-rule="evenodd" d="M7 11V17H6V18L8.57143 21H15.4286L18 18V17H17V11C17 8.23858 14.7614 6 12 6C9.23858 6 7 8.23858 7 11ZM15 17V11C15 9.34315 13.6569 8 12 8C10.3431 8 9 9.34315 9 11V17H15Z" style="fill: var(--element-active-color)"/>
+<path d="M7 11V17H6V18L8.57143 21H15.4286L18 18V17H17V11C17 8.23858 14.7614 6 12 6C9.23858 6 7 8.23858 7 11ZM15 17V11C15 9.34315 13.6569 8 12 8C10.3431 8 9 9.34315 9 11V17H15Z" fill-rule="evenodd" clip-rule="evenodd" style="fill: var(--element-active-color)"/>
 </svg>
 `;
 

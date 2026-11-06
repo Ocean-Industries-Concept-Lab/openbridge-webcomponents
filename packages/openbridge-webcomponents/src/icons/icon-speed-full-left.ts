@@ -7,16 +7,16 @@ export class ObiSpeedFullLeft extends LitElement {
   @property({type: Boolean}) useCssColor = false;
 
   private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-<path fill-rule="evenodd" clip-rule="evenodd" d="M7 17H9.82105L4.83 12L9.82105 7H7L2 12L7 17Z" fill="currentColor"/>
-<path fill-rule="evenodd" clip-rule="evenodd" d="M13 17H15.821L10.83 12L15.821 7H13L7.99996 12L13 17Z" fill="currentColor"/>
-<path fill-rule="evenodd" clip-rule="evenodd" d="M19 17H21.821L16.83 12L21.821 7H18.9999L14 12L19 17Z" fill="currentColor"/>
+<path d="M7 17H9.82105L4.83 12L9.82105 7H7L2 12L7 17Z" fill-rule="evenodd" clip-rule="evenodd" fill="currentColor"/>
+<path d="M13 17H15.821L10.83 12L15.821 7H13L7.99996 12L13 17Z" fill-rule="evenodd" clip-rule="evenodd" fill="currentColor"/>
+<path d="M19 17H21.821L16.83 12L21.821 7H18.9999L14 12L19 17Z" fill-rule="evenodd" clip-rule="evenodd" fill="currentColor"/>
 </svg>
 `;
 
   private iconCss = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path fill-rule="evenodd" clip-rule="evenodd" d="M7 17H9.82105L4.83 12L9.82105 7H7L2 12L7 17Z" style="fill: var(--element-active-color)"/>
-<path fill-rule="evenodd" clip-rule="evenodd" d="M13 17H15.821L10.83 12L15.821 7H13L7.99996 12L13 17Z" style="fill: var(--element-active-color)"/>
-<path fill-rule="evenodd" clip-rule="evenodd" d="M19 17H21.821L16.83 12L21.821 7H18.9999L14 12L19 17Z" style="fill: var(--element-active-color)"/>
+<path d="M7 17H9.82105L4.83 12L9.82105 7H7L2 12L7 17Z" fill-rule="evenodd" clip-rule="evenodd" style="fill: var(--element-active-color)"/>
+<path d="M13 17H15.821L10.83 12L15.821 7H13L7.99996 12L13 17Z" fill-rule="evenodd" clip-rule="evenodd" style="fill: var(--element-active-color)"/>
+<path d="M19 17H21.821L16.83 12L21.821 7H18.9999L14 12L19 17Z" fill-rule="evenodd" clip-rule="evenodd" style="fill: var(--element-active-color)"/>
 </svg>
 `;
 

@@ -7,14 +7,14 @@ export class ObiResistor1On extends LitElement {
   @property({type: Boolean}) useCssColor = false;
 
   private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-<path fill-rule="evenodd" clip-rule="evenodd" d="M20 11V8H4V11H1V13H4V16H20V13H23V11H20ZM19 9H5V15H19V9Z" fill="currentColor"/>
-<path fill-rule="evenodd" clip-rule="evenodd" d="M19 9H5V15H19V9Z" fill="currentColor"/>
+<path d="M20 11V8H4V11H1V13H4V16H20V13H23V11H20ZM19 9H5V15H19V9Z" fill-rule="evenodd" clip-rule="evenodd" fill="currentColor"/>
+<path d="M19 9H5V15H19V9Z" fill-rule="evenodd" clip-rule="evenodd" fill="currentColor"/>
 </svg>
 `;
 
   private iconCss = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path fill-rule="evenodd" clip-rule="evenodd" d="M20 11V8H4V11H1V13H4V16H20V13H23V11H20ZM19 9H5V15H19V9Z" style="fill: var(--automation-symbol-on-border-color)"/>
-<path fill-rule="evenodd" clip-rule="evenodd" d="M19 9H5V15H19V9Z" style="fill: var(--automation-symbol-on-background-color)"/>
+<path d="M20 11V8H4V11H1V13H4V16H20V13H23V11H20ZM19 9H5V15H19V9Z" fill-rule="evenodd" clip-rule="evenodd" style="fill: var(--automation-symbol-on-border-color)"/>
+<path d="M19 9H5V15H19V9Z" fill-rule="evenodd" clip-rule="evenodd" style="fill: var(--automation-symbol-on-background-color)"/>
 </svg>
 `;
 

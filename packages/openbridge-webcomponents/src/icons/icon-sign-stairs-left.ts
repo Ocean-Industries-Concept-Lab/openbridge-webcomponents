@@ -7,12 +7,12 @@ export class ObiSignStairsLeft extends LitElement {
   @property({type: Boolean}) useCssColor = false;
 
   private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-<path fill-rule="evenodd" clip-rule="evenodd" d="M6 7H2V5H8V9H13V13H18V17H22V19H16V15H11V11H6V7Z" fill="currentColor"/>
+<path d="M6 7H2V5H8V9H13V13H18V17H22V19H16V15H11V11H6V7Z" fill-rule="evenodd" clip-rule="evenodd" fill="currentColor"/>
 </svg>
 `;
 
   private iconCss = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path fill-rule="evenodd" clip-rule="evenodd" d="M6 7H2V5H8V9H13V13H18V17H22V19H16V15H11V11H6V7Z" style="fill: var(--element-active-color)"/>
+<path d="M6 7H2V5H8V9H13V13H18V17H22V19H16V15H11V11H6V7Z" fill-rule="evenodd" clip-rule="evenodd" style="fill: var(--element-active-color)"/>
 </svg>
 `;
 

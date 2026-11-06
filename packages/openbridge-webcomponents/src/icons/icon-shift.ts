@@ -7,12 +7,12 @@ export class ObiShift extends LitElement {
   @property({type: Boolean}) useCssColor = false;
 
   private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-<path fill-rule="evenodd" clip-rule="evenodd" d="M9 14V20H15V14H18.1136L12 5.44093L5.88638 14H9ZM2 16H7V22H17V16H22L12 2L2 16Z" fill="currentColor"/>
+<path d="M9 14V20H15V14H18.1136L12 5.44093L5.88638 14H9ZM2 16H7V22H17V16H22L12 2L2 16Z" fill-rule="evenodd" clip-rule="evenodd" fill="currentColor"/>
 </svg>
 `;
 
   private iconCss = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path fill-rule="evenodd" clip-rule="evenodd" d="M9 14V20H15V14H18.1136L12 5.44093L5.88638 14H9ZM2 16H7V22H17V16H22L12 2L2 16Z" style="fill: var(--element-active-color)"/>
+<path d="M9 14V20H15V14H18.1136L12 5.44093L5.88638 14H9ZM2 16H7V22H17V16H22L12 2L2 16Z" fill-rule="evenodd" clip-rule="evenodd" style="fill: var(--element-active-color)"/>
 </svg>
 `;
 

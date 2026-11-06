@@ -11,7 +11,7 @@ export class ObiRouter extends LitElement {
 <path d="M14 11.9689L18 7.93782V10.9689H21V12.9689H18V16L14 11.9689Z" fill="currentColor"/>
 <path d="M6 16.0622L10 12.0311L6 8V11.0311H3V13.0311H6V16.0622Z" fill="currentColor"/>
 <path d="M12.0312 21L8.00011 17H11.0312V14H13.0312V17H16.0623L12.0312 21Z" fill="currentColor"/>
-<path fill-rule="evenodd" clip-rule="evenodd" d="M23 12C23 18.0751 18.0751 23 12 23C5.92487 23 1 18.0751 1 12C1 5.92487 5.92487 1 12 1C18.0751 1 23 5.92487 23 12ZM22 12C22 17.5228 17.5228 22 12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2C17.5228 2 22 6.47715 22 12Z" fill="currentColor"/>
+<path d="M23 12C23 18.0751 18.0751 23 12 23C5.92487 23 1 18.0751 1 12C1 5.92487 5.92487 1 12 1C18.0751 1 23 5.92487 23 12ZM22 12C22 17.5228 17.5228 22 12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2C17.5228 2 22 6.47715 22 12Z" fill-rule="evenodd" clip-rule="evenodd" fill="currentColor"/>
 </svg>
 `;
 
@@ -20,7 +20,7 @@ export class ObiRouter extends LitElement {
 <path d="M14 11.9689L18 7.93782V10.9689H21V12.9689H18V16L14 11.9689Z" style="fill: var(--automation-symbol-static-background-color)"/>
 <path d="M6 16.0622L10 12.0311L6 8V11.0311H3V13.0311H6V16.0622Z" style="fill: var(--automation-symbol-static-background-color)"/>
 <path d="M12.0312 21L8.00011 17H11.0312V14H13.0312V17H16.0623L12.0312 21Z" style="fill: var(--automation-symbol-static-background-color)"/>
-<path fill-rule="evenodd" clip-rule="evenodd" d="M23 12C23 18.0751 18.0751 23 12 23C5.92487 23 1 18.0751 1 12C1 5.92487 5.92487 1 12 1C18.0751 1 23 5.92487 23 12ZM22 12C22 17.5228 17.5228 22 12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2C17.5228 2 22 6.47715 22 12Z" style="fill: var(--automation-symbol-static-background-color)"/>
+<path d="M23 12C23 18.0751 18.0751 23 12 23C5.92487 23 1 18.0751 1 12C1 5.92487 5.92487 1 12 1C18.0751 1 23 5.92487 23 12ZM22 12C22 17.5228 17.5228 22 12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2C17.5228 2 22 6.47715 22 12Z" fill-rule="evenodd" clip-rule="evenodd" style="fill: var(--automation-symbol-static-background-color)"/>
 </svg>
 `;
 

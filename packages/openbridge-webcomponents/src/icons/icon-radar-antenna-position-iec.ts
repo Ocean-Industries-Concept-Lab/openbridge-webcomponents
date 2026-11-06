@@ -7,14 +7,14 @@ export class ObiRadarAntennaPositionIec extends LitElement {
   @property({type: Boolean}) useCssColor = false;
 
   private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-<path fill-rule="evenodd" clip-rule="evenodd" d="M15 12.5H9V11.5H15V12.5Z" fill="currentColor"/>
-<path fill-rule="evenodd" clip-rule="evenodd" d="M11.5 15L11.5 9L12.5 9L12.5 15H11.5Z" fill="currentColor"/>
+<path d="M15 12.5H9V11.5H15V12.5Z" fill-rule="evenodd" clip-rule="evenodd" fill="currentColor"/>
+<path d="M11.5 15L11.5 9L12.5 9L12.5 15H11.5Z" fill-rule="evenodd" clip-rule="evenodd" fill="currentColor"/>
 </svg>
 `;
 
   private iconCss = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path fill-rule="evenodd" clip-rule="evenodd" d="M15 12.5H9V11.5H15V12.5Z" style="fill: var(--element-active-color)"/>
-<path fill-rule="evenodd" clip-rule="evenodd" d="M11.5 15L11.5 9L12.5 9L12.5 15H11.5Z" style="fill: var(--element-active-color)"/>
+<path d="M15 12.5H9V11.5H15V12.5Z" fill-rule="evenodd" clip-rule="evenodd" style="fill: var(--element-active-color)"/>
+<path d="M11.5 15L11.5 9L12.5 9L12.5 15H11.5Z" fill-rule="evenodd" clip-rule="evenodd" style="fill: var(--element-active-color)"/>
 </svg>
 `;
 

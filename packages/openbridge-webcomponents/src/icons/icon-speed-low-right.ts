@@ -7,12 +7,12 @@ export class ObiSpeedLowRight extends LitElement {
   @property({type: Boolean}) useCssColor = false;
 
   private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-<path fill-rule="evenodd" clip-rule="evenodd" d="M11.0011 17H8.18005L13.1711 12L8.18005 7H11.0011L16.0011 12L11.0011 17Z" fill="currentColor"/>
+<path d="M11.0011 17H8.18005L13.1711 12L8.18005 7H11.0011L16.0011 12L11.0011 17Z" fill-rule="evenodd" clip-rule="evenodd" fill="currentColor"/>
 </svg>
 `;
 
   private iconCss = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path fill-rule="evenodd" clip-rule="evenodd" d="M11.0011 17H8.18005L13.1711 12L8.18005 7H11.0011L16.0011 12L11.0011 17Z" style="fill: var(--element-active-color)"/>
+<path d="M11.0011 17H8.18005L13.1711 12L8.18005 7H11.0011L16.0011 12L11.0011 17Z" fill-rule="evenodd" clip-rule="evenodd" style="fill: var(--element-active-color)"/>
 </svg>
 `;
 

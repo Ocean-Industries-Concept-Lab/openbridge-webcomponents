@@ -13,7 +13,7 @@ export class ObiLightDeck extends LitElement {
 <path d="M22.3658 21.0263L20.8658 18.4282L19.1338 19.4282L20.6338 22.0263L22.3658 21.0263Z" fill="currentColor"/>
 <path d="M3.13416 5.57178L1.63416 2.9737L3.36621 1.9737L4.86621 4.57178L3.13416 5.57178Z" fill="currentColor"/>
 <path d="M3.36584 22.0263L4.86584 19.4282L3.13379 18.4282L1.63379 21.0263L3.36584 22.0263Z" fill="currentColor"/>
-<path fill-rule="evenodd" clip-rule="evenodd" d="M20 7C21.1046 7 22 7.89543 22 9V15C22 16.1046 21.1046 17 20 17H4C2.89543 17 2 16.1046 2 15V9C2 7.89543 2.89543 7 4 7H20ZM4 9H20V11H4V9ZM20 15V13H4V15H20Z" fill="currentColor"/>
+<path d="M20 7C21.1046 7 22 7.89543 22 9V15C22 16.1046 21.1046 17 20 17H4C2.89543 17 2 16.1046 2 15V9C2 7.89543 2.89543 7 4 7H20ZM4 9H20V11H4V9ZM20 15V13H4V15H20Z" fill-rule="evenodd" clip-rule="evenodd" fill="currentColor"/>
 </svg>
 `;
 
@@ -24,7 +24,7 @@ export class ObiLightDeck extends LitElement {
 <path d="M22.3658 21.0263L20.8658 18.4282L19.1338 19.4282L20.6338 22.0263L22.3658 21.0263Z" style="fill: var(--element-active-color)"/>
 <path d="M3.13416 5.57178L1.63416 2.9737L3.36621 1.9737L4.86621 4.57178L3.13416 5.57178Z" style="fill: var(--element-active-color)"/>
 <path d="M3.36584 22.0263L4.86584 19.4282L3.13379 18.4282L1.63379 21.0263L3.36584 22.0263Z" style="fill: var(--element-active-color)"/>
-<path fill-rule="evenodd" clip-rule="evenodd" d="M20 7C21.1046 7 22 7.89543 22 9V15C22 16.1046 21.1046 17 20 17H4C2.89543 17 2 16.1046 2 15V9C2 7.89543 2.89543 7 4 7H20ZM4 9H20V11H4V9ZM20 15V13H4V15H20Z" style="fill: var(--element-active-color)"/>
+<path d="M20 7C21.1046 7 22 7.89543 22 9V15C22 16.1046 21.1046 17 20 17H4C2.89543 17 2 16.1046 2 15V9C2 7.89543 2.89543 7 4 7H20ZM4 9H20V11H4V9ZM20 15V13H4V15H20Z" fill-rule="evenodd" clip-rule="evenodd" style="fill: var(--element-active-color)"/>
 </svg>
 `;
 

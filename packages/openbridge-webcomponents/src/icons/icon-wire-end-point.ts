@@ -7,13 +7,13 @@ export class ObiWireEndPoint extends LitElement {
   @property({type: Boolean}) useCssColor = false;
 
   private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-<path fill-rule="evenodd" clip-rule="evenodd" d="M14 19L14 5L10 5V10L1.78814e-07 10L0 14L10 14L10 19H14Z" fill="currentColor"/>
+<path d="M14 19L14 5L10 5V10L1.78814e-07 10L0 14L10 14L10 19H14Z" fill-rule="evenodd" clip-rule="evenodd" fill="currentColor"/>
 <path d="M11 18H13L13 6L11 6V11L0 11V10L10 10V5H14L14 19H10L10 14L0 14V13L11 13L11 18Z" fill="currentColor"/>
 </svg>
 `;
 
   private iconCss = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path fill-rule="evenodd" clip-rule="evenodd" d="M14 19L14 5L10 5V10L1.78814e-07 10L0 14L10 14L10 19H14Z" style="fill: var(--automation-connector-on-background-color)"/>
+<path d="M14 19L14 5L10 5V10L1.78814e-07 10L0 14L10 14L10 19H14Z" fill-rule="evenodd" clip-rule="evenodd" style="fill: var(--automation-connector-on-background-color)"/>
 <path d="M11 18H13L13 6L11 6V11L0 11V10L10 10V5H14L14 19H10L10 14L0 14V13L11 13L11 18Z" style="fill: var(--automation-connector-on-border-color)"/>
 </svg>
 `;

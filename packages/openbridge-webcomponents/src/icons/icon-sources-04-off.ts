@@ -10,7 +10,7 @@ export class ObiSources04Off extends LitElement {
 <g clip-path="url(#clip0_2228_2721)">
 <path d="M2.82837 11.9997L10.9999 3.82813L10.9999 20.1713L2.82837 11.9997Z" fill="currentColor"/>
 <path d="M21.1716 11.9998L12.9999 20.1714L12.9999 3.82812L21.1716 11.9998Z" fill="currentColor"/>
-<path fill-rule="evenodd" clip-rule="evenodd" d="M12.0001 24.0001L0 12L12 0L24.0001 12.0001L12.0001 24.0001ZM11 3.82843L2.82843 12L11 20.1716L11 3.82843ZM13 20.1717L21.1716 12.0001L13 3.82842L13 20.1717Z" fill="currentColor"/>
+<path d="M12.0001 24.0001L0 12L12 0L24.0001 12.0001L12.0001 24.0001ZM11 3.82843L2.82843 12L11 20.1716L11 3.82843ZM13 20.1717L21.1716 12.0001L13 3.82842L13 20.1717Z" fill-rule="evenodd" clip-rule="evenodd" fill="currentColor"/>
 </g>
 <defs>
 <clipPath id="clip0_2228_2721">
@@ -24,7 +24,7 @@ export class ObiSources04Off extends LitElement {
 <g clip-path="url(#clip0_2228_2721)">
 <path d="M2.82837 11.9997L10.9999 3.82813L10.9999 20.1713L2.82837 11.9997Z" style="fill: var(--automation-symbol-off-background-color)"/>
 <path d="M21.1716 11.9998L12.9999 20.1714L12.9999 3.82812L21.1716 11.9998Z" style="fill: var(--automation-symbol-off-background-color)"/>
-<path fill-rule="evenodd" clip-rule="evenodd" d="M12.0001 24.0001L0 12L12 0L24.0001 12.0001L12.0001 24.0001ZM11 3.82843L2.82843 12L11 20.1716L11 3.82843ZM13 20.1717L21.1716 12.0001L13 3.82842L13 20.1717Z" style="fill: var(--automation-symbol-off-border-color)"/>
+<path d="M12.0001 24.0001L0 12L12 0L24.0001 12.0001L12.0001 24.0001ZM11 3.82843L2.82843 12L11 20.1716L11 3.82843ZM13 20.1717L21.1716 12.0001L13 3.82842L13 20.1717Z" fill-rule="evenodd" clip-rule="evenodd" style="fill: var(--automation-symbol-off-border-color)"/>
 </g>
 <defs>
 <clipPath id="clip0_2228_2721">

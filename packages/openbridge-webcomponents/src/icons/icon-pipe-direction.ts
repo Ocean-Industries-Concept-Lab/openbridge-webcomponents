@@ -13,7 +13,7 @@ export class ObiPipeDirection extends LitElement {
 <path d="M15.6474 15H24V14H16.6474L15.6474 15Z" fill="currentColor"/>
 <path d="M16.6474 10H24V9H15.6474L16.6474 10Z" fill="currentColor"/>
 <path d="M9.99461 9H0V10H10.9931L9.99461 9Z" fill="currentColor"/>
-<path fill-rule="evenodd" clip-rule="evenodd" d="M8.48979 6L14.4807 12L8.48926 18H11.3107L17.3107 12L11.3107 6H8.48979Z" fill="currentColor"/>
+<path d="M8.48979 6L14.4807 12L8.48926 18H11.3107L17.3107 12L11.3107 6H8.48979Z" fill-rule="evenodd" clip-rule="evenodd" fill="currentColor"/>
 </svg>
 `;
 
@@ -24,7 +24,7 @@ export class ObiPipeDirection extends LitElement {
 <path d="M15.6474 15H24V14H16.6474L15.6474 15Z" style="fill: var(--automation-connector-on-border-color)"/>
 <path d="M16.6474 10H24V9H15.6474L16.6474 10Z" style="fill: var(--automation-connector-on-border-color)"/>
 <path d="M9.99461 9H0V10H10.9931L9.99461 9Z" style="fill: var(--automation-connector-on-border-color)"/>
-<path fill-rule="evenodd" clip-rule="evenodd" d="M8.48979 6L14.4807 12L8.48926 18H11.3107L17.3107 12L11.3107 6H8.48979Z" style="fill: var(--element-active-color)"/>
+<path d="M8.48979 6L14.4807 12L8.48926 18H11.3107L17.3107 12L11.3107 6H8.48979Z" fill-rule="evenodd" clip-rule="evenodd" style="fill: var(--element-active-color)"/>
 </svg>
 `;
 

@@ -9,14 +9,14 @@ export class ObiSimplifiedBuoyCardinalWest extends LitElement {
   private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
 <path d="M15 21L5 21L12 13L15 21Z" fill="currentColor"/>
 <path d="M19 3H9L12 11L19 3Z" fill="currentColor"/>
-<path fill-rule="evenodd" clip-rule="evenodd" d="M15 21L12 13L5 21L15 21ZM13.557 20L11.651 14.9174L7.20377 20L13.557 20ZM9 3L12 11L19 3H9ZM10.443 4H16.7962L12.349 9.08258L10.443 4Z" fill="currentColor"/>
+<path d="M15 21L12 13L5 21L15 21ZM13.557 20L11.651 14.9174L7.20377 20L13.557 20ZM9 3L12 11L19 3H9ZM10.443 4H16.7962L12.349 9.08258L10.443 4Z" fill-rule="evenodd" clip-rule="evenodd" fill="currentColor"/>
 </svg>
 `;
 
   private iconCss = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
 <path d="M15 21L5 21L12 13L15 21Z" style="fill: var(--navigation-light-yellow-color)"/>
 <path d="M19 3H9L12 11L19 3Z" style="fill: var(--navigation-light-yellow-color)"/>
-<path fill-rule="evenodd" clip-rule="evenodd" d="M15 21L12 13L5 21L15 21ZM13.557 20L11.651 14.9174L7.20377 20L13.557 20ZM9 3L12 11L19 3H9ZM10.443 4H16.7962L12.349 9.08258L10.443 4Z" style="fill: var(--element-active-color)"/>
+<path d="M15 21L12 13L5 21L15 21ZM13.557 20L11.651 14.9174L7.20377 20L13.557 20ZM9 3L12 11L19 3H9ZM10.443 4H16.7962L12.349 9.08258L10.443 4Z" fill-rule="evenodd" clip-rule="evenodd" style="fill: var(--element-active-color)"/>
 </svg>
 `;
 

@@ -8,11 +8,11 @@ export class ObiCursorRemovePoint extends LitElement {
 
   private icon = svg`<svg width="33" height="32" viewBox="0 0 33 32" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
 <g filter="url(#filter0_d_2134_165)">
-<path fill-rule="evenodd" clip-rule="evenodd" d="M6.58114 17.1622L1 0.418823L17.7434 5.99996L9.37171 8.79053L6.58114 17.1622Z" fill="currentColor"/>
-<path fill-rule="evenodd" clip-rule="evenodd" d="M27.5811 21H11.5811V17H27.5811V21Z" fill="currentColor"/>
+<path d="M6.58114 17.1622L1 0.418823L17.7434 5.99996L9.37171 8.79053L6.58114 17.1622Z" fill-rule="evenodd" clip-rule="evenodd" fill="currentColor"/>
+<path d="M27.5811 21H11.5811V17H27.5811V21Z" fill-rule="evenodd" clip-rule="evenodd" fill="currentColor"/>
 </g>
 <path d="M6.58112 14L2.58112 2L14.5811 6L8.58112 8L6.58112 14Z" fill="currentColor"/>
-<path fill-rule="evenodd" clip-rule="evenodd" d="M26.5811 20H12.5811V18H26.5811V20Z" fill="currentColor"/>
+<path d="M26.5811 20H12.5811V18H26.5811V20Z" fill-rule="evenodd" clip-rule="evenodd" fill="currentColor"/>
 <defs>
 <filter id="filter0_d_2134_165" x="0" y="0.418823" width="28.5811" height="22.5812" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
 <feFlood flood-opacity="0" result="BackgroundImageFix"/>
@@ -29,11 +29,11 @@ export class ObiCursorRemovePoint extends LitElement {
 
   private iconCss = svg`<svg width="33" height="32" viewBox="0 0 33 32" fill="none" xmlns="http://www.w3.org/2000/svg">
 <g filter="url(#filter0_d_2134_165)">
-<path fill-rule="evenodd" clip-rule="evenodd" d="M6.58114 17.1622L1 0.418823L17.7434 5.99996L9.37171 8.79053L6.58114 17.1622Z" style="fill: var(--element-active-inverted-color)"/>
-<path fill-rule="evenodd" clip-rule="evenodd" d="M27.5811 21H11.5811V17H27.5811V21Z" style="fill: var(--element-active-inverted-color)"/>
+<path d="M6.58114 17.1622L1 0.418823L17.7434 5.99996L9.37171 8.79053L6.58114 17.1622Z" fill-rule="evenodd" clip-rule="evenodd" style="fill: var(--element-active-inverted-color)"/>
+<path d="M27.5811 21H11.5811V17H27.5811V21Z" fill-rule="evenodd" clip-rule="evenodd" style="fill: var(--element-active-inverted-color)"/>
 </g>
 <path d="M6.58112 14L2.58112 2L14.5811 6L8.58112 8L6.58112 14Z" style="fill: var(--element-active-color)"/>
-<path fill-rule="evenodd" clip-rule="evenodd" d="M26.5811 20H12.5811V18H26.5811V20Z" style="fill: var(--element-active-color)"/>
+<path d="M26.5811 20H12.5811V18H26.5811V20Z" fill-rule="evenodd" clip-rule="evenodd" style="fill: var(--element-active-color)"/>
 <defs>
 <filter id="filter0_d_2134_165" x="0" y="0.418823" width="28.5811" height="22.5812" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
 <feFlood flood-opacity="0" result="BackgroundImageFix"/>

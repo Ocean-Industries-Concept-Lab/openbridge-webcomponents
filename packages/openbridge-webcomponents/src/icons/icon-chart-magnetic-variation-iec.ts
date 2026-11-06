@@ -7,12 +7,12 @@ export class ObiChartMagneticVariationIec extends LitElement {
   @property({type: Boolean}) useCssColor = false;
 
   private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-<path fill-rule="evenodd" clip-rule="evenodd" d="M12.5689 1.6355L14.5001 1.9999V22.9999H12.5001V18.4141L7.83057 13.7445L12.5689 1.6355Z" fill="currentColor"/>
+<path d="M12.5689 1.6355L14.5001 1.9999V22.9999H12.5001V18.4141L7.83057 13.7445L12.5689 1.6355Z" fill-rule="evenodd" clip-rule="evenodd" fill="currentColor"/>
 </svg>
 `;
 
   private iconCss = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path fill-rule="evenodd" clip-rule="evenodd" d="M12.5689 1.6355L14.5001 1.9999V22.9999H12.5001V18.4141L7.83057 13.7445L12.5689 1.6355Z" style="fill: var(--element-active-color)"/>
+<path d="M12.5689 1.6355L14.5001 1.9999V22.9999H12.5001V18.4141L7.83057 13.7445L12.5689 1.6355Z" fill-rule="evenodd" clip-rule="evenodd" style="fill: var(--element-active-color)"/>
 </svg>
 `;
 

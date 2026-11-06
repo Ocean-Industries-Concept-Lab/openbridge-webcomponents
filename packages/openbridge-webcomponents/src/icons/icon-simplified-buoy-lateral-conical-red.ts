@@ -8,14 +8,14 @@ export class ObiSimplifiedBuoyLateralConicalRed extends LitElement {
 
   private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
 <path d="M20 21L4 21L17 3L20 21Z" fill="currentColor"/>
-<path fill-rule="evenodd" clip-rule="evenodd" d="M20 21L17 3L4 21L20 21ZM18.8195 20L16.4076 5.52824L5.95576 20L18.8195 20Z" fill="currentColor"/>
+<path d="M20 21L17 3L4 21L20 21ZM18.8195 20L16.4076 5.52824L5.95576 20L18.8195 20Z" fill-rule="evenodd" clip-rule="evenodd" fill="currentColor"/>
 <path d="M15 15C15 15.5523 14.5523 16 14 16C13.4477 16 13 15.5523 13 15C13 14.4477 13.4477 14 14 14C14.5523 14 15 14.4477 15 15Z" fill="currentColor"/>
 </svg>
 `;
 
   private iconCss = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
 <path d="M20 21L4 21L17 3L20 21Z" style="fill: var(--navigation-light-red-color)"/>
-<path fill-rule="evenodd" clip-rule="evenodd" d="M20 21L17 3L4 21L20 21ZM18.8195 20L16.4076 5.52824L5.95576 20L18.8195 20Z" style="fill: var(--element-active-color)"/>
+<path d="M20 21L17 3L4 21L20 21ZM18.8195 20L16.4076 5.52824L5.95576 20L18.8195 20Z" fill-rule="evenodd" clip-rule="evenodd" style="fill: var(--element-active-color)"/>
 <path d="M15 15C15 15.5523 14.5523 16 14 16C13.4477 16 13 15.5523 13 15C13 14.4477 13.4477 14 14 14C14.5523 14 15 14.4477 15 15Z" style="fill: var(--element-active-color)"/>
 </svg>
 `;

@@ -9,14 +9,14 @@ export class ObiIo extends LitElement {
   private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
 <path d="M10.0031 6L13.0062 9H10.9939L11 13H9.01848L9.01237 9H7.00005L10.0031 6Z" fill="currentColor"/>
 <path d="M13.997 18L10.9938 15H13.0062L13 11H14.9815L14.9877 15H17L13.997 18Z" fill="currentColor"/>
-<path fill-rule="evenodd" clip-rule="evenodd" d="M3 2C2.44772 2 2 2.44772 2 3V21C2 21.5523 2.44772 22 3 22H21C21.5523 22 22 21.5523 22 21V3C22 2.44772 21.5523 2 21 2H3ZM4 20V4H20V20H4Z" fill="currentColor"/>
+<path d="M3 2C2.44772 2 2 2.44772 2 3V21C2 21.5523 2.44772 22 3 22H21C21.5523 22 22 21.5523 22 21V3C22 2.44772 21.5523 2 21 2H3ZM4 20V4H20V20H4Z" fill-rule="evenodd" clip-rule="evenodd" fill="currentColor"/>
 </svg>
 `;
 
   private iconCss = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
 <path d="M10.0031 6L13.0062 9H10.9939L11 13H9.01848L9.01237 9H7.00005L10.0031 6Z" style="fill: var(--element-active-color)"/>
 <path d="M13.997 18L10.9938 15H13.0062L13 11H14.9815L14.9877 15H17L13.997 18Z" style="fill: var(--element-active-color)"/>
-<path fill-rule="evenodd" clip-rule="evenodd" d="M3 2C2.44772 2 2 2.44772 2 3V21C2 21.5523 2.44772 22 3 22H21C21.5523 22 22 21.5523 22 21V3C22 2.44772 21.5523 2 21 2H3ZM4 20V4H20V20H4Z" style="fill: var(--element-active-color)"/>
+<path d="M3 2C2.44772 2 2 2.44772 2 3V21C2 21.5523 2.44772 22 3 22H21C21.5523 22 22 21.5523 22 21V3C22 2.44772 21.5523 2 21 2H3ZM4 20V4H20V20H4Z" fill-rule="evenodd" clip-rule="evenodd" style="fill: var(--element-active-color)"/>
 </svg>
 `;
 

@@ -7,13 +7,13 @@ export class ObiShiftLock extends LitElement {
   @property({type: Boolean}) useCssColor = false;
 
   private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-<path fill-rule="evenodd" clip-rule="evenodd" d="M9 13V16H15V13H17.9383L12 5.28024L6.06173 13H9ZM2 15H7V18H17V15H22L12 2L2 15Z" fill="currentColor"/>
+<path d="M9 13V16H15V13H17.9383L12 5.28024L6.06173 13H9ZM2 15H7V18H17V15H22L12 2L2 15Z" fill-rule="evenodd" clip-rule="evenodd" fill="currentColor"/>
 <path d="M7 20H17V22H7V20Z" fill="currentColor"/>
 </svg>
 `;
 
   private iconCss = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path fill-rule="evenodd" clip-rule="evenodd" d="M9 13V16H15V13H17.9383L12 5.28024L6.06173 13H9ZM2 15H7V18H17V15H22L12 2L2 15Z" style="fill: var(--element-active-color)"/>
+<path d="M9 13V16H15V13H17.9383L12 5.28024L6.06173 13H9ZM2 15H7V18H17V15H22L12 2L2 15Z" fill-rule="evenodd" clip-rule="evenodd" style="fill: var(--element-active-color)"/>
 <path d="M7 20H17V22H7V20Z" style="fill: var(--element-active-color)"/>
 </svg>
 `;

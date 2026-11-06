@@ -8,7 +8,7 @@ export class ObiCursorPointer extends LitElement {
 
   private icon = svg`<svg width="33" height="33" viewBox="0 0 33 33" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
 <g filter="url(#filter0_d_2002_517)">
-<path fill-rule="evenodd" clip-rule="evenodd" d="M15.4563 11.0282L10.1866 11.7874L12.8036 16.3202L9.2644 18.3635L6.64743 13.8308L3.35504 18.0149L1.02166 0L15.4563 11.0282Z" fill="currentColor"/>
+<path d="M15.4563 11.0282L10.1866 11.7874L12.8036 16.3202L9.2644 18.3635L6.64743 13.8308L3.35504 18.0149L1.02166 0L15.4563 11.0282Z" fill-rule="evenodd" clip-rule="evenodd" fill="currentColor"/>
 </g>
 <path d="M12.9038 10.3638L2.34983 2.30049L4.05588 15.4721L6.7777 12.0131L9.63836 16.9679L11.4079 15.9463L8.54728 10.9914L12.9038 10.3638Z" fill="currentColor"/>
 <defs>
@@ -27,7 +27,7 @@ export class ObiCursorPointer extends LitElement {
 
   private iconCss = svg`<svg width="33" height="33" viewBox="0 0 33 33" fill="none" xmlns="http://www.w3.org/2000/svg">
 <g filter="url(#filter0_d_2002_517)">
-<path fill-rule="evenodd" clip-rule="evenodd" d="M15.4563 11.0282L10.1866 11.7874L12.8036 16.3202L9.2644 18.3635L6.64743 13.8308L3.35504 18.0149L1.02166 0L15.4563 11.0282Z" style="fill: var(--element-active-inverted-color)"/>
+<path d="M15.4563 11.0282L10.1866 11.7874L12.8036 16.3202L9.2644 18.3635L6.64743 13.8308L3.35504 18.0149L1.02166 0L15.4563 11.0282Z" fill-rule="evenodd" clip-rule="evenodd" style="fill: var(--element-active-inverted-color)"/>
 </g>
 <path d="M12.9038 10.3638L2.34983 2.30049L4.05588 15.4721L6.7777 12.0131L9.63836 16.9679L11.4079 15.9463L8.54728 10.9914L12.9038 10.3638Z" style="fill: var(--element-active-color)"/>
 <defs>

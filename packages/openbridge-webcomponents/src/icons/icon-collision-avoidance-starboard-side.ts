@@ -11,7 +11,7 @@ export class ObiCollisionAvoidanceStarboardSide extends LitElement {
 <path d="M18.5 12C18.5 12.5523 18.9477 13 19.5 13C20.0523 13 20.5 12.5523 20.5 12C20.5 11.4477 20.0523 11 19.5 11C18.9477 11 18.5 11.4477 18.5 12Z" fill="currentColor"/>
 <path d="M6.99999 12C6.99999 12.5523 7.44771 13 7.99999 13C8.55228 13 8.99999 12.5523 8.99999 12C8.99999 11.4477 8.55228 11 7.99999 11C7.44771 11 6.99999 11.4477 6.99999 12Z" fill="currentColor"/>
 <path d="M16 6L12 2L7.99999 6H11V20H13L13 6H16Z" fill="currentColor"/>
-<path fill-rule="evenodd" clip-rule="evenodd" d="M1.43933 12L4.96966 8.46967L6.03032 9.53033L3.56065 12L6.03032 14.4697L4.96966 15.5303L1.43933 12Z" fill="currentColor"/>
+<path d="M1.43933 12L4.96966 8.46967L6.03032 9.53033L3.56065 12L6.03032 14.4697L4.96966 15.5303L1.43933 12Z" fill-rule="evenodd" clip-rule="evenodd" fill="currentColor"/>
 </svg>
 `;
 
@@ -20,7 +20,7 @@ export class ObiCollisionAvoidanceStarboardSide extends LitElement {
 <path d="M18.5 12C18.5 12.5523 18.9477 13 19.5 13C20.0523 13 20.5 12.5523 20.5 12C20.5 11.4477 20.0523 11 19.5 11C18.9477 11 18.5 11.4477 18.5 12Z" style="fill: var(--element-active-color)"/>
 <path d="M6.99999 12C6.99999 12.5523 7.44771 13 7.99999 13C8.55228 13 8.99999 12.5523 8.99999 12C8.99999 11.4477 8.55228 11 7.99999 11C7.44771 11 6.99999 11.4477 6.99999 12Z" style="fill: var(--element-active-color)"/>
 <path d="M16 6L12 2L7.99999 6H11V20H13L13 6H16Z" style="fill: var(--element-active-color)"/>
-<path fill-rule="evenodd" clip-rule="evenodd" d="M1.43933 12L4.96966 8.46967L6.03032 9.53033L3.56065 12L6.03032 14.4697L4.96966 15.5303L1.43933 12Z" style="fill: var(--element-active-color)"/>
+<path d="M1.43933 12L4.96966 8.46967L6.03032 9.53033L3.56065 12L6.03032 14.4697L4.96966 15.5303L1.43933 12Z" fill-rule="evenodd" clip-rule="evenodd" style="fill: var(--element-active-color)"/>
 </svg>
 `;
 

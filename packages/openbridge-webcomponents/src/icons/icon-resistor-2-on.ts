@@ -8,13 +8,13 @@ export class ObiResistor2On extends LitElement {
 
   private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
 <path d="M5 9H19V15H5V9Z" fill="currentColor"/>
-<path fill-rule="evenodd" clip-rule="evenodd" d="M16 2L13 2V0H11L11 2L8 2L12 8H4V11H1V13H4V16H20V13H23V11H20V8H12L16 2ZM5 15V9H19V15H5Z" fill="currentColor"/>
+<path d="M16 2L13 2V0H11L11 2L8 2L12 8H4V11H1V13H4V16H20V13H23V11H20V8H12L16 2ZM5 15V9H19V15H5Z" fill-rule="evenodd" clip-rule="evenodd" fill="currentColor"/>
 </svg>
 `;
 
   private iconCss = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
 <path d="M5 9H19V15H5V9Z" style="fill: var(--automation-symbol-on-background-color)"/>
-<path fill-rule="evenodd" clip-rule="evenodd" d="M16 2L13 2V0H11L11 2L8 2L12 8H4V11H1V13H4V16H20V13H23V11H20V8H12L16 2ZM5 15V9H19V15H5Z" style="fill: var(--automation-symbol-on-border-color)"/>
+<path d="M16 2L13 2V0H11L11 2L8 2L12 8H4V11H1V13H4V16H20V13H23V11H20V8H12L16 2ZM5 15V9H19V15H5Z" fill-rule="evenodd" clip-rule="evenodd" style="fill: var(--automation-symbol-on-border-color)"/>
 </svg>
 `;
 
