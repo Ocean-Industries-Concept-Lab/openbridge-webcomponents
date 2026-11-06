@@ -3,6 +3,7 @@ import {render, svg} from 'lit';
 import {
   ADVICE_GLYPHS,
   adviceGlyph,
+  glyphMarkup,
   renderAdviceIcon,
   type AdviceGlyph,
 } from './advice-icons.js';
@@ -22,8 +23,15 @@ import '../icons/icon-info.js';
 const mounted: HTMLElement[] = [];
 afterEach(() => mounted.splice(0).forEach((el) => el.remove()));
 
-/** The `<path>`s of the icon element's own SVG, as the glyph copies them. */
-async function iconPaths(glyph: AdviceGlyph) {
+/** Both sides through the same serializer: the DOM expands `<path/>` to `<path></path>`. */
+const normalize = (markup: string) => {
+  const host = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+  host.innerHTML = markup;
+  return host.innerHTML.replace(/\s+/g, ' ').replace(/> </g, '><').trim();
+};
+
+/** The inside of the icon element's own `<svg>`, as the glyph copies it. */
+async function iconMarkup(glyph: AdviceGlyph) {
   const el = document.createElement(glyph.source) as HTMLElement & {
     useCssColor: boolean;
     updateComplete: Promise<unknown>;
@@ -32,12 +40,11 @@ async function iconPaths(glyph: AdviceGlyph) {
   document.body.appendChild(el);
   mounted.push(el);
   await el.updateComplete;
-  return [...el.shadowRoot!.querySelectorAll('path')].map((p) => ({
-    d: p.getAttribute('d'),
-    evenOdd: p.getAttribute('fill-rule') === 'evenodd',
-    fill: p.style.fill || p.getAttribute('fill') || undefined,
-    stroke: p.style.stroke || p.getAttribute('stroke') || undefined,
-  }));
+  const root = el.shadowRoot!.querySelector('svg')!;
+  return {
+    rootFill: root.getAttribute('fill'),
+    markup: normalize(root.innerHTML),
+  };
 }
 
 const glyphs = Object.values(AdviceCategory).flatMap((category) => [
@@ -47,18 +54,9 @@ const glyphs = Object.values(AdviceCategory).flatMap((category) => [
 
 describe('advice glyphs copy the icon set', () => {
   it.each(glyphs)('%s', async (_name, glyph) => {
-    const paths = await iconPaths(glyph);
-    expect(paths.length).toBe(glyph.paths.length);
-    paths.forEach((p, i) => {
-      const g = glyph.paths[i];
-      expect(p.d).toBe(g.d);
-      expect(p.evenOdd).toBe(!!g.evenOdd);
-      // The outline icons paint `currentColor`; the glyph takes the icon colour there.
-      expect(p.fill ?? 'none').toBe(
-        g.fill === 'color' ? 'currentColor' : g.fill
-      );
-      expect(p.stroke).toBe(g.stroke);
-    });
+    const icon = await iconMarkup(glyph);
+    expect(glyph.rootFill).toBe(icon.rootFill);
+    expect(normalize(glyph.markup)).toBe(icon.markup);
   });
 });
 
@@ -79,6 +77,16 @@ describe('adviceGlyph', () => {
   });
 });
 
+describe('glyphMarkup', () => {
+  it('prefixes every id and every reference to one with the instance id', () => {
+    const out = glyphMarkup(ADVICE_GLYPHS.alarm.triggered, 'a1');
+    expect(out).toContain('id="a1-stroke0_2002_1093"');
+    expect(out).toContain('href="#a1-stroke0_2002_1093"');
+    expect(out).toContain('mask="url(#a1-stroke1_2002_1093)"');
+    expect(out).not.toMatch(/id="stroke/);
+  });
+});
+
 describe('renderAdviceIcon', () => {
   const mount = (template: ReturnType<typeof svg>) => {
     const host = document.createElement('div');
@@ -86,7 +94,7 @@ describe('renderAdviceIcon', () => {
     document.body.appendChild(host);
     mounted.push(host);
     render(template, host.querySelector('svg')!);
-    return host.querySelector('g.advice-icon')!;
+    return host.querySelector('g.advice-icon') as SVGGElement;
   };
 
   it('centres the 24-unit glyph on the point and scales it to the size', () => {
@@ -102,9 +110,11 @@ describe('renderAdviceIcon', () => {
     expect(g.getAttribute('transform')).toBe(
       'translate(42 22) scale(0.6666666666666666)'
     );
-    expect(g.querySelector('path')!.getAttribute('fill')).toBe(
+    // The outline glyphs paint currentColor, which the group's colour sets.
+    expect(g.style.color).toBe(
       adviceStyle(AdviceCategory.eco, AdviceState.enabled).iconColor
     );
+    expect(g.querySelector('path')!.getAttribute('fill')).toBe('currentColor');
   });
 
   it('paints a triggered go-to glyph in the band colour and an IEC glyph in its own tokens', () => {
@@ -116,21 +126,21 @@ describe('renderAdviceIcon', () => {
         y: 0,
       })
     );
-    expect(eco.querySelector('path')!.getAttribute('fill')).toBe(
-      'var(--base-mint-500)'
-    );
+    expect(eco.style.color).toBe('var(--base-mint-500)');
     const alarm = mount(
       renderAdviceIcon({
         category: AdviceCategory.alarm,
         state: AdviceState.triggered,
         x: 0,
         y: 0,
+        id: 'alarm-a',
       })
     );
-    const [triangle] = alarm.querySelectorAll('path');
-    expect(triangle.getAttribute('fill')).toBe('var(--alert-alarm-color)');
-    expect(triangle.getAttribute('stroke')).toBe(
-      'var(--alert-alarm-outline-color)'
+    expect((alarm.querySelector('use') as SVGUseElement).style.fill).toBe(
+      'var(--alert-alarm-color)'
     );
+    expect(alarm.querySelector('mask')!.id).toBe('alarm-a-stroke1_2002_1093');
+    // The IEC root is fill="none": its stroke-only outline path stays unfilled.
+    expect(alarm.getAttribute('fill')).toBe('none');
   });
 });

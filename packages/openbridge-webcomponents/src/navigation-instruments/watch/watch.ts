@@ -1120,7 +1120,14 @@ export class ObcWatch extends LitElement {
       );
     const adviceIcons = resolvedAdvices
       .filter((a) => a.showIcon)
-      .map((a) => renderRingAdviceIcon(a, rOff, this.rotation ?? 0));
+      .map((a, i) =>
+        renderRingAdviceIcon(
+          a,
+          rOff,
+          this.rotation ?? 0,
+          `${this._adviceIdPrefix}-icon-${i}`
+        )
+      );
 
     // NSWE labels are px-fixed outside decor, so they degrade with
     // `labelsHidden` like the tick label texts. The north arrow is exempt:

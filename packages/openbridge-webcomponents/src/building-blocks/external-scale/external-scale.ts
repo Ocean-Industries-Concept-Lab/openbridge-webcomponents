@@ -2812,6 +2812,7 @@ function renderAdvice(
         mainEnd,
         perpCenter: adviceIconPerpCenter(config),
         advice,
+        id: `${maskId}-icon`,
       })
     : nothing;
 

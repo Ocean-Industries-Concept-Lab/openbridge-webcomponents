@@ -257,6 +257,8 @@ export interface LinearAdviceIconOptions {
   perpCenter: number;
   advice: AdviceInput | ResolvedAdvice;
   size?: number;
+  /** Unique in the document; the glyph's own ids are prefixed with it. */
+  id?: string;
 }
 
 /** The category's icon beside the band, centred on the range, in the responsive size. */
@@ -271,5 +273,6 @@ export function renderLinearAdviceIcon(
     x: o.vertical ? o.perpCenter : main,
     y: o.vertical ? main : o.perpCenter,
     size: o.size ?? ADVICE_ICON_SIZE_LINEAR,
+    id: o.id,
   });
 }

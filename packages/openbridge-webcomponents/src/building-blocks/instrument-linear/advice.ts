@@ -163,6 +163,7 @@ export function renderAdvice(
         mainEnd: yMax,
         perpCenter: barWidth / 2 + iconColumn + ADVICE_ICON_SIZE_LINEAR / 2,
         advice,
+        id: `${maskId}-icon`,
       })
     : nothing;
   return svg`

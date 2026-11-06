@@ -298,7 +298,8 @@ export function renderAdvice(
 export function renderRingAdviceIcon(
   input: AdviceInput | ResolvedAdvice,
   radiusOffset = 0,
-  rotation = 0
+  rotation = 0,
+  id: string = nextAdviceMaskId('advice-icon')
 ): SVGTemplateResult {
   const advice = asResolvedAdvice(input);
   const angle = advice.point
@@ -307,7 +308,7 @@ export function renderRingAdviceIcon(
   const r = ICON_RADIUS + radiusOffset;
   const rad = degToRad(angle);
   return svg`<g transform="translate(${Math.sin(rad) * r} ${-Math.cos(rad) * r}) rotate(${-rotation})">${renderAdviceIcon(
-    {category: advice.category, state: advice.state, x: 0, y: 0}
+    {category: advice.category, state: advice.state, x: 0, y: 0, id}
   )}</g>`;
 }
 
