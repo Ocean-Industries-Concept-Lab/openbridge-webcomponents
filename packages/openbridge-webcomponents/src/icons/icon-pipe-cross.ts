@@ -6,7 +6,7 @@ import {customElement} from '../decorator.js';
 export class ObiPipeCross extends LitElement {
   @property({type: Boolean}) useCssColor = false;
 
-  private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+  private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
 <path d="M9 0H15V5.67363C16.4557 6.36516 17.6348 7.54431 18.3264 9H24V15H18.3264C17.6348 16.4557 16.4557 17.6348 15 18.3264V24H9V18.3264C7.54431 17.6348 6.36516 16.4557 5.67363 15H0V9H5.67363C6.36516 7.54431 7.54431 6.36516 9 5.67363V0Z" fill="currentColor"/>
 <path d="M9 5.67363C7.54431 6.36516 6.36516 7.54431 5.67363 9H0V10H6.30568L6.57689 9.42909C7.16964 8.18132 8.18132 7.16964 9.42909 6.57689L10 6.30568V0H9V5.67363Z" fill="currentColor"/>
 <path d="M5.67363 15C6.36516 16.4557 7.54431 17.6348 9 18.3264V24H10V17.6943L9.42909 17.4231C8.18132 16.8304 7.16964 15.8187 6.57689 14.5709L6.30568 14H0V15H5.67363Z" fill="currentColor"/>

@@ -6,7 +6,7 @@ import {customElement} from '../decorator.js';
 export class ObiConnection1BarsCaution extends LitElement {
   @property({type: Boolean}) useCssColor = false;
 
-  private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+  private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
 <path d="M5.5 20H3.5V13H5.5V20Z" fill="currentColor"/>
 <path d="M10.5 20H8.5V18H10.5V20Z" fill="currentColor"/>
 <path d="M15.5 20H13.5V18H15.5V20Z" fill="currentColor"/>

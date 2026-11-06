@@ -1,0 +1,44 @@
+import {LitElement, html, css, svg} from 'lit';
+import {property} from 'lit/decorators.js';
+import {customElement} from '../decorator.js';
+
+@customElement('obi-valve-four-way-closed-top')
+export class ObiValveFourWayClosedTop extends LitElement {
+  @property({type: Boolean}) useCssColor = false;
+
+  private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M16.0022 1C16.8258 1.0003 17.2959 1.94049 16.802 2.59961L12.8021 7.93329C12.4022 8.46665 11.6022 8.46669 11.2021 7.93337L7.2014 2.59961C6.70751 1.94039 7.17832 1 8.00218 1H16.0022Z" fill="currentColor" stroke="currentColor"/>
+<path d="M20.426 6.10143C21.0888 5.63749 21.9993 6.11175 21.9993 6.92077V17.079C21.9993 17.888 21.0888 18.3623 20.426 17.8983L14.268 13.5882C14.1859 13.5307 14.0879 13.4999 13.9877 13.4999C13.7182 13.4999 13.4993 13.7183 13.4993 13.9877C13.4993 14.0878 13.5301 14.1855 13.5874 14.2674L17.8987 20.4266C18.3625 21.0894 17.8883 21.9999 17.0793 21.9999H6.92114C6.11212 21.9999 5.63786 21.0894 6.10181 20.4266L10.411 14.2686C10.4684 14.1865 10.4993 14.0885 10.4993 13.9883C10.4993 13.7189 10.2809 13.4999 10.0114 13.4999C9.91135 13.4999 9.81368 13.5307 9.73169 13.5881L3.57446 17.8983C2.91169 18.3622 2.00122 17.888 2.00122 17.079V6.92077C2.00122 6.1118 2.9117 5.63765 3.57446 6.10143L9.60042 10.3191C9.76849 10.4368 9.96868 10.4999 10.1738 10.4999H13.8267C14.0318 10.4999 14.232 10.4368 14.4001 10.3191L20.426 6.10143Z" fill="currentColor" stroke="currentColor"/>
+</svg>
+`;
+
+  private iconCss = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M16.0022 1C16.8258 1.0003 17.2959 1.94049 16.802 2.59961L12.8021 7.93329C12.4022 8.46665 11.6022 8.46669 11.2021 7.93337L7.2014 2.59961C6.70751 1.94039 7.17832 1 8.00218 1H16.0022Z" style="fill: var(--automation-symbol-off-background-color); stroke: var(--automation-symbol-off-border-color)"/>
+<path d="M20.426 6.10143C21.0888 5.63749 21.9993 6.11175 21.9993 6.92077V17.079C21.9993 17.888 21.0888 18.3623 20.426 17.8983L14.268 13.5882C14.1859 13.5307 14.0879 13.4999 13.9877 13.4999C13.7182 13.4999 13.4993 13.7183 13.4993 13.9877C13.4993 14.0878 13.5301 14.1855 13.5874 14.2674L17.8987 20.4266C18.3625 21.0894 17.8883 21.9999 17.0793 21.9999H6.92114C6.11212 21.9999 5.63786 21.0894 6.10181 20.4266L10.411 14.2686C10.4684 14.1865 10.4993 14.0885 10.4993 13.9883C10.4993 13.7189 10.2809 13.4999 10.0114 13.4999C9.91135 13.4999 9.81368 13.5307 9.73169 13.5881L3.57446 17.8983C2.91169 18.3622 2.00122 17.888 2.00122 17.079V6.92077C2.00122 6.1118 2.9117 5.63765 3.57446 6.10143L9.60042 10.3191C9.76849 10.4368 9.96868 10.4999 10.1738 10.4999H13.8267C14.0318 10.4999 14.232 10.4368 14.4001 10.3191L20.426 6.10143Z" style="fill: var(--automation-symbol-on-background-color); stroke: var(--automation-symbol-on-border-color)"/>
+</svg>
+`;
+
+  override render() {
+    return html`
+      <div class="wrapper">${this.useCssColor ? this.iconCss : this.icon}</div>
+    `;
+  }
+
+  static override styles = css`
+    .wrapper {
+      height: 100%;
+      width: 100%;
+      line-height: 0;
+    }
+    .wrapper > * {
+      height: 100%;
+      width: 100%;
+    }
+  `;
+}
+
+declare global {
+  interface HTMLElementTagNameMap {
+    'obi-valve-four-way-closed-top': ObiValveFourWayClosedTop;
+  }
+}

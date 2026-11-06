@@ -4,10 +4,10 @@ import '../../icons/icon-converter-dcdc-off.js';
 import '../../icons/icon-converter-dcdc.js';
 import '../../icons/icon-converter-dcac-on.js';
 import '../../icons/icon-converter-dcac-off.js';
-import '../../icons/icon-converter-dcac.js';
+import '../../icons/icon-converter-dcac-static.js';
 import '../../icons/icon-converter-acdc-on.js';
 import '../../icons/icon-converter-acdc-off.js';
-import '../../icons/icon-converter-acdc.js';
+import '../../icons/icon-converter-acdc-static.js';
 import '../../icons/icon-converter-acac-on.js';
 import '../../icons/icon-converter-acac-off.js';
 import '../../icons/icon-converter-acac-static.js';
@@ -49,12 +49,12 @@ const icons: Record<ConverterAlternativeIcon, SquaredDeviceIcons> = {
   [ConverterAlternativeIcon.converterDcac]: {
     on: 'converter-dcac-on',
     off: 'converter-dcac-off',
-    static: 'converter-dcac',
+    static: 'converter-dcac-static',
   },
   [ConverterAlternativeIcon.converterAcdc]: {
     on: 'converter-acdc-on',
     off: 'converter-acdc-off',
-    static: 'converter-acdc',
+    static: 'converter-acdc-static',
   },
   [ConverterAlternativeIcon.converterAcac]: {
     on: 'converter-acac-on',

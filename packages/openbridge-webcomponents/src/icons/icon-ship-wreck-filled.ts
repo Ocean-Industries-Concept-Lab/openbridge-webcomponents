@@ -6,7 +6,7 @@ import {customElement} from '../decorator.js';
 export class ObiShipWreckFilled extends LitElement {
   @property({type: Boolean}) useCssColor = false;
 
-  private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+  private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
 <ellipse cx="12" cy="12" rx="11" ry="9" fill="currentColor"/>
 <path d="M11.9466 3.0001L12 3L12.0534 3.0001C12.6057 3.00225 13.0516 3.45169 13.0495 4.00397C13.0474 4.55625 12.5979 5.00223 12.0456 5.00009L12 5L11.9544 5.00009C11.4021 5.00223 10.9526 4.55625 10.9505 4.00397C10.9484 3.45169 11.3943 3.00225 11.9466 3.0001Z" fill="currentColor"/>
 <path d="M14.4907 4.20676C14.6465 3.67691 15.2023 3.37369 15.7322 3.5295C15.7666 3.53961 15.8009 3.54986 15.8351 3.56024C16.3636 3.72056 16.6621 4.27897 16.5018 4.80747C16.3414 5.33597 15.783 5.63444 15.2545 5.47412C15.2257 5.46539 15.1969 5.45677 15.1679 5.44826C14.6381 5.29245 14.3349 4.73661 14.4907 4.20676Z" fill="currentColor"/>
