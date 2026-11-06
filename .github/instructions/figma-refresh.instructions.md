@@ -109,15 +109,15 @@ re-sync changes every key are in
 
 Inputs:
 
-| File / env                             | Tracked | Notes                                                                                                      |
-| -------------------------------------- | ------- | ---------------------------------------------------------------------------------------------------------- |
-| `.env` → `FIGMA_TOKEN`                 | no      | required for any run that calls the API                                                                    |
-| `script/figmavariables.json`           | yes     | `VariableID → token` map; the converter falls back to literal hex for an unknown id                        |
-| `script/.cache-figma.json`             | no      | ~30 MB raw API response, reused across runs                                                                |
-| `script/.cache/icons/*.svg`            | no      | per-icon payloads, rewritten each run; a renamed icon's old file stays behind, unread                      |
-| `script/.cache/unknown-variables.json` | no      | written every run: the ids the map did not resolve, `[]` when clean                                        |
-| `OBC_USE_CACHE=1`                      | —       | reuse the on-disk cache instead of calling the API; for iterating on `convert-icons.ts` or a refreshed map |
-| `OBC_ALLOW_UNRESOLVED_VARS=1`          | —       | let a run with unresolved ids finish writing; `lint:icons` still fails on the hex it leaves behind         |
+| File / env                             | Tracked | Notes                                                                                                                                         |
+| -------------------------------------- | ------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
+| `.env` → `FIGMA_TOKEN`                 | no      | required for any run that calls the API                                                                                                       |
+| `script/figmavariables.json`           | yes     | `VariableID → token` map; the converter falls back to literal hex for an unknown id                                                           |
+| `script/.cache-figma.json`             | no      | ~30 MB raw API response, reused across runs                                                                                                   |
+| `script/.cache/icons/*.svg`            | no      | per-icon payloads; a fresh run rewrites them, `OBC_USE_CACHE=1` fetches only the missing ones; a renamed icon's old file stays behind, unread |
+| `script/.cache/unknown-variables.json` | no      | written every run: the ids the map did not resolve, `[]` when clean                                                                           |
+| `OBC_USE_CACHE=1`                      | —       | reuse the on-disk cache instead of calling the API; for iterating on `convert-icons.ts` or a refreshed map                                    |
+| `OBC_ALLOW_UNRESOLVED_VARS=1`          | —       | let a run with unresolved ids finish writing; `lint:icons` still fails on the hex it leaves behind                                            |
 
 Steps:
 
