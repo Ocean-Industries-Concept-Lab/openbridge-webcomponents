@@ -6,6 +6,8 @@ import {
   watchfaceLinear,
 } from './instrument-linear.js';
 import {Priority} from '../../navigation-instruments/types.js';
+import {resolveLinearAdvice} from './advice.js';
+import {AdviceState, AdviceTrigger} from '../../svghelpers/advice.js';
 
 describe('linearTickInterval', () => {
   // The default minSpacing of 16 is load-bearing: it is chosen so the helper
@@ -109,5 +111,31 @@ describe('watchfaceLinear labels', () => {
     expect(labels.map((l) => l.text)).toEqual(['0', '25', '50', '75', '100']);
     expect(labels.map((l) => l.y)).toEqual([-140, -70, 0, 70, 140]);
     expect(labels.every((l) => l.x === 72 / 2 + 4)).toBe(true);
+  });
+});
+
+describe('resolveLinearAdvice', () => {
+  const advices = [
+    {min: 10, max: 20, category: 'caution'},
+    {min: 40, max: 50, category: 'optimal'},
+  ];
+
+  it('triggers an advice the trend band reaches into', () => {
+    const [caution, optimal] = resolveLinearAdvice(advices, 15, 30);
+    expect(caution.state).toBe(AdviceState.triggered);
+    expect(optimal.state).toBe(AdviceState.enabled);
+  });
+
+  it('applies the emphasis rules and the trigger mode', () => {
+    const [caution, optimal] = resolveLinearAdvice(advices, 15, 30, {
+      emphasis: true,
+    });
+    expect(caution.state).toBe(AdviceState.triggered);
+    expect(optimal.state).toBe(AdviceState.hinted);
+    // These scales have no setpoint, so that mode leaves nothing to hit.
+    const [untouched] = resolveLinearAdvice(advices, 15, 30, {
+      trigger: AdviceTrigger.setpoint,
+    });
+    expect(untouched.state).toBe(AdviceState.enabled);
   });
 });

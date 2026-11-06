@@ -1,0 +1,85 @@
+import {Meta, Markdown} from '@storybook/addon-docs/blocks';
+import adviceInput from './migration-guide-2-2/advice-input.md?raw';
+import renamedProperties from './migration-guide-2-2/renamed-properties.md?raw';
+import renamedTypes from './migration-guide-2-2/renamed-types.md?raw';
+
+<Meta title="Introduction/Migration Guide 2.1 to 2.2" />
+
+# Migrating from 2.1 to 2.2
+
+2.2 is a minor release: no element, property, attribute, event or slot was removed, so markup and TypeScript written against 2.1 compile and run. The change is the advice system ([#1402](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/issues/1402)): one input shape, one design layer and the 6.1 categories on every instrument that draws an advice, with point advices and the area layer added. The names each instrument used before are kept as deprecated aliases. Two things change on screen without an API change and are listed under [Behaviour Changes](#behaviour-changes), each with the property that restores the old behaviour.
+
+Coming from 2.0? Read [Migrating from 2.0 to 2.1](?path=/docs/introduction-migration-guide-2-0-to-2-1--docs) first. The [Advice System](?path=/docs/introduction-advice-system--docs) page is the reference for the new vocabulary; the [Changelog](?path=/docs/introduction-changelog--docs) lists every change.
+
+## Contents
+
+1. [Advice Input](#advice-input)
+2. [Renamed Properties](#renamed-properties)
+3. [Renamed Types](#renamed-types)
+4. [Behaviour Changes](#behaviour-changes)
+5. [What Moved on Screen](#what-moved-on-screen)
+
+## Advice Input
+
+Every instrument takes `advices`, a list of `{min, max}` ranges or `{value}` points with a `category` and an optional `state`. The field names the instruments read before are still read and mapped:
+
+<Markdown>{adviceInput}</Markdown>
+
+```ts
+// 2.1
+compass.headingAdvices = [
+  {minAngle: 20, maxAngle: 50, type: AdviceType.advice, hinted: false},
+];
+
+// 2.2
+compass.advices = [{min: 20, max: 50, category: 'optimal'}];
+```
+
+New on every entry: `category: 'running' | 'eco' | 'ai' | 'exclusion'`, `value` for a point advice, `state: 'active'`, `showArea` for the area layer, `showIcon` for the category's icon beside the band, and `hideMinTickmark` / `hideMaxTickmark` on the radial instruments as well as the linear ones. An entry without a category, or with one the library does not know, throws a `TypeError` instead of drawing a grey band.
+
+## Renamed Properties
+
+Each instrument's list is `advices`; the old name keeps working as a deprecated alias of it. Two properties arrived alongside on every one of them: `adviceTrigger` (`both`, `value`, `setpoint`) and `adviceEmphasis`.
+
+<Markdown>{renamedProperties}</Markdown>
+
+Unchanged: `advices` on the watch, the bars and gauges, the thruster, the radial gauges and the rudder; `angleAdvices` and `thrustAdvices` on `obc-azimuth-thruster`, which has two axes; `heaveAdvice` on `obc-pitch-roll-heave`, the heave column's own list. New: `advices` on `obc-line-graph` and `obc-area-graph`, which draw the area layer only.
+
+## Renamed Types
+
+The instrument-specific types are aliases of the two shared ones and are deprecated. Deep imports keep resolving.
+
+<Markdown>{renamedTypes}</Markdown>
+
+## Behaviour Changes
+
+These need no code change, but an instrument shows something different for the same input.
+
+### A reversed angular pair is drawn the short way round
+
+A band on a compass, heading or azimuth thruster runs clockwise from `min` to `max`. 2.1 took a pair with the larger angle first as a band the long way round, which is how a 100° band written as `{200, 100}` became a 260° one ([#1358](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/issues/1358)). 2.2 swaps such a pair when its clockwise span would exceed 180°. A band across north written as `{350, 10}` is unchanged, 20°. To draw a band longer than 180° on purpose, write the smaller angle first: `{min: 20, max: 340}` is the 320° band from 20 clockwise to 340.
+
+### An advice triggers on the value as well as the setpoint
+
+2.1's compass, heading and azimuth thruster triggered a band on the setpoint alone, the bars and gauges on the value alone. 2.2 triggers on either by default, which is what the reports asked for ([#1073](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/issues/1073)). `adviceTrigger` restores the old reading:
+
+```html
+<!-- the compass as in 2.1: the setpoint alone -->
+<obc-compass adviceTrigger="setpoint"></obc-compass>
+
+<!-- a bar as in 2.1: the value alone -->
+<obc-bar-vertical adviceTrigger="value"></obc-bar-vertical>
+```
+
+The trigger test on the angular instruments is wrap-aware: a heading of 5° is inside `{350, 10}`.
+
+## What Moved on Screen
+
+Every band is drawn by the shared layer, so screenshot tests show differences on every instrument with an advice:
+
+- A no-go band (`caution`, `warning`, `alarm`, `exclusion`) is square with a 2-unit corner instead of the go-to pill, and two bands that meet are cut flat at the join.
+- A caution band's hatch is the one 45° stripe on every path and at every zoom level; the pre-baked radial tile is kept at the design radius.
+- A band shorter than the pill's two insets is drawn; 2.1 dropped it.
+- A hinted `warning` or `alarm` band is solid light grey rather than hatched; a hinted `caution` band keeps its grey hatch.
+- A `warning` or `alarm` band carries the alert colour with its outline while triggered, where 2.1 drew the caution yellow for every alert ([#1356](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/1356)).
+- Pattern at every size: a caution band on a small bar or gauge is hatched rather than solid ([#1062](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/issues/1062)).

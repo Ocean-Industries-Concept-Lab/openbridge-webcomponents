@@ -1,4 +1,4 @@
-import {LitElement, html, unsafeCSS, svg, nothing} from 'lit';
+import {LitElement, html, unsafeCSS, svg, nothing, PropertyValues} from 'lit';
 import {property} from 'lit/decorators.js';
 import compentStyle from './main-engine.css?inline';
 import {InstrumentState, Priority} from '../types.js';
@@ -9,14 +9,19 @@ import {
   thrusterTopSingleSided,
   renderThrusterSetpoint,
 } from '../thruster/thruster.js';
-import {LinearAdvice} from '../thruster/advice.js';
+import {AdviceMixin, syncAdviceAlias} from '../../svghelpers/advice-mixin.js';
+import {
+  adviceTriggerReadings,
+  nextAdviceMaskId,
+  type AdviceInput,
+} from '../../svghelpers/advice.js';
 import {customElement} from '../../decorator.js';
 
 /**
  * @stable
  */
 @customElement('obc-main-engine')
-export class ObcMainEngine extends LitElement {
+export class ObcMainEngine extends AdviceMixin(LitElement) {
   private _thrustSetpointId = `me-thrust-sp-${Math.random().toString(36).slice(2, 9)}`;
   private _speedSetpointId = `me-speed-sp-${Math.random().toString(36).slice(2, 9)}`;
 
@@ -38,7 +43,16 @@ export class ObcMainEngine extends LitElement {
   @property({type: Number}) speedSetpointAtZeroDeadband: number = 0.5;
   @property({type: String}) state: InstrumentState = InstrumentState.active;
   @property({type: String}) priority: Priority = Priority.regular;
-  @property({type: Array}) thrustAdvices: LinearAdvice[] = [];
+  /** @deprecated Alias of `advices`. Ranges in percent of thrust. */
+  @property({type: Array}) thrustAdvices?: AdviceInput[];
+
+  // Mask ids are document-scoped, so each engine names its own.
+  private readonly _adviceMaskPrefix = nextAdviceMaskId('engine');
+
+  override willUpdate(changed: PropertyValues) {
+    super.willUpdate(changed);
+    syncAdviceAlias(this, this.thrustAdvices);
+  }
 
   override render() {
     const thrustAtSetpoint = atSetpoint(this.thrust, this.thrustSetpoint, {
@@ -75,7 +89,15 @@ export class ObcMainEngine extends LitElement {
     const frameRight = svg`<rect x="8" y="-176" width="48" height="352" fill="var(--instrument-frame-secondary-color)" vector-effect="non-scaling-stroke" stroke="var(--instrument-frame-secondary-color)"/>`;
     const thrustCenter = svg`<rect x="8" y="-2" height="4" width="72" fill="${cThrust.zeroLineColor}" stroke=${cThrust.zeroLineColor} vector-effect="non-scaling-stroke"/>`;
     const {topAdvices: topThrustAdvice, bottomAdvices: bottomThrustAdvice} =
-      convertThrustAdvices(this.thrustAdvices, this.thrustSetpoint);
+      convertThrustAdvices(
+        this.advices,
+        adviceTriggerReadings(
+          this.adviceTrigger,
+          this.thrust,
+          this.thrustSetpoint
+        ),
+        {emphasis: this.adviceEmphasis}
+      );
     const thrustTop = svg`<g transform="translate(44, 0)">
       ${thrusterTopSingleSided(
         174,
@@ -87,6 +109,7 @@ export class ObcMainEngine extends LitElement {
           flipAdicePattern: false,
           narrow: false,
           off: this.state === InstrumentState.off,
+          adviceMaskPrefix: `${this._adviceMaskPrefix}-top`,
         },
         topThrustAdvice
       )}</g>`;
@@ -98,9 +121,10 @@ export class ObcMainEngine extends LitElement {
        {
          hideContainer: true,
          hideTicks: cThrust.hideTicks,
-         flipAdicePattern: false,
+         flipAdicePattern: true,
          narrow: false,
          off: this.state === InstrumentState.off,
+         adviceMaskPrefix: `${this._adviceMaskPrefix}-bottom`,
        },
        bottomThrustAdvice
      )}</g>`;

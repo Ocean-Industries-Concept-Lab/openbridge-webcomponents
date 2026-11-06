@@ -43,6 +43,8 @@ export default [
           allowFiles: [
             'src/svghelpers/setpoint-mixin.ts',
             'src/svghelpers/setpoint-bundle.ts',
+            'src/svghelpers/advice-mixin.ts',
+            'src/svghelpers/advice-bundle.ts',
           ],
         },
       ],

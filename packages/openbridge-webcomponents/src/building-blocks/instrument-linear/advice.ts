@@ -1,84 +1,61 @@
+/**
+ * The linear instrument scale's advice bands (`watchfaceLinear`): values on
+ * the scale along y, the band on the tick lane beside the bar, the dashed
+ * limit guides across it. Drawn by the shared linear renderer.
+ *
+ * @module
+ */
+
 import {SVGTemplateResult, nothing, svg} from 'lit';
-import {
-  AdviceState,
-  AdviceType,
-} from '../../navigation-instruments/watch/advice.js';
 import {
   tickmarkColor,
   TickmarkStyle,
 } from '../../navigation-instruments/watch/tickmark.js';
-import {valueToY} from './instrument-linear.js';
+import {LINEAR_LABEL_GAP, valueToY} from './instrument-linear.js';
+import {
+  AdviceTrigger,
+  adviceStyle,
+  adviceTriggerReadings,
+  asResolvedAdvice,
+  nextAdviceMaskId,
+  resolveAdvices,
+  ADVICE_ICON_SIZE_LINEAR,
+  type AdviceInput,
+  type ResolvedAdvice,
+} from '../../svghelpers/advice.js';
+import {
+  renderLinearAdviceArea,
+  renderLinearAdviceBand,
+  renderLinearAdviceIcon,
+  renderLinearAdvicePoint,
+} from '../../svghelpers/advice-linear.js';
 
-export interface LinearAdviceRaw {
-  min: number;
-  max: number;
-  type: AdviceType;
-  state: AdviceState;
-}
+/** @deprecated Use {@link ResolvedAdvice}. */
+export type LinearAdviceRaw = ResolvedAdvice;
 
-export interface LinearAdvice {
-  min: number;
-  max: number;
-  type: AdviceType;
-  hinted: boolean;
-}
+/** @deprecated Use {@link AdviceInput}; `type` and `hinted` are still read. */
+export type LinearAdvice = AdviceInput & {min: number; max: number};
 
 /**
- * Resolves the display state of each advice zone against a trend band: an
- * advice the band reaches into is `triggered`, otherwise it is `hinted` or
- * `regular` as configured.
+ * The advice list resolved against a trend band: an advice the band reaches
+ * into is `triggered`, otherwise it keeps its configured state.
  *
- * Shared by the vertical draught-style scales (`obc-heave`, `obc-draft-trim`),
- * which each evaluate their own trend band against the same advice list.
+ * Shared by the vertical draught-style scales (`obc-heave`, `obc-draft-trim`,
+ * the heave column of `obc-pitch-roll-heave`).
  */
 export function resolveLinearAdvice(
-  advice: LinearAdvice[],
+  advice: readonly AdviceInput[],
   trendMin: number,
-  trendMax: number
-): LinearAdviceRaw[] {
-  return advice.map((a) => {
-    const isActive = trendMax >= a.min && trendMin <= a.max;
-    const state = isActive
-      ? AdviceState.triggered
-      : a.hinted
-        ? AdviceState.hinted
-        : AdviceState.regular;
-    return {...a, min: a.min, max: a.max, state} satisfies LinearAdviceRaw;
-  });
-}
-
-function adviceMask({
-  height,
-  minValue,
-  maxValue,
-  min,
-  max,
-  fill,
-  stroke,
-  x1,
-}: {
-  height: number;
-  minValue: number;
-  maxValue: number;
-  min: number;
-  max: number;
-  fill: string;
-  stroke: string;
-  x1: number;
-}): SVGTemplateResult {
-  const width = 8;
-  const offset = 4;
-  const x2 = x1 + width + offset;
-  const r = width / 2;
-  const yL = valueToY(min, minValue, maxValue, height) - 2 * r;
-  const yH = valueToY(max, minValue, maxValue, height) + 2 * r;
-
-  const path = `M ${x1 + offset} ${yL} 
-                    A ${r} ${r} 0 0 0 ${x2} ${yL}
-                    V ${yH}
-                    A ${r} ${r} 0 0 0 ${x1 + offset} ${yH}
-                    Z`;
-  return svg`<path d=${path} fill=${fill} stroke=${stroke} stroke-width="1" vector-effect="non-scaling-stroke" />`;
+  trendMax: number,
+  opts: {trigger?: AdviceTrigger; emphasis?: boolean} = {}
+): ResolvedAdvice[] {
+  // The band is the instrument's value; these scales have no setpoint.
+  const readings = adviceTriggerReadings(
+    opts.trigger ?? AdviceTrigger.both,
+    {min: trendMin, max: trendMax},
+    undefined
+  );
+  return resolveAdvices(advice, readings, {emphasis: opts.emphasis});
 }
 
 export function singleSidedTickmark({
@@ -106,94 +83,94 @@ export function singleSidedTickmark({
   return svg`<line x1=${x1 - 2} x2=${x1 + scaleWidth} y1=${y}  y2=${y} stroke=${color} stroke-width="1" vector-effect="non-scaling-stroke"/>`;
 }
 
+/**
+ * One advice on the linear gauge. `iconColumn` is where the icon box starts
+ * past the +x edge: after the label column when the scale is labelled, in
+ * the labels' place otherwise.
+ */
 export function renderAdvice(
   height: number,
   minValue: number,
   maxValue: number,
   barWidth: number,
   scaleWidth: number,
-  advice: LinearAdviceRaw
+  input: AdviceInput | ResolvedAdvice,
+  maskId: string = nextAdviceMaskId('linear'),
+  iconColumn: number = LINEAR_LABEL_GAP
 ): SVGTemplateResult {
+  const advice = asResolvedAdvice(input);
+  const style = adviceStyle(advice.category, advice.state);
+  const tickmarkStyle = style.tickStyle as TickmarkStyle;
   const x1 = barWidth / 2 - scaleWidth;
-
   const x1Tickmark = -barWidth / 2;
   const x2Tickmark = barWidth / 2 - scaleWidth;
-  const ticks: SVGTemplateResult[] = [];
-  if (advice.min > minValue) {
-    const yMin = valueToY(advice.min, minValue, maxValue, height);
-    ticks.push(svg`<line x1=${x1Tickmark} x2=${x2Tickmark} y1=${yMin} y2=${yMin} 
-                    stroke="var(--instrument-frame-tertiary-color)" stroke-width="1" vector-effect="non-scaling-stroke" 
-                    stroke-dasharray="4 4"/>`);
-  }
-  if (advice.max < maxValue) {
-    const yMax = valueToY(advice.max, minValue, maxValue, height);
-    ticks.push(svg`<line x1=${x1Tickmark} x2=${x2Tickmark} y1=${yMax} y2=${yMax} 
-                    stroke="var(--instrument-frame-tertiary-color)" stroke-width="1" vector-effect="non-scaling-stroke" 
-                    stroke-dasharray="4 4"/>`);
-  }
+  const yMin = valueToY(advice.min, minValue, maxValue, height);
+  const yMax = valueToY(advice.max, minValue, maxValue, height);
 
-  if (advice.type === AdviceType.caution) {
-    let mainColor;
-    let fillColor: string = 'var(--instrument-frame-primary-color)';
-    if (advice.state === AdviceState.hinted) {
-      mainColor = 'var(--instrument-frame-tertiary-color)';
-    } else if (advice.state === AdviceState.regular) {
-      mainColor = 'var(--instrument-tick-mark-tertiary-color)';
-    } else {
-      mainColor = 'var(--on-caution-active-color)';
-      fillColor = 'var(--alert-caution-color)';
-    }
-    const pattern = [];
-    const ypattern = 50;
-    for (let i = -16 * 8; i < 16 * 14; i += 16) {
-      pattern.push(svg`<g transform="translate(0 ${-i}) ">
-            <path d="M 50 0 L 0 ${ypattern}" stroke=${mainColor} stroke-width="6"/>
-            </g>
-            `);
-    }
-    const maskId = `adviceMask-${advice.min}-${advice.max}`;
-    let tickmarkStyle = TickmarkStyle.regular;
-    if (advice.state === AdviceState.regular) {
-      tickmarkStyle = TickmarkStyle.regular;
-    } else if (advice.state === AdviceState.triggered) {
-      tickmarkStyle = TickmarkStyle.enhanced;
-    }
-
-    return svg`
-            <mask id=${maskId}>
-                ${adviceMask({height, minValue, maxValue, min: advice.min, max: advice.max, fill: 'white', stroke: 'black', x1})}
-            </mask>
-            <g mask="url(#${maskId})">
-                ${fillColor ? svg`<rect x="-256" y="-512" width="512" height="1024" fill="${fillColor}"/>` : nothing}
-                ${pattern}
-            </g>
-            ${adviceMask({height, minValue, maxValue, min: advice.min, max: advice.max, fill: 'none', stroke: mainColor, x1})}
-            ${singleSidedTickmark({height, scaleWidth, minValue, maxValue, value: advice.min, style: tickmarkStyle, x1})}
-            ${singleSidedTickmark({height, scaleWidth, minValue, maxValue, value: advice.max, style: tickmarkStyle, x1})}
-            ${ticks}
-        `;
+  // The limit guides across the bar: the area layer draws them in the
+  // category's dash, otherwise they stay the dashed tertiary lines.
+  const bounds: SVGTemplateResult[] = [];
+  if (advice.showArea) {
+    bounds.push(
+      renderLinearAdviceArea({
+        vertical: true,
+        mainStart: yMin,
+        mainEnd: yMax,
+        perpStart: x1Tickmark,
+        perpEnd: x2Tickmark,
+        advice,
+        patternId: `${maskId}-area`,
+      })
+    );
   } else {
-    let strokeColor;
-    let tickmarkStyle;
-    let fillColor: string;
-    if (advice.state === AdviceState.hinted) {
-      strokeColor = 'var(--instrument-frame-tertiary-color)';
-      fillColor = 'var(--instrument-frame-primary-color)';
-      tickmarkStyle = TickmarkStyle.regular;
-    } else if (advice.state === AdviceState.regular) {
-      strokeColor = 'var(--instrument-regular-secondary-color)';
-      fillColor = 'var(--instrument-frame-primary-color)';
-      tickmarkStyle = TickmarkStyle.regular;
-    } else {
-      strokeColor = 'var(--instrument-enhanced-secondary-color)';
-      fillColor = strokeColor;
-      tickmarkStyle = TickmarkStyle.regular;
-    }
-    return svg`
-            ${adviceMask({height, minValue, maxValue, min: advice.min, max: advice.max, fill: fillColor, stroke: strokeColor, x1})}
-            ${singleSidedTickmark({height, scaleWidth, minValue, maxValue, value: advice.min, style: tickmarkStyle, x1})}
-            ${singleSidedTickmark({height, scaleWidth, minValue, maxValue, value: advice.max, style: tickmarkStyle, x1})}
-            ${ticks}
-        `;
+    const guide = (y: number) =>
+      svg`<line x1=${x1Tickmark} x2=${x2Tickmark} y1=${y} y2=${y}
+                    stroke="var(--instrument-frame-tertiary-color)" stroke-width="1" vector-effect="non-scaling-stroke"
+                    stroke-dasharray="4 4"/>`;
+    if (advice.min > minValue) bounds.push(guide(yMin));
+    if (!advice.point && advice.max < maxValue) bounds.push(guide(yMax));
   }
+
+  const marker = advice.point
+    ? renderLinearAdvicePoint({
+        vertical: true,
+        main: yMin,
+        perpCenter: x1 + 8,
+        advice,
+      })
+    : renderLinearAdviceBand({
+        vertical: true,
+        mainStart: yMin,
+        mainEnd: yMax,
+        perpStart: x1 + 4,
+        advice,
+        maskId,
+      });
+  const tick = (value: number) =>
+    singleSidedTickmark({
+      height,
+      scaleWidth,
+      minValue,
+      maxValue,
+      value,
+      style: tickmarkStyle,
+      x1,
+    });
+  const icon = advice.showIcon
+    ? renderLinearAdviceIcon({
+        vertical: true,
+        mainStart: yMin,
+        mainEnd: yMax,
+        perpCenter: barWidth / 2 + iconColumn + ADVICE_ICON_SIZE_LINEAR / 2,
+        advice,
+        id: `${maskId}-icon`,
+      })
+    : nothing;
+  return svg`
+    ${bounds}
+    ${marker}
+    ${advice.hideMinTickmark ? nothing : tick(advice.min)}
+    ${advice.point || advice.hideMaxTickmark ? nothing : tick(advice.max)}
+    ${icon}
+  `;
 }

@@ -5,9 +5,10 @@ import { useWeather } from '@/business/getWeather'
 import { VesselImage } from '@oicl/openbridge-webcomponents/dist/navigation-instruments/watch/vessel'
 import { computed, ref, onMounted, onUnmounted } from 'vue'
 import {
-  type AngleAdvice,
-  AdviceType
-} from '@oicl/openbridge-webcomponents/dist/navigation-instruments/watch/advice.js'
+  AdviceCategory,
+  AdviceState,
+  type AdviceInput
+} from '@oicl/openbridge-webcomponents/dist/svghelpers/advice.js'
 import {
   InstrumentState,
   Priority
@@ -59,7 +60,7 @@ const windSpeedKnots = computed(() => {
   return Math.round(knots * 10) / 10
 })
 
-const headingAdvice = computed((): AngleAdvice[] => {
+const headingAdvice = computed((): AdviceInput[] => {
   const vessel = props.vessel
   const isFerry = vessel === 'ferry'
   let showAdvice = sim.controllers.showAdvice.value
@@ -69,16 +70,16 @@ const headingAdvice = computed((): AngleAdvice[] => {
   if (showAdvice) {
     return [
       {
-        minAngle: 0,
-        maxAngle: 45,
-        type: AdviceType.caution,
-        hinted: true
+        min: 0,
+        max: 45,
+        category: AdviceCategory.caution,
+        state: AdviceState.hinted
       },
       {
-        minAngle: 180,
-        maxAngle: 270,
-        type: AdviceType.advice,
-        hinted: true
+        min: 180,
+        max: 270,
+        category: AdviceCategory.optimal,
+        state: AdviceState.hinted
       }
     ]
   }
@@ -162,7 +163,7 @@ onUnmounted(() => {
       :current-speed="sim.currentSpeedKnots"
       :current-wind-speed-knots="windSpeedKnots"
       :wind-from-direction="weather.windDirection"
-      :heading-advices="headingAdvice"
+      :advices="headingAdvice"
       :state="InstrumentState.active"
       :priority="demoConfigStore.hasCommand ? Priority.enhanced : Priority.regular"
     />

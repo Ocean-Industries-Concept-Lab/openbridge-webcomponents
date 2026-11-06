@@ -9,3 +9,4 @@ export * from './legend.js';
 export * from './x-value.js';
 export * from './label-threshold.js';
 export * from './range-labels.js';
+export * from './advice-area-plugin.js';

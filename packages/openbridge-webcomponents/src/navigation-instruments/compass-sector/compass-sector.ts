@@ -11,7 +11,8 @@ import {ReadoutSize} from '../readout/readout.js';
 import instrumentReadoutStyle from '../readout/instrument-readout.css?inline';
 import {Tickmark, TickmarkType, TickmarkStyle} from '../watch/tickmark.js';
 import {arrow, ArrowStyle} from '../compass/arrow.js';
-import {AdviceState, AngleAdvice, AngleAdviceRaw} from '../watch/advice.js';
+import {AdviceMixin, syncAdviceAlias} from '../../svghelpers/advice-mixin.js';
+import type {AdviceInput, ResolvedAdvice} from '../../svghelpers/advice.js';
 import {
   WatchCircleType,
   WatchArea,
@@ -158,7 +159,9 @@ function tickDensityForFOV(fov: number): TickDensity {
  * @stable
  */
 @customElement('obc-compass-sector')
-export class ObcCompassSector extends LitElement {
+export class ObcCompassSector extends AdviceMixin(LitElement, {
+  angularWraparound: true,
+}) {
   @property({type: Number}) heading = 0;
   @property({type: Number}) courseOverGround = 0;
 
@@ -171,7 +174,8 @@ export class ObcCompassSector extends LitElement {
   @property({type: Number}) autoAtHeadingSetpointDeadband: number = 2;
   @property({type: Boolean}) animateSetpoint: boolean = false;
   @property({type: Boolean}) touching: boolean = false;
-  @property({type: Array, attribute: false}) headingAdvices: AngleAdvice[] = [];
+  /** @deprecated Alias of `advices`. Angle ranges in degrees. */
+  @property({type: Array, attribute: false}) headingAdvices?: AdviceInput[];
 
   @property({type: Number}) minFOV: number = 30;
 
@@ -214,7 +218,7 @@ export class ObcCompassSector extends LitElement {
   private _scale = 1;
   private _cachedAreas: WatchArea[] = [];
   private _cachedTickmarks: Tickmark[] = [];
-  private _cachedAdvices: AngleAdviceRaw[] = [];
+  private _cachedAdvices: ResolvedAdvice[] = [];
 
   // The frame follows the host box, which no property change announces.
   private _resizeController = new ResizeController(this, {});
@@ -229,6 +233,7 @@ export class ObcCompassSector extends LitElement {
 
   override willUpdate(changed: PropertyValues): void {
     super.willUpdate(changed);
+    syncAdviceAlias(this, this.headingAdvices);
     this._headingSp.sync({
       setpoint: this.headingSetpoint ?? undefined,
       newSetpoint: this.newHeadingSetpoint,
@@ -283,7 +288,13 @@ export class ObcCompassSector extends LitElement {
       this._cachedTickmarks = this._buildTickmarks();
     }
 
-    if (arcInputsChanged || changed.has('headingAdvices')) {
+    if (
+      arcInputsChanged ||
+      changed.has('advices') ||
+      changed.has('headingSetpoint') ||
+      changed.has('adviceTrigger') ||
+      changed.has('adviceEmphasis')
+    ) {
       this._cachedAdvices = this._buildAdvices();
     }
   }
@@ -450,27 +461,12 @@ export class ObcCompassSector extends LitElement {
   // Priority & advice helpers
   // ---------------------------------------------------------------------------
 
-  private _angleInRange(value: number, min: number, max: number): boolean {
-    const v = normalizeAngle(value);
-    const start = normalizeAngle(min);
-    const end = normalizeAngle(max);
-    return start <= end ? v >= start && v <= end : v >= start || v <= end;
-  }
-
-  private _buildAdvices(): AngleAdviceRaw[] {
-    return this.headingAdvices.map(({minAngle, maxAngle, hinted, type}) => {
-      const state = this._angleInRange(this.heading, minAngle, maxAngle)
-        ? AdviceState.triggered
-        : hinted
-          ? AdviceState.hinted
-          : AdviceState.regular;
-      return {
-        minAngle: this._mapAngle(minAngle),
-        maxAngle: this._mapAngle(maxAngle),
-        type,
-        state,
-      };
-    });
+  private _buildAdvices(): ResolvedAdvice[] {
+    return this.resolveAdvices(this.heading, this.headingSetpoint).map((a) => ({
+      ...a,
+      min: this._mapAngle(a.min),
+      max: this._mapAngle(a.max),
+    }));
   }
 
   private get _effectiveRotDegPerMin(): number {

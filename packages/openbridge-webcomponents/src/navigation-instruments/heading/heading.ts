@@ -15,7 +15,8 @@ import {
   renderCenterReadouts,
   resolveCompassCenterReadouts,
 } from '../readout/center-readout.js';
-import {AdviceState, AngleAdvice, AngleAdviceRaw} from '../watch/advice.js';
+import {AdviceMixin, syncAdviceAlias} from '../../svghelpers/advice-mixin.js';
+import type {AdviceInput, ResolvedAdvice} from '../../svghelpers/advice.js';
 import {ResizeController} from '@lit-labs/observers/resize-controller.js';
 import {
   applyPinnedHostSize,
@@ -138,7 +139,9 @@ export enum HeadingPriorityElement {
  * @stable
  */
 @customElement('obc-heading')
-export class ObcHeading extends LitElement {
+export class ObcHeading extends AdviceMixin(LitElement, {
+  angularWraparound: true,
+}) {
   @property({type: Number}) heading = 0;
   @property({type: Number}) courseOverGround = 0;
 
@@ -152,7 +155,8 @@ export class ObcHeading extends LitElement {
   @property({type: Number}) autoAtHeadingSetpointDeadband: number = 2;
   @property({type: Boolean}) animateSetpoint: boolean = false;
   @property({type: Boolean}) touching: boolean = false;
-  @property({type: Array, attribute: false}) headingAdvices: AngleAdvice[] = [];
+  /** @deprecated Alias of `advices`. Angle ranges in degrees. */
+  @property({type: Array, attribute: false}) headingAdvices?: AdviceInput[];
   @property({type: String}) direction: CompassDirection =
     CompassDirection.NorthUp;
   @property({type: String}) priority: Priority = Priority.regular;
@@ -177,6 +181,7 @@ export class ObcHeading extends LitElement {
 
   override willUpdate(changed: PropertyValues): void {
     super.willUpdate(changed);
+    syncAdviceAlias(this, this.headingAdvices);
     this._headingSp.sync({
       setpoint: this.headingSetpoint ?? undefined,
       newSetpoint: this.newHeadingSetpoint,
@@ -225,16 +230,8 @@ export class ObcHeading extends LitElement {
     );
   }
 
-  private get angleAdviceRaw(): AngleAdviceRaw[] {
-    return this.headingAdvices.map(({minAngle, maxAngle, hinted, type}) => {
-      const state =
-        this.heading >= minAngle && this.heading <= maxAngle
-          ? AdviceState.triggered
-          : hinted
-            ? AdviceState.hinted
-            : AdviceState.regular;
-      return {minAngle, maxAngle, type, state};
-    });
+  private get angleAdviceRaw(): ResolvedAdvice[] {
+    return this.resolveAdvices(this.heading, this.headingSetpoint);
   }
 
   private priorityFor(element: HeadingPriorityElement): Priority {
