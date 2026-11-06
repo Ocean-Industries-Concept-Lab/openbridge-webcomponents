@@ -6,7 +6,7 @@ import {customElement} from '../decorator.js';
 export class ObiAlarmGeneral extends LitElement {
   @property({type: Boolean}) useCssColor = false;
 
-  private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+  private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
 <path d="M6.34315 4.34292C5.60028 5.08579 5.011 5.96771 4.60896 6.93831C4.20693 7.90892 4 8.9492 4 9.99978L2 9.99978C2 8.68656 2.25866 7.3862 2.7612 6.17295C3.26375 4.95969 4.00035 3.8573 4.92893 2.92871L6.34315 4.34292Z" fill="currentColor"/>
 <path d="M19.391 6.93831C19.7931 7.90892 20 8.9492 20 9.99978L22 9.99978C22 8.68656 21.7413 7.3862 21.2388 6.17294C20.7362 4.95969 19.9997 3.8573 19.0711 2.92871L17.6569 4.34292C18.3997 5.08579 18.989 5.96771 19.391 6.93831Z" fill="currentColor"/>
 <path d="M12 16C15.3137 16 18 13.3137 18 10C18 6.68629 15.3137 4 12 4C8.68629 4 6 6.68629 6 10C6 13.3137 8.68629 16 12 16ZM12 12C13.1046 12 14 11.1046 14 10C14 8.89543 13.1046 8 12 8C10.8954 8 10 8.89543 10 10C10 11.1046 10.8954 12 12 12Z" fill-rule="evenodd" clip-rule="evenodd" fill="currentColor"/>

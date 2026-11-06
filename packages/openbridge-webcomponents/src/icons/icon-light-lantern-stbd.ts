@@ -6,7 +6,7 @@ import {customElement} from '../decorator.js';
 export class ObiLightLanternStbd extends LitElement {
   @property({type: Boolean}) useCssColor = false;
 
-  private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+  private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
 <path d="M19 13H22V11H19V13Z" fill-rule="evenodd" clip-rule="evenodd" fill="currentColor"/>
 <path d="M18.4282 8.86603L21.0263 7.36603L20.0263 5.63397L17.4282 7.13397L18.4282 8.86603Z" fill-rule="evenodd" clip-rule="evenodd" fill="currentColor"/>
 <path d="M17.4273 16.866L20.0254 18.366L21.0254 16.634L18.4273 15.134L17.4273 16.866Z" fill-rule="evenodd" clip-rule="evenodd" fill="currentColor"/>

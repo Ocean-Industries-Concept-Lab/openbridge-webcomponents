@@ -68,9 +68,12 @@ export function getSingleColorIcon(imageData: string, icon: IconRef): string {
 }
 
 function singleColorPart(imageData: string, _icon: IconRef): string {
-  // replace fill color with currentColor
+  // `fill="none"` stays: Figma sets it on the root so stroke-only shapes stay
+  // unfilled, and an inherited fill closes an open path into a solid shape.
   const fillRegex = /fill="[^"]+"/g;
-  let imageDataNew = imageData.replace(fillRegex, 'fill="currentColor"');
+  let imageDataNew = imageData.replace(fillRegex, (match) =>
+    match === 'fill="none"' ? match : 'fill="currentColor"'
+  );
 
   // remove fillOpacity
   const fillOpacityRegex = /fill-opacity="[^"]+"/g;

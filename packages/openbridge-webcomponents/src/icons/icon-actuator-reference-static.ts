@@ -6,7 +6,7 @@ import {customElement} from '../decorator.js';
 export class ObiActuatorReferenceStatic extends LitElement {
   @property({type: Boolean}) useCssColor = false;
 
-  private icon = svg`<svg width="24" height="25" viewBox="0 0 24 25" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+  private icon = svg`<svg width="24" height="25" viewBox="0 0 24 25" fill="none" xmlns="http://www.w3.org/2000/svg">
 <path d="M12 24L12 15" stroke-linecap="round" stroke="currentColor"/>
 <path d="M12 0.5C16.1421 0.5 19.5 3.85786 19.5 8C19.5 12.1421 16.1421 15.5 12 15.5C7.85786 15.5 4.5 12.1421 4.5 8C4.5 3.85786 7.85786 0.5 12 0.5Z" fill="currentColor" stroke="currentColor"/>
 <path d="M11.5 5.5H12.5V7.5H14.5V8.5H12.5V10.5H11.5V8.5H9.5V7.5H11.5V5.5Z" fill="currentColor"/>

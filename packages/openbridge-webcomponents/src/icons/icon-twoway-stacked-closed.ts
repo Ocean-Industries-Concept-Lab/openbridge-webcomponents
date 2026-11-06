@@ -6,7 +6,7 @@ import {customElement} from '../decorator.js';
 export class ObiTwowayStackedClosed extends LitElement {
   @property({type: Boolean}) useCssColor = false;
 
-  private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+  private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
 <path d="M8 9.51479L3 5.94336V18.057L8 14.4856V9.51479Z" fill-rule="evenodd" clip-rule="evenodd" fill="currentColor"/>
 <path d="M16 14.4856V9.51479L21 5.94336L21 18.057L16 14.4856Z" fill="currentColor"/>
 <path d="M13 0H11L11 13C11 13.5523 11.4477 14 12 14C12.5523 14 13 13.5523 13 13L13 0Z" fill="currentColor"/>

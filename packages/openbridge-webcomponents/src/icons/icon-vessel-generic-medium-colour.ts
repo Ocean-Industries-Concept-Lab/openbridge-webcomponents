@@ -6,7 +6,7 @@ import {customElement} from '../decorator.js';
 export class ObiVesselGenericMediumColour extends LitElement {
   @property({type: Boolean}) useCssColor = false;
 
-  private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+  private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
 <path d="M7.03865 13.2869L11.4846 2.33535C11.6661 1.88821 12.3339 1.88822 12.5154 2.33536L16.9613 13.2869C17.1482 13.7473 16.6205 14.1744 16.1697 13.9277L12.2763 11.7964C12.1053 11.7029 11.8947 11.7029 11.7237 11.7964L7.8303 13.9277C7.37952 14.1744 6.85176 13.7473 7.03865 13.2869Z" fill="currentColor"/>
 <path d="M13.4999 21.9999C13.0857 21.9999 12.7499 21.6641 12.7499 21.2499V16.7499C12.7499 16.3356 13.0857 15.9999 13.4999 15.9999C13.9142 15.9999 14.2499 16.3356 14.2499 16.7499V21.2499C14.2499 21.6641 13.9142 21.9999 13.4999 21.9999Z" fill-rule="evenodd" clip-rule="evenodd" fill="currentColor"/>
 <path d="M10.4999 21.9999C10.0857 21.9999 9.74994 21.6641 9.74994 21.2499V16.7499C9.74994 16.3356 10.0857 15.9999 10.4999 15.9999C10.9142 15.9999 11.2499 16.3356 11.2499 16.7499V21.2499C11.2499 21.6641 10.9142 21.9999 10.4999 21.9999Z" fill-rule="evenodd" clip-rule="evenodd" fill="currentColor"/>

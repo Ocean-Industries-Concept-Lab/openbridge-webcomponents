@@ -6,7 +6,7 @@ import {customElement} from '../decorator.js';
 export class ObiSimplifiedBeaconCardinalEast extends LitElement {
   @property({type: Boolean}) useCssColor = false;
 
-  private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+  private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
 <path d="M18 11L6 11L12 3L18 11Z" fill="currentColor"/>
 <path d="M18 13H6L12 21L18 13Z" fill="currentColor"/>
 <path d="M18 11L12 3L6 11L18 11ZM16 10L12 4.66667L8 10L16 10ZM6 13L12 21L18 13H6ZM8 14L12 19.3333L16 14H8Z" fill-rule="evenodd" clip-rule="evenodd" fill="currentColor"/>

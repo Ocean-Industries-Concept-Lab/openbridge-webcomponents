@@ -6,7 +6,7 @@ import {customElement} from '../decorator.js';
 export class ObiRadarShortPulseIec extends LitElement {
   @property({type: Boolean}) useCssColor = false;
 
-  private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+  private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
 <path d="M12 21.5C17.2467 21.5 21.5 17.2467 21.5 12C21.5 6.75329 17.2467 2.5 12 2.5C6.75329 2.5 2.5 6.75329 2.5 12C2.5 17.2467 6.75329 21.5 12 21.5ZM12 23C18.0751 23 23 18.0751 23 12C23 5.92487 18.0751 1 12 1C5.92487 1 1 5.92487 1 12C1 18.0751 5.92487 23 12 23Z" fill-rule="evenodd" clip-rule="evenodd" fill="currentColor"/>
 <path d="M9 6H15V14H19V16H13V8H11V16H5V14H9V6Z" fill-rule="evenodd" clip-rule="evenodd" fill="currentColor"/>
 </svg>

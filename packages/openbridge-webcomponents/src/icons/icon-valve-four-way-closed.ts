@@ -6,7 +6,7 @@ import {customElement} from '../decorator.js';
 export class ObiValveFourWayClosed extends LitElement {
   @property({type: Boolean}) useCssColor = false;
 
-  private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+  private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
 <path d="M11.2002 15.0664C11.6002 14.5336 12.3998 14.5336 12.7998 15.0664L16.7998 20.4004C17.2942 21.0596 16.824 22 16 22H8C7.17596 22 6.70579 21.0596 7.2002 20.4004L11.2002 15.0664Z" fill="currentColor"/>
 <path d="M2 8C2.00016 7.17619 2.94044 6.70613 3.59961 7.2002L8.93359 11.2002C9.46665 11.6001 9.46651 12.3998 8.93359 12.7998L3.59961 16.7998C2.94038 17.2942 2 16.824 2 16V8Z" fill="currentColor"/>
 <path d="M20.4004 7.2002C21.0596 6.70612 21.9998 7.17619 22 8V16C22 16.824 21.0596 17.2942 20.4004 16.7998L15.0664 12.7998C14.5335 12.3998 14.5334 11.6001 15.0664 11.2002L20.4004 7.2002Z" fill="currentColor"/>

@@ -6,7 +6,7 @@ import {customElement} from '../decorator.js';
 export class ObiLatched extends LitElement {
   @property({type: Boolean}) useCssColor = false;
 
-  private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+  private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
 <path d="M8.35986 12C8.35986 13.6569 7.01672 15 5.35986 15C3.70301 15 2.35986 13.6569 2.35986 12C2.35986 10.3431 3.70301 9 5.35986 9C7.01672 9 8.35986 10.3431 8.35986 12Z" fill="currentColor"/>
 <path d="M4.35986 11H12.3599V13H4.35986V11Z" fill-rule="evenodd" clip-rule="evenodd" fill="currentColor"/>
 <path d="M22.3599 13H15.3599V11H22.3599V13Z" fill-rule="evenodd" clip-rule="evenodd" fill="currentColor"/>

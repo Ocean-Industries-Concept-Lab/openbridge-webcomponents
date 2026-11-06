@@ -6,7 +6,7 @@ import {customElement} from '../decorator.js';
 export class ObiAssociatedTargetAisSelectedIec extends LitElement {
   @property({type: Boolean}) useCssColor = false;
 
-  private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+  private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
 <path d="M12 1L6 21H18L12 1ZM12 7.9602L8.68806 19H15.3119L12 7.9602Z" fill-rule="evenodd" clip-rule="evenodd" fill="currentColor"/>
 <path d="M12 23C18.0751 23 23 18.0751 23 12C23 5.92487 18.0751 1 12 1C5.92487 1 1 5.92487 1 12C1 18.0751 5.92487 23 12 23ZM12 24C18.6274 24 24 18.6274 24 12C24 5.37258 18.6274 0 12 0C5.37258 0 0 5.37258 0 12C0 18.6274 5.37258 24 12 24Z" fill-rule="evenodd" clip-rule="evenodd" fill="currentColor"/>
 <path d="M2 5V2H5V0H1C0.447715 0 0 0.447716 0 1V5H2Z" fill="currentColor"/>

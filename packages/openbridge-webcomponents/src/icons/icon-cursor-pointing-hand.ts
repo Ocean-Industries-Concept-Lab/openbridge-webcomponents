@@ -6,7 +6,7 @@ import {customElement} from '../decorator.js';
 export class ObiCursorPointingHand extends LitElement {
   @property({type: Boolean}) useCssColor = false;
 
-  private icon = svg`<svg width="32" height="32" viewBox="0 0 32 32" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+  private icon = svg`<svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
 <g filter="url(#filter0_d_2002_525)">
 <path d="M15.7367 11.1618C16.5843 11.078 17.3979 11.3316 18.0332 11.8195C18.2195 11.7493 18.4146 11.6954 18.6169 11.6597C19.5253 11.4996 20.4116 11.734 21.1001 12.2373C23.0822 11.8403 25.2596 13.1363 25.5853 15.2989C25.9401 17.6555 26.1727 20.3222 25.3205 22.5874C24.8755 23.7703 24.1393 24.8376 23.0206 25.6803C21.9169 26.5118 20.5239 27.0626 18.8465 27.3584C15.3942 27.9671 12.7683 27.4479 10.6331 25.7023C8.66014 24.0895 7.30727 21.5632 5.9442 18.8046C5.11372 17.1239 5.7717 15.0969 7.40751 14.2104C8.10203 13.834 8.87442 13.7165 9.60726 13.8319L9.02994 10.5578C8.71826 8.7901 9.89855 7.10446 11.6662 6.79277C13.4339 6.48109 15.1195 7.66139 15.4312 9.42904L15.7367 11.1618Z" fill-rule="evenodd" clip-rule="evenodd" fill="currentColor"/>
 </g>

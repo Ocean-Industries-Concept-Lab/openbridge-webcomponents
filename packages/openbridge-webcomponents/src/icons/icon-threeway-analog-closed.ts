@@ -6,7 +6,7 @@ import {customElement} from '../decorator.js';
 export class ObiThreewayAnalogClosed extends LitElement {
   @property({type: Boolean}) useCssColor = false;
 
-  private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+  private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
 <path d="M11.2002 15.0671C11.6002 14.5338 12.3998 14.5338 12.7998 15.0671L16.7998 20.4001C17.2942 21.0594 16.824 22.0007 16 22.0007H8C7.17595 22.0007 6.70577 21.0594 7.2002 20.4001L11.2002 15.0671Z" fill="currentColor"/>
 <path d="M2 8.00073C2 7.17686 2.94039 6.70603 3.59961 7.19995L8.93359 11.1999C9.46691 11.5999 9.46688 12.4005 8.93359 12.8005L3.59961 16.8005C2.94051 17.2944 2.00033 16.8244 2 16.0007V8.00073Z" fill="currentColor"/>
 <path d="M20.4004 7.19995C21.0596 6.70603 22 7.17686 22 8.00073V16.0007C21.9997 16.8244 21.0595 17.2944 20.4004 16.8005L15.0664 12.8005C14.5331 12.4005 14.5331 11.5999 15.0664 11.1999L20.4004 7.19995Z" fill="currentColor"/>

@@ -6,7 +6,7 @@ import {customElement} from '../decorator.js';
 export class ObiKeepingTrack extends LitElement {
   @property({type: Boolean}) useCssColor = false;
 
-  private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+  private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
 <path d="M2 22H5V20H2V22Z" fill="currentColor"/>
 <path d="M7 22H11V20H7V22Z" fill="currentColor"/>
 <path d="M13 22H17V20H13V22Z" fill="currentColor"/>

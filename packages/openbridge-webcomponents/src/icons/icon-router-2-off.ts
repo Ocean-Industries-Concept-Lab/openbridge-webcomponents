@@ -6,7 +6,7 @@ import {customElement} from '../decorator.js';
 export class ObiRouter2Off extends LitElement {
   @property({type: Boolean}) useCssColor = false;
 
-  private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+  private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
 <path d="M3 2H21C21.5523 2 22 2.44771 22 3V21C22 21.5523 21.5523 22 21 22H3C2.44772 22 2 21.5523 2 21V3C2 2.44772 2.44771 2 3 2ZM16.0623 7L12.0311 3L8 7H11.0311V10H13.0311V7H16.0623ZM18 7.93782L14 11.9689L18 16V12.9689H21V10.9689H18V7.93782ZM10 12.0311L6 16.0622V13.0311H3.00001V11.0311H6V8L10 12.0311ZM8.00012 17L12.0312 21L16.0623 17H13.0312V14H11.0312V17H8.00012Z" fill-rule="evenodd" clip-rule="evenodd" fill="currentColor"/>
 <path d="M16.0623 7L12.0311 3L8 7H11.0311V10H13.0311V7H16.0623Z" fill="currentColor"/>
 <path d="M18 7.93782L14 11.9689L18 16V12.9689H21V10.9689H18V7.93782Z" fill="currentColor"/>

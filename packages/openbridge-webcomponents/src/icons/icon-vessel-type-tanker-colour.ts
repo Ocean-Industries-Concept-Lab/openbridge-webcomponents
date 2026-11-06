@@ -6,7 +6,7 @@ import {customElement} from '../decorator.js';
 export class ObiVesselTypeTankerColour extends LitElement {
   @property({type: Boolean}) useCssColor = false;
 
-  private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+  private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
 <path d="M5.75 18.5H7V7.81153C7 4.36809 8.8362 2.26552 11.5585 1.17661L12 1L12.4415 1.17661C15.1638 2.26552 17 4.36809 17 7.81153V18.5H18.25C18.6642 18.5 19 18.8358 19 19.25C19 19.6642 18.6642 20 18.25 20H17V22H7V20H5.75C5.33579 20 5 19.6642 5 19.25C5 18.8358 5.33579 18.5 5.75 18.5Z" fill="currentColor"/>
 <path d="M12 4C11.1716 4 10.5 4.67157 10.5 5.5C10.5 6.32843 11.1716 7 12 7C12.8284 7 13.5 6.32843 13.5 5.5C13.5 4.67157 12.8284 4 12 4Z" fill="currentColor"/>
 <path d="M10.5 10C10.5 9.17157 11.1716 8.5 12 8.5C12.8284 8.5 13.5 9.17157 13.5 10C13.5 10.8284 12.8284 11.5 12 11.5C11.1716 11.5 10.5 10.8284 10.5 10Z" fill="currentColor"/>

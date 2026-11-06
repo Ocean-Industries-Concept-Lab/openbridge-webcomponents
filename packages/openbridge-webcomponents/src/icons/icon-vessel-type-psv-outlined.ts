@@ -6,7 +6,7 @@ import {customElement} from '../decorator.js';
 export class ObiVesselTypePsvOutlined extends LitElement {
   @property({type: Boolean}) useCssColor = false;
 
-  private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+  private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
 <path d="M10.5 17C11.3284 17 12 17.6716 12 18.5C12 19.3284 11.3284 20 10.5 20C9.67157 20 9 19.3284 9 18.5C9 17.6716 9.67157 17 10.5 17Z" fill="currentColor"/>
 <path d="M15 20H13V13H15V20Z" fill="currentColor"/>
 <path d="M10.5 13C11.3284 13 12 13.6716 12 14.5C12 15.3284 11.3284 16 10.5 16C9.67157 16 9 15.3284 9 14.5C9 13.6716 9.67157 13 10.5 13Z" fill="currentColor"/>

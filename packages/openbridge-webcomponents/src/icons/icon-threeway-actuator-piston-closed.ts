@@ -6,7 +6,7 @@ import {customElement} from '../decorator.js';
 export class ObiThreewayActuatorPistonClosed extends LitElement {
   @property({type: Boolean}) useCssColor = false;
 
-  private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+  private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
 <path d="M8 10.5146L3 6.94317V17.0568L8 13.4854V10.5146Z" fill-rule="evenodd" clip-rule="evenodd" fill="currentColor"/>
 <path d="M21 17.0568L16 13.4854V10.5146L21 6.94321V17.0568Z" fill-rule="evenodd" clip-rule="evenodd" fill="currentColor"/>
 <path d="M10.5146 16L6.94317 21H17.0568L13.4854 16H10.5146Z" fill-rule="evenodd" clip-rule="evenodd" fill="currentColor"/>

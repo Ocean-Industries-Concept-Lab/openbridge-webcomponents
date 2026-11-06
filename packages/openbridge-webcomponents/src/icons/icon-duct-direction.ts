@@ -6,7 +6,7 @@ import {customElement} from '../decorator.js';
 export class ObiDuctDirection extends LitElement {
   @property({type: Boolean}) useCssColor = false;
 
-  private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+  private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
 <path d="M6.99916 6H0V18H6.99857L12.99 12L6.99916 6Z" fill="currentColor"/>
 <path d="M12.6474 18H24V6H12.6474L18.6474 12L12.6474 18Z" fill="currentColor"/>
 <path d="M7.99713 17L6.99857 18H0V17H7.99713Z" fill="currentColor"/>

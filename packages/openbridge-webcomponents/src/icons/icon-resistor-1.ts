@@ -6,7 +6,7 @@ import {customElement} from '../decorator.js';
 export class ObiResistor1 extends LitElement {
   @property({type: Boolean}) useCssColor = false;
 
-  private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+  private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
 <path d="M4 8V11H1V13H4V16H20V13H23V11H20V8H4ZM18 10H6V14H18V10Z" fill-rule="evenodd" clip-rule="evenodd" fill="currentColor"/>
 </svg>
 `;

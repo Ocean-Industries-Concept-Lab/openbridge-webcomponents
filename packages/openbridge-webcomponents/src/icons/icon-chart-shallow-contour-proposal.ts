@@ -6,7 +6,7 @@ import {customElement} from '../decorator.js';
 export class ObiChartShallowContourProposal extends LitElement {
   @property({type: Boolean}) useCssColor = false;
 
-  private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+  private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
 <path d="M4.95 9.25H2V7.75H4.95C7.02107 7.75 8.75 9.42893 8.75 11.5V15H13.5C15.5711 15 17.25 16.6789 17.25 18.75V22H15.75V18.75C15.75 17.5074 14.7426 16.5 13.5 16.5H7.25V11.5C7.25 10.2574 6.19264 9.25 4.95 9.25Z" fill-rule="evenodd" clip-rule="evenodd" fill="currentColor"/>
 <path d="M5 2.5H6.5V4H5V2.5Z" fill="currentColor"/>
 <path d="M8 2.5H9.5V4H8V2.5Z" fill="currentColor"/>

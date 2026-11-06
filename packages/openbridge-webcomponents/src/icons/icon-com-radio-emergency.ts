@@ -6,7 +6,7 @@ import {customElement} from '../decorator.js';
 export class ObiComRadioEmergency extends LitElement {
   @property({type: Boolean}) useCssColor = false;
 
-  private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+  private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
 <path d="M5 8V2H7V8H11V7H13V8C14.1046 8 15 8.89543 15 10V11.5871C14.9298 11.6817 14.8649 11.7831 14.8059 11.8912L13.5 14.2853V10C13.5 9.72386 13.2761 9.5 13 9.5H5C4.72386 9.5 4.5 9.72386 4.5 10V20C4.5 20.2761 4.72386 20.5 5 20.5H10.2328C10.1251 21.0184 10.1916 21.5402 10.3935 22H5C3.89543 22 3 21.1046 3 20V10C3 8.89543 3.89543 8 5 8Z" fill="currentColor"/>
 <path d="M6 12.5H12V11H6V12.5Z" fill="currentColor"/>
 <path d="M12 15.5H6V14H12V15.5Z" fill="currentColor"/>

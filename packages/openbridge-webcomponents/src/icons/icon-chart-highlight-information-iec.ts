@@ -6,7 +6,7 @@ import {customElement} from '../decorator.js';
 export class ObiChartHighlightInformationIec extends LitElement {
   @property({type: Boolean}) useCssColor = false;
 
-  private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+  private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
 <path d="M13 6V8H11V6H13Z" fill="currentColor"/>
 <path d="M9 18V16H11V12H10V10H13V16H15V18H9Z" fill="currentColor"/>
 <path d="M2 22V2H22V22H2ZM4 4H20V20H4V4Z" fill-rule="evenodd" clip-rule="evenodd" fill="currentColor"/>

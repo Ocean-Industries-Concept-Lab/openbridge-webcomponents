@@ -6,7 +6,7 @@ import {customElement} from '../decorator.js';
 export class ObiGround1 extends LitElement {
   @property({type: Boolean}) useCssColor = false;
 
-  private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+  private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
 <path d="M13 10V4H11V10H4L12 20L20 10H13ZM15.8387 12L12 16.7984L8.16125 12H15.8387Z" fill-rule="evenodd" clip-rule="evenodd" fill="currentColor"/>
 </svg>
 `;

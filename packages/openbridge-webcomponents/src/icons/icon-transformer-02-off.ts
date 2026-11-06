@@ -6,7 +6,7 @@ import {customElement} from '../decorator.js';
 export class ObiTransformer02Off extends LitElement {
   @property({type: Boolean}) useCssColor = false;
 
-  private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+  private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
 <path d="M15 22C12.6955 22 10.6944 20.7008 9.68929 18.7948C11.7532 18.2834 13.4557 16.8562 14.3408 14.9694C14.5578 14.9896 14.7777 15 15 15C17.0022 15 18.808 14.1594 20.0839 12.8119C20.6643 13.7356 21 14.8286 21 16C21 19.3137 18.3137 22 15 22Z" fill="currentColor"/>
 <path d="M21 8C21 9.17142 20.6643 10.2644 20.0839 11.1881C18.808 9.84058 17.0022 9 15 9C14.7777 9 14.5578 9.01036 14.3408 9.03063C13.4557 7.14378 11.7532 5.71662 9.68929 5.2052C10.6944 3.29924 12.6955 2 15 2C18.3137 2 21 4.68629 21 8Z" fill="currentColor"/>
 <path d="M15 10C14.9035 10 14.8075 10.0023 14.7121 10.0068C14.8994 10.6385 15 11.3075 15 12C15 12.6925 14.8994 13.3615 14.7121 13.9932C14.8075 13.9977 14.9035 14 15 14C16.777 14 18.3736 13.2275 19.4722 12C18.3736 10.7725 16.777 10 15 10Z" fill="currentColor"/>

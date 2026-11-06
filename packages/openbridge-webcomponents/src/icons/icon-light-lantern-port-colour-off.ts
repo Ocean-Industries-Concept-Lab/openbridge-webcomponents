@@ -6,7 +6,7 @@ import {customElement} from '../decorator.js';
 export class ObiLightLanternPortColourOff extends LitElement {
   @property({type: Boolean}) useCssColor = false;
 
-  private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+  private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
 <path d="M9 2C8.44772 2 8 2.44772 8 3V4H18V3C18 2.44772 17.5523 2 17 2H9Z" fill="currentColor"/>
 <path d="M8 8C8 6.89543 8.89543 6 10 6H16C17.1046 6 18 6.89543 18 8V16C18 17.1046 17.1046 18 16 18H10C8.89543 18 8 17.1046 8 16V8ZM10 8H16V16H10V8Z" fill-rule="evenodd" clip-rule="evenodd" fill="currentColor"/>
 <path d="M8 20H20V2H22V21C22 21.5523 21.5523 22 21 22H9C8.44772 22 8 21.5523 8 21V20Z" fill="currentColor"/>

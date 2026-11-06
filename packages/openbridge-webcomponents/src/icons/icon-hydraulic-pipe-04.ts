@@ -6,7 +6,7 @@ import {customElement} from '../decorator.js';
 export class ObiHydraulicPipe04 extends LitElement {
   @property({type: Boolean}) useCssColor = false;
 
-  private icon = svg`<svg width="48" height="48" viewBox="0 0 48 48" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+  private icon = svg`<svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
 <g clip-path="url(#clip0_8681_1533)">
 <path d="M11.206 4.00021C11.6061 3.46617 12.4078 3.46599 12.8076 4.00021L19.8037 13.4006C20.2969 14.06 19.8264 15.0002 19.0029 15.0002H15V48.0002H8.99995V22.0002H9.01167L8.99995 15.0002H4.99898C4.17517 15.0002 3.7052 14.0599 4.19917 13.4006L11.206 4.00021Z" fill="currentColor"/>
 <path d="M44 39.0002H39V48.0002H33V39.0002H28V33.0002H44V39.0002Z" fill="currentColor"/>

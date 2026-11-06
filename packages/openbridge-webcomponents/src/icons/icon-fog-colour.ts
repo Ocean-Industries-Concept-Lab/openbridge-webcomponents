@@ -6,7 +6,7 @@ import {customElement} from '../decorator.js';
 export class ObiFogColour extends LitElement {
   @property({type: Boolean}) useCssColor = false;
 
-  private icon = svg`<svg width="32" height="32" viewBox="0 0 32 32" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+  private icon = svg`<svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
 <path d="M29 22.2502C29 22.6643 28.6643 23 28.2502 23H8.74982C8.33571 23 8 22.6643 8 22.2502C8 21.8361 8.33571 21.5004 8.74982 21.5004H28.2502C28.6643 21.5004 29 21.8361 29 22.2502Z" fill-rule="evenodd" clip-rule="evenodd" fill="currentColor"/>
 <path d="M25 24.7502C25 25.1643 24.6643 25.5 24.2502 25.5H4.74982C4.33571 25.5 4 25.1643 4 24.7502C4 24.3361 4.33571 24.0004 4.74982 24.0004H24.2502C24.6643 24.0004 25 24.3361 25 24.7502Z" fill-rule="evenodd" clip-rule="evenodd" fill="currentColor"/>
 <path d="M27.5 27.2504C27.5 27.6646 27.1643 28.0003 26.7502 28.0003H7.24982C6.83571 28.0003 6.5 27.6646 6.5 27.2504C6.5 26.8363 6.83571 26.5006 7.24982 26.5006H26.7502C27.1643 26.5006 27.5 26.8363 27.5 27.2504Z" fill-rule="evenodd" clip-rule="evenodd" fill="currentColor"/>

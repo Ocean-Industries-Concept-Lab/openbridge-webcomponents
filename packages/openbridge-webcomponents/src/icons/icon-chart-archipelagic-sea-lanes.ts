@@ -6,7 +6,7 @@ import {customElement} from '../decorator.js';
 export class ObiChartArchipelagicSeaLanes extends LitElement {
   @property({type: Boolean}) useCssColor = false;
 
-  private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+  private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
 <path d="M8.25 3.75H11V2.25H1V3.75H3.75L6 6L8.25 3.75Z" fill="currentColor"/>
 <path d="M3.61905 13H1V11H3.61905V13Z" fill="currentColor"/>
 <path d="M10.9524 13H5.71429V11H10.9524V13Z" fill="currentColor"/>

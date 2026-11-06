@@ -6,7 +6,7 @@ import {customElement} from '../decorator.js';
 export class ObiUnderwaysailing extends LitElement {
   @property({type: Boolean}) useCssColor = false;
 
-  private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+  private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
 <path d="M12.5 12.5H20C20 8.5 16.5 3.5 12.5 2C13.5492 5.07351 13.7285 9.46764 12.5 12.5Z" fill="currentColor"/>
 <path d="M11 3L4 12.5H11V3Z" fill="currentColor"/>
 <path d="M21 14H3C3 14.9258 3.25793 15.7406 3.70349 16.447C4.14953 16.3799 4.58541 16.2497 5.01172 16.0605C5.31167 15.9313 6.00021 15.5 6.00021 15.5C6.00021 15.5 6.6857 15.9268 6.98565 16.056C8.27971 16.6143 9.71724 16.6147 11.0115 16.0572C11.3115 15.928 12.0002 15.5 12.0002 15.5C12.0002 15.5 12.6885 15.928 12.9885 16.0572C14.2809 16.6139 15.7161 16.6143 17.0086 16.0584C17.3086 15.9292 17.9996 15.5073 17.9996 15.5073C17.9996 15.5073 18.6879 15.9353 18.9878 16.0645C19.4118 16.2517 19.8519 16.3805 20.2964 16.4471C20.742 15.7407 21 14.9259 21 14Z" fill="currentColor"/>

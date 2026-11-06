@@ -6,7 +6,7 @@ import {customElement} from '../decorator.js';
 export class ObiAlertList extends LitElement {
   @property({type: Boolean}) useCssColor = false;
 
-  private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+  private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
 <path d="M2 8.995V6.99667H3.9802V8.995H2Z" fill="currentColor"/>
 <path d="M2 12.9917V10.9933H3.9802V12.9917H2Z" fill="currentColor"/>
 <path d="M2 4.99833V3H3.9802V4.99833H2Z" fill="currentColor"/>

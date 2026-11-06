@@ -6,7 +6,7 @@ import {customElement} from '../decorator.js';
 export class ObiCautionColorIec extends LitElement {
   @property({type: Boolean}) useCssColor = false;
 
-  private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+  private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
 <path d="M4.8 3C3.80589 3 3 3.80589 3 4.8V19.2C3 20.1941 3.80589 21 4.8 21H19.2C20.1941 21 21 20.1941 21 19.2V4.8C21 3.80589 20.1941 3 19.2 3H4.8Z" fill-rule="evenodd" clip-rule="evenodd" fill="currentColor"/>
 <mask id="stroke0_2002_1107" fill="white">
 <path d="M4.8 3C3.80589 3 3 3.80589 3 4.8V19.2C3 20.1941 3.80589 21 4.8 21H19.2C20.1941 21 21 20.1941 21 19.2V4.8C21 3.80589 20.1941 3 19.2 3H4.8Z" fill-rule="evenodd" clip-rule="evenodd"/>

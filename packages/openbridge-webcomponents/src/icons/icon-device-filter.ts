@@ -6,7 +6,7 @@ import {customElement} from '../decorator.js';
 export class ObiDeviceFilter extends LitElement {
   @property({type: Boolean}) useCssColor = false;
 
-  private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+  private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
 <path d="M5.25261 4L4 5.25261V8.08104L8.08104 4H5.25261Z" fill="currentColor"/>
 <path d="M4 10.5838V13.4122L13.4122 4H10.5838L4 10.5838Z" fill="currentColor"/>
 <path d="M4 18.7461V15.9176L15.9176 4H18.7461L4 18.7461Z" fill="currentColor"/>

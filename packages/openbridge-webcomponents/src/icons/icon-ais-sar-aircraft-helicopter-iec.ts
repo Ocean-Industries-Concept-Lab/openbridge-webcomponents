@@ -6,7 +6,7 @@ import {customElement} from '../decorator.js';
 export class ObiAisSarAircraftHelicopterIec extends LitElement {
   @property({type: Boolean}) useCssColor = false;
 
-  private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+  private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
 <path d="M8.99968 13.839V12.4248L4.22172 17.2028C4.02646 17.398 4.02646 17.7146 4.22172 17.9099L-nan -nanL-nan -nanL4.22172 17.9099C4.41698 18.1051 4.73356 18.1051 4.92882 17.9099L8.99968 13.839Z" fill="currentColor"/>
 <path d="M8.99968 7.83862V6.99992C8.99968 6.81942 9.01562 6.64263 9.04618 6.4709L4.92875 2.35348C4.73349 2.15822 4.4169 2.15822 4.22164 2.35348L-nan -nanL-nan -nanL4.22164 2.35348C4.02638 2.54874 4.02638 2.86532 4.22164 3.06058L8.99968 7.83862Z" fill="currentColor"/>
 <path d="M14.9997 7.83902L19.7781 3.06063C19.9733 2.86537 19.9733 2.54879 19.7781 2.35353L-nan -nanL-nan -nanL19.7781 2.35353C19.5828 2.15826 19.2662 2.15826 19.071 2.35353L14.9532 6.47124C14.9838 6.64286 14.9997 6.81953 14.9997 6.99992V7.83902Z" fill="currentColor"/>

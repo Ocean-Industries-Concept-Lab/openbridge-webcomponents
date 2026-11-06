@@ -6,7 +6,7 @@ import {customElement} from '../decorator.js';
 export class ObiLightAol extends LitElement {
   @property({type: Boolean}) useCssColor = false;
 
-  private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+  private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
 <path d="M13 4V1H11V4H13Z" fill="currentColor"/>
 <path d="M4 13H1V11H4V13Z" fill="currentColor"/>
 <path d="M23 13H20V11H23V13Z" fill="currentColor"/>

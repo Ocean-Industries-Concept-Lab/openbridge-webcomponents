@@ -6,7 +6,7 @@ import {customElement} from '../decorator.js';
 export class ObiPiezoelectricCrystalOff extends LitElement {
   @property({type: Boolean}) useCssColor = false;
 
-  private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+  private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
 <path d="M8 3H16V21H8V3Z" fill="currentColor"/>
 <path d="M4 5C4.55228 5 5 5.44772 5 6L5 18C5 18.5523 4.55228 19 4 19C3.44771 19 3 18.5523 3 18L3 6C3 5.44772 3.44772 5 4 5Z" fill="currentColor"/>
 <path d="M20 5C20.5523 5 21 5.44772 21 6V18C21 18.5523 20.5523 19 20 19C19.4477 19 19 18.5523 19 18V6C19 5.44772 19.4477 5 20 5Z" fill="currentColor"/>

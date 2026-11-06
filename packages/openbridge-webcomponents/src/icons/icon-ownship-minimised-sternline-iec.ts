@@ -6,7 +6,7 @@ import {customElement} from '../decorator.js';
 export class ObiOwnshipMinimisedSternlineIec extends LitElement {
   @property({type: Boolean}) useCssColor = false;
 
-  private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+  private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
 <g clip-path="url(#clip0_2862_786)">
 <path d="M13 12C13 12.5523 12.5523 13 12 13C11.4477 13 11 12.5523 11 12C11 11.4477 11.4477 11 12 11C12.5523 11 13 11.4477 13 12Z" fill="currentColor"/>
 <path d="M9 12.5H0V11.5H9V12.5Z" fill-rule="evenodd" clip-rule="evenodd" fill="currentColor"/>

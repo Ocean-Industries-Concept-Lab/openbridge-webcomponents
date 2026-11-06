@@ -6,7 +6,7 @@ import {customElement} from '../decorator.js';
 export class ObiCursorSetpoint extends LitElement {
   @property({type: Boolean}) useCssColor = false;
 
-  private icon = svg`<svg width="32" height="32" viewBox="0 0 32 32" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+  private icon = svg`<svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
 <g filter="url(#filter0_d_2002_519)">
 <path d="M17.9996 15.9996C17.9996 17.1042 17.1041 17.9996 15.9996 17.9996C14.895 17.9996 13.9996 17.1042 13.9996 15.9996C13.9996 14.8951 14.895 13.9996 15.9996 13.9996C17.1041 13.9996 17.9996 14.8951 17.9996 15.9996Z" fill-rule="evenodd" clip-rule="evenodd" fill="currentColor"/>
 <path d="M19.9996 13.9996H23.2301C22.5308 11.4656 20.5336 9.46842 17.9996 8.76906V11.9996H13.9996V8.76906C11.4655 9.46842 9.46834 11.4656 8.76898 13.9996H11.9996V17.9996H8.76898C9.46834 20.5337 11.4655 22.5309 13.9996 23.2302V19.9996H17.9996V23.2302C20.5336 22.5309 22.5308 20.5337 23.2301 17.9996H19.9996V13.9996ZM26.9996 15.9996C26.9996 22.0748 22.0747 26.9996 15.9996 26.9996C9.92443 26.9996 4.99956 22.0748 4.99956 15.9996C4.99956 9.9245 9.92443 4.99963 15.9996 4.99963C22.0747 4.99963 26.9996 9.9245 26.9996 15.9996Z" fill-rule="evenodd" clip-rule="evenodd" fill="currentColor"/>

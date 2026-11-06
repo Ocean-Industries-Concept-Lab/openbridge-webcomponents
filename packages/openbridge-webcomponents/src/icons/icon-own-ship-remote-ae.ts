@@ -6,7 +6,7 @@ import {customElement} from '../decorator.js';
 export class ObiOwnShipRemoteAe extends LitElement {
   @property({type: Boolean}) useCssColor = false;
 
-  private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+  private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
 <path d="M11.9141 8.9082V12.4355H9.6582L11.1699 8.9082H11.9141Z" fill="currentColor"/>
 <path d="M12 4C16.4183 4 20 7.58172 20 12C20 16.4183 16.4183 20 12 20C7.58172 20 4 16.4183 4 12C4 7.58172 7.58172 4 12 4ZM10.1982 7.43164L6.33398 16H8.09766L9.02246 13.8877H11.9141V16H16.9541V14.5596H13.6416V12.2559H16.7383V10.8281H13.6416V8.86035H16.9541V7.43164H10.1982Z" fill-rule="evenodd" clip-rule="evenodd" fill="currentColor"/>
 <path d="M2.76074 8.17285C2.25833 9.38589 2.00006 10.687 2 12C2.00006 13.3128 2.25845 14.6133 2.76074 15.8262L0.913086 16.5918C0.310214 15.1362 5.77178e-05 13.5755 0 12C5.77831e-05 10.4243 0.310089 8.86299 0.913086 7.40723L2.76074 8.17285Z" fill="currentColor"/>

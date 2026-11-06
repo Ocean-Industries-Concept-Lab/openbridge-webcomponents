@@ -6,7 +6,7 @@ import {customElement} from '../decorator.js';
 export class ObiMisc extends LitElement {
   @property({type: Boolean}) useCssColor = false;
 
-  private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+  private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
 <path d="M8.25 13.25C8.94036 13.25 9.5 12.6904 9.5 12C9.5 11.3096 8.94036 10.75 8.25 10.75C7.55964 10.75 7 11.3096 7 12C7 12.6904 7.55964 13.25 8.25 13.25Z" fill="currentColor"/>
 <path d="M12 13.25C12.6904 13.25 13.25 12.6904 13.25 12C13.25 11.3096 12.6904 10.75 12 10.75C11.3096 10.75 10.75 11.3096 10.75 12C10.75 12.6904 11.3096 13.25 12 13.25Z" fill="currentColor"/>
 <path d="M15.75 13.25C16.4404 13.25 17 12.6904 17 12C17 11.3096 16.4404 10.75 15.75 10.75C15.0596 10.75 14.5 11.3096 14.5 12C14.5 12.6904 15.0596 13.25 15.75 13.25Z" fill="currentColor"/>

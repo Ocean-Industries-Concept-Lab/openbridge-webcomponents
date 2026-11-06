@@ -6,7 +6,7 @@ import {customElement} from '../decorator.js';
 export class ObiSpeedHalfUp extends LitElement {
   @property({type: Boolean}) useCssColor = false;
 
-  private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+  private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
 <path d="M17 10V12.8211L12 7.83L7 12.8211L7 10L12 5L17 10Z" fill-rule="evenodd" clip-rule="evenodd" fill="currentColor"/>
 <path d="M17 16V18.8211L12 13.83L7 18.8211L7 16L12 11L17 16Z" fill-rule="evenodd" clip-rule="evenodd" fill="currentColor"/>
 </svg>

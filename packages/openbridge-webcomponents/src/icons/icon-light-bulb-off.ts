@@ -6,7 +6,7 @@ import {customElement} from '../decorator.js';
 export class ObiLightBulbOff extends LitElement {
   @property({type: Boolean}) useCssColor = false;
 
-  private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+  private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
 <path d="M12 22C14.3539 22 16.5178 21.1867 18.2262 19.8258L12.0006 13.6002L5.77452 19.8263C7.48273 21.1869 9.64641 22 12 22Z" fill="currentColor"/>
 <path d="M13.6006 12.0002L19.8261 18.2257C21.1868 16.5175 22 14.3537 22 12C22 9.64641 21.1869 7.48273 19.8263 5.77452L13.6006 12.0002Z" fill="currentColor"/>
 <path d="M12.0006 10.4002L18.2264 4.17443C16.5181 2.81338 14.354 2 12 2C9.64629 2 7.48251 2.81317 5.77427 4.17389L12.0006 10.4002Z" fill="currentColor"/>

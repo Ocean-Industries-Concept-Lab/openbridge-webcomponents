@@ -6,7 +6,7 @@ import {customElement} from '../decorator.js';
 export class ObiBlowerOnHorizontal extends LitElement {
   @property({type: Boolean}) useCssColor = false;
 
-  private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+  private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
 <path d="M14.5 9.50012C14.7761 9.50012 15 9.72398 15 10.0001C15 10.2763 14.7761 10.5001 14.5 10.5001L9.5 10.5001C9.22386 10.5001 9 10.2763 9 10.0001C9 9.72398 9.22386 9.50012 9.5 9.50012L14.5 9.50012Z" fill="currentColor"/>
 <path d="M14.5 11.5001C14.7761 11.5001 15 11.724 15 12.0001C15 12.2763 14.7761 12.5001 14.5 12.5001H9.5C9.22386 12.5001 9 12.2763 9 12.0001C9 11.724 9.22386 11.5001 9.5 11.5001L14.5 11.5001Z" fill="currentColor"/>
 <path d="M15 14.0001C15 13.724 14.7761 13.5001 14.5 13.5001H9.5C9.22386 13.5001 9 13.724 9 14.0001C9 14.2763 9.22386 14.5001 9.5 14.5001H14.5C14.7761 14.5001 15 14.2763 15 14.0001Z" fill="currentColor"/>

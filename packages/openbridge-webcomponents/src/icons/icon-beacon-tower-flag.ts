@@ -6,7 +6,7 @@ import {customElement} from '../decorator.js';
 export class ObiBeaconTowerFlag extends LitElement {
   @property({type: Boolean}) useCssColor = false;
 
-  private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+  private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
 <path d="M12 2C11.4477 2 11 2.44772 11 3V7C11 7.55228 11.4477 8 12 8C12.5523 8 13 7.55228 13 7V3C13 2.44772 12.5523 2 12 2Z" fill-rule="evenodd" clip-rule="evenodd" fill="currentColor"/>
 <path d="M15 10L17.5909 19.5H19V21H14.8293C14.4175 22.1652 13.3062 23 12 23C10.6938 23 9.58254 22.1652 9.17071 21H5V19.5H6.40909L9 10H15ZM9.04148 19.5H7.96388L10.1457 11.5H13.8543L16.0361 19.5H14.9585C14.7205 18.0811 13.4865 17 12 17C10.5135 17 9.27952 18.0811 9.04148 19.5ZM13.5 20C13.5 20.8284 12.8284 21.5 12 21.5C11.1716 21.5 10.5 20.8284 10.5 20C10.5 19.1716 11.1716 18.5 12 18.5C12.8284 18.5 13.5 19.1716 13.5 20Z" fill-rule="evenodd" clip-rule="evenodd" fill="currentColor"/>
 </svg>

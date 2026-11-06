@@ -6,7 +6,7 @@ import {customElement} from '../decorator.js';
 export class ObiRadarRainIec extends LitElement {
   @property({type: Boolean}) useCssColor = false;
 
-  private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+  private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
 <path d="M5.45918 8.0377L8.28761 5.20927L7.22694 4.14861L4.39852 6.97704L5.45918 8.0377Z" fill="currentColor"/>
 <path d="M15.7122 18.2907L16.7729 19.3514L19.6013 16.523L18.5407 15.4623L15.7122 18.2907Z" fill="currentColor"/>
 <path d="M6.33464 12.8191L9.02838 10.1253L7.96772 9.06469L5.27398 11.7584L6.33464 12.8191Z" fill="currentColor"/>

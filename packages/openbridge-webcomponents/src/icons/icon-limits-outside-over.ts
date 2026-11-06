@@ -6,7 +6,7 @@ import {customElement} from '../decorator.js';
 export class ObiLimitsOutsideOver extends LitElement {
   @property({type: Boolean}) useCssColor = false;
 
-  private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+  private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
 <path d="M5 15.0002V17.0002H3V15.0002H5Z" fill="currentColor"/>
 <path d="M21 17.0002H19V15.0002H21V17.0002Z" fill="currentColor"/>
 <path d="M17 17.0002H15V15.0002H17V17.0002Z" fill="currentColor"/>

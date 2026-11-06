@@ -6,7 +6,7 @@ import {customElement} from '../decorator.js';
 export class ObiBeaconMinorStake extends LitElement {
   @property({type: Boolean}) useCssColor = false;
 
-  private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+  private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
 <path d="M8 21V19.5H11L11 4C11 3.44772 11.4477 3 12 3C12.5523 3 13 3.44771 13 4V19.5H16V21H8Z" fill="currentColor"/>
 </svg>
 `;

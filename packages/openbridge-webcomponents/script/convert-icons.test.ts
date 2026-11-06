@@ -20,6 +20,11 @@ const outsideStroke = `<svg viewBox="0 0 24 24" fill="none">
 <path d="M1 1" stroke-width="2" stroke="#393939" mask="url(#s1)"/>
 </svg>`;
 
+/** A stroke-only open path: Figma leaves it unfilled through the root `fill="none"`. */
+const strokeOnly = `<svg viewBox="0 0 24 24" fill="none">
+<path d="M12 12V9L14 8L10 6.5" stroke="#393939"/>
+</svg>`;
+
 const icon = {
   name: 'test',
   id: '0:0',
@@ -59,6 +64,16 @@ describe('masks keep the colours Figma gave them', () => {
     );
     expect(getSingleColorIcon(insideStroke, icon)).toContain(
       'stroke="currentColor" mask="url(#s1)"'
+    );
+  });
+});
+
+describe('the single-colour variant', () => {
+  it('leaves a stroke-only shape unfilled, as the CSS-colour variant does', () => {
+    const single = getSingleColorIcon(strokeOnly, icon);
+    expect(single).toContain('<svg viewBox="0 0 24 24" fill="none">');
+    expect(single).toContain(
+      '<path d="M12 12V9L14 8L10 6.5" stroke="currentColor"/>'
     );
   });
 });

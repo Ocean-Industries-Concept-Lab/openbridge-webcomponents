@@ -6,7 +6,7 @@ import {customElement} from '../decorator.js';
 export class ObiChartSeabedProposal extends LitElement {
   @property({type: Boolean}) useCssColor = false;
 
-  private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+  private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
 <path d="M22 14.5H2V12.5H22V14.5Z" fill-rule="evenodd" clip-rule="evenodd" fill="currentColor"/>
 <path d="M5 17C5 17.5523 4.55228 18 4 18C3.44772 18 3 17.5523 3 17C3 16.4477 3.44772 16 4 16C4.55228 16 5 16.4477 5 17Z" fill="currentColor"/>
 <path d="M9 17C9 17.5523 8.55228 18 8 18C7.44772 18 7 17.5523 7 17C7 16.4477 7.44772 16 8 16C8.55228 16 9 16.4477 9 17Z" fill="currentColor"/>

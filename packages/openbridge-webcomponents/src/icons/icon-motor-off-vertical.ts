@@ -6,7 +6,7 @@ import {customElement} from '../decorator.js';
 export class ObiMotorOffVertical extends LitElement {
   @property({type: Boolean}) useCssColor = false;
 
-  private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+  private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
 <path d="M14 19C14.5523 19 15 18.5523 15 18V17H9L9 18C9 18.5523 9.44772 19 10 19H14ZM7 7.5V15C7 15.5523 7.44772 16 8 16H16C16.5523 16 17 15.5523 17 15V7.5C17 6.94771 16.5523 6.5 16 6.5L8 6.5C7.44771 6.5 7 6.94772 7 7.5ZM9 4V5.5L15 5.5V4C15 3.44772 14.5523 3 14 3L10 3C9.44772 3 9 3.44772 9 4Z" fill-rule="evenodd" clip-rule="evenodd" fill="currentColor"/>
 <path d="M3 14L3 9C3 8.72386 3.22386 8.5 3.5 8.5C3.77614 8.5 4 8.72386 4 9L4 14C4 14.2761 3.77614 14.5 3.5 14.5C3.22386 14.5 3 14.2761 3 14Z" fill-rule="evenodd" clip-rule="evenodd" fill="currentColor"/>
 <path d="M20 9V14C20 14.2761 20.2239 14.5 20.5 14.5C20.7761 14.5 21 14.2761 21 14V9C21 8.72386 20.7761 8.5 20.5 8.5C20.2239 8.5 20 8.72386 20 9Z" fill-rule="evenodd" clip-rule="evenodd" fill="currentColor"/>

@@ -6,7 +6,7 @@ import {customElement} from '../decorator.js';
 export class ObiCursorMap extends LitElement {
   @property({type: Boolean}) useCssColor = false;
 
-  private icon = svg`<svg width="32" height="32" viewBox="0 0 32 32" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+  private icon = svg`<svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
 <g filter="url(#filter0_d_2002_521)">
 <path d="M14 10L18 10V13.9999L22 14V17.9999L18 17.9999L18 22H14L14 17.9999H10V14L14 13.9999V10Z" fill-rule="evenodd" clip-rule="evenodd" fill="currentColor"/>
 </g>

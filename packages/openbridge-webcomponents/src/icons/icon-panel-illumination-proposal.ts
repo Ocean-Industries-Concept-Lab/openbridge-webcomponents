@@ -6,7 +6,7 @@ import {customElement} from '../decorator.js';
 export class ObiPanelIlluminationProposal extends LitElement {
   @property({type: Boolean}) useCssColor = false;
 
-  private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+  private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
 <path d="M18.364 4.22192L19.7782 5.63614L16.9497 8.46456L15.5355 7.05035L18.364 4.22192Z" fill="currentColor"/>
 <path d="M2 11.0001V13.0001H6V11.0001H2Z" fill="currentColor"/>
 <path d="M5.63605 4.22192L4.22183 5.63614L7.05026 8.46457L8.46447 7.05035L5.63605 4.22192Z" fill="currentColor"/>

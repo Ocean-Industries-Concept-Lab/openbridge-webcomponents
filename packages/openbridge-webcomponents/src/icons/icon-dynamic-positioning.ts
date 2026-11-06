@@ -6,7 +6,7 @@ import {customElement} from '../decorator.js';
 export class ObiDynamicPositioning extends LitElement {
   @property({type: Boolean}) useCssColor = false;
 
-  private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+  private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
 <path d="M18.7633 18.3164L21.6616 18.6651C21.8823 18.2934 22 17.9029 22 17.4999C22 17.097 21.8823 16.7064 21.6616 16.3348L18.7633 16.6835C18.9171 16.9424 19 17.2158 19 17.4999C19 17.7841 18.9171 18.0575 18.7633 18.3164Z" fill="currentColor"/>
 <path d="M18.065 15.9257L20.6617 15.2496C19.7837 14.5667 18.5183 13.9973 17.0008 13.6022L15.4984 14.7707C16.5617 15.0475 17.4498 15.4472 18.065 15.9257Z" fill="currentColor"/>
 <path d="M8.50162 14.7707L6.9992 13.6022C5.48168 13.9973 4.21631 14.5667 3.33828 15.2496L5.93496 15.9257C6.55021 15.4472 7.43827 15.0475 8.50162 14.7707Z" fill="currentColor"/>

@@ -6,7 +6,7 @@ import {customElement} from '../decorator.js';
 export class ObiLightSearchlightColourOn extends LitElement {
   @property({type: Boolean}) useCssColor = false;
 
-  private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+  private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
 <path d="M18.5269 7.23414L20.259 6.23414C20.7373 5.958 20.9011 5.34641 20.625 4.86812C20.3489 4.38983 19.7373 4.22595 19.259 4.50209L17.5269 5.50209L18.5269 7.23414Z" fill-rule="evenodd" clip-rule="evenodd" fill="currentColor"/>
 <path d="M15.9637 3.94036L16.9637 2.20831C17.2398 1.73002 17.0759 1.11843 16.5977 0.842285C16.1194 0.566143 15.5078 0.730018 15.2316 1.20831L14.2316 2.94036L15.9637 3.94036Z" fill-rule="evenodd" clip-rule="evenodd" fill="currentColor"/>
 <path d="M19.0977 11.3686H21.0977C21.6499 11.3686 22.0977 10.9208 22.0977 10.3686C22.0977 9.81628 21.6499 9.36856 21.0977 9.36856H19.0977V11.3686Z" fill-rule="evenodd" clip-rule="evenodd" fill="currentColor"/>

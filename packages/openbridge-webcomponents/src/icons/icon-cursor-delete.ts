@@ -6,7 +6,7 @@ import {customElement} from '../decorator.js';
 export class ObiCursorDelete extends LitElement {
   @property({type: Boolean}) useCssColor = false;
 
-  private icon = svg`<svg width="33" height="32" viewBox="0 0 33 32" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+  private icon = svg`<svg width="33" height="32" viewBox="0 0 33 32" fill="none" xmlns="http://www.w3.org/2000/svg">
 <g filter="url(#filter0_d_2144_1044)">
 <path d="M15.5811 10.0001V9.00008H23.5811V10.0001H28.5811V14.0001H27.5811V26.0001C27.5811 26.8174 27.2785 27.542 26.7007 28.1197C26.123 28.6974 25.3985 29.0001 24.5811 29.0001H14.5811C13.7638 29.0001 13.0392 28.6974 12.4615 28.1197C11.8838 27.542 11.5811 26.8174 11.5811 26.0001V14.0001H10.5811V10.0001H15.5811Z" fill="currentColor"/>
 <path d="M6.58114 17.1624L1 0.418945L17.7434 6.00008L9.37171 8.79065L6.58114 17.1624Z" fill-rule="evenodd" clip-rule="evenodd" fill="currentColor"/>

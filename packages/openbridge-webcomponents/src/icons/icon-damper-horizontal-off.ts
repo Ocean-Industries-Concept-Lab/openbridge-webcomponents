@@ -6,7 +6,7 @@ import {customElement} from '../decorator.js';
 export class ObiDamperHorizontalOff extends LitElement {
   @property({type: Boolean}) useCssColor = false;
 
-  private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+  private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
 <g clip-path="url(#clip0_2234_112)">
 <path d="M14.8552 9.19703L20.1605 6.13402C20.6388 5.85788 21.2504 6.02176 21.5265 6.50005C21.8026 6.97834 21.6388 7.58993 21.1605 7.86607L15.8552 10.9291C16.3332 12.6452 15.6143 14.5322 14.0002 15.4642C12.3861 16.3961 10.3924 16.0751 9.14525 14.8031L3.83996 17.8661C3.36167 18.1422 2.75008 17.9783 2.47394 17.5C2.19779 17.0218 2.36167 16.4102 2.83996 16.134L8.14525 13.071C7.66719 11.3549 8.38608 9.46787 10.0002 8.53595C11.6143 7.60403 13.608 7.92496 14.8552 9.19703Z" fill="currentColor"/>
 <path d="M13.7323 11C14.2846 11.9566 13.9568 13.1798 13.0002 13.7321C12.0436 14.2844 10.8204 13.9566 10.2682 13C9.71588 12.0435 10.0436 10.8203 11.0002 10.268C11.9568 9.71571 13.18 10.0435 13.7323 11Z" fill-rule="evenodd" clip-rule="evenodd" fill="currentColor"/>

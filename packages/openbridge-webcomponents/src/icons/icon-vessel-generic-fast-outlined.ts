@@ -6,7 +6,7 @@ import {customElement} from '../decorator.js';
 export class ObiVesselGenericFastOutlined extends LitElement {
   @property({type: Boolean}) useCssColor = false;
 
-  private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+  private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
 <path d="M11.9999 21.9999C11.5857 21.9999 11.2499 21.6641 11.2499 21.2499V16.7499C11.2499 16.3356 11.5857 15.9999 11.9999 15.9999C12.4142 15.9999 12.7499 16.3356 12.7499 16.7499V21.2499C12.7499 21.6641 12.4142 21.9999 11.9999 21.9999Z" fill-rule="evenodd" clip-rule="evenodd" fill="currentColor"/>
 <path d="M8.99994 21.9999C8.58572 21.9999 8.24994 21.6641 8.24994 21.2499V16.7499C8.24994 16.3356 8.58572 15.9999 8.99994 15.9999C9.41415 15.9999 9.74994 16.3356 9.74994 16.7499V21.2499C9.74994 21.6641 9.41415 21.9999 8.99994 21.9999Z" fill-rule="evenodd" clip-rule="evenodd" fill="currentColor"/>
 <path d="M14.9999 21.9999C14.5857 21.9999 14.2499 21.6641 14.2499 21.2499V16.7499C14.2499 16.3356 14.5857 15.9999 14.9999 15.9999C15.4142 15.9999 15.7499 16.3356 15.7499 16.7499V21.2499C15.7499 21.6641 15.4142 21.9999 14.9999 21.9999Z" fill-rule="evenodd" clip-rule="evenodd" fill="currentColor"/>

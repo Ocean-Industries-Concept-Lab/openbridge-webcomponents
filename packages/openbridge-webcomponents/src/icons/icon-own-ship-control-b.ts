@@ -6,7 +6,7 @@ import {customElement} from '../decorator.js';
 export class ObiOwnShipControlB extends LitElement {
   @property({type: Boolean}) useCssColor = false;
 
-  private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+  private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
 <g clip-path="url(#clip0_7025_3090)">
 <path d="M11.9863 12.2314C12.3863 12.2314 12.7026 12.28 12.9346 12.376C13.1664 12.464 13.3308 12.5918 13.4268 12.7598C13.5226 12.9277 13.5703 13.1238 13.5703 13.3477C13.5703 13.7156 13.4583 14.0114 13.2344 14.2354C13.0104 14.4594 12.6139 14.5713 12.0459 14.5713H10.7979V12.2314H11.9863Z" fill="currentColor"/>
 <path d="M11.8066 8.85938C12.3505 8.85941 12.7462 8.93593 12.9941 9.08789C13.2501 9.23185 13.3779 9.4755 13.3779 9.81934C13.3779 10.1553 13.2706 10.4119 13.0547 10.5879C12.8467 10.7639 12.4661 10.8516 11.9141 10.8516H10.7979V8.85938H11.8066Z" fill="currentColor"/>

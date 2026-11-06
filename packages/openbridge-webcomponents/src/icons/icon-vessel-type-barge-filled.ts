@@ -6,7 +6,7 @@ import {customElement} from '../decorator.js';
 export class ObiVesselTypeBargeFilled extends LitElement {
   @property({type: Boolean}) useCssColor = false;
 
-  private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+  private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
 <path d="M15.1307 4.00011L12 0.347656L8.86933 4.00011H8C6.89543 4.00011 6 4.89554 6 6.00011V18.0001C6 19.1047 6.89543 20.0001 8 20.0001H16C17.1046 20.0001 18 19.1047 18 18.0001V6.00011C18 4.89554 17.1046 4.00011 16 4.00011H15.1307Z" fill-rule="evenodd" clip-rule="evenodd" fill="currentColor"/>
 <path d="M13 17.0001V7.00011H15V17.0001H13Z" fill="currentColor"/>
 <path d="M9 7.00011V17.0001H11V7.00011H9Z" fill="currentColor"/>

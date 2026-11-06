@@ -6,7 +6,7 @@ import {customElement} from '../decorator.js';
 export class ObiCapacitor03On extends LitElement {
   @property({type: Boolean}) useCssColor = false;
 
-  private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+  private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
 <path d="M10 7L10 19C10 19.5523 9.55228 20 9 20C8.44772 20 8 19.5523 8 19V7C8 6.44772 8.44772 6 9 6C9.55228 6 10 6.44772 10 7Z" fill="currentColor"/>
 <path d="M16 7L16 19C16 19.5523 15.5523 20 15 20C14.4477 20 14 19.5523 14 19L14 7C14 6.44772 14.4477 6 15 6C15.5523 6 16 6.44772 16 7Z" fill="currentColor"/>
 <path d="M23.314 0.686523L21.8998 7.75759L16.2429 2.10074L23.314 0.686523Z" fill="currentColor"/>

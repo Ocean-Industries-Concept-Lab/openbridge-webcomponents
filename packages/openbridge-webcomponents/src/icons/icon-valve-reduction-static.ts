@@ -6,7 +6,7 @@ import {customElement} from '../decorator.js';
 export class ObiValveReductionStatic extends LitElement {
   @property({type: Boolean}) useCssColor = false;
 
-  private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+  private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
 <use xlink:href="#stroke0_15319_2616" fill="currentColor"/>
 <mask id="stroke1_15319_2616" maskUnits="userSpaceOnUse" x="1" y="0.470703" width="22" height="23" fill="black">
 <rect fill="white" x="1" y="0.470703" width="22" height="23"/>

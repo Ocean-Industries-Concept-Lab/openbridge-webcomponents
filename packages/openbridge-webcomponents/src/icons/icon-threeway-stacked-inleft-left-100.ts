@@ -6,7 +6,7 @@ import {customElement} from '../decorator.js';
 export class ObiThreewayStackedInleftLeft100 extends LitElement {
   @property({type: Boolean}) useCssColor = false;
 
-  private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+  private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
 <path d="M13 10H14L20.47 5.95625C21.136 5.53997 22 6.01881 22 6.80425V17.1958C22 17.9812 21.136 18.46 20.47 18.0438L14 14H10L3.53 18.0438C2.86395 18.46 2 17.9812 2 17.1958V6.80425C2 6.01881 2.86395 5.53997 3.53 5.95625L9.8784 9.924C9.95786 9.97367 10.0497 10 10.1434 10H11V0H13V10ZM14.53 10.848C14.3711 10.9473 14.1874 11 14 11H10.1434C9.86227 11 9.5868 10.921 9.3484 10.772L3 6.80425L3 17.1958L9.47 13.152C9.62893 13.0527 9.81258 13 10 13H14C14.1874 13 14.3711 13.0527 14.53 13.152L21 17.1958V6.80425L14.53 10.848Z" fill-rule="evenodd" clip-rule="evenodd" fill="currentColor"/>
 <path d="M6.94312 21L10.5145 16H13.4853L17.0567 21H6.94312Z" fill="currentColor"/>
 <path d="M10.5146 16L6.94317 21H17.0568L13.4854 16L10.5146 16ZM6.12944 20.4188C5.65667 21.0806 6.1298 22 6.94317 22H17.0568C17.8702 22 18.3433 21.0806 17.8705 20.4188L14.2991 15.4188C14.1114 15.156 13.8083 15 13.4854 15H10.5146C10.1916 15 9.88858 15.156 9.70086 15.4188L6.12944 20.4188Z" fill-rule="evenodd" clip-rule="evenodd" fill="currentColor"/>

@@ -6,7 +6,7 @@ import {customElement} from '../decorator.js';
 export class ObiSignMeetingPoint extends LitElement {
   @property({type: Boolean}) useCssColor = false;
 
-  private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+  private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
 <path d="M2.10236 1L4.4252 3.30315V1.55118H6V6H1.55118V4.4252H3.32283L1 2.10236L2.10236 1Z" fill="currentColor"/>
 <path d="M19.5748 3.30315L21.8976 1L23 2.10236L20.6772 4.4252H22.4488V6H18V1.55118H19.5748V3.30315Z" fill="currentColor"/>
 <path d="M2.10236 23L4.4252 20.6968V22.4488H6V18H1.55118V19.5748H3.32283L1 21.8976L2.10236 23Z" fill="currentColor"/>

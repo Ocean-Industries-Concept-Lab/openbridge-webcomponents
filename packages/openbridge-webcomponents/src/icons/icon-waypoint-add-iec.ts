@@ -6,7 +6,7 @@ import {customElement} from '../decorator.js';
 export class ObiWaypointAddIec extends LitElement {
   @property({type: Boolean}) useCssColor = false;
 
-  private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+  private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
 <path d="M7.0001 8.99998C8.10467 8.99998 9.0001 8.10455 9.0001 6.99998C9.0001 5.89541 8.10467 4.99998 7.0001 4.99998C5.89553 4.99998 5.0001 5.89541 5.0001 6.99998C5.0001 8.10455 5.89553 8.99998 7.0001 8.99998ZM7.0001 11C9.20924 11 11.0001 9.20912 11.0001 6.99998C11.0001 4.79084 9.20924 2.99998 7.0001 2.99998C4.79096 2.99998 3.0001 4.79084 3.0001 6.99998C3.0001 9.20912 4.79096 11 7.0001 11Z" fill-rule="evenodd" clip-rule="evenodd" fill="currentColor"/>
 <path d="M4.48126 12.5367L6.41311 13.0544L5.89547 14.9862L3.96362 14.4686L4.48126 12.5367Z" fill="currentColor"/>
 <path d="M3.44598 16.4004L5.37783 16.9181L4.86019 18.8499L2.92834 18.3323L3.44598 16.4004Z" fill="currentColor"/>

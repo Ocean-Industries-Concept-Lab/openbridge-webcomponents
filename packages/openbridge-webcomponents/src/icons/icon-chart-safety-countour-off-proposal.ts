@@ -6,7 +6,7 @@ import {customElement} from '../decorator.js';
 export class ObiChartSafetyCountourOffProposal extends LitElement {
   @property({type: Boolean}) useCssColor = false;
 
-  private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+  private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
 <path d="M6.75015 2H5.25015V3.5H6.75015V2Z" fill="currentColor"/>
 <path d="M11.2501 2H12.7501V3.5H11.2501V2Z" fill="currentColor"/>
 <path d="M14.2502 2H15.7502V3.5H14.2502V2Z" fill="currentColor"/>

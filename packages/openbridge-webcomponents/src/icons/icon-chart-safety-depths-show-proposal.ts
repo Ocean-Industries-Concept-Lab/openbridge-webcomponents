@@ -6,7 +6,7 @@ import {customElement} from '../decorator.js';
 export class ObiChartSafetyDepthsShowProposal extends LitElement {
   @property({type: Boolean}) useCssColor = false;
 
-  private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+  private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
 <path d="M22 21H2V19H22V21Z" fill-rule="evenodd" clip-rule="evenodd" fill="currentColor"/>
 <path d="M5 16H3V14H5V16Z" fill-rule="evenodd" clip-rule="evenodd" fill="currentColor"/>
 <path d="M9 16H7V14H9V16Z" fill-rule="evenodd" clip-rule="evenodd" fill="currentColor"/>

@@ -6,7 +6,7 @@ import {customElement} from '../decorator.js';
 export class ObiMosfetPtype4Off extends LitElement {
   @property({type: Boolean}) useCssColor = false;
 
-  private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+  private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
 <path d="M23 1H13V6.25L23 6.25V1Z" fill="currentColor"/>
 <path d="M1 1H11V6.25L7 6.25V3L1 7V1Z" fill="currentColor"/>
 <path d="M1 7L7 11V7.75L11 7.75V23H1V7Z" fill="currentColor"/>

@@ -6,7 +6,7 @@ import {customElement} from '../decorator.js';
 export class ObiActuatorPistonOpen extends LitElement {
   @property({type: Boolean}) useCssColor = false;
 
-  private icon = svg`<svg width="24" height="25" viewBox="0 0 24 25" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+  private icon = svg`<svg width="24" height="25" viewBox="0 0 24 25" fill="none" xmlns="http://www.w3.org/2000/svg">
 <path d="M12 24L12 13" stroke-linecap="round" stroke="currentColor"/>
 <path d="M4 4C4 3.44772 4.44772 3 5 3H19C19.5523 3 20 3.44772 20 4V8V12C20 12.5523 19.5523 13 19 13H5C4.44772 13 4 12.5523 4 12V8V4Z" fill="currentColor"/>
 <mask id="stroke0_15289_1526" fill="white">

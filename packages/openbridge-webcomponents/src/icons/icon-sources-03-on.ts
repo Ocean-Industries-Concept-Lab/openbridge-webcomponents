@@ -6,7 +6,7 @@ import {customElement} from '../decorator.js';
 export class ObiSources03On extends LitElement {
   @property({type: Boolean}) useCssColor = false;
 
-  private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+  private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
 <g clip-path="url(#clip0_2228_2717)">
 <path d="M11.9999 2.82812L3.82837 10.9997L20.1715 10.9997L11.9999 2.82812Z" fill="currentColor"/>
 <path d="M12 21.1713L3.82837 12.9997L20.1717 12.9997L12 21.1713Z" fill="currentColor"/>

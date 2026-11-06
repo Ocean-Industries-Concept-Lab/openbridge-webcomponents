@@ -6,7 +6,7 @@ import {customElement} from '../decorator.js';
 export class ObiViewSingleGoogle extends LitElement {
   @property({type: Boolean}) useCssColor = false;
 
-  private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+  private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
 <path d="M2 7H6V17H2V7ZM7 5H17V19H7V5ZM18 7H22V17H18V7ZM9 7V17H15V7H9Z" fill="currentColor"/>
 </svg>
 `;

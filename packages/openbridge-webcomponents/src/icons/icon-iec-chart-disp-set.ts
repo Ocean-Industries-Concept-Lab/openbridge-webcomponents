@@ -6,7 +6,7 @@ import {customElement} from '../decorator.js';
 export class ObiIecChartDispSet extends LitElement {
   @property({type: Boolean}) useCssColor = false;
 
-  private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+  private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
 <path d="M2.35986 6.25C4.70707 6.25 6.60986 4.34721 6.60986 2H8.10986C8.10986 5.17564 5.5355 7.75 2.35986 7.75V6.25Z" fill="currentColor"/>
 <path d="M22.3599 17.75C20.0127 17.75 18.1099 19.6528 18.1099 22H16.6099C16.6099 18.8244 19.1842 16.25 22.3599 16.25V17.75Z" fill="currentColor"/>
 <path d="M21.6481 14.7844C21.882 14.7617 22.1195 14.75 22.3599 14.75V13.25C22.0709 13.25 21.785 13.264 21.5028 13.2915L21.6481 14.7844Z" fill="currentColor"/>

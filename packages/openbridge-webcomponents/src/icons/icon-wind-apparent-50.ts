@@ -6,7 +6,7 @@ import {customElement} from '../decorator.js';
 export class ObiWindApparent50 extends LitElement {
   @property({type: Boolean}) useCssColor = false;
 
-  private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+  private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
 <path d="M12.0816 0.00343171L12.1969 0.0200333L19.691 1.51906C20.7637 1.73378 20.7637 3.26722 19.691 3.48195L12.9996 4.81984V15.0005H14.9977C15.7412 15.0005 16.2259 15.7828 15.8932 16.4487L12.8951 22.4458C12.526 23.1831 11.473 23.1833 11.1041 22.4458L8.10605 16.4487C7.77356 15.7833 8.25784 15.0008 9.00156 15.0005H10.9996V1.00148C10.9997 0.409303 11.508 -0.0441718 12.0816 0.00343171ZM11.9996 19.7642L13.3814 17.0005H10.6178L11.9996 19.7642Z" fill-rule="evenodd" clip-rule="evenodd" fill="currentColor"/>
 </svg>
 `;

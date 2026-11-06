@@ -6,7 +6,7 @@ import {customElement} from '../decorator.js';
 export class ObiPipeDirection extends LitElement {
   @property({type: Boolean}) useCssColor = false;
 
-  private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+  private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
 <path d="M9.99461 9L12.99 12L9.99427 15H0V9H9.99461Z" fill="currentColor"/>
 <path d="M15.6474 9L18.6474 12L15.6474 15H24V9H15.6474Z" fill="currentColor"/>
 <path d="M10.9928 14H0V15H9.99427L10.9928 14Z" fill="currentColor"/>
