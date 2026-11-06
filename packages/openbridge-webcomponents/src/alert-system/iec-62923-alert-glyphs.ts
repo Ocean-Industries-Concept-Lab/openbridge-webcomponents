@@ -29,7 +29,9 @@ export const IEC_62923_ALARM_GLYPHS = {
     frame: html`<obi-alarm-unacknowledged-iec
       usecsscolor
     ></obi-alarm-unacknowledged-iec>`,
-    flashFrame: html``,
+    flashFrame: html`<obi-alarm-unacknowledged-outlined
+      usecsscolor
+    ></obi-alarm-unacknowledged-outlined>`,
   },
   silenced: {
     frame: html`<obi-alarm-silenced-iec usecsscolor></obi-alarm-silenced-iec>`,
