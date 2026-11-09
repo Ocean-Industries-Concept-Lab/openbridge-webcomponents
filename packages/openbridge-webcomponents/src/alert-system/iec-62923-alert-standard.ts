@@ -20,6 +20,7 @@ import '../icons/icon-alarm-emergency-iec.js';
 import '../icons/icon-alarm-noack-iec.js';
 import '../icons/icon-warning-noack-iec.js';
 import '../icons/icon-caution-color-iec.js';
+import '../icons/icon-caution-badge-outline.js';
 import {FlashingSpeed} from '../types.js';
 import {
   ALERT_ACTION_ID_APPLIED_BY_ACK_VISIBLE_BUTTON,
