@@ -67,7 +67,9 @@ const Acknowledge = ALERT_ACTION_ID_APPLIED_BY_ACK_VISIBLE_BUTTON;
 // square; the off frame is empty until the design draws one.
 const EMERGENCY_ALARM_GLYPH: AlertGlyph = {
   frame: html`<obi-alarm-emergency-iec usecsscolor></obi-alarm-emergency-iec>`,
-  flashFrame: html``,
+  flashFrame: html`<obi-caution-badge-outline>
+    usecsscolor
+  </obi-caution-badge-outline>`,
 };
 
 const STEADY_EMERGENCY_ALARM_GLYPH: AlertGlyph = {
