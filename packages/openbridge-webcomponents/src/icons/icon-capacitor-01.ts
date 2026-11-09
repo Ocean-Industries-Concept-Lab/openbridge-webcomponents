@@ -6,15 +6,15 @@ import {customElement} from '../decorator.js';
 export class ObiCapacitor01 extends LitElement {
   @property({type: Boolean}) useCssColor = false;
 
-  private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-<path d="M11 5.5C11 4.67157 10.3284 4 9.5 4C8.67157 4 8 4.67157 8 5.5V18.5C8 19.3284 8.67157 20 9.5 20C10.3284 20 11 19.3284 11 18.5L11 5.5Z" fill="currentColor"/>
-<path d="M16 5.5C16 4.67157 15.3284 4 14.5 4C13.6716 4 13 4.67157 13 5.5L13 18.5C13 19.3284 13.6716 20 14.5 20C15.3284 20 16 19.3284 16 18.5L16 5.5Z" fill="currentColor"/>
+  private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M10 6L10 18C10 18.5523 9.55228 19 9 19C8.44772 19 8 18.5523 8 18V6C8 5.44772 8.44772 5 9 5C9.55228 5 10 5.44772 10 6Z" fill="currentColor"/>
+<path d="M16 6L16 18C16 18.5523 15.5523 19 15 19C14.4477 19 14 18.5523 14 18L14 6C14 5.44772 14.4477 5 15 5C15.5523 5 16 5.44772 16 6Z" fill="currentColor"/>
 </svg>
 `;
 
   private iconCss = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M11 5.5C11 4.67157 10.3284 4 9.5 4C8.67157 4 8 4.67157 8 5.5V18.5C8 19.3284 8.67157 20 9.5 20C10.3284 20 11 19.3284 11 18.5L11 5.5Z" style="fill: var(--element-neutral-color)"/>
-<path d="M16 5.5C16 4.67157 15.3284 4 14.5 4C13.6716 4 13 4.67157 13 5.5L13 18.5C13 19.3284 13.6716 20 14.5 20C15.3284 20 16 19.3284 16 18.5L16 5.5Z" style="fill: var(--element-neutral-color)"/>
+<path d="M10 6L10 18C10 18.5523 9.55228 19 9 19C8.44772 19 8 18.5523 8 18V6C8 5.44772 8.44772 5 9 5C9.55228 5 10 5.44772 10 6Z" style="fill: var(--automation-symbol-static-background-color)"/>
+<path d="M16 6L16 18C16 18.5523 15.5523 19 15 19C14.4477 19 14 18.5523 14 18L14 6C14 5.44772 14.4477 5 15 5C15.5523 5 16 5.44772 16 6Z" style="fill: var(--automation-symbol-static-background-color)"/>
 </svg>
 `;
 

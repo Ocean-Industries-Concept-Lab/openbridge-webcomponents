@@ -1,8 +1,19 @@
-import {PropertyValues} from 'lit';
+import {PropertyValues, TemplateResult} from 'lit';
+import {html, unsafeStatic} from 'lit/static-html.js';
 import {property} from 'lit/decorators.js';
 import {ObcAbstractAutomationButton} from './abstract-automation-button.js';
 import {AutomationButtonReadoutStack} from '../../components/automation-button-readout-stack/automation-button-readout-stack.js';
 import {AutomationButtonOrientation} from './automation-button.js';
+
+/**
+ * Icon names, without the `obi-` prefix, that a two-state device shows for
+ * each state. `static` is left out where the icons file has no static symbol.
+ */
+export interface SquaredDeviceIcons {
+  on: string;
+  off: string;
+  static?: string;
+}
 
 export enum SquaredVariant {
   square = 'square',
@@ -50,7 +61,7 @@ export class ObcAbstractAutomationButtonSquared extends ObcAbstractAutomationBut
         {
           type: 'state-on',
           value: 'On',
-          hasIcon: true,
+          hasIcon: this.showStatusIcon,
         },
       ];
     } else {
@@ -58,7 +69,7 @@ export class ObcAbstractAutomationButtonSquared extends ObcAbstractAutomationBut
         {
           type: 'state-off',
           value: 'Off',
-          hasIcon: true,
+          hasIcon: this.showStatusIcon,
         },
       ];
     }
@@ -73,5 +84,22 @@ export class ObcAbstractAutomationButtonSquared extends ObcAbstractAutomationBut
 
   override get _on(): boolean {
     return this.turnedOn;
+  }
+
+  /**
+   * Renders one of `icons` into the `icon` and `icon-silhouette` slots: the
+   * static icon when `static` is set and the device has one, otherwise the on
+   * or off icon.
+   */
+  protected renderDeviceIcon(icons: SquaredDeviceIcons): TemplateResult {
+    const name =
+      this.static && icons.static
+        ? icons.static
+        : this.turnedOn
+          ? icons.on
+          : icons.off;
+    const tag = unsafeStatic(`obi-${name}`);
+    return html`<${tag} usecsscolor slot="icon"></${tag}>
+      <${tag} usecsscolor slot="icon-silhouette"></${tag}>`;
   }
 }

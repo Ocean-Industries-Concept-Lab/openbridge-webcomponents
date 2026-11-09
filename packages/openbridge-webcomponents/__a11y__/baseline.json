@@ -124,10 +124,13 @@
   "application-components-alerts-alert-menu-item--with-secondary-action": [
     "nested-interactive"
   ],
-  "application-components-alerts-alert-menu-item-experimental-iec-62923--regular": [
+  "application-components-alerts-diagnostic-menu--no-diagnostic-list-button": [
     "nested-interactive"
   ],
-  "application-components-alerts-alert-menu-item-experimental-isa-18-2--two-actions": [
+  "application-components-alerts-diagnostic-menu--regular": [
+    "nested-interactive"
+  ],
+  "application-components-alerts-diagnostic-menu--soft-dismiss-from-a-top-bar-button": [
     "nested-interactive"
   ],
   "application-components-calendar-calendar--empty-calendar": ["select-name"],
@@ -330,6 +333,10 @@
   "application-components-top-elements-topbar--asset-picker": [
     "button-name",
     "select-name"
+  ],
+  "application-components-top-elements-topbar--diagnostics": [
+    "button-name",
+    "nested-interactive"
   ],
   "application-components-top-elements-topbar--home-button-icon": [
     "button-name"

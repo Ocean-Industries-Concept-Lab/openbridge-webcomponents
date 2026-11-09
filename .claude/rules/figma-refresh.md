@@ -116,15 +116,15 @@ re-sync changes every key are in
 
 Inputs:
 
-| File / env                             | Tracked | Notes                                                                                                      |
-| -------------------------------------- | ------- | ---------------------------------------------------------------------------------------------------------- |
-| `.env` → `FIGMA_TOKEN`                 | no      | required for any run that calls the API                                                                    |
-| `script/figmavariables.json`           | yes     | `VariableID → token` map; the converter falls back to literal hex for an unknown id                        |
-| `script/.cache-figma.json`             | no      | ~30 MB raw API response, reused across runs                                                                |
-| `script/.cache/icons/*.svg`            | no      | per-icon payloads, cleared each run                                                                        |
-| `script/.cache/unknown-variables.json` | no      | written every run: the ids the map did not resolve, `[]` when clean                                        |
-| `OBC_USE_CACHE=1`                      | —       | reuse the on-disk cache instead of calling the API; for iterating on `convert-icons.ts` or a refreshed map |
-| `OBC_ALLOW_UNRESOLVED_VARS=1`          | —       | let a run with unresolved ids finish writing; `lint:icons` still fails on the hex it leaves behind         |
+| File / env                             | Tracked | Notes                                                                                                                                         |
+| -------------------------------------- | ------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
+| `.env` → `FIGMA_TOKEN`                 | no      | required for any run that calls the API                                                                                                       |
+| `script/figmavariables.json`           | yes     | `VariableID → token` map; the converter falls back to literal hex for an unknown id                                                           |
+| `script/.cache-figma.json`             | no      | ~30 MB raw API response, reused across runs                                                                                                   |
+| `script/.cache/icons/*.svg`            | no      | per-icon payloads; a fresh run rewrites them, `OBC_USE_CACHE=1` fetches only the missing ones; a renamed icon's old file stays behind, unread |
+| `script/.cache/unknown-variables.json` | no      | written every run: the ids the map did not resolve, `[]` when clean                                                                           |
+| `OBC_USE_CACHE=1`                      | —       | reuse the on-disk cache instead of calling the API; for iterating on `convert-icons.ts` or a refreshed map                                    |
+| `OBC_ALLOW_UNRESOLVED_VARS=1`          | —       | let a run with unresolved ids finish writing; `lint:icons` still fails on the hex it leaves behind                                            |
 
 Steps:
 
@@ -229,4 +229,15 @@ the semantic diff (renamed, removed, changed per block) belong there too.
     The dusk, night and bright primitives export that way (`WCAG`,
     `WCAG Amber`, `WCAG AAA`); whether those are the intended modes is open
     with the design team.
+- The `Font exports` codegen names every instrument and automation mixin
+  `font-instrument-deprecated-*` / `font-automation-deprecated-*`, because
+  the design team moved those text styles under a Deprecated group; the
+  values are unchanged. `fonts.css` keeps the names the components read
+  until the design team names their replacements: when an export changes
+  anything else, paste it and fold those names back by hand.
+- The plugin shortens an `On-` name to `--on-…` while only one variable
+  claims it: `Color/Automation/Symbol/On-line-color` exports as
+  `--on-line-color`, next to `--automation-symbol-off-line-color`. The icon
+  map points at the short name, so a second family adding `On-line-color`
+  renames it and the icons that bind it fall back to hex.
 - Token typos in Figma (#985).

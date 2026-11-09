@@ -6,7 +6,7 @@ import {customElement} from '../decorator.js';
 export class ObiWinch extends LitElement {
   @property({type: Boolean}) useCssColor = false;
 
-  private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+  private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
 <path d="M3 5C3 4.44772 3.44772 4 4 4H6C6.55228 4 7 4.44772 7 5V13C7 13.5523 6.55228 14 6 14H4C3.44772 14 3 13.5523 3 13V5Z" fill="currentColor"/>
 <path d="M8 6.5C8 6.22386 8.22386 6 8.5 6H9.5C9.77614 6 10 6.22386 10 6.5V11.5C10 11.7761 9.77614 12 9.5 12H8.5C8.22386 12 8 11.7761 8 11.5V6.5Z" fill="currentColor"/>
 <path d="M11 6.5C11 6.22386 11.2239 6 11.5 6H12.5C12.7761 6 13 6.22386 13 6.5V11.5C13 11.7761 12.7761 12 12.5 12H11.5C11.2239 12 11 11.7761 11 11.5V6.5Z" fill="currentColor"/>

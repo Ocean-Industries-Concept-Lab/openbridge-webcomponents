@@ -43,6 +43,7 @@ export enum ObcTopBarMenuButtonIcon {
  * - **Command Button Slot:** Slot for inserting a primary command/action button.
  * - **Asset Picker Slot:** Slot for a control that switches between the assets the page can show, such as an `obc-dropdown-button` whose label is the current asset.
  * - **Alert/Notification Area:** Slot for alert indicators, notification badges, or custom alert components.
+ * - **Diagnostics Slot:** Slot for the diagnostic button, after the alert area.
  * - **Dimming Button:** Optional button for toggling display modes (e.g., day/night).
  * - **User/Profile Button:** Optional user icon for profile/account actions.
  * - **Apps Button:** Optional button for accessing additional applications or modules.
@@ -67,6 +68,7 @@ export enum ObcTopBarMenuButtonIcon {
  * - Insert custom icons or buttons using the `app-icon` and `command-button` slots.
  * - Slot an `obc-dropdown-button` into `asset-picker` when the page shows one of several assets; the app owns the list and the selection and listens for the button's `change`.
  * - Use the `alerts` slot to display alert indicators, notification badges, or custom alert components.
+ * - Slot an `obc-diagnostic-button` into `diagnostics`; open its `obc-diagnostic-menu` from the button's `click` the way the user menu is opened from the user button.
  *
  * **TODO(designer):** Clarify recommended combinations of visible elements for different app contexts (e.g., when to show both user and apps buttons, or best practices for alert placement).
  *
@@ -78,6 +80,7 @@ export enum ObcTopBarMenuButtonIcon {
  * | `command-button` | `settings` is false (if provided) | Primary command or action button for the current context.      |
  * | `asset-picker`   | `settings` is false (if provided) | Control that switches the asset the page shows; its label is the current asset. |
  * | `alerts`         | Always (if provided)            | Area for alert indicators, notification badges, or alert items.|
+ * | `diagnostics`    | Always (if provided)            | The diagnostic button (`obc-diagnostic-button`), after the alert area and before the dimming button. |
  * | `clock`          | Always (if provided)            | Clock component for displaying the current time.              |
  *
  * ## Events
@@ -164,6 +167,7 @@ export enum ObcTopBarMenuButtonIcon {
  * @slot command-button - Primary command/action button for the current context
  * @slot asset-picker - Control that switches the asset the page shows, with the current asset as its label; an `obc-dropdown-button` fits (regular layout only, not in settings mode)
  * @slot alerts - Area for alert indicators, notification badges, or alert items
+ * @slot diagnostics - The diagnostic button, after the alert area and before the dimming button
  * @slot clock - Clock component for displaying the current time (shown when `showClock` is true)
  * @fires menu-button-clicked - Fired when the menu button is clicked
  * @fires dimming-button-clicked - Fired when the dimming (day/night) button is clicked
@@ -510,6 +514,7 @@ export class ObcTopBar extends LitElement {
           <div class="alert-container">
             <slot name="alerts"></slot>
           </div>
+          <slot name="diagnostics"></slot>
           ${
             this.showDimmingButton && !this.inactive
               ? html`<obc-icon-button

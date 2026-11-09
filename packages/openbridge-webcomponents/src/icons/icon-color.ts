@@ -6,13 +6,13 @@ import {customElement} from '../decorator.js';
 export class ObiColor extends LitElement {
   @property({type: Boolean}) useCssColor = false;
 
-  private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-<circle cx="12" cy="12" r="9.5" fill="currentColor" stroke="currentColor"/>
+  private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M21.5 12C21.5 17.2467 17.2467 21.5 12 21.5C6.75329 21.5 2.5 17.2467 2.5 12C2.5 6.75329 6.75329 2.5 12 2.5C17.2467 2.5 21.5 6.75329 21.5 12Z" fill="currentColor" stroke="currentColor"/>
 </svg>
 `;
 
   private iconCss = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-<circle cx="12" cy="12" r="9.5" style="fill: var(--base-categorical-100); stroke: var(--base-categorical-200)"/>
+<path d="M21.5 12C21.5 17.2467 17.2467 21.5 12 21.5C6.75329 21.5 2.5 17.2467 2.5 12C2.5 6.75329 6.75329 2.5 12 2.5C17.2467 2.5 21.5 6.75329 21.5 12Z" style="fill: var(--base-categorical-100); stroke: var(--base-categorical-200)"/>
 </svg>
 `;
 

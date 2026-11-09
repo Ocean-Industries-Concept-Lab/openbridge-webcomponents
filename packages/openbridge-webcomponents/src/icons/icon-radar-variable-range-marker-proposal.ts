@@ -6,7 +6,7 @@ import {customElement} from '../decorator.js';
 export class ObiRadarVariableRangeMarkerProposal extends LitElement {
   @property({type: Boolean}) useCssColor = false;
 
-  private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+  private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
 <path d="M7 19.499C7 20.8797 5.88071 21.999 4.5 21.999C3.11929 21.999 2 20.8797 2 19.499C2 18.1182 3.11929 16.999 4.5 16.999C5.88071 16.999 7 18.1182 7 19.499Z" fill="currentColor"/>
 <path d="M20.499 18.4989H22.499V20.4989H20.499V18.4989Z" fill="currentColor"/>
 <path d="M15.1059 7.47882L16.5201 6.0646L17.9343 7.47882L16.5201 8.89303L15.1059 7.47882Z" fill="currentColor"/>

@@ -27,7 +27,7 @@ import '../../icons/icon-alarm-silenced-outlined.js';
 import '../../icons/icon-warning-silenced-iec.js';
 import '../../icons/icon-warning-silenced-outlined.js';
 import '../../icons/icon-alarm-unacknowledged-iec.js';
-import '../../icons/icon-alarm-acknowledged-outlined.js';
+import '../../icons/icon-alarm-unacknowledged-outlined.js';
 import '../../icons/icon-warning-unacknowledged-iec.js';
 import '../../icons/icon-warning-unacknowledged-outlined.js';
 
@@ -90,9 +90,9 @@ const mapping = {
     a: html`<obi-alarm-unacknowledged-iec
       usecsscolor
     ></obi-alarm-unacknowledged-iec>`,
-    b: html`<obi-alarm-acknowledged-outlined
+    b: html`<obi-alarm-unacknowledged-outlined
       usecsscolor
-    ></obi-alarm-acknowledged-outlined>`,
+    ></obi-alarm-unacknowledged-outlined>`,
   },
   [AlertIconName.AlarmRectified]: {
     a: html`<obi-alarm-rectified-iec usecsscolor></obi-alarm-rectified-iec>`,

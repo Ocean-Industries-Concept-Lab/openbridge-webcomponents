@@ -1411,7 +1411,7 @@
   --app-components-alert-toolbar-label-spacing: 8px;
   --app-components-alert-toolbar-icon-spacing: 4px;
   --app-components-alert-toolbar-toggle-button-width: 360px;
-  --app-components-alert-toolbar-margin-horizontal: 16px;
+  --app-components-alert-toolbar-margin-horizontal: 8px;
   --app-components-alert-info-margin-horizontal-card: 16px;
   --app-components-alert-info-margin-horizontal-modal: 24px;
   --app-components-alert-info-margin-vertical-modal: 16px;
@@ -2824,6 +2824,7 @@
   --global-typography-dev-console-m-letter-spacing: -0.20000000298023224px;
   --global-typography-dev-console-m-degree-symbol-width: 8px;
   --global-size-spacing-border-weight-error-frame: 2px;
+  --app-components-message-menu-item-gap-horizontal: 16px;
 }
 
 .obc-component-size-medium {
@@ -5523,6 +5524,7 @@
   --global-typography-dev-console-m-letter-spacing: 0px;
   --global-typography-dev-console-m-degree-symbol-width: 8px;
   --global-size-spacing-border-weight-error-frame: 2px;
+  --app-components-message-menu-item-gap-horizontal: 8px;
 }
 
 .obc-component-size-large {
@@ -8212,6 +8214,7 @@
   --global-typography-dev-console-m-letter-spacing: 0px;
   --global-typography-dev-console-m-degree-symbol-width: 8px;
   --global-size-spacing-border-weight-error-frame: 2px;
+  --app-components-message-menu-item-gap-horizontal: 12px;
 }
 
 .obc-component-size-xl {
@@ -10919,6 +10922,7 @@
   --global-typography-dev-console-m-letter-spacing: 0px;
   --global-typography-dev-console-m-degree-symbol-width: 6px;
   --global-size-spacing-border-weight-error-frame: 2px;
+  --app-components-message-menu-item-gap-horizontal: 16px;
 }
 
 * {
@@ -10992,7 +10996,6 @@
   --typography-primitives-letter-spacing-400: -1px;
   --typography-primitives-letter-spacing-450: -1px;
   --typography-primitives-letter-spacing-500: -1px;
-  --weight-demo: "470";
   --typography-primitives-font-weight-350: 320;
   --typography-primitives-font-weight-450: 420;
   --typography-primitives-font-weight-550: 520;
@@ -11367,7 +11370,6 @@
   --primitive-caution-100: rgb(255, 219, 66);
   --primitive-neutral-inverted-1000: rgb(255, 255, 255);
   --primitive-neutral-1000: rgb(0, 0, 0);
-  --primitive-neutral-600: rgb(57, 57, 57);
   --primitive-neutral-inverted-500: rgb(156, 156, 156);
   --primitive-neutral-inverted-400: rgb(122, 122, 122);
   --primitive-neutral-inverted-200: rgb(59, 59, 59);
@@ -11383,7 +11385,7 @@
   --primitive-blue-600: rgb(24, 58, 97);
   --primitive-blue-650: rgb(17, 44, 77);
   --primitive-blue-700: rgb(10, 31, 57);
-  --primitive-neutral-transparent-050: rgb(0, 0, 0, 0.029999999329447746);
+  --primitive-neutral-transparent-050: rgb(0, 0, 0, 0.03999999910593033);
   --primitive-neutral-transparent-100: rgb(0, 0, 0, 0.10000000149011612);
   --primitive-blue-050: rgb(230, 240, 253);
   --primitive-blue-550: rgb(31, 69, 115);
@@ -11393,6 +11395,7 @@
   --primitive-mint-200: rgb(129, 202, 168);
   --primitive-red-200: rgb(241, 168, 172);
   --primitive-yellow-200: rgb(194, 190, 123);
+  --primitive-neutral-transparent-200: rgb(0, 0, 0, 0.23000000417232513);
   --primitive-alarm-500: rgb(169, 0, 0);
   --primitive-alarm-450: rgb(197, 0, 0);
   --primitive-warning-300: rgb(227, 107, 0);
@@ -11405,6 +11408,7 @@
   --primitive-orange-400: rgb(160, 95, 27);
   --primitive-orange-100: rgb(244, 215, 191);
   --primitive-neutral-transparent-150: rgb(0, 0, 0, 0.17000000178813934);
+  --primitive-neutral-600: rgb(57, 57, 57);
   --primitive-caution-400: rgb(141, 105, 0);
   --primitive-warning-500: rgb(139, 57, 0);
   --primitive-alarm-050: rgb(255, 234, 231);
@@ -11522,7 +11526,6 @@
     255,
     0.6700000166893005
   );
-  --primitive-neutral-transparent-200: rgb(0, 0, 0, 0.23000000417232513);
   --primitive-neutral-inverted-transparent-150: rgb(
     255,
     255,
@@ -11558,7 +11561,7 @@
   --primitive-running-050-tint: rgb(0, 170, 0, 0.05999999865889549);
   --primitive-alarm-100-tint: rgb(255, 29, 0, 0.17000000178813934);
   --primitive-warning-050-tint: rgb(255, 145, 0, 0.11999999731779099);
-  --primitive-caution-050-tint: rgb(255, 231, 0, 0.4399999976158142);
+  --primitive-caution-050-tint: rgb(255, 231, 0, 0.20000000298023224);
   --primitive-neutral-inverted-550: rgb(174, 174, 174);
   --primitive-alarm-250: rgb(255, 123, 110);
   --primitive-enhanced-400: rgb(61, 112, 176);
@@ -11568,6 +11571,12 @@
   --primitive-critical-050: rgb(251, 232, 250);
   --primitive-critical-200: rgb(237, 161, 235);
   --primitive-enhanced-600: rgb(24, 58, 97);
+  --primitive-running-550: rgb(0, 80, 0);
+  --primitive-running-650: rgb(0, 52, 0);
+  --primitive-running-150: rgb(172, 215, 165);
+  --primitive-alarm-700: rgb(71, 0, 0);
+  --primitive-alarm-150: rgb(255, 187, 177);
+  --primitive-running-700: rgb(0, 37, 0);
   --element-active-color: var(--primitive-neutral-700);
   --element-neutral-color: var(--primitive-neutral-500);
   --element-inactive-color: var(--primitive-neutral-400);
@@ -11598,7 +11607,7 @@
   --alert-caution-color: var(--primitive-caution-100);
   --on-alarm-color: var(--primitive-neutral-inverted-1000);
   --on-warning-color: var(--primitive-neutral-1000);
-  --on-caution-color: var(--primitive-neutral-600);
+  --on-caution-color: var(--primitive-neutral-700);
   --element-active-inverted-color: var(--primitive-neutral-inverted-1000);
   --element-neutral-inverted-color: var(--primitive-neutral-inverted-500);
   --element-inactive-inverted-color: var(--primitive-neutral-inverted-400);
@@ -11678,8 +11687,8 @@
   --navigation-light-green-color: var(--primitive-mint-200);
   --navigation-light-red-color: var(--primitive-red-200);
   --navigation-light-yellow-color: var(--primitive-yellow-200);
-  --alert-limit-primary-color: var(--primitive-neutral-transparent-050);
-  --alert-limit-secondary-color: var(--primitive-neutral-transparent-050);
+  --alert-limit-primary-color: var(--primitive-neutral-transparent-200);
+  --alert-limit-secondary-color: var(--primitive-neutral-transparent-100);
   --alarm-enabled-background-color: var(--primitive-alarm-400);
   --alarm-enabled-border-color: var(--primitive-alarm-500);
   --alarm-hover-background-color: var(--primitive-alarm-450);
@@ -12497,7 +12506,7 @@
   --alert-caution-tint-color: var(--primitive-caution-050-tint);
   --alert-running-tint-color: var(--primitive-running-050-tint);
   --integration-container-container: var(--primitive-neutral-inverted-100);
-  --pui-beta-opaque-cap-regular-background-color: rgb(31, 31, 31);
+  --pui-beta-opaque-cap-regular-background-color: rgb(41, 41, 41);
   --pui-beta-effect-button-highlight-color: rgb(
     255,
     255,
@@ -12514,7 +12523,7 @@
   --pui-beta-element-active-color: var(--primitive-neutral-inverted-700);
   --pui-beta-element-inactive-color: var(--primitive-neutral-inverted-400);
   --pui-beta-element-symbol-color: var(--primitive-neutral-inverted-300);
-  --pui-beta-container-background-color: rgb(31, 31, 31);
+  --pui-beta-container-background-color: rgb(20, 20, 20);
   --pui-beta-border-outline-color: var(
     --primitive-neutral-inverted-transparent-200
   );
@@ -12663,6 +12672,46 @@
   --shadow-elevation-level-5-ambient-color: var(
     --primitive-neutral-transparent-100
   );
+  --on-line-color: var(--primitive-neutral-600);
+  --automation-symbol-off-line-color: var(--primitive-neutral-500);
+  --automation-symbol-static-line-color: var(--primitive-neutral-300);
+  --automation-symbol-running-line-color: var(--primitive-running-500);
+  --automation-symbol-enhanced-line-color: var(--primitive-enhanced-600);
+  --automation-symbol-medium-line-color: var(--primitive-enhanced-600);
+  --safety-enabled-background-color: var(--primitive-running-600);
+  --safety-enabled-border-color: var(--primitive-running-200);
+  --safety-hover-background-color: var(--primitive-running-550);
+  --safety-hover-border-color: var(--primitive-running-200);
+  --safety-pressed-background-color: var(--primitive-running-650);
+  --safety-pressed-border-color: var(--primitive-running-200);
+  --safety-focused-background-color: var(--primitive-running-600);
+  --safety-focused-border-color: var(--primitive-running-200);
+  --safety-disabled-background-color: var(--primitive-running-100);
+  --safety-disabled-border-color: var(--primitive-running-100);
+  --on-safety-active-color: var(--primitive-running-100);
+  --on-safety-neutral-color: var(--primitive-running-150);
+  --on-safety-disabled-color: var(--primitive-running-200);
+  --emergency-enabled-background-color: var(--primitive-alarm-600);
+  --emergency-enabled-border-color: var(--primitive-alarm-200);
+  --emergency-hover-background-color: var(--primitive-alarm-500);
+  --emergency-hover-border-color: var(--primitive-alarm-200);
+  --emergency-pressed-background-color: var(--primitive-alarm-700);
+  --emergency-pressed-border-color: var(--primitive-alarm-200);
+  --emergency-focused-background-color: var(--primitive-alarm-600);
+  --emergency-focused-border-color: var(--primitive-alarm-200);
+  --emergency-disabled-background-color: var(--primitive-alarm-100);
+  --emergency-disabled-border-color: var(--primitive-alarm-100);
+  --on-emergency-active-color: var(--primitive-alarm-050);
+  --on-emergency-neutral-color: var(--primitive-alarm-150);
+  --on-emergency-disabled-color: var(--primitive-alarm-200);
+  --safety-loading-background-color: var(--primitive-running-100);
+  --safety-loading-border-color: var(--primitive-running-150);
+  --emergency-loading-background-color: var(--primitive-alarm-100);
+  --emergency-loading-border-color: var(--primitive-alarm-150);
+  --on-emergency-active-inverted-color: var(--primitive-alarm-700);
+  --on-emergency-neutral-inverted-color: var(--primitive-alarm-600);
+  --on-safety-active-inverted-color: var(--primitive-running-700);
+  --on-safety-neutral-inverted-color: var(--primitive-running-600);
 }
 
 :root[data-obc-theme="dusk"] {
@@ -12674,7 +12723,7 @@
   --primitive-neutral-200: rgb(75, 75, 75);
   --primitive-surface-400: rgb(36, 36, 36);
   --primitive-surface-200: rgb(20, 20, 20);
-  --primitive-surface-300: rgb(28, 28, 28);
+  --primitive-surface-300: rgb(26, 26, 26);
   --primitive-surface-100: rgb(10, 10, 10);
   --primitive-neutral-100: rgb(48, 48, 48);
   --primitive-neutral-150: rgb(62, 62, 62);
@@ -12855,6 +12904,10 @@
   --primitive-enhanced-450: rgb(118, 158, 210);
   --primitive-critical-050-tint: rgb(255, 14, 255, 0.17000000178813934);
   --primitive-enhanced-500: rgb(132, 178, 235);
+  --primitive-alarm-500: rgb(255, 143, 131);
+  --primitive-alarm-150: rgb(129, 8, 17);
+  --primitive-running-550: rgb(157, 203, 149);
+  --primitive-alarm-550: rgb(255, 169, 157);
   --element-active-color: var(--primitive-neutral-700);
   --element-neutral-color: var(--primitive-neutral-500);
   --element-inactive-color: var(--primitive-neutral-400);
@@ -13890,6 +13943,46 @@
   --shadow-elevation-level-5-ambient-color: var(
     --primitive-neutral-inverted-transparent-200
   );
+  --on-line-color: var(--primitive-neutral-1000);
+  --automation-symbol-off-line-color: var(--primitive-neutral-500);
+  --automation-symbol-static-line-color: var(--primitive-neutral-400);
+  --automation-symbol-running-line-color: var(--primitive-running-200);
+  --automation-symbol-enhanced-line-color: var(--primitive-enhanced-400);
+  --automation-symbol-medium-line-color: var(--primitive-enhanced-400);
+  --safety-enabled-background-color: var(--primitive-running-100);
+  --safety-enabled-border-color: var(--primitive-running-500);
+  --safety-hover-background-color: var(--primitive-running-150);
+  --safety-hover-border-color: var(--primitive-running-500);
+  --safety-pressed-background-color: var(--primitive-running-050);
+  --safety-pressed-border-color: var(--primitive-running-500);
+  --safety-focused-background-color: var(--primitive-running-100);
+  --safety-focused-border-color: var(--primitive-running-500);
+  --safety-disabled-background-color: var(--primitive-running-500);
+  --safety-disabled-border-color: var(--primitive-running-500);
+  --on-safety-active-color: var(--primitive-running-600);
+  --on-safety-neutral-color: var(--primitive-running-500);
+  --on-safety-disabled-color: var(--primitive-neutral-030);
+  --emergency-enabled-background-color: var(--primitive-alarm-100);
+  --emergency-enabled-border-color: var(--primitive-alarm-500);
+  --emergency-hover-background-color: var(--primitive-alarm-150);
+  --emergency-hover-border-color: var(--primitive-alarm-500);
+  --emergency-pressed-background-color: var(--primitive-alarm-050);
+  --emergency-pressed-border-color: var(--primitive-alarm-500);
+  --emergency-focused-background-color: var(--primitive-alarm-100);
+  --emergency-focused-border-color: var(--primitive-alarm-500);
+  --emergency-disabled-background-color: var(--primitive-alarm-050);
+  --emergency-disabled-border-color: var(--primitive-alarm-050);
+  --on-emergency-active-color: var(--primitive-alarm-600);
+  --on-emergency-neutral-color: var(--primitive-alarm-500);
+  --on-emergency-disabled-color: var(--primitive-neutral-000);
+  --safety-loading-background-color: var(--primitive-running-500);
+  --safety-loading-border-color: var(--primitive-running-550);
+  --emergency-loading-background-color: var(--primitive-alarm-500);
+  --emergency-loading-border-color: var(--primitive-alarm-550);
+  --on-emergency-active-inverted-color: var(--primitive-alarm-050);
+  --on-emergency-neutral-inverted-color: var(--primitive-alarm-100);
+  --on-safety-active-inverted-color: var(--primitive-running-050);
+  --on-safety-neutral-inverted-color: var(--primitive-running-100);
 }
 
 :root[data-obc-theme="night"] {
@@ -13912,7 +14005,7 @@
   --primitive-red-300: rgb(123, 76, 79);
   --primitive-red-100: rgb(50, 31, 32);
   --primitive-alarm-300: rgb(183, 0, 0);
-  --primitive-warning-300: rgb(150, 63, 0);
+  --primitive-warning-400: rgb(198, 85, 0);
   --primitive-caution-300: rgb(117, 83, 0);
   --primitive-neutral-inverted-transparent-1000: rgb(0, 0, 0);
   --primitive-neutral-inverted-600: rgb(48, 40, 33);
@@ -13939,12 +14032,13 @@
   --primitive-enhanced-250: rgb(45, 82, 67);
   --primitive-neutral-050: rgb(34, 22, 15);
   --primitive-yellow-300: rgb(97, 90, 46);
+  --primitive-neutral-transparent-050: rgb(255, 175, 120, 0.12999999523162842);
   --primitive-alarm-400: rgb(238, 10, 29);
   --primitive-alarm-350: rgb(211, 0, 0);
   --primitive-alarm-200: rgb(128, 9, 17);
-  --primitive-warning-400: rgb(198, 85, 0);
   --primitive-warning-500: rgb(240, 114, 0);
   --primitive-warning-350: rgb(174, 74, 0);
+  --primitive-warning-300: rgb(150, 63, 0);
   --primitive-caution-400: rgb(153, 112, 0);
   --primitive-caution-500: rgb(189, 143, 0);
   --primitive-caution-350: rgb(135, 98, 0);
@@ -13967,7 +14061,8 @@
     0.2800000011920929
   );
   --primitive-neutral-700: rgb(255, 209, 176);
-  --primitive-neutral-transparent-050: rgb(255, 175, 120, 0.12999999523162842);
+  --primitive-neutral-inverted-700: rgb(0, 0, 0);
+  --primitive-neutral-000: rgb(0, 0, 0);
   --primitive-blue-050: rgb(16, 25, 36);
   --primitive-blue-600: rgb(138, 185, 245);
   --primitive-blue-100: rgb(25, 37, 52);
@@ -14109,6 +14204,12 @@
   --primitive-warning-050-tint: rgb(255, 87, 0, 0.17000000178813934);
   --primitive-caution-050-tint: rgb(255, 170, 8, 0.12999999523162842);
   --primitive-critical-050-tint: rgb(255, 68, 255, 0.1599999964237213);
+  --primitive-running-150: rgb(23, 55, 21);
+  --primitive-alarm-150: rgb(96, 18, 19);
+  --primitive-alarm-650: rgb(255, 179, 169);
+  --primitive-alarm-550: rgb(255, 129, 116);
+  --primitive-alarm-500: rgb(255, 97, 87);
+  --primitive-running-550: rgb(118, 181, 106);
   --element-active-color: var(--primitive-neutral-600);
   --element-neutral-color: var(--primitive-neutral-500);
   --element-inactive-color: var(--primitive-neutral-400);
@@ -14135,7 +14236,7 @@
   --instrument-port-primary-color: var(--primitive-red-300);
   --instrument-port-secondary-color: var(--primitive-red-100);
   --alert-alarm-color: var(--primitive-alarm-300);
-  --alert-warning-color: var(--primitive-warning-300);
+  --alert-warning-color: var(--primitive-warning-400);
   --alert-caution-color: var(--primitive-caution-300);
   --on-alarm-color: var(--primitive-neutral-inverted-transparent-1000);
   --on-warning-color: var(--primitive-neutral-inverted-transparent-1000);
@@ -14223,8 +14324,8 @@
   --navigation-light-green-color: var(--primitive-mint-300);
   --navigation-light-red-color: var(--primitive-red-300);
   --navigation-light-yellow-color: var(--primitive-yellow-300);
-  --alert-limit-primary-color: rgb(255, 255, 255, 0.05000000074505806);
-  --alert-limit-secondary-color: rgb(255, 255, 255, 0.05000000074505806);
+  --alert-limit-primary-color: var(--primitive-neutral-transparent-050);
+  --alert-limit-secondary-color: var(--primitive-neutral-transparent-050);
   --alarm-enabled-background-color: var(--primitive-alarm-300);
   --alarm-enabled-border-color: var(--primitive-alarm-300);
   --alarm-hover-background-color: var(--primitive-alarm-300);
@@ -14300,10 +14401,10 @@
   --data-weather-cloud-primary-color: var(--primitive-gray-300);
   --data-weather-moon-secondary-color: var(--primitive-neutral-300);
   --automation-symbol-on-background-color: var(--primitive-neutral-700);
-  --automation-symbol-static-background-color: var(--primitive-neutral-400);
-  --automation-symbol-on-border-color: var(--primitive-neutral-inverted-600);
+  --automation-symbol-static-background-color: var(--primitive-neutral-300);
+  --automation-symbol-on-border-color: var(--primitive-neutral-inverted-700);
   --automation-symbol-off-background-color: var(--primitive-neutral-100);
-  --automation-symbol-static-border-color: var(--primitive-neutral-300);
+  --automation-symbol-static-border-color: var(--primitive-neutral-000);
   --automation-symbol-off-border-color: var(--primitive-neutral-400);
   --on-running-color: var(--primitive-neutral-inverted-transparent-1000);
   --flat-activated-background-color: var(--primitive-neutral-transparent-050);
@@ -14396,7 +14497,7 @@
   --navigation-light-danger-color: var(--primitive-purple-300);
   --navigation-light-map-caution-color: var(--primitive-orange-300);
   --alert-caution-outline-color: var(--primitive-caution-300);
-  --alert-warning-outline-color: var(--primitive-warning-300);
+  --alert-warning-outline-color: var(--primitive-warning-400);
   --instrument-regular-secondary-dif-color: var(--primitive-neutral-300);
   --notification-enabled-background-color: var(--primitive-enhanced-300);
   --notification-enabled-border-color: var(--primitive-enhanced-100);
@@ -15152,6 +15253,46 @@
   --shadow-elevation-level-5-ambient-color: var(
     --primitive-neutral-inverted-transparent-100
   );
+  --on-line-color: var(--primitive-neutral-700);
+  --automation-symbol-off-line-color: var(--primitive-neutral-400);
+  --automation-symbol-static-line-color: var(--primitive-neutral-300);
+  --automation-symbol-running-line-color: var(--primitive-running-400);
+  --automation-symbol-enhanced-line-color: var(--primitive-enhanced-400);
+  --automation-symbol-medium-line-color: var(--primitive-neutral-700);
+  --safety-enabled-background-color: var(--primitive-running-100);
+  --safety-enabled-border-color: var(--primitive-running-500);
+  --safety-hover-background-color: var(--primitive-running-150);
+  --safety-hover-border-color: var(--primitive-running-500);
+  --safety-pressed-background-color: var(--primitive-running-050);
+  --safety-pressed-border-color: var(--primitive-running-500);
+  --safety-focused-background-color: var(--primitive-running-100);
+  --safety-focused-border-color: var(--primitive-running-500);
+  --safety-disabled-background-color: var(--primitive-running-100);
+  --safety-disabled-border-color: var(--primitive-running-100);
+  --on-safety-active-color: var(--primitive-running-600);
+  --on-safety-neutral-color: var(--primitive-running-500);
+  --on-safety-disabled-color: var(--primitive-running-500);
+  --emergency-enabled-background-color: var(--primitive-alarm-100);
+  --emergency-enabled-border-color: var(--primitive-alarm-600);
+  --emergency-hover-background-color: var(--primitive-alarm-150);
+  --emergency-hover-border-color: var(--primitive-alarm-650);
+  --emergency-pressed-background-color: var(--primitive-alarm-050);
+  --emergency-pressed-border-color: var(--primitive-alarm-550);
+  --emergency-focused-background-color: var(--primitive-alarm-100);
+  --emergency-focused-border-color: var(--primitive-alarm-600);
+  --emergency-disabled-background-color: var(--primitive-alarm-050);
+  --emergency-disabled-border-color: var(--primitive-alarm-050);
+  --on-emergency-active-color: var(--primitive-alarm-650);
+  --on-emergency-neutral-color: var(--primitive-alarm-550);
+  --on-emergency-disabled-color: var(--primitive-alarm-500);
+  --safety-loading-background-color: var(--primitive-running-500);
+  --safety-loading-border-color: var(--primitive-running-550);
+  --emergency-loading-background-color: var(--primitive-alarm-500);
+  --emergency-loading-border-color: var(--primitive-alarm-550);
+  --on-emergency-active-inverted-color: var(--primitive-alarm-050);
+  --on-emergency-neutral-inverted-color: var(--primitive-alarm-100);
+  --on-safety-active-inverted-color: var(--primitive-running-050);
+  --on-safety-neutral-inverted-color: var(--primitive-running-100);
 }
 
 :root[data-obc-theme="bright"] {
@@ -15194,6 +15335,8 @@
   --primitive-blue-050: rgb(192, 214, 242);
   --primitive-blue-200: rgb(89, 138, 203);
   --primitive-blue-300: rgb(57, 109, 176);
+  --primitive-neutral-transparent-100: rgb(0, 0, 0, 0.250980406999588);
+  --primitive-neutral-transparent-050: rgb(0, 0, 0, 0.14901961386203766);
   --primitive-alarm-500: rgb(112, 0, 0);
   --primitive-alarm-400: rgb(164, 0, 0);
   --primitive-alarm-600: rgb(79, 0, 0);
@@ -15209,7 +15352,6 @@
   --primitive-orange-100: rgb(222, 178, 141);
   --primitive-neutral-400: rgb(79, 79, 80);
   --primitive-teal-400: rgb(0, 89, 89);
-  --primitive-neutral-transparent-050: rgb(0, 0, 0, 0.14901961386203766);
   --primitive-neutral-transparent-200: rgb(0, 0, 0, 0.45098039507865906);
   --primitive-neutral-transparent-150: rgb(0, 0, 0, 0.3607843220233917);
   --primitive-neutral-transparent-300: rgb(0, 0, 0, 0.5607843399047852);
@@ -15308,7 +15450,6 @@
   );
   --primitive-red-550: rgb(78, 25, 33);
   --primitive-warning-050: rgb(255, 202, 160);
-  --primitive-neutral-transparent-100: rgb(0, 0, 0, 0.250980406999588);
   --primitive-caution-400: rgb(102, 75, 0);
   --primitive-neutral-inverted-050: rgb(54, 54, 54);
   --primitive-yellow-250: rgb(141, 119, 26);
@@ -15339,6 +15480,10 @@
   --primitive-critical-400: rgb(142, 7, 143);
   --primitive-critical-050-tint: rgb(219, 0, 210, 0.21176470816135406);
   --primitive-enhanced-500: rgb(15, 52, 97);
+  --primitive-running-700: rgb(0, 22, 0);
+  --primitive-alarm-700: rgb(46, 0, 0);
+  --primitive-alarm-050: rgb(255, 199, 191);
+  --primitive-running-150: rgb(101, 177, 88);
   --element-active-color: var(--primitive-neutral-1000);
   --element-neutral-color: var(--primitive-neutral-600);
   --element-inactive-color: var(--primitive-neutral-500);
@@ -15447,8 +15592,8 @@
   --navigation-light-green-color: var(--primitive-mint-100);
   --navigation-light-red-color: var(--primitive-red-100);
   --navigation-light-yellow-color: rgb(248, 242, 167);
-  --alert-limit-primary-color: var(--primitive-neutral-100);
-  --alert-limit-secondary-color: var(--primitive-neutral-050);
+  --alert-limit-primary-color: var(--primitive-neutral-transparent-100);
+  --alert-limit-secondary-color: var(--primitive-neutral-transparent-050);
   --alarm-enabled-background-color: var(--primitive-alarm-300);
   --alarm-enabled-border-color: var(--primitive-alarm-500);
   --alarm-hover-background-color: var(--primitive-alarm-400);
@@ -15525,7 +15670,7 @@
   --automation-symbol-static-background-color: var(--primitive-neutral-400);
   --automation-symbol-on-border-color: var(--primitive-neutral-600);
   --automation-symbol-off-background-color: var(--primitive-neutral-400);
-  --automation-symbol-static-border-color: var(--primitive-neutral-300);
+  --automation-symbol-static-border-color: var(--primitive-neutral-000);
   --automation-symbol-off-border-color: var(--primitive-surface-200);
   --on-running-color: var(--primitive-neutral-inverted-600);
   --flat-activated-background-color: var(--primitive-neutral-100);
@@ -16371,6 +16516,46 @@
   --shadow-elevation-level-5-ambient-color: var(
     --primitive-neutral-transparent-050
   );
+  --on-line-color: var(--primitive-neutral-600);
+  --automation-symbol-off-line-color: var(--primitive-surface-200);
+  --automation-symbol-static-line-color: var(--primitive-neutral-400);
+  --automation-symbol-running-line-color: var(--primitive-running-600);
+  --automation-symbol-enhanced-line-color: var(--primitive-enhanced-600);
+  --automation-symbol-medium-line-color: var(--primitive-neutral-inverted-700);
+  --safety-enabled-background-color: var(--primitive-running-600);
+  --safety-enabled-border-color: var(--primitive-running-100);
+  --safety-hover-background-color: var(--primitive-running-500);
+  --safety-hover-border-color: var(--primitive-running-100);
+  --safety-pressed-background-color: var(--primitive-running-700);
+  --safety-pressed-border-color: var(--primitive-running-100);
+  --safety-focused-background-color: var(--primitive-running-600);
+  --safety-focused-border-color: var(--primitive-running-100);
+  --safety-disabled-background-color: var(--primitive-running-100);
+  --safety-disabled-border-color: var(--primitive-running-100);
+  --on-safety-active-color: var(--primitive-running-050);
+  --on-safety-neutral-color: var(--primitive-running-100);
+  --on-safety-disabled-color: var(--primitive-running-200);
+  --emergency-enabled-background-color: var(--primitive-alarm-600);
+  --emergency-enabled-border-color: var(--primitive-alarm-100);
+  --emergency-hover-background-color: var(--primitive-alarm-500);
+  --emergency-hover-border-color: var(--primitive-alarm-100);
+  --emergency-pressed-background-color: var(--primitive-alarm-700);
+  --emergency-pressed-border-color: var(--primitive-alarm-100);
+  --emergency-focused-background-color: var(--primitive-alarm-600);
+  --emergency-focused-border-color: var(--primitive-alarm-100);
+  --emergency-disabled-background-color: var(--primitive-alarm-100);
+  --emergency-disabled-border-color: var(--primitive-alarm-100);
+  --on-emergency-active-color: var(--primitive-alarm-050);
+  --on-emergency-neutral-color: var(--primitive-alarm-100);
+  --on-emergency-disabled-color: var(--primitive-alarm-200);
+  --safety-loading-background-color: var(--primitive-running-100);
+  --safety-loading-border-color: var(--primitive-running-150);
+  --emergency-loading-background-color: var(--primitive-alarm-100);
+  --emergency-loading-border-color: var(--primitive-alarm-150);
+  --on-emergency-active-inverted-color: var(--primitive-alarm-700);
+  --on-emergency-neutral-inverted-color: var(--primitive-alarm-600);
+  --on-safety-active-inverted-color: var(--primitive-running-700);
+  --on-safety-neutral-inverted-color: var(--primitive-running-600);
 }
 
 :root,

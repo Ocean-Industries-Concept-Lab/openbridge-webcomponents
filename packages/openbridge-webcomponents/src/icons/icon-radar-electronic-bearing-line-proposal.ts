@@ -6,7 +6,7 @@ import {customElement} from '../decorator.js';
 export class ObiRadarElectronicBearingLineProposal extends LitElement {
   @property({type: Boolean}) useCssColor = false;
 
-  private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+  private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
 <path d="M18.2886 4.2941L19.7028 2.87988L21.117 4.2941L19.7028 5.70831L18.2886 4.2941Z" fill="currentColor"/>
 <path d="M15.4601 7.12252L16.8743 5.70831L18.2886 7.12252L16.8743 8.53674L15.4601 7.12252Z" fill="currentColor"/>
 <path d="M14.0459 8.53674L12.6317 9.95095L14.0459 11.3652L15.4601 9.95095L14.0459 8.53674Z" fill="currentColor"/>

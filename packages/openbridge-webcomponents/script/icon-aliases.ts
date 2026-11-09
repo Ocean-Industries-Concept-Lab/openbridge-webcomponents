@@ -15,8 +15,102 @@ import {kebabToUpperCamelCase} from './convert-icons.js';
 
 /** Old icon name to the name it carries now. */
 export const RENAMED_ICONS: Record<string, string> = {
+  'alarm-acknowledged-outlined': 'alarm-unacknowledged-outlined',
+  'converter-acdc': 'converter-acdc-static',
+  'converter-dcac': 'converter-dcac-static',
   'log-open-google': 'log-open',
+  'threeway-acuator-generic-closed': 'threeway-actuator-generic-closed',
+  'threeway-acuator-generic-closed-bottom':
+    'threeway-actuator-generic-closed-bottom',
+  'threeway-acuator-generic-closed-left':
+    'threeway-actuator-generic-closed-left',
+  'threeway-acuator-generic-closed-right':
+    'threeway-actuator-generic-closed-right',
+  'threeway-acuator-generic-inleft-bottom-0':
+    'threeway-actuator-generic-inleft-bottom-0',
+  'threeway-acuator-generic-inleft-bottom-100':
+    'threeway-actuator-generic-inleft-bottom-100',
+  'threeway-acuator-generic-inleft-bottom-25':
+    'threeway-actuator-generic-inleft-bottom-25',
+  'threeway-acuator-generic-inleft-bottom-50':
+    'threeway-actuator-generic-inleft-bottom-50',
+  'threeway-acuator-generic-inleft-bottom-75':
+    'threeway-actuator-generic-inleft-bottom-75',
+  'threeway-acuator-generic-inleft-left-0':
+    'threeway-actuator-generic-inleft-left-0',
+  'threeway-acuator-generic-inleft-left-100':
+    'threeway-actuator-generic-inleft-left-100',
+  'threeway-acuator-generic-inleft-left-25':
+    'threeway-actuator-generic-inleft-left-25',
+  'threeway-acuator-generic-inleft-left-50':
+    'threeway-actuator-generic-inleft-left-50',
+  'threeway-acuator-generic-inleft-left-75':
+    'threeway-actuator-generic-inleft-left-75',
+  'threeway-acuator-generic-inleft-right-0':
+    'threeway-actuator-generic-inleft-right-0',
+  'threeway-acuator-generic-inleft-right-100':
+    'threeway-actuator-generic-inleft-right-100',
+  'threeway-acuator-generic-inleft-right-25':
+    'threeway-actuator-generic-inleft-right-25',
+  'threeway-acuator-generic-inleft-right-50':
+    'threeway-actuator-generic-inleft-right-50',
+  'threeway-acuator-generic-inleft-right-75':
+    'threeway-actuator-generic-inleft-right-75',
+  'threeway-acuator-generic-open': 'threeway-actuator-generic-open',
+  'threeway-acuator-piston-closed': 'threeway-actuator-piston-closed',
+  'threeway-acuator-piston-closed-bottom':
+    'threeway-actuator-piston-closed-bottom',
+  'threeway-acuator-piston-closed-left': 'threeway-actuator-piston-closed-left',
+  'threeway-acuator-piston-closed-right':
+    'threeway-actuator-piston-closed-right',
+  'threeway-acuator-piston-inleft-bottom-0':
+    'threeway-actuator-piston-inleft-bottom-0',
+  'threeway-acuator-piston-inleft-bottom-100':
+    'threeway-actuator-piston-inleft-bottom-100',
+  'threeway-acuator-piston-inleft-bottom-25':
+    'threeway-actuator-piston-inleft-bottom-25',
+  'threeway-acuator-piston-inleft-bottom-50':
+    'threeway-actuator-piston-inleft-bottom-50',
+  'threeway-acuator-piston-inleft-bottom-75':
+    'threeway-actuator-piston-inleft-bottom-75',
+  'threeway-acuator-piston-inleft-left-0':
+    'threeway-actuator-piston-inleft-left-0',
+  'threeway-acuator-piston-inleft-left-100':
+    'threeway-actuator-piston-inleft-left-100',
+  'threeway-acuator-piston-inleft-left-25':
+    'threeway-actuator-piston-inleft-left-25',
+  'threeway-acuator-piston-inleft-left-50':
+    'threeway-actuator-piston-inleft-left-50',
+  'threeway-acuator-piston-inleft-left-75':
+    'threeway-actuator-piston-inleft-left-75',
+  'threeway-acuator-piston-inleft-right-0':
+    'threeway-actuator-piston-inleft-right-0',
+  'threeway-acuator-piston-inleft-right-100':
+    'threeway-actuator-piston-inleft-right-100',
+  'threeway-acuator-piston-inleft-right-25':
+    'threeway-actuator-piston-inleft-right-25',
+  'threeway-acuator-piston-inleft-right-50':
+    'threeway-actuator-piston-inleft-right-50',
+  'threeway-acuator-piston-inleft-right-75':
+    'threeway-actuator-piston-inleft-right-75',
+  'threeway-acuator-piston-open': 'threeway-actuator-piston-open',
   'timer-google': 'timer',
+  'twoway-acuator-general-10': 'twoway-actuator-general-10',
+  'twoway-acuator-general-25': 'twoway-actuator-general-25',
+  'twoway-acuator-general-50': 'twoway-actuator-general-50',
+  'twoway-acuator-general-75': 'twoway-actuator-general-75',
+  'twoway-acuator-general-closed': 'twoway-actuator-general-closed',
+  'twoway-acuator-general-closed-left': 'twoway-actuator-general-closed-left',
+  'twoway-acuator-general-closed-right': 'twoway-actuator-general-closed-right',
+  'twoway-acuator-general-open': 'twoway-actuator-general-open',
+  'twoway-acuator-piston-10': 'twoway-actuator-piston-10',
+  'twoway-acuator-piston-25': 'twoway-actuator-piston-25',
+  'twoway-acuator-piston-50': 'twoway-actuator-piston-50',
+  'twoway-acuator-piston-75': 'twoway-actuator-piston-75',
+  'twoway-acuator-piston-closed': 'twoway-actuator-piston-closed',
+  'twoway-acuator-piston-closed-left': 'twoway-actuator-piston-closed-left',
+  'twoway-acuator-piston-closed-right': 'twoway-actuator-piston-closed-right',
+  'twoway-acuator-piston-open': 'twoway-actuator-piston-open',
 };
 
 /**

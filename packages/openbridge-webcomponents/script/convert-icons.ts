@@ -49,10 +49,31 @@ export interface IconRef {
   styles: {[colorCode: string]: {cssClass: string | undefined}};
 }
 
-export function getSingleColorIcon(imageData: string, _icon: IconRef): string {
-  // replace fill color with currentColor
+/**
+ * Runs a recolouring pass on everything except the `<mask>` blocks.
+ *
+ * Figma exports an inside or outside stroke as a mask whose white parts let
+ * the stroke through, so a recoloured mask hides the stroke wherever the new
+ * colour is dark.
+ */
+function outsideMasks(svg: string, recolour: (part: string) => string): string {
+  return svg
+    .split(/(<mask\b[\s\S]*?<\/mask>)/)
+    .map((part) => (part.startsWith('<mask') ? part : recolour(part)))
+    .join('');
+}
+
+export function getSingleColorIcon(imageData: string, icon: IconRef): string {
+  return outsideMasks(imageData, (part) => singleColorPart(part, icon));
+}
+
+function singleColorPart(imageData: string, _icon: IconRef): string {
+  // `fill="none"` stays: Figma sets it on the root so stroke-only shapes stay
+  // unfilled, and an inherited fill closes an open path into a solid shape.
   const fillRegex = /fill="[^"]+"/g;
-  let imageDataNew = imageData.replace(fillRegex, 'fill="currentColor"');
+  let imageDataNew = imageData.replace(fillRegex, (match) =>
+    match === 'fill="none"' ? match : 'fill="currentColor"'
+  );
 
   // remove fillOpacity
   const fillOpacityRegex = /fill-opacity="[^"]+"/g;
@@ -78,6 +99,12 @@ export function getSingleColorIcon(imageData: string, _icon: IconRef): string {
 }
 
 export function getCssColorIcon(imageData: string, icon: IconRef): string {
+  return mergeStyleAttributes(
+    outsideMasks(imageData, (part) => cssColorPart(part, icon))
+  );
+}
+
+function cssColorPart(imageData: string, icon: IconRef): string {
   // replace fill color with currentColor
   const fillRegex = /fill="([^"]+)"/g;
 
@@ -135,8 +162,10 @@ export function getCssColorIcon(imageData: string, icon: IconRef): string {
 
   // remove strokeOpacity
   const strokeOpacityRegex = /stroke-opacity="[^"]+"/g;
-  imageData = imageData.replace(strokeOpacityRegex, '');
+  return imageData.replace(strokeOpacityRegex, '');
+}
 
+function mergeStyleAttributes(imageData: string): string {
   // Merge sibling `style="…"` attributes on the same element. The fill and
   // stroke passes each emit their own `style="…"` independently, so an
   // element with both attributes ends up with two `style` attributes — only
