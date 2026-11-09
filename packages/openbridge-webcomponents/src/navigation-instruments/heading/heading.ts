@@ -78,7 +78,7 @@ export enum HeadingPriorityElement {
  * - **Heading setpoint**: Optional setpoint marker with auto at-setpoint
  *   detection via `headingSetpoint`, `atHeadingSetpoint`, and deadband
  *   tuning properties.
- * - **Advice zones**: Pass `headingAdvices` to render caution/alert arcs.
+ * - **Advice zones**: Pass `headingAdvices` (or the shared `advices`) to render caution/alert arcs.
  * - **Color priority**: Set `priority` to `Priority.enhanced` and select
  *   the accented elements via `priorityElements`.
  *
@@ -136,6 +136,7 @@ export enum HeadingPriorityElement {
  *   so instruments sharing the same value have identical ring circumference
  *   regardless of label width or arc extent (like obc-donut-chart's
  *   fixedHeight). When unset (default), the instrument fills its container.
+ * @property headingAdvices - Heading advices: ranges and points in degrees, resolved against `heading` and `headingSetpoint`. The same list as `advices`, the name every instrument shares.
  * @stable
  */
 @customElement('obc-heading')
@@ -155,7 +156,6 @@ export class ObcHeading extends AdviceMixin(LitElement, {
   @property({type: Number}) autoAtHeadingSetpointDeadband: number = 2;
   @property({type: Boolean}) animateSetpoint: boolean = false;
   @property({type: Boolean}) touching: boolean = false;
-  /** @deprecated Alias of `advices`. Angle ranges in degrees. */
   @property({type: Array, attribute: false}) headingAdvices?: AdviceInput[];
   @property({type: String}) direction: CompassDirection =
     CompassDirection.NorthUp;

@@ -29,7 +29,7 @@ const meta: Meta<typeof ObcHeading> = {
     heading: 311,
     courseOverGround: 338,
     showLabels: true,
-    advices: [{min: 20, max: 50, category: 'optimal'}],
+    headingAdvices: [{min: 20, max: 50, category: 'optimal'}],
     headingSetpoint: 311,
     direction: CompassDirection.NorthUp,
     touching: false,

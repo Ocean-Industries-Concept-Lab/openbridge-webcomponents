@@ -34,7 +34,7 @@ const meta: Meta<typeof ObcCompass> = {
     width: 512,
     heading: 311,
     courseOverGround: 338,
-    advices: [{min: 20, max: 50, category: 'optimal'}],
+    headingAdvices: [{min: 20, max: 50, category: 'optimal'}],
     headingSetpoint: 311,
     currentWindSpeedKnots: 20,
     windFromDirection: 45,
@@ -160,7 +160,7 @@ export const CourseAdvicePoint: Story = {
   args: {
     heading: 311,
     courseOverGround: 338,
-    advices: [{value: 338, category: 'optimal', state: 'active'}],
+    headingAdvices: [{value: 338, category: 'optimal', state: 'active'}],
   },
 };
 
@@ -414,7 +414,7 @@ export const AdviceIcons: Story = {
     heading: 40,
     courseOverGround: 60,
     direction: CompassDirection.HeadingUp,
-    advices: [
+    headingAdvices: [
       {min: 20, max: 60, category: 'optimal', showIcon: true},
       {min: 100, max: 130, category: 'caution', showIcon: true},
       {min: 200, max: 240, category: 'alarm', showIcon: true},

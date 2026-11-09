@@ -108,7 +108,7 @@ function tickDensityForFOV(fov: number): TickDensity {
  *   north when it falls within the visible FOV.
  * - **Heading setpoint**: Optional setpoint marker with auto at‑setpoint
  *   detection and confirm animation, positioned at the mapped arc angle.
- * - **Advice zones**: Pass `headingAdvices` to render caution/alert arcs,
+ * - **Advice zones**: Pass `headingAdvices` (or the shared `advices`) to render caution/alert arcs,
  *   mapped into the scaled arc.
  * - **Rate of turn**: Animated ROT indicator (dots or bar) spanning from
  *   HDG to the mapped COG position, clipped to the arc.
@@ -156,6 +156,7 @@ function tickDensityForFOV(fov: number): TickDensity {
  *   ±`ARC_HALF_EXTENT` arc when the measured rate of turn reaches
  *   ±`rotMaxValue`. The default `60` aligns with ES-TRIN 2025/1 Art. 3.02.
  * @availableWhen rotMaxValue rotType==bar
+ * @property headingAdvices - Heading advices: ranges and points in degrees, resolved against `heading` and `headingSetpoint`. The same list as `advices`, the name every instrument shares.
  * @stable
  */
 @customElement('obc-compass-sector')
@@ -174,7 +175,6 @@ export class ObcCompassSector extends AdviceMixin(LitElement, {
   @property({type: Number}) autoAtHeadingSetpointDeadband: number = 2;
   @property({type: Boolean}) animateSetpoint: boolean = false;
   @property({type: Boolean}) touching: boolean = false;
-  /** @deprecated Alias of `advices`. Angle ranges in degrees. */
   @property({type: Array, attribute: false}) headingAdvices?: AdviceInput[];
 
   @property({type: Number}) minFOV: number = 30;

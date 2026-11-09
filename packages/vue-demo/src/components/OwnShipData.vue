@@ -163,7 +163,7 @@ onUnmounted(() => {
       :current-speed="sim.currentSpeedKnots"
       :current-wind-speed-knots="windSpeedKnots"
       :wind-from-direction="weather.windDirection"
-      :advices="headingAdvice"
+      :heading-advices="headingAdvice"
       :state="InstrumentState.active"
       :priority="demoConfigStore.hasCommand ? Priority.enhanced : Priority.regular"
     />

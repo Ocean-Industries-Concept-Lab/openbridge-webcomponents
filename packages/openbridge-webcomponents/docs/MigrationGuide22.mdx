@@ -32,14 +32,14 @@ compass.headingAdvices = [
 ];
 
 // 2.2
-compass.advices = [{min: 20, max: 50, category: 'optimal'}];
+compass.headingAdvices = [{min: 20, max: 50, category: 'optimal'}];
 ```
 
 New on every entry: `category: 'running' | 'eco' | 'ai' | 'exclusion'`, `value` for a point advice, `state: 'active'`, `showArea` for the area layer, `showIcon` for the category's icon beside the band, and `hideMinTickmark` / `hideMaxTickmark` on the radial instruments as well as the linear ones. An entry without a category, or with one the library does not know, throws a `TypeError` instead of drawing a grey band.
 
 ## Renamed Properties
 
-Each instrument's list is `advices`; the old name keeps working as a deprecated alias of it. Two properties arrived alongside on every one of them: `adviceTrigger` (`both`, `value`, `setpoint`) and `adviceEmphasis`.
+Every instrument takes its list as `advices`, the shared name. A name that says which quantity the list advises stays the instrument's own: `headingAdvices` on the compass, heading and compass sector (a compass also shows a course over ground) and `sailAngleAdvices` on the wind propulsion instrument, as `headingSetpoint` stays beside the shared `setpoint`. A name for an instrument's only quantity is a deprecated alias of `advices`: Two properties arrived alongside on every one of them: `adviceTrigger` (`both`, `value`, `setpoint`) and `adviceEmphasis`.
 
 <Markdown>{renamedProperties}</Markdown>
 

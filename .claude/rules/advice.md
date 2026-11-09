@@ -107,14 +107,18 @@ those primitives and no semantic token exists for either.
 | Resolved by a composite, not a reading | `resolveAdvices()` directly                 | `instrument-linear` (the trend band is the reading)  |
 
 The mixin adds `advices`, `adviceTrigger` (default `both`), `adviceEmphasis`
-(default `false`) and `resolveAdvices(value, setpoint?)`. A prefixed or
-singular public name an instrument used before (`headingAdvices`,
-`speedAdvices`, `sailAngleAdvices`, `thrustAdvices` on the main engine,
-`advice` on the gauges, tank and depth instruments) is a **deprecated plain
-field with no default**, synced first in `willUpdate()`:
+(default `false`) and `resolveAdvices(value, setpoint?)`. An instrument's
+own name for the list is a **plain field with no default**, synced first in
+`willUpdate()`, and the setpoint mixin's rule decides whether it is public:
+a name that says which quantity the list advises stays the API
+(`headingAdvices` on the compass, heading and compass sector, which also
+show a course over ground; `sailAngleAdvices` on the wind propulsion
+instrument), as `headingSetpoint` stands beside `setpoint`; a name for the
+instrument's only quantity (`speedAdvices`, `thrustAdvices` on the main
+engine, `advice` on the gauges, tank and depth instruments) is a
+`@deprecated` alias of `advices`:
 
 ```ts
-/** @deprecated Alias of `advices`. Angle ranges in degrees. */
 @property({type: Array, attribute: false}) headingAdvices?: AdviceInput[];
 
 override willUpdate(changed: PropertyValues) {

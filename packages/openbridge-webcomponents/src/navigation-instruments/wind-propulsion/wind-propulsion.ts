@@ -54,6 +54,7 @@ export enum WindPropulsionPriorityElement {
  *   proportionally (default 100).
  * - For a full-circle compass, use `<obc-compass>` instead.
  *
+ * @property sailAngleAdvices - Sail angle advices: ranges and points in degrees, resolved against `sailAngle` and `sailAngleSetpoint`. The same list as `advices`, the name every instrument shares.
  * @beta
  */
 @customElement('obc-wind-propulsion')
@@ -92,7 +93,6 @@ export class ObcWindPropulsion extends AdviceMixin(LitElement, {
   @property({type: Number}) currentWindSpeedKnots: number | null = null;
   @property({type: Number}) currentWindFromDirection: number | null = null;
 
-  /** @deprecated Alias of `advices`. Sail angle ranges in degrees. */
   @property({type: Array, attribute: false}) sailAngleAdvices?: AdviceInput[];
 
   private _forceBarMaskId = `wp-fb-${Math.random().toString(36).slice(2, 9)}`;

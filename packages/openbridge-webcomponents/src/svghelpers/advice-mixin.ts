@@ -31,10 +31,13 @@
  * ```
  *
  * An angular instrument passes `{angularWraparound: true}` so a band across
- * north hits and a reversed pair is ordered. An instrument that keeps a
- * prefixed public name (`headingAdvices`) declares it as a plain optional
- * field and calls {@link syncAdviceAlias} first in `willUpdate()`. An
- * instrument with two advice axes uses one `AdviceBundle`
+ * north hits and a reversed pair is ordered. An instrument with a name of
+ * its own for the list declares it as a plain optional field and calls
+ * {@link syncAdviceAlias} first in `willUpdate()`: `headingAdvices` and
+ * `sailAngleAdvices` are public, since they say which quantity the list
+ * advises, as `headingSetpoint` does on the setpoint mixin; a name for an
+ * instrument's only quantity (`speedAdvices`, `advice`) is a deprecated
+ * alias. An instrument with two advice axes uses one `AdviceBundle`
  * (`advice-bundle.ts`) per axis.
  */
 

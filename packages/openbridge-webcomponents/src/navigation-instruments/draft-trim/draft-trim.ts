@@ -55,7 +55,7 @@ const VESSEL_OFFSET_Y = 4.5;
  *   left, the left one mirrored so its tick lane faces outward.
  * - Each scale spans `±instrumentRange` around the waterline, so the lower
  *   half reads as draught and the upper half as freeboard.
- * - Optional `advice` zones, shared by both scales and triggered
+ * - Optional `advices`, shared by both scales and triggered
  *   independently by each draught.
  * - `regular` / `enhanced` palette via `priority`, and a selectable
  *   `vesselImage`.
