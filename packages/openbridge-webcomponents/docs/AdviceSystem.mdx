@@ -97,7 +97,7 @@ Change the category, the state and the readings to see how one band responds on 
 
 ### Properties
 
-Every instrument that draws advices has these three properties. The compass, heading, compass sector and wind propulsion instruments also name their list for the quantity it advises, `headingAdvices` and `sailAngleAdvices`, as `headingSetpoint` stands beside `setpoint`; both names are the same list. Two exceptions are listed under [Instruments](#instruments): `obc-azimuth-thruster` has two lists, `angleAdvices` and `thrustAdvices`, that share one trigger and emphasis, and `obc-pitch-roll-heave` has `heaveAdvice` alone. `obc-gauge-trend`, `obc-automation-tank` and `obc-depth` also keep the whole layer behind `hasAdvice`, which is off by default.
+Every instrument that draws advices has these three properties. The compass, heading, compass sector and wind propulsion instruments also name their list for the quantity it advises, `headingAdvices` and `sailAngleAdvices`, as `headingSetpoint` stands beside `setpoint`; both names are the same list. Three exceptions are listed under [Instruments](#instruments): `obc-azimuth-thruster` (`angleAdvices`, `thrustAdvices`) and `obc-main-engine` (`thrustAdvices`, `speedAdvices`) have two lists that share one trigger and emphasis, and `obc-pitch-roll-heave` has `heaveAdvice` alone. `obc-gauge-trend`, `obc-automation-tank` and `obc-depth` also keep the whole layer behind `hasAdvice`, which is off by default.
 
 <Markdown>{properties}</Markdown>
 

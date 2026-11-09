@@ -2,7 +2,6 @@ import {describe, it, expect, afterEach} from 'vitest';
 import '../navigation-instruments/compass/compass.js';
 import '../navigation-instruments/speed-gauge/speed-gauge.js';
 import '../navigation-instruments/heave/heave.js';
-import '../navigation-instruments/main-engine/main-engine.js';
 import type {LitElement} from 'lit';
 import type {AdviceInput} from './advice.js';
 
@@ -29,7 +28,6 @@ describe.each([
   ['obc-compass', 'headingAdvices'],
   ['obc-speed-gauge', 'speedAdvices'],
   ['obc-heave', 'advice'],
-  ['obc-main-engine', 'thrustAdvices'],
 ])('%s %s alias', (tag, alias) => {
   it('sets advices through the alias', async () => {
     const el = await mount(tag, (e) => {

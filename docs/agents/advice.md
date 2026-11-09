@@ -97,12 +97,12 @@ those primitives and no semantic token exists for either.
 
 ## Mixin, bundle and aliases
 
-| Scenario                               | Use                                         | Example                                              |
-| -------------------------------------- | ------------------------------------------- | ---------------------------------------------------- |
-| One advice list                        | `AdviceMixin`                               | `bar-vertical`, `gauge-radial`, `line-graph`         |
-| Angular list                           | `AdviceMixin(…, {angularWraparound: true})` | `compass`, `rudder`, `speed-gauge`                   |
-| Two lists on two axes                  | `AdviceBundle`, one per axis                | `azimuth-thruster` (`angleAdvices`, `thrustAdvices`) |
-| Resolved by a composite, not a reading | `resolveAdvices()` directly                 | `instrument-linear` (the trend band is the reading)  |
+| Scenario                               | Use                                                            | Example                                                                                               |
+| -------------------------------------- | -------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------- |
+| One advice list                        | `AdviceMixin`                                                  | `bar-vertical`, `gauge-radial`, `line-graph`                                                          |
+| Angular list                           | `AdviceMixin(…, {angularWraparound: true})`                    | `compass`, `rudder`, `speed-gauge`                                                                    |
+| Two lists on two axes                  | `AdviceBundle`, one per axis, or `resolveAdvices()` per column | `azimuth-thruster` (`angleAdvices`, `thrustAdvices`), `main-engine` (`thrustAdvices`, `speedAdvices`) |
+| Resolved by a composite, not a reading | `resolveAdvices()` directly                                    | `instrument-linear` (the trend band is the reading)                                                   |
 
 The mixin adds `advices`, `adviceTrigger` (default `both`), `adviceEmphasis`
 (default `false`) and `resolveAdvices(value, setpoint?)`. An instrument's
@@ -111,10 +111,12 @@ own name for the list is a **plain field with no default**, synced first in
 a name that says which quantity the list advises stays the API
 (`headingAdvices` on the compass, heading and compass sector, which also
 show a course over ground; `sailAngleAdvices` on the wind propulsion
-instrument), as `headingSetpoint` stands beside `setpoint`; a name for the
-instrument's only quantity (`speedAdvices`, `thrustAdvices` on the main
-engine, `advice` on the gauges, tank and depth instruments) is a
-`@deprecated` alias of `advices`:
+instrument), as `headingSetpoint` stands beside `setpoint`, and an
+instrument with two columns has two lists and no `advices` at all
+(`thrustAdvices` and `speedAdvices` on the main engine); a name for the
+instrument's only quantity (`speedAdvices` on the speed gauge, `advice` on
+the gauges, tank and depth instruments) is a `@deprecated` alias of
+`advices`:
 
 ```ts
 @property({type: Array, attribute: false}) headingAdvices?: AdviceInput[];
