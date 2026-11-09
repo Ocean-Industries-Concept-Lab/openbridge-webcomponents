@@ -124,6 +124,12 @@
   "application-components-alerts-alert-menu-item--with-secondary-action": [
     "nested-interactive"
   ],
+  "application-components-alerts-alert-menu-item-experimental-iec-62923--regular": [
+    "nested-interactive"
+  ],
+  "application-components-alerts-alert-menu-item-experimental-isa-18-2--two-actions": [
+    "nested-interactive"
+  ],
   "application-components-alerts-diagnostic-menu--no-diagnostic-list-button": [
     "nested-interactive"
   ],
