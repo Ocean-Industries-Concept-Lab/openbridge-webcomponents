@@ -23,6 +23,7 @@ import '../icons/icon-warning-transferred-iec.js';
 import '../icons/icon-warning-rectified-iec.js';
 import '../icons/icon-warning-rectified-outlined.js';
 import '../icons/icon-caution-badge-outline.js';
+import '../icons/icon-alarm-unacknowledged-outlined.js';
 import type {AlertGlyph} from './alert-standard.js';
 
 export const IEC_62923_ALARM_GLYPHS = {
