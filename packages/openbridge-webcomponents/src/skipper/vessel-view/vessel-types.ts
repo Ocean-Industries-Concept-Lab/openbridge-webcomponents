@@ -724,19 +724,19 @@ function totalVesselWidth(vesselWidth: number) {
 
 function horizontalCCRPLine() {
   return svg`
-    <svg xmlns="http://www.w3.org/2000/svg" width="296" height="31" viewBox="0 0 296 31" fill="none">
+    <svg xmlns="http://www.w3.org/2000/svg" width="306" height="31" viewBox="0 0 306 31" fill="none">
       <g id="horizontal-ccrp-line">
         <g clip-path="url(#clip0_2070_125396)">
-          <text id="CCRP" transform="translate(264 7)" fill="${Colors.elementActiveColor}" style="white-space: pre" xml:space="preserve" font-family="Noto Sans" font-size="12" font-weight="bold" letter-spacing="0em"><tspan x="0.300781" y="12.656">CCRP</tspan></text>
+          <text xmlns="http://www.w3.org/2000/svg" id="CCRP" transform="translate(274 7)" fill="${Colors.elementActiveColor}" style="white-space: pre" xml:space="preserve" font-family="Noto Sans" font-size="12" font-weight="bold" letter-spacing="0em"><tspan x="0.300781" y="12.656">CCRP</tspan></text>  
           <g id="CCRP_2">
             <line id="line" x1="258.5" y1="15.5" x2="6.5" y2="15.5" stroke="${Colors.elementSymbolColor}" stroke-linecap="round" stroke-dasharray="4 6"/>
           </g>
         </g>
-        <rect x="295.5" y="0.5" width="30" height="295" transform="rotate(90 295.5 0.5)"/>
+        <rect x="305.5" y="0.5" width="30" height="305" transform="rotate(90 305.5 0.5)"/>
       </g>
       <defs>
         <clipPath id="clip0_2070_125396">
-          <rect x="296" width="31" height="296" transform="rotate(90 296 0)" fill="white"/>
+          <rect x="306" width="31" height="306" transform="rotate(90 306 0)" fill="white"/>
         </clipPath>
       </defs>
     </svg>
