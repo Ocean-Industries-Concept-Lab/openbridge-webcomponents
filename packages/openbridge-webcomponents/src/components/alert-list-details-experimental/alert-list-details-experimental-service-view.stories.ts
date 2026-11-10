@@ -407,7 +407,6 @@ export default meta;
 type Story = StoryObj<ObcAlertListDetailsExperimental>;
 
 export const ServiceView: Story = {
-  name: 'Service View - Customized Alert Standard',
   parameters: {
     docs: {
       description: {

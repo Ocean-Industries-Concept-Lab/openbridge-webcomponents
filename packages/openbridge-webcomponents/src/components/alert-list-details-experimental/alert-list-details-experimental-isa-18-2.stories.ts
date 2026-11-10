@@ -200,6 +200,7 @@ const ISA_18_2_FILTER_IDS = [
 
 export const FilterModes: Story = {
   name: 'Filters',
+  args: {alerts: isa182AlertsInEveryKindOfState},
   parameters: {
     docs: {
       description: {
@@ -208,7 +209,7 @@ export const FilterModes: Story = {
       },
     },
   },
-  render: () => {
+  render: (args) => {
     setAlertStandard(isa182AlertStandard);
     return html`<style>
         .filters {
@@ -230,7 +231,7 @@ export const FilterModes: Story = {
               <obc-alert-list-details-experimental
                 aria-label=${`${filterId ?? 'all'} alerts`}
                 .filterId=${filterId}
-                .alerts=${isa182AlertsInEveryKindOfState}
+                .alerts=${args.alerts}
                 .columns=${[statusColumn(), actionColumn()]}
                 .showHeader=${false}
                 @cell-click=${moveClickedAlertToStateAfterAction<Isa182ListAlert>(

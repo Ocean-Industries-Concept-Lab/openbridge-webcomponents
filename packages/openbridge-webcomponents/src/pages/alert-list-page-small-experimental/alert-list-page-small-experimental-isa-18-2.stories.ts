@@ -100,6 +100,7 @@ const meta: Meta<ObcAlertListPageSmallExperimental> = {
   args: {
     filterId: 'active',
     showTime: true,
+    alerts: isa182Alerts,
   },
   parameters: {
     docs: {
@@ -116,7 +117,7 @@ const meta: Meta<ObcAlertListPageSmallExperimental> = {
     return html`<obc-alert-list-page-small-experimental
       .filterId=${args.filterId}
       .showTime=${args.showTime}
-      .alerts=${isa182Alerts}
+      .alerts=${args.alerts}
       @action-click=${(
         event: ObcAlertListPageSmallExperimentalActionClickEvent
       ) =>
