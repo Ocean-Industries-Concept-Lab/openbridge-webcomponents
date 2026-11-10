@@ -117,7 +117,8 @@ describe('property-docs-in-class-jsdoc — reports', () => {
     tester.run('property-docs', propertyDocsRule, {
       valid: [
         // cem lifts a member @deprecated into the manifest; the class JSDoc
-        // has no tag for it, so the doc stays where it is.
+        // has no tag for it, so the doc stays where it is, with its text as
+        // the description.
         cls(
           ' * Thing.\n * @stable',
           '  /**\n   * The value.\n   * @deprecated use other\n   */\n  @property({type: Number}) value = 0;'
@@ -126,6 +127,11 @@ describe('property-docs-in-class-jsdoc — reports', () => {
         cls(
           ' * Thing.\n * @stable',
           '  /**\n   * The value.\n   * @see other\n   * @deprecated use other\n   */\n  @property({type: Number}) value = 0;'
+        ),
+        // A tag-only block beside a header tag that carries the description.
+        cls(
+          ' * Thing.\n * @property value - The value.\n * @stable',
+          '  /** @deprecated use other */\n  @property({type: Number}) value = 0;'
         ),
         // A class without a JSDoc does not turn it back into a report.
         "import {LitElement} from 'lit';\n@customElement('obc-x')\nexport class ObcX extends LitElement {\n  /** @deprecated use other */\n  @property({type: Number}) value = 0;\n}\n",
@@ -140,7 +146,25 @@ describe('property-docs-in-class-jsdoc — reports', () => {
           "  /**\n   * Size.\n   * @default 'normal'\n   */\n  @property({type: String}) size = Size.normal;"
         ),
       ],
-      invalid: [],
+      invalid: [
+        // A block that is only its tag leaves the description to the header, which has none.
+        {
+          code: cls(
+            ' * Thing.\n * @stable',
+            '  /** @deprecated use other */\n  @property({type: Number}) value = 0;'
+          ),
+          errors: [{messageId: 'missingHeader'}],
+          output: null,
+        },
+        {
+          code: cls(
+            ' * Thing.\n * @stable',
+            '  /** @default Size.normal */\n  @property({type: String}) size = Size.normal;'
+          ),
+          errors: [{messageId: 'missingHeader'}],
+          output: null,
+        },
+      ],
     });
   });
 
@@ -344,12 +368,14 @@ describe('classifyFieldDoc', () => {
       ok: false,
       reason: 'contains @deprecated',
       keep: true,
+      hasText: true,
     });
     // @deprecated wins over an earlier foreign tag.
     expect(classifyFieldDoc(['Old.', '@see x', '@deprecated use x'])).toEqual({
       ok: false,
       reason: 'contains @deprecated',
       keep: true,
+      hasText: true,
     });
   });
   it('splits a same-line @availableWhen or @default off the description', () => {
@@ -371,6 +397,7 @@ describe('classifyFieldDoc', () => {
       ok: false,
       reason: '@default differs from the initializer',
       keep: true,
+      hasText: true,
     });
     // A literal initializer is what cem reads, so the mismatch is reported.
     expect(classifyFieldDoc(['Desc.', '@default 385'], '384', true)).toEqual({
@@ -393,6 +420,7 @@ describe('classifyFieldDoc', () => {
       ok: false,
       reason: '@default on a non-literal initializer',
       keep: true,
+      hasText: true,
     });
     expect(classifyFieldDoc(['Desc.', '@default 384'], '384', true)).toEqual({
       ok: true,

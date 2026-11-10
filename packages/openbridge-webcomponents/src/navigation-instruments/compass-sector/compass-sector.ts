@@ -157,6 +157,8 @@ function tickDensityForFOV(fov: number): TickDensity {
  *   ±`rotMaxValue`. The default `60` aligns with ES-TRIN 2025/1 Art. 3.02.
  * @availableWhen rotMaxValue rotType==bar
  * @property headingAdvices - Heading advices: ranges and points in degrees, resolved against `heading` and `headingSetpoint`. The same list as `advices`, the name every instrument shares.
+ * @property rotationsPerMinute - Rate of turn in rotations per minute, read only while `rateOfTurnDegreesPerMinute` is unset.
+ * @availableWhen rotationsPerMinute rotType!=undefined && rateOfTurnDegreesPerMinute==undefined
  * @stable
  */
 @customElement('obc-compass-sector')
@@ -187,7 +189,6 @@ export class ObcCompassSector extends AdviceMixin(LitElement, {
    * @deprecated Use `rateOfTurnDegreesPerMinute` (and optionally
    * `rotDotAnimationFactor`) instead. Takes effect only when
    * `rateOfTurnDegreesPerMinute` is `undefined`.
-   * @availableWhen rotType!=undefined && rateOfTurnDegreesPerMinute==undefined
    */
   @property({type: Number}) rotationsPerMinute: number = 0;
   @property({type: Number}) rotMaxValue: number = 60;

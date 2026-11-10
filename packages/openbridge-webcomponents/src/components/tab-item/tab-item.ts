@@ -145,6 +145,17 @@ export interface TabItemBadge {
  *   deprecated single-badge properties (`hasBadge`, `badgeType`, `badgeSize`,
  *   `badgeCount`, `badgeShowNumber`, `showLeadingBadgeIcon`); an empty one
  *   falls back to them, gated by `hasBadge`.
+ * @property hasBadge - Shows a badge (a count or a status) on the tab; `badgeCount`, `badgeType` and `badgeSize` configure it. The `badges` array replaces it.
+ * @property badgeType - The badge's type, a `BadgeType` member such as `regular`, `alarm` or `warning`.
+ * @availableWhen badgeType hasBadge==true
+ * @property badgeSize - The badge's size, a `BadgeSize` member: `regular` or `large`.
+ * @availableWhen badgeSize hasBadge==true
+ * @property badgeShowNumber - Shows the badge's number; off, only the badge background shows, for a status badge.
+ * @availableWhen badgeShowNumber hasBadge==true
+ * @property badgeCount - The number shown in the badge.
+ * @availableWhen badgeCount hasBadge==true
+ * @property showLeadingBadgeIcon - Shows an icon inside the badge, from the `badge-icon` slot.
+ * @availableWhen showLeadingBadgeIcon hasBadge==true
  * @slot leading-icon - Slot for the leading icon (shown when `hasLeadingIcon` is true)
  * @slot title - Slot for the tab's label/title (shown when `hasTitle` is true)
  * @slot badge-icon - Slot for an icon inside the badge (shown when `hasBadge` and `showLeadingBadgeIcon` are true)
@@ -171,14 +182,7 @@ export class ObcTabItem extends LitElement {
 
   @property({type: Array, attribute: false}) badges: TabItemBadge[] = [];
 
-  /**
-   * @deprecated Use the `badges` array instead.
-   *
-   * Displays a badge (count/status) on the tab.
-   * Configure badge appearance via `badgeCount`, `badgeType`, `badgeSize`, etc.
-   *
-   * Default: false
-   */
+  /** @deprecated Use the `badges` array instead. */
   @property({type: Boolean, attribute: 'has-badge'}) hasBadge = false;
 
   @property({type: String}) icon = 'placeholder';
@@ -195,57 +199,19 @@ export class ObcTabItem extends LitElement {
 
   @property({attribute: false}) panel: Element | null = null;
 
-  /**
-   * @deprecated Use the `badges` array instead.
-   *
-   * Type of badge to display (e.g., 'regular', 'alarm', 'warning', etc.).
-   * See `BadgeType` enum for available options.
-   *
-   * Default: 'regular'
-   * @availableWhen hasBadge==true
-   */
+  /** @deprecated Use the `badges` array instead. */
   @property({type: String}) badgeType: string = BadgeType.regular;
 
-  /**
-   * @deprecated Use the `badges` array instead.
-   *
-   * Size of the badge ('regular' or 'large').
-   * See `BadgeSize` enum for available options.
-   *
-   * Default: 'regular'
-   * @availableWhen hasBadge==true
-   */
+  /** @deprecated Use the `badges` array instead. */
   @property({type: String}) badgeSize: string = BadgeSize.regular;
 
-  /**
-   * @deprecated Use the `badges` array instead.
-   *
-   * Shows the badge's numeric value. When false, only the badge background is rendered (for status-only badges).
-   *
-   * Default: true
-   * @availableWhen hasBadge==true
-   */
+  /** @deprecated Use the `badges` array instead. */
   @property({type: Boolean, attribute: false}) badgeShowNumber: boolean = true;
 
-  /**
-   * @deprecated Use the `badges` array instead.
-   *
-   * The numeric value to display in the badge (e.g., count of notifications).
-   *
-   * Default: 0
-   * @availableWhen hasBadge==true
-   */
+  /** @deprecated Use the `badges` array instead. */
   @property({type: Number}) badgeCount = 0;
 
-  /**
-   * @deprecated Use the `badges` array instead.
-   *
-   * Shows an icon inside the badge.
-   * Supply icon content via the `badge-icon` slot.
-   *
-   * Default: false
-   * @availableWhen hasBadge==true
-   */
+  /** @deprecated Use the `badges` array instead. */
   @property({type: Boolean}) showLeadingBadgeIcon = false;
 
   private handleClick(event: Event) {

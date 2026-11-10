@@ -82,6 +82,7 @@ export {RotType, RotPosition};
  * @availableWhen unit hasReadout==true
  * @property fractionDigits - Number of fraction digits shown in the readout. Default `0`.
  * @availableWhen fractionDigits hasReadout==true
+ * @property rotationsPerMinute - Rate of turn in rotations per minute, read only while `rateOfTurnDegreesPerMinute` is unset.
  * @stable
  */
 @customElement('obc-rate-of-turn')

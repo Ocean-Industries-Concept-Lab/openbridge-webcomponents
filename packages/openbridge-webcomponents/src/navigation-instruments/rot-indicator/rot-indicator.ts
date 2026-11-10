@@ -18,6 +18,7 @@ export enum RotIndicatorType {
  *   Drives the spinner animation via `(rateOfTurnDegreesPerMinute / 360) *
  *   rotDotAnimationFactor` rotations per minute. When `undefined` the legacy
  *   `rotationsPerMinute` value is used instead.
+ * @property rotationsPerMinute - Rate of turn in rotations per minute, read only while `rateOfTurnDegreesPerMinute` is unset.
  * @stable
  */
 @customElement('obc-rot-indicator')

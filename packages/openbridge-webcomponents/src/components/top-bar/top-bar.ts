@@ -163,6 +163,7 @@ export enum ObcTopBarMenuButtonIcon {
  * @property settings - Enables settings mode, displaying close, back buttons, breadcrumbs, and app title.
  * @property breadcrumbItems - Array of breadcrumb items for navigation (used in settings mode).
  * @availableWhen breadcrumbItems settings==true
+ * @property leftMoreButtonActivated - Alias of `moreButtonActivated`, which it sets.
  * @slot app-icon - Custom icon representing the application or brand (shown when `showAppIcon` is true)
  * @slot command-button - Primary command/action button for the current context
  * @slot asset-picker - Control that switches the asset the page shows, with the current asset as its label; an `obc-dropdown-button` fits (regular layout only, not in settings mode)

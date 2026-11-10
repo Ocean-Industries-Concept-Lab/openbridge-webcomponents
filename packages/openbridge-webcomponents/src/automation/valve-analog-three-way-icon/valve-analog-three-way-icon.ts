@@ -124,6 +124,7 @@ function renderBand(port: number, opening: number) {
  * @property open2 - Opening of port 2, the stem, in percent (0–100).
  * @property open3 - Opening of port 3 in percent (0–100).
  * @property orientation - Side the stem points to; `bottom` and `top` lay the valve on a horizontal pipe, `left` and `right` on a vertical one.
+ * @property closed - Closes every port, as setting every opening to 0 does.
  * @stable
  */
 @customElement('obc-valve-analog-three-way-icon')
