@@ -453,7 +453,7 @@ function sensorToCCRPDim(sensorToCCRPParams: getSideViewParams) {
                     font-size="12"
                     font-family="Noto Sans"
                     >
-                    ${Math.abs(sensorToCCRPParams.sensorToCCRP)}
+                    A: ${Math.abs(sensorToCCRPParams.sensorToCCRP)}
                   </text>
                 </g>
               </g>
