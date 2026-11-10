@@ -145,7 +145,6 @@ export enum CompassPriorityElement {
  * @availableWhen animateSetpoint headingSetpoint!=null
  * @property touching - Indicates if the compass is being touched.
  * @availableWhen touching headingSetpoint!=null
- * @property headingAdvices - An array of angle advices for the compass.
  * @property currentWindSpeedKnots - The wind speed in knots.
  * @availableWhen currentWindSpeedKnots windFromDirection!=null
  * @property windFromDirection - The direction the wind is coming from in degrees.
@@ -210,6 +209,11 @@ export class ObcCompass extends LitElement {
   @property({type: Number}) autoAtHeadingSetpointDeadband: number = 2;
   @property({type: Boolean}) animateSetpoint: boolean = false;
   @property({type: Boolean}) touching: boolean = false;
+  /**
+   * An array of angle advices for the compass.
+   *
+   * @deprecated Use `advices` instead.
+   */
   @property({type: Array, attribute: false}) headingAdvices: AngleAdvice[] = [];
   @property({type: Number}) currentWindSpeedKnots: number | null = null;
   @property({type: Number}) windFromDirection: number | null = null;
