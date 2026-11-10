@@ -82,7 +82,7 @@ export {RotType, RotPosition};
  * @availableWhen unit hasReadout==true
  * @property fractionDigits - Number of fraction digits shown in the readout. Default `0`.
  * @availableWhen fractionDigits hasReadout==true
- * @property rotationsPerMinute - Rate of turn in rotations per minute, read only while `rateOfTurnDegreesPerMinute` is unset.
+ * @property rotationsPerMinute - Legacy rate-of-turn input in rotations per minute, read by the dot ring only while `rateOfTurnDegreesPerMinute` is unset; the track bar ignores it.
  * @stable
  */
 @customElement('obc-rate-of-turn')
