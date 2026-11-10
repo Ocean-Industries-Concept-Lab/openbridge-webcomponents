@@ -60,6 +60,7 @@ const BAR_VIEW_BOX = '-64 -192 128 384';
  * @availableWhen vesselImageSrc type==vessel
  * @property type - `vessel` (default) frames the scale next to a vessel silhouette; `bar`
  *   renders the scale column on its own.
+ * @property advice - Alias of `advices`: ranges and points in the heave unit, resolved against the trend band.
  * @stable
  */
 @customElement('obc-heave')

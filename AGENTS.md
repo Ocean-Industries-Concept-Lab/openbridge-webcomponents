@@ -94,7 +94,8 @@ Key points:
    tag per public property (no type), after the Markdown sections and before
    `@slot`/`@fires`, with `@availableWhen name condition` under a conditional one.
    No inline JSDoc above `@property()` fields (`npm run lint:comments` fails;
-   `--fix` hoists them; the exceptions are in [`docs/agents/jsdoc.md`](docs/agents/jsdoc.md)).
+   `--fix` hoists them; an inline `@deprecated` / `@default` is the exception and keeps
+   its description in the class block — [`docs/agents/jsdoc.md`](docs/agents/jsdoc.md)).
    A tag naming a property that does not exist fails `npm run lint:slots`.
 7. **Tone:** Do NOT mention "maritime", "industrial", "bridge", or domain qualifiers; keep text domain-agnostic.
 8. If purpose is unclear, insert `**TODO(designer)**` instead of guessing.

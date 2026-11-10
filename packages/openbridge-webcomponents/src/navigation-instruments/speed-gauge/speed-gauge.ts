@@ -100,6 +100,7 @@ export type SpeedAdvice = AdviceInput & {minSpeed: number; maxSpeed: number};
  *   so instruments sharing the same value have identical ring circumference
  *   regardless of label width or arc extent (like obc-donut-chart's
  *   fixedHeight). When unset (default), the instrument fills its container.
+ * @property speedAdvices - Alias of `advices`: ranges and points in the gauge's speed unit.
  * @stable
  */
 @customElement('obc-speed-gauge')

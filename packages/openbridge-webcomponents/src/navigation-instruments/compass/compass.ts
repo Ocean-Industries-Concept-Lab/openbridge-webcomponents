@@ -109,7 +109,7 @@ export enum CompassPriorityElement {
  *   in degrees.
  * - Use `direction` to control the compass orientation mode.
  * - Use `headingSetpoint` to show a target heading marker.
- * - Pass `headingAdvices` as an array of `AngleAdvice` objects for
+ * - Pass `headingAdvices` as an array of `AdviceInput` entries for
  *   caution/alert zones.
  * - Set `currentWindSpeedKnots` / `windFromDirection` and `currentSpeed` /
  *   `currentFromDirection` to display environmental indicators.
