@@ -460,14 +460,15 @@ function sensorToCCRPDim(sensorToCCRPParams: getSideViewParams) {
              </svg>`;
 }
 //vessel lines
+
 function verticalCCRPLine() {
   return svg`
-    <svg xmlns="http://www.w3.org/2000/svg" width="35" height="205" viewBox="0 0 35 205" fill="none">
+    <svg xmlns="http://www.w3.org/2000/svg" width="35" height="230" viewBox="0 0 35 230" fill="none">
       <g id="stern-CCRP-bow-line">
-        <rect width="35" height="205" fill="none" fill-opacity="0.5"/>
+        <rect width="35" height="230" fill="none" fill-opacity="0.5"/>
         <text id="CCRP" fill="${Colors.elementActiveColor}" style="white-space: pre" xml:space="preserve" font-family="Noto Sans" font-size="12" font-weight="bold" letter-spacing="0em"><tspan x="2.30078" y="12.656">CCRP</tspan></text>
         <g id="CCRP_2">
-          <line id="line" x1="17.5" y1="19.5" x2="17.5" y2="200.5" stroke="${Colors.elementNeutralColor}" stroke-linecap="round" stroke-dasharray="4 6"/>
+          <line id="line" x1="17.5" y1="19.5" x2="17.5" y2="230" stroke="${Colors.elementNeutralColor}" stroke-linecap="round" stroke-dasharray="4 6"/>
         </g>
       </g>
     </svg>
