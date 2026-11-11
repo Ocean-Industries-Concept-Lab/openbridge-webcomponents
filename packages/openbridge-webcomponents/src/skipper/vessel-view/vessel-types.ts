@@ -143,6 +143,8 @@ type sensorPosTopDownParams = {
 };
 
 const STANDARD_KEEL_Y = 158;
+const SENSOR_TEXT_TOP_LIMIT = 13;
+const SENSOR_TEXT_BOTTOM_LIMIT = 140;
 
 type upArrowDimParams = {
   arrowTipY: number;
@@ -387,6 +389,13 @@ function keelArrowLinesVertical(
 }
 
 function sensorHeights(sensorHeightsParams: getSideViewParams) {
+  const sensorLabelY = Math.max(
+    SENSOR_TEXT_TOP_LIMIT,
+    Math.min(
+      SENSOR_TEXT_BOTTOM_LIMIT, // keep above Draft/Keel texts
+      sensorHeightsParams.sensorY
+    )
+  );
   return svg`
     <svg xmlns="http://www.w3.org/2000/svg" width="70" height="174" viewBox="0 0 70 174" fill="none">
       <g id="sensor-heights">
@@ -395,7 +404,7 @@ function sensorHeights(sensorHeightsParams: getSideViewParams) {
           !sensorHeightsParams.toggleSLAndDLSensor
             ? svg`
           <g id="top">
-            <text id="A: 14.7" fill="${Colors.elementActiveColor}" style="white-space: pre" xml:space="preserve" font-family="Noto Sans" font-size="12" letter-spacing="0px"><tspan x="1" y="13.656">A: ${sensorHeightsParams.sensorHeightOverKeel} m</tspan></text>
+            <text id="A: 14.7" fill="${Colors.elementActiveColor}" style="white-space: pre" xml:space="preserve" font-family="Noto Sans" font-size="12" letter-spacing="0px"><tspan x="1" y="${sensorLabelY - 20}">A: ${sensorHeightsParams.sensorHeightOverKeel} m</tspan></text>
           </g>
           `
             : nothing
