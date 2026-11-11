@@ -1,6 +1,11 @@
 const TAG_BLOCK_RE =
   /^@(slot|fires|event|ignore|stable|beta|experimental|deprecated|attr|attribute|csspart|cssprop|cssproperty|cssstate|tag|tagname)\b/;
 const PROP_LINE_RE = /^@(?:property|prop)\s+(\{[^}]*\}\s+)?([\w$]+)/;
+// A header tag that carries text after the name and its separator, which
+// cem uses as the member's description; `@property name` and
+// `@property name -` give it none.
+const PROP_DESCRIBED_RE =
+  /^@(?:property|prop)\s+(?:\{[^}]*\}\s+)?[\w$]+\s+(?:-\s+)?(?!-\s*$)\S/;
 const AVAIL_LINE_RE = /^@availableWhen\s+([\w$]+)\s+(.+)$/;
 const ANY_TAG_RE = /^@(\w+)(?:\s+(.*))?$/;
 const MARKDOWN_RE = /^(\s*[-*+] |\s*\d+\. |\s*\||#|```)/;
@@ -42,10 +47,13 @@ export function classifyFieldDoc(lines, initializerText, initializerIsLiteral) {
     else if (tags.length) tags[tags.length - 1].rest += ' ' + l.trim();
     else text.push(l);
   }
+  // cem reads the lines before the first tag as the member's description;
+  // a block that opens with its tag leaves the manifest description empty.
+  const hasText = text.some((l) => l.trim() !== '');
   // cem lifts a member @deprecated into the manifest and the class JSDoc has
   // no tag for it, so this doc has to stay inline (`keep`: not reported).
   if (tags.some((t) => t.tag === 'deprecated'))
-    return {ok: false, reason: 'contains @deprecated', keep: true};
+    return {ok: false, reason: 'contains @deprecated', keep: true, hasText};
   const foreign = tags.find(
     (t) => t.tag !== 'availableWhen' && t.tag !== 'default'
   );
@@ -71,13 +79,14 @@ export function classifyFieldDoc(lines, initializerText, initializerIsLiteral) {
       const reason = '@default differs from the initializer';
       return initializerIsLiteral
         ? {ok: false, reason}
-        : {ok: false, reason, keep: true};
+        : {ok: false, reason, keep: true, hasText};
     }
     if (!initializerIsLiteral) {
       return {
         ok: false,
         reason: '@default on a non-literal initializer',
         keep: true,
+        hasText,
       };
     }
   }
@@ -196,6 +205,10 @@ export const propertyDocsRule = {
         '`@property {{name}}` names no `@property()` field of this class — it would become a ghost manifest member.',
       unknownRef:
         '`@availableWhen` refers to `{{name}}`, which is not a property of this class.',
+      missingHeader:
+        '`{{name}}` has an inline doc that is only its tag ({{reason}}) and no described `@property {{name}} - …` tag in the class JSDoc, so its manifest description is empty; add the tag to the class JSDoc.',
+      missingDescription:
+        '`{{name}}` has an inline doc that is only its tag ({{reason}}) and {{where}}, so its manifest description is empty; write the description before the tag.',
     },
   },
   create(context) {
@@ -236,8 +249,10 @@ export const propertyDocsRule = {
         // empty manifest descriptions. Treat it like "no usable class doc".
         const hasTypedef = headerLines.some((l) => TYPEDEF_RE.test(l));
         const seen = new Set();
+        const described = new Set();
         headerLines.forEach((l) => {
           const p = PROP_LINE_RE.exec(l);
+          if (p && PROP_DESCRIBED_RE.test(l)) described.add(p[2]);
           if (p) {
             if (p[1])
               context.report({
@@ -289,7 +304,30 @@ export const propertyDocsRule = {
             f.value ? sourceCode.getText(f.value) : null,
             isLiteralInitializer(f.value)
           );
-          if (cls.keep) continue;
+          if (cls.keep) {
+            // A block that is only its tag gives the manifest no description;
+            // the class JSDoc has to carry one then, and cannot without a
+            // block of its own or with a @typedef in it.
+            if (!cls.hasText && (!classDoc || hasTypedef))
+              context.report({
+                loc: doc.comment.loc,
+                messageId: 'missingDescription',
+                data: {
+                  name: f.key.name,
+                  reason: cls.reason,
+                  where: !classDoc
+                    ? 'the class has no JSDoc'
+                    : 'the class JSDoc contains @typedef, so cem reads none of its tags',
+                },
+              });
+            else if (!cls.hasText && !described.has(f.key.name))
+              context.report({
+                loc: doc.comment.loc,
+                messageId: 'missingHeader',
+                data: {name: f.key.name, reason: cls.reason},
+              });
+            continue;
+          }
           if (!cls.ok || !classDoc || hasTypedef) {
             const reason = !classDoc
               ? 'class has no JSDoc'

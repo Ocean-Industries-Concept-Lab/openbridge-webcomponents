@@ -32,6 +32,7 @@ export enum MotorizedVariant {
  * which Svelte binds as an event listener in markup (#1090).
  * @property on - Alias of `turnedOn` for 1.x markup: setting it sets
  * `turnedOn`.
+ * @property speedInPercent - Speed in percent, read only while `speed` is unset.
  * @availableWhen direction variant in [double, forward, flatForward]
  */
 export class ObcAbstractAutomationButtonMotorized extends ObcAbstractAutomationButton {

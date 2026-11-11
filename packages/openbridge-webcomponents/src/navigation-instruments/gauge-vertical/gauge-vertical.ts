@@ -143,6 +143,7 @@ export {
  * @property highlightCurrentValue - When true, displays a dot indicator at the current value position.
  *   The dot is rendered in the scale band, touching its inner edge (towards the chart).
  *   This provides an alternative to bar fill for highlighting the current value.
+ * @property focused - Earlier name for `touching`: a change to it sets `touching`, unless `touching` changes in the same update, which then wins. It is not updated from `touching`, so it does not read back the current value.
  * @fires {CustomEvent} scale-dimensions-changed - Fired when layout-affecting properties change, providing dimension info for parent chart integration. It bubbles to the chart slot the gauge sits in and does not leave the shadow root around it.
  * @stable
  */
