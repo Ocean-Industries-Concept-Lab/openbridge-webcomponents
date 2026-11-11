@@ -71,6 +71,15 @@ const meta: Meta<ObcTabItem> = {
     centerContent: false,
     badges: [],
   },
+  // The legacy badge controls' conditions are compound, which the manifest
+  // gate does not resolve; show them with `hasBadge` as before.
+  argTypes: {
+    badgeType: {if: {arg: 'hasBadge'}},
+    badgeSize: {if: {arg: 'hasBadge'}},
+    badgeShowNumber: {if: {arg: 'hasBadge'}},
+    badgeCount: {if: {arg: 'hasBadge'}},
+    showLeadingBadgeIcon: {if: {arg: 'hasBadge'}},
+  },
 } satisfies Meta<ObcTabItem>;
 
 export default meta;

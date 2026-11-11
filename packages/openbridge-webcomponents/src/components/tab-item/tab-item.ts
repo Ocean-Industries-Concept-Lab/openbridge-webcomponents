@@ -145,17 +145,17 @@ export interface TabItemBadge {
  *   deprecated single-badge properties (`hasBadge`, `badgeType`, `badgeSize`,
  *   `badgeCount`, `badgeShowNumber`, `showLeadingBadgeIcon`); an empty one
  *   falls back to them, gated by `hasBadge`.
- * @property hasBadge - Shows a badge (a count or a status) on the tab; `badgeCount`, `badgeType` and `badgeSize` configure it. The `badges` array replaces it.
+ * @property hasBadge - Shows a badge (a count or a status) on the tab; `badgeCount`, `badgeType` and `badgeSize` configure it. The `badges` array replaces it, and a non-empty `badges` wins over all six.
  * @property badgeType - The badge's type, a `BadgeType` member such as `regular`, `alarm` or `warning`.
- * @availableWhen badgeType hasBadge==true
+ * @availableWhen badgeType hasBadge==true && badges==[]
  * @property badgeSize - The badge's size, a `BadgeSize` member: `regular` or `large`.
- * @availableWhen badgeSize hasBadge==true
+ * @availableWhen badgeSize hasBadge==true && badges==[]
  * @property badgeShowNumber - Shows the badge's number; off, only the badge background shows, for a status badge.
- * @availableWhen badgeShowNumber hasBadge==true
+ * @availableWhen badgeShowNumber hasBadge==true && badges==[]
  * @property badgeCount - The number shown in the badge.
- * @availableWhen badgeCount hasBadge==true
+ * @availableWhen badgeCount hasBadge==true && badges==[] && badgeShowNumber==true
  * @property showLeadingBadgeIcon - Shows an icon inside the badge, from the `badge-icon` slot.
- * @availableWhen showLeadingBadgeIcon hasBadge==true
+ * @availableWhen showLeadingBadgeIcon hasBadge==true && badges==[]
  * @slot leading-icon - Slot for the leading icon (shown when `hasLeadingIcon` is true)
  * @slot title - Slot for the tab's label/title (shown when `hasTitle` is true)
  * @slot badge-icon - Slot for an icon inside the badge (shown when `hasBadge` and `showLeadingBadgeIcon` are true)

@@ -134,7 +134,7 @@ describe('property-docs-in-class-jsdoc — reports', () => {
           '  /** @deprecated use other */\n  @property({type: Number}) value = 0;'
         ),
         // A class without a JSDoc does not turn it back into a report.
-        "import {LitElement} from 'lit';\n@customElement('obc-x')\nexport class ObcX extends LitElement {\n  /** @deprecated use other */\n  @property({type: Number}) value = 0;\n}\n",
+        "import {LitElement} from 'lit';\n@customElement('obc-x')\nexport class ObcX extends LitElement {\n  /**\n   * The value.\n   * @deprecated use other\n   */\n  @property({type: Number}) value = 0;\n}\n",
         // cem reads `default` only from a literal initializer, so the tag is
         // the manifest's only source here.
         cls(
@@ -162,6 +162,29 @@ describe('property-docs-in-class-jsdoc — reports', () => {
             '  /** @default Size.normal */\n  @property({type: String}) size = Size.normal;'
           ),
           errors: [{messageId: 'missingHeader'}],
+          output: null,
+        },
+        // A bare header tag names the member but gives it no description.
+        {
+          code: cls(
+            ' * Thing.\n * @property value\n * @stable',
+            '  /** @deprecated use other */\n  @property({type: Number}) value = 0;'
+          ),
+          errors: [{messageId: 'missingHeader'}],
+          output: null,
+        },
+        // No class JSDoc, or one cem reads no tags from: the inline doc has to describe.
+        {
+          code: "import {LitElement} from 'lit';\n@customElement('obc-x')\nexport class ObcX extends LitElement {\n  /** @deprecated use other */\n  @property({type: Number}) value = 0;\n}\n",
+          errors: [{messageId: 'missingDescription'}],
+          output: null,
+        },
+        {
+          code: cls(
+            ' * Thing.\n * @typedef {object} Opts\n * @property value - The value.\n * @stable',
+            '  /** @deprecated use other */\n  @property({type: Number}) value = 0;'
+          ),
+          errors: [{messageId: 'missingDescription'}],
           output: null,
         },
       ],

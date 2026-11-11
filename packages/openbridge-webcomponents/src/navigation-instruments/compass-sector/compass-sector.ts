@@ -157,7 +157,7 @@ function tickDensityForFOV(fov: number): TickDensity {
  *   ±`rotMaxValue`. The default `60` aligns with ES-TRIN 2025/1 Art. 3.02.
  * @availableWhen rotMaxValue rotType==bar
  * @property headingAdvices - Heading advices: ranges and points in degrees, resolved against `heading` and `headingSetpoint`. The same list as `advices`, the name every instrument shares.
- * @property rotationsPerMinute - Legacy rate-of-turn input, read only while `rateOfTurnDegreesPerMinute` is unset: the dot ring spins at it as rotations per minute, the bar reads it unconverted against `rotMaxValue`.
+ * @property rotationsPerMinute - Legacy visual input, read only while `rateOfTurnDegreesPerMinute` is unset: the dot ring's spin in rotations per minute, and the bar's extent read unconverted against `rotMaxValue`. A measured rate of turn goes in `rateOfTurnDegreesPerMinute`.
  * @availableWhen rotationsPerMinute rotType!=undefined && rateOfTurnDegreesPerMinute==undefined
  * @stable
  */
