@@ -18,6 +18,14 @@
     "husky": "^9.1.7",
     "lint-staged": "^17.6.0"
   },
+  "overrides": {
+    "@firebase/firestore": {
+      "@grpc/grpc-js": "^1.13.6"
+    },
+    "gaxios": {
+      "uuid": "^11.1.1"
+    }
+  },
   "lint-staged": {
     "packages/openbridge-webcomponents/src/**/*.ts": [
       "eslint --config packages/openbridge-webcomponents/eslint.config.mjs --max-warnings=0",
