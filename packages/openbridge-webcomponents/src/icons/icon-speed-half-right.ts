@@ -6,15 +6,15 @@ import {customElement} from '../decorator.js';
 export class ObiSpeedHalfRight extends LitElement {
   @property({type: Boolean}) useCssColor = false;
 
-  private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-<path fill-rule="evenodd" clip-rule="evenodd" d="M14.0011 17H11.1801L16.1711 12L11.1801 7H14.0011L19.0011 12L14.0011 17Z" fill="currentColor"/>
-<path fill-rule="evenodd" clip-rule="evenodd" d="M8.00111 17H5.18005L10.1711 12L5.18005 7H8.00114L13.0011 12L8.00111 17Z" fill="currentColor"/>
+  private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M14.0011 17H11.1801L16.1711 12L11.1801 7H14.0011L19.0011 12L14.0011 17Z" fill-rule="evenodd" clip-rule="evenodd" fill="currentColor"/>
+<path d="M8.00111 17H5.18005L10.1711 12L5.18005 7H8.00114L13.0011 12L8.00111 17Z" fill-rule="evenodd" clip-rule="evenodd" fill="currentColor"/>
 </svg>
 `;
 
   private iconCss = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path fill-rule="evenodd" clip-rule="evenodd" d="M14.0011 17H11.1801L16.1711 12L11.1801 7H14.0011L19.0011 12L14.0011 17Z" style="fill: var(--element-active-color)"/>
-<path fill-rule="evenodd" clip-rule="evenodd" d="M8.00111 17H5.18005L10.1711 12L5.18005 7H8.00114L13.0011 12L8.00111 17Z" style="fill: var(--element-active-color)"/>
+<path d="M14.0011 17H11.1801L16.1711 12L11.1801 7H14.0011L19.0011 12L14.0011 17Z" fill-rule="evenodd" clip-rule="evenodd" style="fill: var(--element-active-color)"/>
+<path d="M8.00111 17H5.18005L10.1711 12L5.18005 7H8.00114L13.0011 12L8.00111 17Z" fill-rule="evenodd" clip-rule="evenodd" style="fill: var(--element-active-color)"/>
 </svg>
 `;
 

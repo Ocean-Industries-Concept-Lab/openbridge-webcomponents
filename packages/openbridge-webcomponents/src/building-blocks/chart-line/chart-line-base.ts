@@ -57,6 +57,9 @@ import {
   ScaleType,
 } from '../external-scale/external-scale.js';
 import {clamp} from '../../svghelpers/math.js';
+import {AdviceMixin} from '../../svghelpers/advice-mixin.js';
+import type {AdviceReading, ResolvedAdvice} from '../../svghelpers/advice.js';
+import {createAdviceAreaPlugin} from '../../charthelpers/advice-area-plugin.js';
 
 // Register Chart.js components used by the line graph (scales, elements, plugins)
 Chart.register(
@@ -263,6 +266,9 @@ Chart.register(datasetClipPlugin, Filler);
 const LINE_GRAPH_WATCHED_PROP_NAMES = [
   'data',
   'datasets',
+  'advices',
+  'adviceTrigger',
+  'adviceEmphasis',
   'labels',
   'colors',
   'xAxisType',
@@ -483,6 +489,9 @@ const LINE_GRAPH_DIMENSION_PROP_NAMES = [
  *   the value unless `showDot` is false. Drawn in the dataset's line colour.
  * @property yMarker - Horizontal 2px marker across the plot at a y value, in the
  *   dataset's line colour (`datasetIndex`, default 0).
+ * @property advices - Advice ranges and points in the y axis' unit; an entry with `showArea` draws its tint, pattern and limit lines across the plot, under the datasets. The shape is `svghelpers/advice.ts`'s.
+ * @property adviceTrigger - Which readings trigger an advice; a plain chart has none, so its advices keep their configured state unless a subclass supplies readings.
+ * @property adviceEmphasis - The design's emphasis rules between go-to and no-go bands, off by default.
  * @property showGrid - Show grid lines.
  * @property showGridX - Show vertical grid lines (x-axis). Default: false.
  * @availableWhen showGridX showGrid==true
@@ -524,7 +533,7 @@ const LINE_GRAPH_DIMENSION_PROP_NAMES = [
  *   never wants axis labels, as `obc-automation-tank` does.
  * @experimental
  */
-export class ObcChartLineBase extends LitElement {
+export class ObcChartLineBase extends AdviceMixin(LitElement) {
   @property({type: Array, attribute: false})
   data: ChartLineDataItem[] = [];
 
@@ -842,6 +851,9 @@ export class ObcChartLineBase extends LitElement {
   lastRangeLabels: {axis: 'x' | 'y'; text: string; x: number; y: number}[] = [];
 
   /** @internal - Marker pixels drawn last, for tests. */
+  /** The pixel rows of the advice areas drawn last, for specs. */
+  lastAdviceAreas: {top: number; bottom: number}[] = [];
+
   lastMarkers: {x?: {x: number; y?: number; dot: boolean}; y?: {y: number}} =
     {};
 
@@ -1024,6 +1036,33 @@ export class ObcChartLineBase extends LitElement {
     }
     this.rangeLabelCache = cache;
     return cache;
+  }
+
+  /**
+   * The readings the advice list is resolved against: a plain chart has
+   * none; `obc-gauge-trend` supplies its value and setpoint.
+   */
+  protected adviceReadings(): [AdviceReading, AdviceReading] {
+    return [undefined, undefined];
+  }
+
+  /** The advice list the area plugin draws; a subclass may gate it. */
+  protected chartAdvices(): ResolvedAdvice[] {
+    return this.resolveAdvices(...this.adviceReadings());
+  }
+
+  private createAdviceAreaPluginInstance() {
+    return createAdviceAreaPlugin({
+      resolvedAdvices: () => this.chartAdvices(),
+      resolveColor: (reference) => {
+        const token = /^var\((--[^)]+)\)$/.exec(reference);
+        return token ? getCssVariableValue(this, token[1]) : reference;
+      },
+      adviceAxisId: () => this.primaryYAxisId,
+      recordAreas: (areas) => {
+        this.lastAdviceAreas = areas;
+      },
+    });
   }
 
   /**
@@ -3220,6 +3259,7 @@ export class ObcChartLineBase extends LitElement {
         ...(this.rangeLabels !== RangeLabels.none
           ? [this.createRangeLabelsPlugin()]
           : []),
+        this.createAdviceAreaPluginInstance(),
         this.createMarkersPlugin(),
       ],
     } as ChartConfiguration<'line'>);

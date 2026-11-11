@@ -3,6 +3,8 @@ import {customElement} from '../../decorator.js';
 import {
   formatLinearLabel,
   watchfaceLinear,
+  LINEAR_LABEL_GAP,
+  LINEAR_LABEL_SPACING,
 } from '../../building-blocks/instrument-linear/instrument-linear.js';
 import {property, state} from 'lit/decorators.js';
 import type {PropertyValues} from 'lit';
@@ -13,11 +15,13 @@ import {
   type VesselImageSrc,
 } from '../watch/vessel.js';
 import {PaletteController} from '../../charthelpers/theme.js';
+import {AdviceMixin, syncAdviceAlias} from '../../svghelpers/advice-mixin.js';
 import {
-  LinearAdvice,
-  LinearAdviceRaw,
-} from '../../building-blocks/instrument-linear/advice.js';
-import {AdviceState} from '../watch/advice.js';
+  negateAdvice,
+  type AdviceInput,
+  ADVICE_ICON_SIZE_LINEAR,
+  type ResolvedAdvice,
+} from '../../svghelpers/advice.js';
 import {Priority} from '../types.js';
 import {
   DEPTH_RANGES,
@@ -30,7 +34,6 @@ const FRAME = 336;
 const HALF_FRAME = FRAME / 2;
 const BOX = 384;
 /** The design's label spacing: with labels the box grows by this on every side. */
-const LABEL_SPACING = 20;
 const FRAME_RADIUS = 8;
 /** The gauge pill: bar lane plus tick lane, at the frame's right edge. */
 const GAUGE_WIDTH = 72;
@@ -73,10 +76,11 @@ const VESSEL_ART_HALF = 80;
  * @stable
  */
 @customElement('obc-depth-actual')
-export class ObcDepthActual extends LitElement {
+export class ObcDepthActual extends AdviceMixin(LitElement) {
   @property({type: Number}) depth = 0;
   @property({type: Number}) draft = 0;
-  @property({type: Array}) advice: LinearAdvice[] = [];
+  /** @deprecated Alias of `advices`. Ranges in depth units. */
+  @property({type: Array}) advice?: AdviceInput[];
   @property({type: Number}) vesselScale = 1;
   @property({type: String}) vesselImage: VesselImage = VesselImage.psvFore;
   @property({type: Object, attribute: false})
@@ -105,6 +109,7 @@ export class ObcDepthActual extends LitElement {
   private readonly _palette = new PaletteController(this);
 
   override willUpdate(changed: PropertyValues) {
+    syncAdviceAlias(this, this.advice);
     if (
       changed.has('depth') ||
       changed.has('maxDepth') ||
@@ -131,21 +136,9 @@ export class ObcDepthActual extends LitElement {
     return -value;
   }
 
-  private _getAdvice(): LinearAdviceRaw[] {
-    return this.advice.map((advice) => {
-      const isActive = this.depth >= advice.min && this.depth <= advice.max;
-      const state = isActive
-        ? AdviceState.triggered
-        : advice.hinted
-          ? AdviceState.hinted
-          : AdviceState.regular;
-      return {
-        ...advice,
-        min: this._toValue(advice.max),
-        max: this._toValue(advice.min),
-        state,
-      } satisfies LinearAdviceRaw;
-    });
+  private _getAdvice(): ResolvedAdvice[] {
+    // Scale space is positive-up and depth grows downward.
+    return this.resolveAdvices(this.depth).map(negateAdvice);
   }
 
   override render() {
@@ -158,7 +151,12 @@ export class ObcDepthActual extends LitElement {
     const toY = (depth: number) => waterTop + depth * unitsPerDepth;
     const dividerX = HALF_FRAME - GAUGE_WIDTH;
     const scaleX = HALF_FRAME - SCALE_WIDTH;
-    const box = BOX + (this.showLabels ? 2 * LABEL_SPACING : 0);
+    // The icon column follows the labels, so the box grows for it too.
+    const iconRoom = this.advices?.some((a) => a.showIcon)
+      ? ADVICE_ICON_SIZE_LINEAR + (this.showLabels ? 0 : LINEAR_LABEL_GAP)
+      : 0;
+    const box =
+      BOX + 2 * ((this.showLabels ? LINEAR_LABEL_SPACING : 0) + iconRoom);
     const primary =
       this.primaryTickmarkInterval ?? range.primaryTickmarkInterval;
     const secondary =

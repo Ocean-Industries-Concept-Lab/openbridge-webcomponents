@@ -6,17 +6,23 @@ import {customElement} from '../decorator.js';
 export class ObiCautionColorIec extends LitElement {
   @property({type: Boolean}) useCssColor = false;
 
-  private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-<path fill-rule="evenodd" clip-rule="evenodd" d="M4 2C2.89543 2 2 2.89543 2 4V20C2 21.1046 2.89543 22 4 22H20C21.1046 22 22 21.1046 22 20V4C22 2.89543 21.1046 2 20 2H4Z" fill="currentColor"/>
-<path d="M4 2.5H20C20.8284 2.5 21.5 3.17157 21.5 4V20C21.5 20.8284 20.8284 21.5 20 21.5H4C3.17157 21.5 2.5 20.8284 2.5 20V4C2.5 3.17157 3.17157 2.5 4 2.5Z" stroke="currentColor"/>
+  private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M4.8 3C3.80589 3 3 3.80589 3 4.8V19.2C3 20.1941 3.80589 21 4.8 21H19.2C20.1941 21 21 20.1941 21 19.2V4.8C21 3.80589 20.1941 3 19.2 3H4.8Z" fill-rule="evenodd" clip-rule="evenodd" fill="currentColor"/>
+<mask id="stroke0_2002_1107" fill="white">
+<path d="M4.8 3C3.80589 3 3 3.80589 3 4.8V19.2C3 20.1941 3.80589 21 4.8 21H19.2C20.1941 21 21 20.1941 21 19.2V4.8C21 3.80589 20.1941 3 19.2 3H4.8Z" fill-rule="evenodd" clip-rule="evenodd"/>
+</mask>
+<path d="M3 4.8C3 3.80589 3.80589 3 4.8 3H19.2C20.1941 3 21 3.80589 21 4.8V19.2C21 20.1941 20.1941 21 19.2 21H4.8C3.80589 21 3 20.1941 3 19.2V4.8Z" stroke-width="2" stroke="currentColor" mask="url(#stroke0_2002_1107)"/>
 <path d="M11 14V6H13V14H11Z" fill="currentColor"/>
 <path d="M13 16H11V18H13V16Z" fill="currentColor"/>
 </svg>
 `;
 
   private iconCss = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path fill-rule="evenodd" clip-rule="evenodd" d="M4 2C2.89543 2 2 2.89543 2 4V20C2 21.1046 2.89543 22 4 22H20C21.1046 22 22 21.1046 22 20V4C22 2.89543 21.1046 2 20 2H4Z" style="fill: var(--alert-caution-color)"/>
-<path d="M4 2.5H20C20.8284 2.5 21.5 3.17157 21.5 4V20C21.5 20.8284 20.8284 21.5 20 21.5H4C3.17157 21.5 2.5 20.8284 2.5 20V4C2.5 3.17157 3.17157 2.5 4 2.5Z" style="stroke: var(--alert-caution-outline-color)"/>
+<path d="M4.8 3C3.80589 3 3 3.80589 3 4.8V19.2C3 20.1941 3.80589 21 4.8 21H19.2C20.1941 21 21 20.1941 21 19.2V4.8C21 3.80589 20.1941 3 19.2 3H4.8Z" fill-rule="evenodd" clip-rule="evenodd" style="fill: var(--alert-caution-color)"/>
+<mask id="stroke0_2002_1107" fill="white">
+<path d="M4.8 3C3.80589 3 3 3.80589 3 4.8V19.2C3 20.1941 3.80589 21 4.8 21H19.2C20.1941 21 21 20.1941 21 19.2V4.8C21 3.80589 20.1941 3 19.2 3H4.8Z" fill-rule="evenodd" clip-rule="evenodd"/>
+</mask>
+<path d="M3 4.8C3 3.80589 3.80589 3 4.8 3H19.2C20.1941 3 21 3.80589 21 4.8V19.2C21 20.1941 20.1941 21 19.2 21H4.8C3.80589 21 3 20.1941 3 19.2V4.8Z" stroke-width="2" style="stroke: var(--alert-caution-outline-color)" mask="url(#stroke0_2002_1107)"/>
 <path d="M11 14V6H13V14H11Z" style="fill: var(--on-caution-active-color)"/>
 <path d="M13 16H11V18H13V16Z" style="fill: var(--on-caution-active-color)"/>
 </svg>

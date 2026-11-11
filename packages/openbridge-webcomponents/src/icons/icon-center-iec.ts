@@ -6,8 +6,8 @@ import {customElement} from '../decorator.js';
 export class ObiCenterIec extends LitElement {
   @property({type: Boolean}) useCssColor = false;
 
-  private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-<path fill-rule="evenodd" clip-rule="evenodd" d="M17.7078 6.29222C15.7061 5.75766 13.4818 6.27557 11.9114 7.84595L6.34312 13.4142L10.5858 17.6569L16.154 12.0886C17.7244 10.5182 18.2423 8.29392 17.7078 6.29222ZM15.9039 8.09607C14.9635 8.15453 14.0422 8.5436 13.3256 9.26016L9.17154 13.4142L10.5858 14.8285L14.7398 10.6744C15.4564 9.95781 15.8455 9.0365 15.9039 8.09607Z" fill="currentColor"/>
+  private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M17.7078 6.29222C15.7061 5.75766 13.4818 6.27557 11.9114 7.84595L6.34312 13.4142L10.5858 17.6569L16.154 12.0886C17.7244 10.5182 18.2423 8.29392 17.7078 6.29222ZM15.9039 8.09607C14.9635 8.15453 14.0422 8.5436 13.3256 9.26016L9.17154 13.4142L10.5858 14.8285L14.7398 10.6744C15.4564 9.95781 15.8455 9.0365 15.9039 8.09607Z" fill-rule="evenodd" clip-rule="evenodd" fill="currentColor"/>
 <path d="M11 19V23H13V19H11Z" fill="currentColor"/>
 <path d="M5 13H1V11H5L5 13Z" fill="currentColor"/>
 <path d="M11 1V5H13V1H11Z" fill="currentColor"/>
@@ -16,7 +16,7 @@ export class ObiCenterIec extends LitElement {
 `;
 
   private iconCss = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path fill-rule="evenodd" clip-rule="evenodd" d="M17.7078 6.29222C15.7061 5.75766 13.4818 6.27557 11.9114 7.84595L6.34312 13.4142L10.5858 17.6569L16.154 12.0886C17.7244 10.5182 18.2423 8.29392 17.7078 6.29222ZM15.9039 8.09607C14.9635 8.15453 14.0422 8.5436 13.3256 9.26016L9.17154 13.4142L10.5858 14.8285L14.7398 10.6744C15.4564 9.95781 15.8455 9.0365 15.9039 8.09607Z" style="fill: var(--element-active-color)"/>
+<path d="M17.7078 6.29222C15.7061 5.75766 13.4818 6.27557 11.9114 7.84595L6.34312 13.4142L10.5858 17.6569L16.154 12.0886C17.7244 10.5182 18.2423 8.29392 17.7078 6.29222ZM15.9039 8.09607C14.9635 8.15453 14.0422 8.5436 13.3256 9.26016L9.17154 13.4142L10.5858 14.8285L14.7398 10.6744C15.4564 9.95781 15.8455 9.0365 15.9039 8.09607Z" fill-rule="evenodd" clip-rule="evenodd" style="fill: var(--element-active-color)"/>
 <path d="M11 19V23H13V19H11Z" style="fill: var(--element-active-color)"/>
 <path d="M5 13H1V11H5L5 13Z" style="fill: var(--element-active-color)"/>
 <path d="M11 1V5H13V1H11Z" style="fill: var(--element-active-color)"/>

@@ -2,11 +2,8 @@ import {css, LitElement, PropertyValues, html, svg, nothing} from 'lit';
 import {property} from 'lit/decorators.js';
 import {ResizeController} from '@lit-labs/observers/resize-controller.js';
 import {customElement} from '../../decorator.js';
-import {
-  AdviceState,
-  AdviceType,
-  AngleAdviceRaw,
-} from '../../navigation-instruments/watch/advice.js';
+import {AdviceMixin} from '../../svghelpers/advice-mixin.js';
+import type {AdviceInput, ResolvedAdvice} from '../../svghelpers/advice.js';
 import {WatchCircleType} from '../../navigation-instruments/watch/watch.js';
 import {Tickmark} from '../../navigation-instruments/watch/tickmark.js';
 import {buildIntervalTickmarks} from '../../navigation-instruments/watch/tickmark.js';
@@ -42,12 +39,11 @@ export enum ObcGaugeRadialType {
   needle = 'needle',
 }
 
-export interface GaugeRadialAdvice {
+/** @deprecated Use {@link AdviceInput}; `minValue` / `maxValue` are still read. */
+export type GaugeRadialAdvice = AdviceInput & {
   minValue: number;
   maxValue: number;
-  type: AdviceType;
-  hinted: boolean;
-}
+};
 
 const NEEDLE_TIP_RADIUS = 160;
 const NEEDLE_TIP_GAP = 5; // tip stops this far short of the scale
@@ -139,7 +135,9 @@ function defaultGaugeAngle(
  * @experimental
  */
 @customElement('obc-instrument-radial')
-export class ObcInstrumentRadial extends SetpointMixin(LitElement) {
+export class ObcInstrumentRadial extends AdviceMixin(
+  SetpointMixin(LitElement)
+) {
   // setpoint, newSetpoint, atSetpoint, touching, autoAtSetpoint,
   // autoAtSetpointDeadband, setpointAtZeroDeadband, setpointOverride
   // — all inherited from SetpointMixin
@@ -165,7 +163,6 @@ export class ObcInstrumentRadial extends SetpointMixin(LitElement) {
   @property({type: Boolean}) tickmarksInside: boolean = false;
   @property({type: String}) tickmarkStyle: TickmarkStyle =
     TickmarkStyle.regular;
-  @property({type: Array, attribute: false}) advices: GaugeRadialAdvice[] = [];
   @property({type: Number}) clipTop: number = 0; // in percent of height
   @property({type: Number}) clipBottom: number = 0; // in percent of height
   @property({type: Number}) clipLeft: number = 0; // in percent of width
@@ -467,26 +464,14 @@ export class ObcInstrumentRadial extends SetpointMixin(LitElement) {
     });
   }
 
-  private get _advices(): AngleAdviceRaw[] {
-    const value = this.clampedValue;
-
-    return this.advices.map((advice) => {
-      const minAngle = this.mapAngle(advice.minValue);
-      const maxAngle = this.mapAngle(advice.maxValue);
-      let state = advice.hinted ? AdviceState.hinted : AdviceState.regular;
-      if (value >= advice.minValue && value <= advice.maxValue) {
-        state = AdviceState.triggered;
-      }
-
-      return {
-        minAngle,
-        maxAngle,
-        type: advice.type,
-        state,
-        hideMinTickmark: advice.minValue === this.minValue,
-        hideMaxTickmark: advice.maxValue === this.maxValue,
-      };
-    });
+  private get _advices(): ResolvedAdvice[] {
+    return this.resolveAdvices(this.clampedValue, this.setpoint).map((a) => ({
+      ...a,
+      min: this.mapAngle(a.min),
+      max: this.mapAngle(a.max),
+      hideMinTickmark: a.hideMinTickmark || a.min === this.minValue,
+      hideMaxTickmark: a.hideMaxTickmark || a.max === this.maxValue,
+    }));
   }
 
   static override styles = css`

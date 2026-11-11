@@ -6,7 +6,7 @@ import {customElement} from '../decorator.js';
 export class ObiSimplifiedBuoySuper extends LitElement {
   @property({type: Boolean}) useCssColor = false;
 
-  private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+  private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
 <path d="M13 11V5H11V11H6.13333L4.26667 18H2V19H22V18H19.7333L17.8667 11H13Z" fill="currentColor"/>
 </svg>
 `;

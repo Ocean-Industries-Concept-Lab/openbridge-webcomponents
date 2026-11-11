@@ -8,9 +8,9 @@ import {
 } from './gauge-valve.js';
 import {GaugeValveScalePosition} from './gauge-valve-geometry.js';
 import './gauge-valve.js';
-import '../../icons/icon-twoway-acuator-general-75.js';
-import '../../icons/icon-twoway-acuator-general-closed.js';
-import '../../icons/icon-threeway-acuator-generic-inleft-left-75.js';
+import '../../icons/icon-twoway-actuator-general-75.js';
+import '../../icons/icon-twoway-actuator-general-closed.js';
+import '../../icons/icon-threeway-actuator-generic-inleft-left-75.js';
 import {
   playgroundColumn,
   resizableStoryBox,
@@ -77,10 +77,10 @@ const meta = {
       .faceDiameter=${args.faceDiameter}
       .hasLabelStack=${args.hasLabelStack ?? true}
     >
-      <obi-twoway-acuator-general-75
+      <obi-twoway-actuator-general-75
         slot="icon"
         usecsscolor
-      ></obi-twoway-acuator-general-75>
+      ></obi-twoway-actuator-general-75>
     </obc-gauge-valve>
   `,
 } satisfies Meta<GaugeValveStoryArgs>;
@@ -119,10 +119,10 @@ export const ThreeWay: Story = {
       .faceDiameter=${args.faceDiameter}
       .hasLabelStack=${args.hasLabelStack ?? true}
     >
-      <obi-threeway-acuator-generic-inleft-left-75
+      <obi-threeway-actuator-generic-inleft-left-75
         slot="icon"
         usecsscolor
-      ></obi-threeway-acuator-generic-inleft-left-75>
+      ></obi-threeway-actuator-generic-inleft-left-75>
     </obc-gauge-valve>
   `,
 };
@@ -174,10 +174,10 @@ export const Closed: Story = {
       .faceDiameter=${args.faceDiameter}
       .hasLabelStack=${args.hasLabelStack ?? true}
     >
-      <obi-twoway-acuator-general-closed
+      <obi-twoway-actuator-general-closed
         slot="icon"
         usecsscolor
-      ></obi-twoway-acuator-general-closed>
+      ></obi-twoway-actuator-general-closed>
     </obc-gauge-valve>
   `,
 };
@@ -236,10 +236,10 @@ export const OffState: Story = {
       .faceDiameter=${args.faceDiameter}
       .hasLabelStack=${args.hasLabelStack ?? true}
     >
-      <obi-twoway-acuator-general-closed
+      <obi-twoway-actuator-general-closed
         slot="icon"
         usecsscolor
-      ></obi-twoway-acuator-general-closed>
+      ></obi-twoway-actuator-general-closed>
     </obc-gauge-valve>
   `,
 };
@@ -301,10 +301,10 @@ export const SizingPlayground: Story = {
                 .tag=${'#0001'}
                 .faceDiameter=${fd(0)}
               >
-                <obi-twoway-acuator-general-75
+                <obi-twoway-actuator-general-75
                   slot="icon"
                   usecsscolor
-                ></obi-twoway-acuator-general-75>
+                ></obi-twoway-actuator-general-75>
               </obc-gauge-valve>
             `,
             {pinned: fd(0) !== undefined}
@@ -319,10 +319,10 @@ export const SizingPlayground: Story = {
                 .unit=${'Unit'}
                 .faceDiameter=${fd(1)}
               >
-                <obi-twoway-acuator-general-75
+                <obi-twoway-actuator-general-75
                   slot="icon"
                   usecsscolor
-                ></obi-twoway-acuator-general-75>
+                ></obi-twoway-actuator-general-75>
               </obc-gauge-valve>
             `,
             {pinned: fd(1) !== undefined}
@@ -339,10 +339,10 @@ export const SizingPlayground: Story = {
                 .unit=${'Unit'}
                 .faceDiameter=${fd(2)}
               >
-                <obi-threeway-acuator-generic-inleft-left-75
+                <obi-threeway-actuator-generic-inleft-left-75
                   slot="icon"
                   usecsscolor
-                ></obi-threeway-acuator-generic-inleft-left-75>
+                ></obi-threeway-actuator-generic-inleft-left-75>
               </obc-gauge-valve>
             `,
             {pinned: fd(2) !== undefined}

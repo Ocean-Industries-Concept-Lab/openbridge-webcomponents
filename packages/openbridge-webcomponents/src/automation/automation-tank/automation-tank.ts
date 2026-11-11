@@ -5,6 +5,7 @@ import {
   nothing,
   svg,
   unsafeCSS,
+  PropertyValues,
 } from 'lit';
 import {property, state} from 'lit/decorators.js';
 import compentStyle from './automation-tank.css?inline';
@@ -37,12 +38,14 @@ import {
 } from '../../components/alert-frame/alert-frame.js';
 import {AlertType} from '../../types.js';
 import type {ChartLineDataItem} from '../../building-blocks/chart-line/chart-line-base.js';
-import type {LinearAdvice} from '../../building-blocks/instrument-linear/advice.js';
+import {AdviceMixin, syncAdviceAlias} from '../../svghelpers/advice-mixin.js';
+import type {AdviceInput} from '../../svghelpers/advice.js';
 import {
   AdvicePosition,
   ExternalScaleSide,
   FillMode,
-  computeSetpointBandThickness,
+  ScaleType,
+  computeOutsideBarThickness,
 } from '../../building-blocks/external-scale/external-scale.js';
 import {classMap} from 'lit/directives/class-map.js';
 import {customElement} from '../../decorator.js';
@@ -185,7 +188,7 @@ export enum TankChartMode {
  * @beta
  */
 @customElement('obc-automation-tank')
-export class ObcAutomationTank extends SetpointMixin(LitElement) {
+export class ObcAutomationTank extends AdviceMixin(SetpointMixin(LitElement)) {
   @property({type: String}) medium: LineMedium = LineMedium.water;
   @property({type: Number}) value: number = 0;
   @property({type: Number}) max: number = 100;
@@ -209,8 +212,8 @@ export class ObcAutomationTank extends SetpointMixin(LitElement) {
 
   @property({type: String}) priority: Priority = Priority.regular;
 
-  @property({type: Array, attribute: false})
-  advice: LinearAdvice[] = [];
+  /** @deprecated Alias of `advices`. Ranges in tank units. */
+  @property({type: Array, attribute: false}) advice?: AdviceInput[];
 
   @property({type: Boolean}) hasAdvice = false;
 
@@ -611,6 +614,11 @@ export class ObcAutomationTank extends SetpointMixin(LitElement) {
     return html`<div class="cap cap-battery cap-${side}"></div>`;
   }
 
+  override willUpdate(changed: PropertyValues) {
+    super.willUpdate(changed);
+    syncAdviceAlias(this, this.advice);
+  }
+
   override render() {
     const safeMax = this.max > 0 ? this.max : 1;
     const percent = clamp((this.value / safeMax) * 100, 0, 100);
@@ -789,7 +797,9 @@ export class ObcAutomationTank extends SetpointMixin(LitElement) {
                   .hasLabelPadding=${false}
                   .chartFill=${true}
                   .hasAdvice=${this.hasAdvice}
-                  .advice=${this.advice}
+                  .advices=${this.advices}
+                  .adviceTrigger=${this.adviceTrigger}
+                  .adviceEmphasis=${this.adviceEmphasis}
                   .width=${this._cellWidth}
                   .height=${this._cellHeight}
                   .setpoint=${this.setpoint}
@@ -822,17 +832,26 @@ export class ObcAutomationTank extends SetpointMixin(LitElement) {
       // in viewBox units (automation-components.md § Tank rendering).
       const SCALE_REFERENCE_SIZE = 384;
       // The bar's viewBox cross-axis includes an outside-bar band for advice
-      // pills and/or the setpoint marker (see computeExternalScaleLayout).
+      // pills, icons and/or the setpoint marker (see computeExternalScaleLayout).
       // Subtract the same band the bar will reserve so total viewBox width
       // still equals viewBoxCross and the meet-scale fills the cell exactly.
       const hasSetpointMarker =
         this.setpoint !== undefined ||
         this.newSetpoint !== undefined ||
         this.departingNewSetpoint !== undefined;
-      const outsideBarReserveVb = Math.max(
-        this.hasAdvice ? 16 : 0,
-        computeSetpointBandThickness({hasSetpoint: hasSetpointMarker})
-      );
+      const outsideBarReserveVb = computeOutsideBarThickness({
+        hasBar: true,
+        hasScale: false,
+        labels: false,
+        labelThickness: 0,
+        tickThickness: 0,
+        scaleType: ScaleType.regular,
+        hasAdvice: this.hasAdvice,
+        hasAdviceIcon:
+          this.hasAdvice && !!this.advices?.some((a) => a.showIcon),
+        advicePosition: AdvicePosition.inner,
+        hasSetpoint: hasSetpointMarker,
+      });
       const safeCellHeight = Math.max(1, this._cellHeight);
       const viewBoxCross =
         (this._cellWidth * SCALE_REFERENCE_SIZE) / safeCellHeight;
@@ -857,7 +876,9 @@ export class ObcAutomationTank extends SetpointMixin(LitElement) {
         .fillMode=${FillMode.tint}
         .instrumentMode=${true}
         .borderRadius=${2}
-        .advices=${this.hasAdvice ? this.advice : []}
+        .advices=${this.hasAdvice ? this.advices : []}
+        .adviceTrigger=${this.adviceTrigger}
+        .adviceEmphasis=${this.adviceEmphasis}
         .advicePosition=${AdvicePosition.inner}
         .setpoint=${this.setpoint}
         .newSetpoint=${this.newSetpoint}

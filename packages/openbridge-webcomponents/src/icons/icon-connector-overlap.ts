@@ -6,7 +6,7 @@ import {customElement} from '../decorator.js';
 export class ObiConnectorOverlap extends LitElement {
   @property({type: Boolean}) useCssColor = false;
 
-  private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+  private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
 <path d="M11.5 0V2H12.5V0H11.5Z" fill="currentColor"/>
 <path d="M11.5 4V8H12.5V4H11.5Z" fill="currentColor"/>
 <path d="M11.5 14H12.5V10H11.5V14Z" fill="currentColor"/>

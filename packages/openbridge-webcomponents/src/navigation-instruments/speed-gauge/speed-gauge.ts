@@ -11,7 +11,8 @@ import {
 } from '../../svghelpers/radial-frame.js';
 import {Tickmark, TickmarkStyle, TickmarkType} from '../watch/tickmark.js';
 import {WatchCircleType} from '../watch/watch.js';
-import {AdviceType, AngleAdviceRaw, AdviceState} from '../watch/advice.js';
+import {AdviceMixin, syncAdviceAlias} from '../../svghelpers/advice-mixin.js';
+import type {AdviceInput, ResolvedAdvice} from '../../svghelpers/advice.js';
 import {SetpointMixin} from '../../svghelpers/setpoint-mixin.js';
 import {Priority} from '../types.js';
 import {renderInstrumentReadout} from '../readout/instrument-readout.js';
@@ -33,12 +34,8 @@ export enum ObcSpeedGaugeNeedleType {
   bar = 'bar',
 }
 
-export interface SpeedAdvice {
-  minSpeed: number;
-  maxSpeed: number;
-  type: AdviceType;
-  hinted: boolean;
-}
+/** @deprecated Use {@link AdviceInput}; `minSpeed` / `maxSpeed` are still read. */
+export type SpeedAdvice = AdviceInput & {minSpeed: number; maxSpeed: number};
 
 /**
  * `<obc-speed-gauge>` — Radial speed gauge with needle and optional readout.
@@ -113,6 +110,7 @@ export interface SpeedAdvice {
  *   so instruments sharing the same value have identical ring circumference
  *   regardless of label width or arc extent (like obc-donut-chart's
  *   fixedHeight). When unset (default), the instrument fills its container.
+ * @property speedAdvices - Alias of `advices`: ranges and points in the gauge's speed unit.
  * @property portStarboard - Enables the maritime PORT/STBD (red/green) color mode: positive speed
  *   renders green, astern red. The face is not tinted — the gauge shows a
  *   centred readout.
@@ -124,7 +122,7 @@ export interface SpeedAdvice {
  * @stable
  */
 @customElement('obc-speed-gauge')
-export class ObcSpeedGauge extends SetpointMixin(LitElement) {
+export class ObcSpeedGauge extends AdviceMixin(SetpointMixin(LitElement)) {
   @property({type: Number}) speed = 0;
   @property({type: Number}) maxSpeed = 100;
   @property({type: Number}) minSpeed = 0;
@@ -134,7 +132,8 @@ export class ObcSpeedGauge extends SetpointMixin(LitElement) {
   @property({type: String}) priority: Priority = Priority.regular;
   @property({type: String}) needleType: ObcSpeedGaugeNeedleType =
     ObcSpeedGaugeNeedleType.full;
-  @property({type: Array, attribute: false}) speedAdvices: SpeedAdvice[] = [];
+  /** @deprecated Alias of `advices`. Speed ranges in the instrument unit. */
+  @property({type: Array, attribute: false}) speedAdvices?: AdviceInput[];
   @property({type: String}) tickmarkStyle: TickmarkStyle =
     TickmarkStyle.regular;
   @property({type: Boolean}) hasReadout: boolean = false;
@@ -218,6 +217,11 @@ export class ObcSpeedGauge extends SetpointMixin(LitElement) {
   }
 
   maxAngle = 180 - 45;
+
+  override willUpdate(changed: PropertyValues) {
+    super.willUpdate(changed);
+    syncAdviceAlias(this, this.speedAdvices);
+  }
 
   override render() {
     const barColor =
@@ -389,27 +393,14 @@ export class ObcSpeedGauge extends SetpointMixin(LitElement) {
     return tickmarks;
   }
 
-  get _advices(): AngleAdviceRaw[] {
-    return this.speedAdvices.map((speedAdvice) => {
-      const minAngle = this.getAngle(speedAdvice.minSpeed);
-      const maxAngle = this.getAngle(speedAdvice.maxSpeed);
-      let state = speedAdvice.hinted ? AdviceState.hinted : AdviceState.regular;
-      if (
-        this.speed >= speedAdvice.minSpeed &&
-        this.speed <= speedAdvice.maxSpeed
-      ) {
-        state = AdviceState.triggered;
-      }
-
-      return {
-        minAngle,
-        maxAngle,
-        type: speedAdvice.type,
-        state,
-        hideMinTickmark: speedAdvice.minSpeed === this.minSpeed,
-        hideMaxTickmark: speedAdvice.maxSpeed === this.maxSpeed,
-      };
-    });
+  get _advices(): ResolvedAdvice[] {
+    return this.resolveAdvices(this.speed, this.setpoint).map((a) => ({
+      ...a,
+      min: this.getAngle(a.min),
+      max: this.getAngle(a.max),
+      hideMinTickmark: a.hideMinTickmark || a.min === this.minSpeed,
+      hideMaxTickmark: a.hideMaxTickmark || a.max === this.maxSpeed,
+    }));
   }
 
   static override styles = css`

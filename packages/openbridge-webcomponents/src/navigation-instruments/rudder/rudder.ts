@@ -7,7 +7,7 @@ import {Tickmark, TickmarkStyle, TickmarkType} from '../watch/tickmark.js';
 import {WatchCircleType, innerRingRadiusFor} from '../watch/watch.js';
 import {InstrumentState, Priority} from '../types.js';
 import {SetpointMixin} from '../../svghelpers/setpoint-mixin.js';
-import {AdviceState, AngleAdvice, AngleAdviceRaw} from '../watch/advice.js';
+import {AdviceMixin} from '../../svghelpers/advice-mixin.js';
 import {customElement} from '../../decorator.js';
 import {degToRad} from '../../svghelpers/math.js';
 import {ArcFrameFit} from '../../svghelpers/arc-frame.js';
@@ -110,7 +110,7 @@ export enum ObcRudderVariant {
  * @stable
  */
 @customElement('obc-rudder')
-export class ObcRudder extends SetpointMixin(LitElement) {
+export class ObcRudder extends AdviceMixin(SetpointMixin(LitElement)) {
   @property({type: Number}) angle = 0;
   @property({type: String}) variant: ObcRudderVariant = ObcRudderVariant.Bar;
   @property({type: Number}) maxAngle = 90;
@@ -120,7 +120,6 @@ export class ObcRudder extends SetpointMixin(LitElement) {
   @property({type: String}) priority: Priority = Priority.regular;
   @property({type: String}) tickmarkStyle: TickmarkStyle =
     TickmarkStyle.regular;
-  @property({type: Array, attribute: false}) advices: AngleAdvice[] = [];
   @property({type: Boolean}) portStarboard: boolean = false;
   @property({type: Array, attribute: false})
   portStarboardElements: PortStarboardElement[] = [
@@ -383,28 +382,17 @@ export class ObcRudder extends SetpointMixin(LitElement) {
       tickmarks.push({angle: 180 + helpAngle, type: TickmarkType.primary});
     }
 
-    const advices = this.advices.map<AngleAdviceRaw>((adv): AngleAdviceRaw => {
-      const startAngle = 180 - adv.maxAngle;
-      const endAngle = 180 - adv.minAngle;
-      const isInRange =
-        this.setpoint !== undefined &&
-        this.setpoint >= adv.minAngle &&
-        this.setpoint <= adv.maxAngle;
-      let state;
-      if (isInRange) {
-        state = AdviceState.triggered;
-      } else if (adv.hinted) {
-        state = AdviceState.hinted;
-      } else {
-        state = AdviceState.regular;
-      }
-      return {
-        minAngle: startAngle,
-        maxAngle: endAngle,
-        type: adv.type,
-        state: state,
-      };
-    });
+    // The rudder draws its angles mirrored at 180°, so a resolved range
+    // flips: its ends, its caps and its tick-hide flags swap.
+    const advices = this.resolveAdvices(this.angle, this.setpoint).map((a) => ({
+      ...a,
+      min: 180 - a.max,
+      max: 180 - a.min,
+      flatStart: a.flatEnd,
+      flatEnd: a.flatStart,
+      hideMinTickmark: a.hideMaxTickmark,
+      hideMaxTickmark: a.hideMinTickmark,
+    }));
 
     const frameOptions = {
       basePadding: 48,

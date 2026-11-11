@@ -1,8 +1,18 @@
 import {LitElement, svg, html, css, nothing, SVGTemplateResult} from 'lit';
 import {property} from 'lit/decorators.js';
 import {InstrumentState, Priority} from '../types.js';
-import {LinearAdvice, LinearAdviceRaw, renderAdvice} from './advice.js';
-import {AdviceState} from '../watch/advice.js';
+import {renderAdvice} from './advice.js';
+import {AdviceMixin} from '../../svghelpers/advice-mixin.js';
+import {
+  AdviceTrigger,
+  adviceTriggerReadings,
+  negateAdvice,
+  nextAdviceMaskId,
+  resolveAdvices,
+  type AdviceInput,
+  type AdviceReading,
+  type ResolvedAdvice,
+} from '../../svghelpers/advice.js';
 import {TickmarkStyle} from '../watch/tickmark.js';
 import {singleSidedTickmark} from './tickmark.js';
 import {PropellerType, bottomPropeller, topPropeller} from './propeller.js';
@@ -51,9 +61,11 @@ export interface ThrusterPortStarboardConfig {
  * @stable
  */
 @customElement('obc-thruster')
-export class ObcThruster extends SetpointMixin(LitElement, {
-  defaultDeadband: 1,
-}) {
+export class ObcThruster extends AdviceMixin(
+  SetpointMixin(LitElement, {
+    defaultDeadband: 1,
+  })
+) {
   private _setpointId = `thruster-sp-${Math.random().toString(36).slice(2, 9)}`;
 
   @property({type: Number}) thrust: number = 0;
@@ -63,7 +75,8 @@ export class ObcThruster extends SetpointMixin(LitElement, {
   @property({type: Boolean}) singleSided: boolean = false;
   @property({type: Boolean}) singleDirection: boolean = false;
   @property({type: Boolean}) singleDirectionHalfSize: boolean = false;
-  @property({type: Array}) advices: LinearAdvice[] = [];
+  // Mask ids are document-scoped, so each thruster names its own.
+  private readonly _adviceMaskPrefix = nextAdviceMaskId('thruster');
   @property({type: String}) topPropeller: PropellerType = PropellerType.none;
   @property({type: String}) bottomPropeller: PropellerType = PropellerType.none;
   @property({type: Boolean}) portStarboard: boolean = false;
@@ -83,6 +96,9 @@ export class ObcThruster extends SetpointMixin(LitElement, {
         touching: this.touching,
         singleSided: this.singleSided,
         advices: this.advices,
+        adviceTrigger: this.adviceTrigger,
+        adviceEmphasis: this.adviceEmphasis,
+        adviceMaskPrefix: this._adviceMaskPrefix,
         singleDirection: this.singleDirection,
         singleDirectionHalfSize: this.singleDirectionHalfSize,
         topPropeller: this.topPropeller,
@@ -185,8 +201,9 @@ export function thrusterTopSingleSided(
     hideContainer: boolean;
     narrow: boolean;
     off: boolean;
+    adviceMaskPrefix?: string;
   },
-  advice: LinearAdviceRaw[]
+  advice: (AdviceInput | ResolvedAdvice)[]
 ) {
   const container = options.narrow
     ? svg`
@@ -229,8 +246,13 @@ export function thrusterTopSingleSided(
   const bar = svg`
     ${mask}
     <rect mask=${maskAttr} width=${barWidth} height=${barHeight} x=${barX} y=${barY} fill=${colors.box} stroke=${colors.box} vector-effect="non-scaling-stroke"/>`;
-  const advicesSvg = advice.map((a) =>
-    renderAdvice(height, a, options.flipAdicePattern)
+  const advicesSvg = advice.map((a, i) =>
+    renderAdvice(
+      height,
+      a,
+      options.flipAdicePattern,
+      `${options.adviceMaskPrefix ?? 'thruster'}-${options.flipAdicePattern ? 'bottom' : 'top'}-${i}`
+    )
   );
   const all = [tickmarks, bar, advicesSvg];
   if (!options.hideContainer) {
@@ -267,12 +289,13 @@ function thrusterBottomSingleSided(
     hideContainer: boolean;
     narrow: boolean;
     off: boolean;
+    adviceMaskPrefix?: string;
   },
-  advice: LinearAdviceRaw[]
+  advice: (AdviceInput | ResolvedAdvice)[]
 ) {
   const container = svg`
       <g transform="rotate(180) scale(-1,1)">
-        ${thrusterTopSingleSided(height, value, colors, {hideTicks: options.hideTicks, flipAdicePattern: options.flipAdicePattern, hideContainer: options.hideContainer, narrow: options.narrow, off: options.off}, advice)}
+        ${thrusterTopSingleSided(height, value, colors, {hideTicks: options.hideTicks, flipAdicePattern: options.flipAdicePattern, hideContainer: options.hideContainer, narrow: options.narrow, off: options.off, adviceMaskPrefix: options.adviceMaskPrefix}, advice)}
       </g>
   `;
   return container;
@@ -641,7 +664,10 @@ export function thruster(
     autoAtSetpoint: boolean;
     autoAtSetpointDeadband: number;
     touching: boolean;
-    advices: LinearAdvice[];
+    advices: AdviceInput[];
+    adviceTrigger?: AdviceTrigger;
+    adviceEmphasis?: boolean;
+    adviceMaskPrefix?: string;
     topPropeller: PropellerType;
     bottomPropeller: PropellerType;
     narrow: boolean;
@@ -691,7 +717,12 @@ export function thruster(
 
   const {topAdvices, bottomAdvices} = convertThrustAdvices(
     options.advices,
-    setpoint
+    adviceTriggerReadings(
+      options.adviceTrigger ?? AdviceTrigger.both,
+      thrust,
+      setpoint
+    ),
+    {emphasis: options.adviceEmphasis}
   );
 
   const thrusterSvg = [];
@@ -709,6 +740,7 @@ export function thruster(
           hideContainer: false,
           narrow: options.narrow,
           off: state === InstrumentState.off,
+          adviceMaskPrefix: options.adviceMaskPrefix,
         },
         topAdvices
       )
@@ -725,6 +757,7 @@ export function thruster(
             hideContainer: false,
             narrow: options.narrow,
             off: state === InstrumentState.off,
+            adviceMaskPrefix: options.adviceMaskPrefix,
           },
           bottomAdvices
         )
@@ -837,36 +870,45 @@ declare global {
   }
 }
 
+/**
+ * The advice list of a thrust column, split into the top (positive) and the
+ * bottom (negative, mirrored) half. A band across zero is cut at the zero
+ * line into one part per side, flat where they meet; a point goes to the
+ * side of its sign. `readings` is the list the trigger mode selected, or one
+ * reading.
+ */
 export function convertThrustAdvices(
-  advices: LinearAdvice[],
-  thrustSetpoint: number | undefined
-): {topAdvices: LinearAdviceRaw[]; bottomAdvices: LinearAdviceRaw[]} {
-  const rawAdvices: LinearAdviceRaw[] = advices.map((a) => {
-    const triggered =
-      thrustSetpoint !== undefined &&
-      thrustSetpoint >= a.min &&
-      thrustSetpoint <= a.max;
-    let state: AdviceState;
-    if (triggered) {
-      state = AdviceState.triggered;
-    } else if (a.hinted) {
-      state = AdviceState.hinted;
-    } else {
-      state = AdviceState.regular;
-    }
-    return {
-      min: a.min,
-      max: a.max,
-      type: a.type,
-      state,
-      hinted: a.hinted,
-    };
+  advices: readonly AdviceInput[],
+  readings: AdviceReading | readonly AdviceReading[],
+  opts: {emphasis?: boolean} = {}
+): {topAdvices: ResolvedAdvice[]; bottomAdvices: ResolvedAdvice[]} {
+  const list = Array.isArray(readings)
+    ? (readings as readonly AdviceReading[])
+    : [readings as AdviceReading];
+  const resolved = resolveAdvices(advices, list, opts);
+  const topAdvices: ResolvedAdvice[] = [];
+  const bottomAdvices: ResolvedAdvice[] = [];
+  // The cut at zero is not a limit: no boundary tick there.
+  const cut = (a: ResolvedAdvice): ResolvedAdvice => ({
+    ...a,
+    min: 0,
+    flatStart: true,
+    hideMinTickmark: true,
   });
-
-  const topAdvices = rawAdvices.filter((a) => a.min >= 0);
-  const bottomAdvices = rawAdvices
-    .filter((a) => a.max <= 0)
-    .map((a) => ({...a, min: -a.max, max: -a.min}));
+  for (const a of resolved) {
+    if (a.point) {
+      (a.min >= 0 ? topAdvices : bottomAdvices).push(
+        a.min >= 0 ? a : negateAdvice(a)
+      );
+    } else if (a.min >= 0) {
+      topAdvices.push(a);
+    } else if (a.max <= 0) {
+      bottomAdvices.push(negateAdvice(a));
+    } else {
+      topAdvices.push(cut(a));
+      bottomAdvices.push(cut(negateAdvice(a)));
+    }
+  }
   return {topAdvices, bottomAdvices};
 }
 

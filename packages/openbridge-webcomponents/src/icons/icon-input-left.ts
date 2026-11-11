@@ -6,7 +6,7 @@ import {customElement} from '../decorator.js';
 export class ObiInputLeft extends LitElement {
   @property({type: Boolean}) useCssColor = false;
 
-  private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+  private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
 <path d="M17.0001 7.20382C17.0001 6.21532 15.8242 5.65107 15.0002 6.24417L7.7225 11.1724C7.13688 11.5689 7.13675 12.4315 7.72224 12.8282L15.0002 17.76C15.8242 18.3531 17.0001 17.7888 17.0001 16.8003V7.20382Z" fill="currentColor"/>
 </svg>
 `;

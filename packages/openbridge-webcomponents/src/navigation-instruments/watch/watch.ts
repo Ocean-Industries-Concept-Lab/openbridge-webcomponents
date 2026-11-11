@@ -37,7 +37,17 @@ export {PortStarboardElement, PortStarboardSides};
 export type {PortStarboardSign};
 import compentStyle from './watch.css?inline';
 import {ResizeController} from '@lit-labs/observers/resize-controller.js';
-import {adviceMask, AngleAdviceRaw, renderAdvice} from './advice.js';
+import {
+  adviceMask,
+  renderAdvice,
+  renderAdviceArea,
+  renderRingAdviceIcon,
+} from './advice.js';
+import {
+  asResolvedAdvice,
+  nextAdviceMaskId,
+  type AdviceInput,
+} from '../../svghelpers/advice.js';
 import {Tickmark, TickmarkStyle, tickmark} from './tickmark.js';
 export {TickmarkStyle};
 import {
@@ -320,6 +330,7 @@ const WIND_ICON_OUTSIDE_RADIUS =
  * @property rotPriority - Override priority for ROT color derivation. When set, ROT colors use this instead of the main `priority`. Useful when the ROT element has independent priority (e.g. compass per-element priority).
  * @property rateOfTurnDegreesPerMinute - Measured rate of turn in degrees per minute (the maritime/AIS convention, see ES-TRIN 2025/1 Art. 3.02 and ITU-R M.1371). Sign controls direction (positive = starboard/clockwise). When defined, this drives both the dot animation (multiplied by `rotDotAnimationFactor`) and the port/starboard direction sign.
  * @property rotDotAnimationFactor - Visual amplification factor applied only to the spinning-dot animation (not to bar extent). Default `18` keeps the legacy visual feel (≈1 rpm at 20°/min).
+ * @property advices - Advice bands and points on the ring, already resolved by the instrument: `min` / `max` (or `value`) in degrees, `category`, `state`, the tick-hide flags and `showArea` for the wedge inside the face. The earlier `minAngle` / `maxAngle`, `type` and `hinted` names are still read.
  * @property portStarboard - Enables the maritime PORT/STBD (red/green) color mode.
  *   Additional to `priority`: parts not listed in `portStarboardElements` keep
  *   their regular/enhanced colors, and the setpoint focus state never recolors.
@@ -395,7 +406,10 @@ export class ObcWatch extends LitElement {
   @property({type: Boolean}) tickmarksInside: boolean = false;
   @property({type: String}) tickmarkStyle: TickmarkStyle =
     TickmarkStyle.regular;
-  @property({type: Array, attribute: false}) advices: AngleAdviceRaw[] = [];
+  @property({type: Array, attribute: false}) advices: AdviceInput[] = [];
+
+  // Mask and pattern ids are document-scoped, so each watch names its own.
+  private readonly _adviceIdPrefix = nextAdviceMaskId('watch');
   @property({type: Boolean}) crosshairEnabled: boolean = false;
   @property({type: Boolean}) crosshairCenterCutout: boolean = false;
   @property({type: Boolean}) showLabels: boolean = false;
@@ -1221,9 +1235,25 @@ export class ObcWatch extends LitElement {
         endLabelsMaxMin: this.endLabelsMaxMin,
       })
     );
-    const advices = this.advices
-      ? this.advices.map((a) => renderAdvice(a, rOff))
-      : nothing;
+    const resolvedAdvices = (this.advices ?? []).map(asResolvedAdvice);
+    const advices = resolvedAdvices.map((a, i) =>
+      renderAdvice(a, rOff, `${this._adviceIdPrefix}-${i}`)
+    );
+    const adviceAreas = resolvedAdvices
+      .filter((a) => a.showArea)
+      .map((a, i) =>
+        renderAdviceArea(a, rOff, `${this._adviceIdPrefix}-area-${i}`)
+      );
+    const adviceIcons = resolvedAdvices
+      .filter((a) => a.showIcon)
+      .map((a, i) =>
+        renderRingAdviceIcon(
+          a,
+          rOff,
+          this.rotation ?? 0,
+          `${this._adviceIdPrefix}-icon-${i}`
+        )
+      );
 
     // NSWE labels are px-fixed outside decor, so they degrade with
     // `labelsHidden` like the tick label texts. The north arrow is exempt:
@@ -1297,7 +1327,7 @@ export class ObcWatch extends LitElement {
         style="--scale: ${scale}; transform-origin: ${pivotX}% ${pivotY}%"
         transform="rotate(${this.rotation ?? 0})"
       >
-        ${this.renderPortStarboardFace()} ${this.watchCircle()}
+        ${this.renderPortStarboardFace()} ${this.watchCircle()} ${adviceAreas}
         ${this.renderBars()}
         ${
           this.crosshairEnabled
@@ -1335,7 +1365,7 @@ export class ObcWatch extends LitElement {
             ? svg`<g mask="url(#tickFadeMask)">${labels}</g>`
             : labels
         }
-        ${this.renderVesselImage()} ${this.renderNeedles()}
+        ${adviceIcons} ${this.renderVesselImage()} ${this.renderNeedles()}
       </svg>
     `;
   }

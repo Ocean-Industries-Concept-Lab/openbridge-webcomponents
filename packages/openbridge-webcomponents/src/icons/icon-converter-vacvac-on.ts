@@ -1,0 +1,52 @@
+import {LitElement, html, css, svg} from 'lit';
+import {property} from 'lit/decorators.js';
+import {customElement} from '../decorator.js';
+
+@customElement('obi-converter-vacvac-on')
+export class ObiConverterVacvacOn extends LitElement {
+  @property({type: Boolean}) useCssColor = false;
+
+  private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+<rect x="1" y="1" width="22" height="22" fill="currentColor"/>
+<path d="M19.4062 16.3203L18.6992 15.6133L15.4424 18.8711L15.4414 18.8701L12.4746 21.8379C12.2794 22.0331 11.9628 22.0331 11.7676 21.8379C11.5726 21.6426 11.5724 21.326 11.7676 21.1309L14.6963 18.2012C13.8822 17.7613 12.8089 17.9928 12.2783 18.8418L11.8477 19.5303L10.1523 18.4697L10.582 17.7812C11.8043 15.8256 14.4021 15.4342 16.1396 16.7578L17.9922 14.9062L17.2852 14.1992L20.4775 13.1494L19.4062 16.3203Z" fill="currentColor"/>
+<path d="M21.8477 17.5303L21.418 18.2188C20.2805 20.0384 17.9523 20.5028 16.2344 19.4922L17.7588 17.9678C18.483 18.1343 19.2855 17.8561 19.7217 17.1582L20.1523 16.4697L21.8477 17.5303Z" fill="currentColor"/>
+<path d="M11.4062 5.32031L10.6992 4.61328L4.47461 10.8379C4.27937 11.0331 3.96285 11.0331 3.76758 10.8379C3.57263 10.6426 3.57242 10.326 3.76758 10.1309L6.62891 7.26855C5.80595 6.76421 4.67528 6.98049 4.12598 7.85938L3.69629 8.54785L2 7.4873L2.43066 6.79883C3.67085 4.81492 6.32672 4.44029 8.06348 5.83398L9.99219 3.90625L9.28516 3.19922L12.4775 2.14941L11.4062 5.32031Z" fill="currentColor"/>
+<path d="M13.6963 6.54785L13.2656 7.23633C12.1469 9.02596 9.8759 9.5058 8.16699 8.55957L9.7168 7.00977C10.4108 7.12489 11.1552 6.83827 11.5693 6.17578L12 5.4873L13.6963 6.54785Z" fill="currentColor"/>
+<path d="M23 0C23.5523 0 24 0.447715 24 1V23C24 23.5523 23.5523 24 23 24H1C0.447716 24 0 23.5523 0 23V1C2.57704e-07 0.447716 0.447715 0 1 0H23ZM1.70703 23H23V1.70703L1.70703 23ZM1 22.293L22.293 1H1V22.293Z" fill-rule="evenodd" clip-rule="evenodd" fill="currentColor"/>
+</svg>
+`;
+
+  private iconCss = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+<rect x="1" y="1" width="22" height="22" style="fill: var(--automation-symbol-on-background-color)"/>
+<path d="M19.4062 16.3203L18.6992 15.6133L15.4424 18.8711L15.4414 18.8701L12.4746 21.8379C12.2794 22.0331 11.9628 22.0331 11.7676 21.8379C11.5726 21.6426 11.5724 21.326 11.7676 21.1309L14.6963 18.2012C13.8822 17.7613 12.8089 17.9928 12.2783 18.8418L11.8477 19.5303L10.1523 18.4697L10.582 17.7812C11.8043 15.8256 14.4021 15.4342 16.1396 16.7578L17.9922 14.9062L17.2852 14.1992L20.4775 13.1494L19.4062 16.3203Z" style="fill: var(--automation-symbol-on-border-color)"/>
+<path d="M21.8477 17.5303L21.418 18.2188C20.2805 20.0384 17.9523 20.5028 16.2344 19.4922L17.7588 17.9678C18.483 18.1343 19.2855 17.8561 19.7217 17.1582L20.1523 16.4697L21.8477 17.5303Z" style="fill: var(--automation-symbol-on-border-color)"/>
+<path d="M11.4062 5.32031L10.6992 4.61328L4.47461 10.8379C4.27937 11.0331 3.96285 11.0331 3.76758 10.8379C3.57263 10.6426 3.57242 10.326 3.76758 10.1309L6.62891 7.26855C5.80595 6.76421 4.67528 6.98049 4.12598 7.85938L3.69629 8.54785L2 7.4873L2.43066 6.79883C3.67085 4.81492 6.32672 4.44029 8.06348 5.83398L9.99219 3.90625L9.28516 3.19922L12.4775 2.14941L11.4062 5.32031Z" style="fill: var(--automation-symbol-on-border-color)"/>
+<path d="M13.6963 6.54785L13.2656 7.23633C12.1469 9.02596 9.8759 9.5058 8.16699 8.55957L9.7168 7.00977C10.4108 7.12489 11.1552 6.83827 11.5693 6.17578L12 5.4873L13.6963 6.54785Z" style="fill: var(--automation-symbol-on-border-color)"/>
+<path d="M23 0C23.5523 0 24 0.447715 24 1V23C24 23.5523 23.5523 24 23 24H1C0.447716 24 0 23.5523 0 23V1C2.57704e-07 0.447716 0.447715 0 1 0H23ZM1.70703 23H23V1.70703L1.70703 23ZM1 22.293L22.293 1H1V22.293Z" fill-rule="evenodd" clip-rule="evenodd" style="fill: var(--automation-symbol-on-border-color)"/>
+</svg>
+`;
+
+  override render() {
+    return html`
+      <div class="wrapper">${this.useCssColor ? this.iconCss : this.icon}</div>
+    `;
+  }
+
+  static override styles = css`
+    .wrapper {
+      height: 100%;
+      width: 100%;
+      line-height: 0;
+    }
+    .wrapper > * {
+      height: 100%;
+      width: 100%;
+    }
+  `;
+}
+
+declare global {
+  interface HTMLElementTagNameMap {
+    'obi-converter-vacvac-on': ObiConverterVacvacOn;
+  }
+}

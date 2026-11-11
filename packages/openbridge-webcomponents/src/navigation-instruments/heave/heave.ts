@@ -1,5 +1,15 @@
-import {LitElement, html, css, nothing, svg, type SVGTemplateResult} from 'lit';
+import {
+  LitElement,
+  html,
+  css,
+  nothing,
+  svg,
+  type SVGTemplateResult,
+  PropertyValues,
+} from 'lit';
 import {customElement} from '../../decorator.js';
+import {AdviceMixin, syncAdviceAlias} from '../../svghelpers/advice-mixin.js';
+import type {AdviceInput} from '../../svghelpers/advice.js';
 import {
   verticalScaleTickmarks,
   watchfaceLinear,
@@ -12,10 +22,7 @@ import {
   type VesselImageSrc,
 } from '../watch/vessel.js';
 import {PaletteController} from '../../charthelpers/theme.js';
-import {
-  LinearAdvice,
-  resolveLinearAdvice,
-} from '../../building-blocks/instrument-linear/advice.js';
+import {resolveLinearAdvice} from '../../building-blocks/instrument-linear/advice.js';
 import {Priority} from '../types.js';
 
 export enum ObcHeaveType {
@@ -53,16 +60,18 @@ const BAR_VIEW_BOX = '-64 -192 128 384';
  * @availableWhen vesselImageSrc type==vessel
  * @property type - `vessel` (default) frames the scale next to a vessel silhouette; `bar`
  *   renders the scale column on its own.
+ * @property advice - Alias of `advices`: ranges and points in the heave unit, resolved against the trend band.
  * @stable
  */
 @customElement('obc-heave')
-export class ObcHeave extends LitElement {
+export class ObcHeave extends AdviceMixin(LitElement) {
   @property({type: Number}) heave = 0;
   @property({type: Number}) gainScale = 10;
   @property({type: Number}) minTrendHeave = 0;
   @property({type: Number}) maxTrendHeave = 0;
   @property({type: Number}) draftOffset = 0;
-  @property({type: Array}) advice: LinearAdvice[] = [];
+  /** @deprecated Alias of `advices`. Ranges in heave units. */
+  @property({type: Array}) advice?: AdviceInput[];
 
   @property({type: Number}) instrumentRange = 10;
   @property({type: String}) vesselImage: VesselImage = VesselImage.psvFore;
@@ -131,6 +140,11 @@ export class ObcHeave extends LitElement {
     `;
   }
 
+  override willUpdate(changed: PropertyValues) {
+    super.willUpdate(changed);
+    syncAdviceAlias(this, this.advice);
+  }
+
   override render() {
     const isBar = this.type === ObcHeaveType.bar;
     const gaugeOffset = isBar ? 0 : this._boxWidth / 2 - this._gaugeWidth / 2;
@@ -161,9 +175,10 @@ export class ObcHeave extends LitElement {
               {hideContainer: false, off: false, priority: this.priority},
               verticalScaleTickmarks(this.instrumentRange),
               resolveLinearAdvice(
-                this.advice,
+                this.advices,
                 this.minTrendHeave,
-                this.maxTrendHeave
+                this.maxTrendHeave,
+                {trigger: this.adviceTrigger, emphasis: this.adviceEmphasis}
               )
             )}
           </g>
