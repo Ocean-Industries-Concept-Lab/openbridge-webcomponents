@@ -675,6 +675,52 @@ export const GaugeTrendWithAdvice: Story = {
   `,
 };
 
+export const GaugeTrendWithAdviceArea: Story = {
+  name: 'With Advice Areas',
+  play: async () => {
+    await new Promise((resolve) => setTimeout(resolve, 300));
+  },
+  args: {
+    hasAdvice: true,
+    value: 75,
+    primaryTickmarkInterval: 20,
+    secondaryTickmarkInterval: 10,
+    tertiaryTickmarkInterval: 2,
+    scaleReferenceSize: 384,
+  },
+  render: (_args) => html`
+    <obc-gauge-trend
+      .data=${SAMPLE_DATA}
+      .width=${_args.width}
+      .height=${_args.height}
+      .priority=${_args.priority}
+      .chartFill=${_args.chartFill}
+      .minValue=${0}
+      .maxValue=${100}
+      .value=${_args.value}
+      .hasBar=${_args.hasBar}
+      .hasScale=${_args.hasScale}
+      .hasAdvice=${_args.hasAdvice}
+      .advices=${[
+        {min: 70, max: 90, category: 'caution', showArea: true},
+        {min: 90, max: 100, category: 'alarm', showArea: true},
+        {
+          min: 20,
+          max: 40,
+          category: 'optimal',
+          state: 'active',
+          showArea: true,
+        },
+      ]}
+      .primaryTickmarkInterval=${20}
+      .secondaryTickmarkInterval=${10}
+      .tertiaryTickmarkInterval=${2}
+      .scaleReferenceSize=${_args.scaleReferenceSize}
+    >
+    </obc-gauge-trend>
+  `,
+};
+
 /**
  * Demonstrates a non-standard scale range (25-75) that fits the SAMPLE_DATA values (28-68).
  *
@@ -1353,6 +1399,54 @@ export const MinMaxLabels: Story = {
       .primaryTickmarkInterval=${0}
       .secondaryTickmarkInterval=${0}
       .scaleType=${ScaleType.condensed}
+    >
+    </obc-gauge-trend>
+  `,
+};
+
+/** The chart's bands with their icons in the scale's label column, the caution band triggered. */
+export const GaugeTrendWithAdviceIcons: Story = {
+  name: 'With Advice Icons',
+  play: async () => {
+    await new Promise((resolve) => setTimeout(resolve, 300));
+  },
+  args: {
+    hasAdvice: true,
+    value: 75,
+    primaryTickmarkInterval: 20,
+    secondaryTickmarkInterval: 10,
+    tertiaryTickmarkInterval: 2,
+    scaleReferenceSize: 384,
+  },
+  render: (_args) => html`
+    <obc-gauge-trend
+      .data=${SAMPLE_DATA}
+      .width=${_args.width}
+      .height=${_args.height}
+      .priority=${_args.priority}
+      .chartFill=${_args.chartFill}
+      .minValue=${0}
+      .maxValue=${100}
+      .value=${_args.value}
+      .hasBar=${_args.hasBar}
+      .hasScale=${_args.hasScale}
+      .hasAdvice=${_args.hasAdvice}
+      .advices=${[
+        {min: 70, max: 90, category: 'caution', showArea: true, showIcon: true},
+        {min: 90, max: 100, category: 'alarm', showArea: true, showIcon: true},
+        {
+          min: 20,
+          max: 40,
+          category: 'optimal',
+          state: 'active',
+          showArea: true,
+          showIcon: true,
+        },
+      ]}
+      .primaryTickmarkInterval=${20}
+      .secondaryTickmarkInterval=${10}
+      .tertiaryTickmarkInterval=${2}
+      .scaleReferenceSize=${_args.scaleReferenceSize}
     >
     </obc-gauge-trend>
   `,

@@ -9,8 +9,7 @@ import '../readout/readout.js';
 import {ReadoutDirection} from '../readout/readout.js';
 import {ReadoutBlockSize} from '../../building-blocks/readout-block/readout-block.js';
 import {InstrumentState, Priority} from '../types.js';
-import {AngleAdvice} from '../watch/advice.js';
-import {LinearAdvice} from '../thruster/advice.js';
+import {AdviceTrigger, type AdviceInput} from '../../svghelpers/advice.js';
 import {PropellerType} from '../thruster/propeller.js';
 import {TickmarkStyle} from '../watch/tickmark.js';
 import {customElement} from '../../decorator.js';
@@ -34,6 +33,8 @@ export enum AzimuthThrusterLabeledSize {
  * @availableWhen autoAtThrustSetpointDeadband thrustSetpoint!=undefined && autoAtThrustSetpoint==true
  * @availableWhen thrustSetpointAtZeroDeadband thrustSetpoint!=undefined
  * @availableWhen thrustSetpointOverride thrustSetpoint!=undefined
+ * @property adviceTrigger - Which readings trigger an advice on both axes: the value, the setpoint, or either (the default).
+ * @property adviceEmphasis - The design's emphasis rules between go-to and no-go bands, off by default.
  * @deprecated The azimuth-thruster-labeled component is deprecated and will be removed in future releases.
  * Please make a combined component by using <obc-azimuth-thruster> in combination with <obc-readout> instead.
  */
@@ -67,8 +68,10 @@ export class ObcAzimuthThrusterLabeled extends LitElement {
   @property({type: Number}) autoAtThrustSetpointDeadband: number = 1;
   @property({type: Number}) thrustSetpointAtZeroDeadband: number = 0.1;
   @property({type: Boolean}) thrustSetpointOverride: boolean = false;
-  @property({type: Array, attribute: false}) angleAdvices: AngleAdvice[] = [];
-  @property({type: Array, attribute: false}) thrustAdvices: LinearAdvice[] = [];
+  @property({type: Array, attribute: false}) angleAdvices: AdviceInput[] = [];
+  @property({type: Array, attribute: false}) thrustAdvices: AdviceInput[] = [];
+  @property({type: String}) adviceTrigger: AdviceTrigger = AdviceTrigger.both;
+  @property({type: Boolean}) adviceEmphasis = false;
   @property({type: String}) tickmarkStyle: TickmarkStyle =
     TickmarkStyle.regular;
   @property({type: Boolean}) singleDirection: boolean = false;
@@ -184,6 +187,8 @@ export class ObcAzimuthThrusterLabeled extends LitElement {
           .touching=${this.touching}
           .angleAdvices=${this.angleAdvices}
           .thrustAdvices=${this.thrustAdvices}
+          .adviceTrigger=${this.adviceTrigger}
+          .adviceEmphasis=${this.adviceEmphasis}
           .singleDirection=${this.singleDirection}
           .tickmarkStyle=${this.tickmarkStyle}
           .topPropeller=${this.topPropeller}

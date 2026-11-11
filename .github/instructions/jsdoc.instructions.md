@@ -19,7 +19,20 @@ Key points:
 3. **Usage Guidelines** — when and how to use the component; contrast with similar components.
 4. **Slots** — table of slot names, conditions, and purposes.
 5. **Events** — a `@fires` tag for every event the component exposes, custom **and** native (a passthrough `<button>`'s `click` included). See below.
-6. **Properties are documented in the class JSDoc**, one tag per public property, without a type — `@property name - description` — placed after the Markdown sections and before `@slot`/`@fires`. Conditional properties add a line `@availableWhen name condition` directly under their tag. No inline JSDoc above `@property()` fields (`npm run lint:comments` fails; `--fix` hoists them), except one that carries a member `@deprecated` or a `@default` the manifest cannot read from the initializer: the class JSDoc has no tag for those, so the doc stays inline and the lint does not report it. A tag naming a property that does not exist is a ghost manifest member — `npm run lint:slots` fails on it. Mixin-provided properties (`svghelpers/setpoint-mixin.ts`, `svghelpers/setpoint-bundle.ts`) keep their inline docs.
+6. **Properties are documented in the class JSDoc**, one tag per public property, without a type — `@property name - description` — placed after the Markdown sections and before `@slot`/`@fires`. Conditional properties add a line `@availableWhen name condition` directly under their tag. No inline JSDoc above `@property()` fields (`npm run lint:comments` fails; `--fix` hoists them), except one that carries a member `@deprecated` or a `@default` the manifest cannot read from the initializer: the class JSDoc has no tag for those, so that tag stays inline while the description stays in the class block — the manifest takes `description` from `@property name - …` and `deprecated` / `default` from the inline block, so a member with only the inline block has an empty description. The shape, on a deprecated alias:
+
+   ```ts
+   /**
+    * …
+    * @property on - Alias of `turnedOn` for 1.x markup: setting it sets `turnedOn`.
+    */
+   export class ObcX extends LitElement {
+     /** @deprecated Use `turnedOn`. */
+     @property({type: Boolean}) on?: boolean;
+   ```
+
+   A tag naming a property that does not exist is a ghost manifest member — `npm run lint:slots` fails on it. Mixin-provided properties (`svghelpers/setpoint-mixin.ts`, `svghelpers/setpoint-bundle.ts`) keep their inline docs.
+
 7. **Tone:** Keep generic behaviour domain-neutral: no "maritime", "industrial" or "bridge" as decoration. Where the behaviour comes from a domain or a standard, name it, citing the standard by number (`IEC 62923`, `ISA-18.2`).
 8. If purpose is unclear, insert `**TODO(designer)**` instead of guessing.
 9. **`@availableWhen` for conditional properties** — see below.

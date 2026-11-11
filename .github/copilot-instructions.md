@@ -25,6 +25,7 @@ TypeScript.
 | Doc | Scope (globs) | Description |
 | --- | --- | --- |
 | [a11y](../docs/agents/a11y.md) | `packages/openbridge-webcomponents/src/{components,automation,internal}/**` | Accessibility (WCAG 2.1 AA + 2.2 § 2.5.8 target size) — keyboard nav, ARIA, focus |
+| [advice](../docs/agents/advice.md) | `packages/openbridge-webcomponents/src/svghelpers/{advice.ts,advice-linear.ts,advice-patterns.ts,advice-mixin.ts,advice-bundle.ts}`<br>`packages/openbridge-webcomponents/src/charthelpers/advice-area-plugin.ts`<br>`packages/openbridge-webcomponents/src/building-blocks/advice/**` | Advice design layer, mixin/bundle, the four renderers and the area plugin |
 | [alerts](../docs/agents/alerts.md) | `packages/openbridge-webcomponents/src/alert-system/**`<br>`packages/openbridge-webcomponents/src/**/alert-*-experimental/**` | Alert standards, and the experimental alert icon, menu item, lists, menu and page drawn by them |
 | [ar](../docs/agents/ar.md) | `packages/openbridge-webcomponents/src/ar/**` | Augmented-reality POI overlay — controller, layer stack, overlap resolution, and the POI composition chain |
 | [automation-components](../docs/agents/automation-components.md) | `packages/openbridge-webcomponents/src/automation/**` | Automation devices, valves, lines, tanks, badges |

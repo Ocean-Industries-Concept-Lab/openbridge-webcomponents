@@ -1,6 +1,7 @@
 import type {Meta, StoryObj} from '@storybook/web-components-vite';
 import {watchfaceLinear} from './instrument-linear.js';
 import './instrument-linear.js';
+import {resolveAdvices} from '../../svghelpers/advice.js';
 import {
   AdviceState,
   AdviceType,
@@ -141,7 +142,9 @@ const meta: Meta = {
           primaryTickmarkInterval: args.primaryTickmarkInterval,
           secondaryTickmarkInterval: args.secondaryTickmarkInterval,
         },
-        args.advice
+        // The building block draws what it is given; an instrument resolves
+        // the list, which also cuts touching bands flat.
+        resolveAdvices(args.advice, [])
       )}
     </svg>`;
   },
