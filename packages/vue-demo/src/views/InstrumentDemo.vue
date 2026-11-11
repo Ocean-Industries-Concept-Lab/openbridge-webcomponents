@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { AdviceType } from '@oicl/openbridge-webcomponents/dist/navigation-instruments/watch/advice'
 import { onMounted, ref, onUnmounted } from 'vue'
 import ObcCard from '@oicl/openbridge-webcomponents-vue/components/card/ObcCard.vue'
 import ObcSpeedGauge from '@oicl/openbridge-webcomponents-vue/navigation-instruments/speed-gauge/ObcSpeedGauge.vue'
@@ -74,9 +73,7 @@ onUnmounted(() => {
           :speed="sim.vessel.speedForwardThroughWaterKnots.value"
           :min-speed="-5"
           :max-speed="25"
-          :speed-advices="[
-            { minSpeed: maxSpeed, maxSpeed: 25, type: AdviceType.caution, hinted: true }
-          ]"
+          :advices="[{ min: maxSpeed, max: 25, category: 'caution', state: 'hinted' }]"
         />
         <obc-readout
           :value="sim.vessel.speedForwardThroughWaterKnots.value"

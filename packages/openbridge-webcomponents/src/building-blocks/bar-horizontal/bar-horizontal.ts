@@ -10,11 +10,9 @@ import {
   BorderRadiusPosition,
   Priority,
 } from '../../navigation-instruments/types.js';
-import type {LinearAdvice} from '../instrument-linear/advice.js';
-import type {
-  ExternalScaleAdvice,
-  ExternalScaleConfig,
-} from '../external-scale/external-scale.js';
+import {AdviceMixin} from '../../svghelpers/advice-mixin.js';
+import {nextAdviceMaskId} from '../../svghelpers/advice.js';
+import type {ExternalScaleConfig} from '../external-scale/external-scale.js';
 import {
   computeExternalScaleViewBox,
   computeFixedAspectRatioScale,
@@ -130,7 +128,7 @@ export {
  * @property value - Current value (bar fill level)
  * @property state - Instrument state (affects colors and some marker behavior)
  * @property advicePosition - Advice overlay positioning: center (in bar), inner (covers minor ticks), outer (no overlap)
- * @availableWhen advicePosition hasBar==true && advices!=undefined
+ * @availableWhen advicePosition hasBar==true
  * @property advices - Advice/alert overlays with state and positioning.
  *   When undefined or empty, no advice shown.
  * @property highlightCurrentValue - When true, displays a dot indicator at the current value position.
@@ -140,9 +138,11 @@ export {
  * @beta
  */
 @customElement('obc-bar-horizontal')
-export class ObcBarHorizontal extends SetpointMixin(LitElement, {
-  defaultDeadband: 1,
-}) {
+export class ObcBarHorizontal extends AdviceMixin(
+  SetpointMixin(LitElement, {
+    defaultDeadband: 1,
+  })
+) {
   @property({type: Number}) minValue = 0;
   @property({type: Number}) maxValue = 100;
   @property({type: Boolean}) reverse = false;
@@ -246,7 +246,8 @@ export class ObcBarHorizontal extends SetpointMixin(LitElement, {
   // Advice
   @property({type: String}) advicePosition: AdvicePosition =
     AdvicePosition.inner;
-  @property({type: Array, attribute: false}) advices?: LinearAdvice[] = [];
+  // Mask ids are document-scoped, so each scale names its own.
+  private readonly _adviceMaskPrefix = nextAdviceMaskId('bar');
 
   @property({type: Boolean}) highlightCurrentValue = false;
 
@@ -307,7 +308,10 @@ export class ObcBarHorizontal extends SetpointMixin(LitElement, {
       state: this.state,
       touching: this.touching,
       advicePosition: this.advicePosition,
-      advices: this.advices as ExternalScaleAdvice[],
+      advices: this.advices,
+      adviceTrigger: this.adviceTrigger,
+      adviceEmphasis: this.adviceEmphasis,
+      adviceMaskPrefix: this._adviceMaskPrefix,
       fixedAspectRatio: this.fixedAspectRatio,
       instrumentMode: this.instrumentMode,
       highlightCurrentValue: this.highlightCurrentValue,
@@ -426,6 +430,7 @@ export class ObcBarHorizontal extends SetpointMixin(LitElement, {
       scaleType: this.scaleType,
       advicePosition: this.advicePosition,
       hasAdvice: !!this.advices && this.advices.length > 0,
+      hasAdviceIcon: !!this.advices?.some((a) => a.showIcon),
       hasSetpoint:
         this.setpoint !== undefined ||
         this.newSetpoint !== undefined ||

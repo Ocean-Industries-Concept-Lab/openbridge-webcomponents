@@ -57,3 +57,26 @@ export const Off: Story = {
     thrustSetpoint: 0,
   },
 };
+
+/**
+ * Each column takes its own list: the thrust bands are split at zero and
+ * the speed bands sit on the speed column's outer side. The readings sit
+ * inside the optimal bands, which trigger.
+ */
+export const WithAdvices: Story = {
+  args: {
+    thrust: 60,
+    thrustSetpoint: 60,
+    speed: 70,
+    speedSetpoint: 70,
+    thrustAdvices: [
+      {min: 40, max: 80, category: 'optimal'},
+      {min: 90, max: 100, category: 'alarm'},
+      {min: -60, max: -20, category: 'caution'},
+    ],
+    speedAdvices: [
+      {min: 55, max: 85, category: 'optimal'},
+      {min: 90, max: 100, category: 'caution'},
+    ],
+  },
+};

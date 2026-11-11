@@ -163,6 +163,23 @@ export const WithAdvices: Story = {
   },
 };
 
+/**
+ * A limit as a point advice beside a range: the alarm point is a short tick
+ * on the ring, the optimal range is triggered because the value sits in it.
+ */
+export const LimitPoint: Story = {
+  args: {
+    value: 50,
+    maxValue: 100,
+    minValue: 0,
+    type: ObcGaugeRadialType.filled,
+    advices: [
+      {min: 25, max: 60, category: 'optimal', state: 'active'},
+      {value: 85, category: 'alarm'},
+    ],
+  },
+};
+
 export const IrregularRange: Story = {
   args: {
     value: 300,

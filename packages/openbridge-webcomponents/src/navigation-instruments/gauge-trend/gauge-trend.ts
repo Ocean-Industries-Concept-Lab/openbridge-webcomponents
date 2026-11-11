@@ -14,8 +14,13 @@ import {
   BarContainerStyle,
   ScaleType,
 } from '../../building-blocks/bar-vertical/bar-vertical.js';
-import type {LinearAdvice} from '../../building-blocks/instrument-linear/advice.js';
+import type {
+  AdviceInput,
+  AdviceReading,
+  ResolvedAdvice,
+} from '../../svghelpers/advice.js';
 import {SetpointMixin} from '../../svghelpers/setpoint-mixin.js';
+import {syncAdviceAlias} from '../../svghelpers/advice-mixin.js';
 import '../../building-blocks/bar-vertical/bar-vertical.js';
 import type {ObcBarVertical} from '../../building-blocks/bar-vertical/bar-vertical.js';
 import {ExternalScaleSide} from '../../building-blocks/external-scale/external-scale.js';
@@ -179,6 +184,7 @@ export {FillMode, ScaleType};
  * @property chartFill - Enable chart area fill.
  *   When true, fills the area under the line with semitransparent color.
  *   When false (default), renders as line-only chart.
+ * @property highlightCurrentValue - Shows the dot at the value on the vertical scale. Left unset, the dot shows while `hasBar` is false.
  * @property hasBar - Show bar on the vertical scale.
  *   When `true`, displays a filled bar indicating the current value.
  *   When `false`, a dot indicator is automatically shown at the value position instead.
@@ -335,8 +341,9 @@ export class ObcGaugeTrend extends SetpointMixin(ObcChartLineBase) {
     barVertical.setpointOverride = this.setpointOverride;
     // Advice position is always 'inner' for gauge-trend
     barVertical.advicePosition = AdvicePosition.inner;
-    // obc-bar-vertical uses 'advices' (plural), not 'advice' or 'hasAdvice'
-    barVertical.advices = this.hasAdvice ? this.advice : [];
+    barVertical.advices = this.hasAdvice ? this.advices : [];
+    barVertical.adviceTrigger = this.adviceTrigger;
+    barVertical.adviceEmphasis = this.adviceEmphasis;
     barVertical.primaryTickmarkInterval = this.primaryTickmarkInterval;
     barVertical.secondaryTickmarkInterval = this.secondaryTickmarkInterval;
     barVertical.tertiaryTickmarkInterval = this.tertiaryTickmarkInterval;
@@ -367,9 +374,12 @@ export class ObcGaugeTrend extends SetpointMixin(ObcChartLineBase) {
       ? BorderRadiusPosition.middleChild
       : BorderRadiusPosition.outerLastChild;
 
-    // Auto-derive: show dot indicator when no bar is shown
-    barVertical.highlightCurrentValue = !this.hasBar;
+    barVertical.highlightCurrentValue =
+      this.highlightCurrentValue ?? !this.hasBar;
   }
+
+  @property({type: Boolean, attribute: false})
+  highlightCurrentValue?: boolean;
 
   @property({type: String})
   scaleType: ScaleType = ScaleType.regular;
@@ -413,8 +423,8 @@ export class ObcGaugeTrend extends SetpointMixin(ObcChartLineBase) {
   @property({type: Number})
   fillMax?: number = undefined;
 
-  @property({type: Array, attribute: false})
-  advice: LinearAdvice[] = [];
+  /** @deprecated Alias of `advices`. Ranges in scale units. */
+  @property({type: Array, attribute: false}) advice?: AdviceInput[];
 
   @property({type: Number})
   primaryTickmarkInterval?: number = undefined;
@@ -448,6 +458,16 @@ export class ObcGaugeTrend extends SetpointMixin(ObcChartLineBase) {
     return this.chartFill ? 'semitransparent' : undefined;
   }
 
+  /** The scale's value and setpoint also trigger the chart's advice areas. */
+  protected override adviceReadings(): [AdviceReading, AdviceReading] {
+    return [this.value, this.setpoint];
+  }
+
+  /** `hasAdvice` gates the chart areas as it gates the scale's bands. */
+  protected override chartAdvices(): ResolvedAdvice[] {
+    return this.hasAdvice ? super.chartAdvices() : [];
+  }
+
   /**
    * Stacking is not used in gauge-trend (always false).
    */
@@ -467,6 +487,7 @@ export class ObcGaugeTrend extends SetpointMixin(ObcChartLineBase) {
   }
 
   override willUpdate(changed: Map<PropertyKey, unknown>) {
+    syncAdviceAlias(this, this.advice);
     // Auto axis detection: {x, value} data switches to time spacing, {label,
     // value} stays category. An explicit xAxisType assignment (anything we
     // did not auto-apply) permanently disables auto-detection. The
@@ -560,7 +581,10 @@ export class ObcGaugeTrend extends SetpointMixin(ObcChartLineBase) {
       changed.has('fillMode') ||
       changed.has('fillMin') ||
       changed.has('fillMax') ||
-      changed.has('advice') ||
+      changed.has('highlightCurrentValue') ||
+      changed.has('advices') ||
+      changed.has('adviceTrigger') ||
+      changed.has('adviceEmphasis') ||
       changed.has('primaryTickmarkInterval') ||
       changed.has('secondaryTickmarkInterval') ||
       changed.has('tertiaryTickmarkInterval') ||

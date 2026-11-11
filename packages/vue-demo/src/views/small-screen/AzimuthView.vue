@@ -3,9 +3,10 @@ import { useSim } from '@/composables/useSim'
 import { useDemoConfigStore } from '@/stores/demoConfig'
 import ObcAzimuthThruster from '@oicl/openbridge-webcomponents-vue/navigation-instruments/azimuth-thruster/ObcAzimuthThruster.vue'
 import {
-  AdviceType,
-  type AngleAdvice
-} from '@oicl/openbridge-webcomponents/dist/navigation-instruments/watch/advice.js'
+  AdviceCategory,
+  AdviceState,
+  type AdviceInput
+} from '@oicl/openbridge-webcomponents/dist/svghelpers/advice.js'
 import { computed, onMounted, watch } from 'vue'
 import {
   InstrumentState,
@@ -43,20 +44,20 @@ const angleSet = computed(() => sim.propulsion.rudderSet.value)
 const thrust = computed(() => sim.propulsion.propeller.value)
 const thrustSet = computed(() => sim.propulsion.propellerSet.value)
 
-const angleAdvice = computed<AngleAdvice[]>(() => {
+const angleAdvice = computed<AdviceInput[]>(() => {
   if (sim.controllers.showAdvice.value || props.details) {
     return [
       {
-        minAngle: 0,
-        maxAngle: 10,
-        type: AdviceType.advice,
-        hinted: true
+        min: 0,
+        max: 10,
+        category: AdviceCategory.optimal,
+        state: AdviceState.hinted
       },
       {
-        minAngle: 20,
-        maxAngle: 45,
-        type: AdviceType.caution,
-        hinted: true
+        min: 20,
+        max: 45,
+        category: AdviceCategory.caution,
+        state: AdviceState.hinted
       }
     ]
   }

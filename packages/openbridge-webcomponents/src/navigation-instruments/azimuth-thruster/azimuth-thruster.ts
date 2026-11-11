@@ -15,20 +15,15 @@ import {SetpointBundle} from '../../svghelpers/setpoint-bundle.js';
 import {thruster} from '../thruster/thruster.js';
 import '../watch/watch.js';
 import componentStyle from './azimuth-thruster.css?inline';
-import {AdviceState, AngleAdvice, AngleAdviceRaw} from '../watch/advice.js';
+import {AdviceBundle} from '../../svghelpers/advice-bundle.js';
+import {
+  AdviceTrigger,
+  type AdviceInput,
+  type ResolvedAdvice,
+} from '../../svghelpers/advice.js';
 import {Tickmark, TickmarkStyle, TickmarkType} from '../watch/tickmark.js';
-import {LinearAdvice} from '../thruster/advice.js';
 import {PropellerType} from '../thruster/propeller.js';
 import {customElement} from '../../decorator.js';
-
-function mapAngle0to360(angle: number): number {
-  const a = angle % 360;
-  if (a >= 0) {
-    return a;
-  } else {
-    return a + 360;
-  }
-}
 
 /**
  * @availableWhen newAngleSetpoint angleSetpoint!=undefined
@@ -57,6 +52,12 @@ function mapAngle0to360(angle: number): number {
  *   so instruments sharing the same value have identical ring circumference
  *   regardless of label width or arc extent (like obc-donut-chart's
  *   fixedHeight). When unset (default), the instrument fills its container.
+ * @property angleAdvices - Advice ranges and points on the ring, in degrees; see `svghelpers/advice.ts` for the shape.
+ * @property thrustAdvices - Advice ranges and points on the thrust column, in percent of thrust.
+ * @property adviceTrigger - Which readings trigger an advice on both axes: the value, the setpoint, or either (the default).
+ * @availableWhen adviceTrigger angleAdvices!=[] || thrustAdvices!=[]
+ * @property adviceEmphasis - The design's emphasis rules between go-to and no-go bands, off by default.
+ * @availableWhen adviceEmphasis angleAdvices!=[] || thrustAdvices!=[]
  * @stable
  */
 @customElement('obc-azimuth-thruster')
@@ -108,6 +109,11 @@ export class ObcAzimuthThruster extends LitElement {
   override willUpdate(changed: PropertyValues): void {
     super.willUpdate(changed);
     // Sync public prefixed props → bundles
+    this._angleAdvice.sync({
+      advices: this.angleAdvices,
+      adviceTrigger: this.adviceTrigger,
+      adviceEmphasis: this.adviceEmphasis,
+    });
     this._angleSp.sync({
       setpoint: this.angleSetpoint,
       newSetpoint: this.newAngleSetpoint,
@@ -133,8 +139,12 @@ export class ObcAzimuthThruster extends LitElement {
   }
   @property({type: Number}) loading: number = 0;
   @property({type: Boolean, attribute: false}) hasLabelSpacer: boolean = true;
-  @property({type: Array, attribute: false}) angleAdvices: AngleAdvice[] = [];
-  @property({type: Array, attribute: false}) thrustAdvices: LinearAdvice[] = [];
+  @property({type: Array, attribute: false}) angleAdvices: AdviceInput[] = [];
+  @property({type: Array, attribute: false}) thrustAdvices: AdviceInput[] = [];
+  @property({type: String}) adviceTrigger: AdviceTrigger = AdviceTrigger.both;
+  @property({type: Boolean}) adviceEmphasis = false;
+
+  private _angleAdvice = new AdviceBundle({angularWraparound: true});
   @property({type: Boolean}) singleDirection: boolean = false;
   @property({type: String}) topPropeller: PropellerType = PropellerType.none;
   @property({type: String}) bottomPropeller: PropellerType = PropellerType.none;
@@ -165,27 +175,8 @@ export class ObcAzimuthThruster extends LitElement {
     );
   }
 
-  private get angleAdviceRaw(): AngleAdviceRaw[] {
-    return this.angleAdvices.map((advice) => {
-      const triggered =
-        this.angleSetpoint !== undefined &&
-        mapAngle0to360(this.angleSetpoint - advice.minAngle) < 180 &&
-        mapAngle0to360(this.angleSetpoint - advice.maxAngle) > 180;
-      let state: AdviceState;
-      if (triggered) {
-        state = AdviceState.triggered;
-      } else if (advice.hinted) {
-        state = AdviceState.hinted;
-      } else {
-        state = AdviceState.regular;
-      }
-      return {
-        minAngle: advice.minAngle,
-        maxAngle: advice.maxAngle,
-        type: advice.type,
-        state,
-      };
-    });
+  private get angleAdviceRaw(): ResolvedAdvice[] {
+    return this._angleAdvice.resolve(this.angle, this.angleSetpoint);
   }
 
   private getTickmarks(): Tickmark[] {
@@ -318,6 +309,8 @@ export class ObcAzimuthThruster extends LitElement {
                 setpointAtZeroDeadband: this.thrustSetpointAtZeroDeadband,
                 touching: this.touching,
                 advices: this.thrustAdvices,
+                adviceTrigger: this.adviceTrigger,
+                adviceEmphasis: this.adviceEmphasis,
                 topPropeller: this.topPropeller,
                 bottomPropeller: this.bottomPropeller,
                 narrow: true,

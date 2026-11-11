@@ -94,7 +94,8 @@ Key points:
    tag per public property (no type), after the Markdown sections and before
    `@slot`/`@fires`, with `@availableWhen name condition` under a conditional one.
    No inline JSDoc above `@property()` fields (`npm run lint:comments` fails;
-   `--fix` hoists them; the exceptions are in [`docs/agents/jsdoc.md`](docs/agents/jsdoc.md)).
+   `--fix` hoists them; an inline `@deprecated` / `@default` is the exception and keeps
+   its description in the class block — [`docs/agents/jsdoc.md`](docs/agents/jsdoc.md)).
    A tag naming a property that does not exist fails `npm run lint:slots`.
 7. **Tone:** Do NOT mention "maritime", "industrial", "bridge", or domain qualifiers; keep text domain-agnostic.
 8. If purpose is unclear, insert `**TODO(designer)**` instead of guessing.
@@ -141,6 +142,7 @@ The table below is generated too. Edit `docs/agents/*.md`, never this block.
 | Doc | Scope (globs) | Description |
 | --- | --- | --- |
 | [a11y](docs/agents/a11y.md) | `packages/openbridge-webcomponents/src/{components,automation,internal}/**` | Accessibility (WCAG 2.1 AA + 2.2 § 2.5.8 target size) — keyboard nav, ARIA, focus |
+| [advice](docs/agents/advice.md) | `packages/openbridge-webcomponents/src/svghelpers/{advice.ts,advice-linear.ts,advice-patterns.ts,advice-mixin.ts,advice-bundle.ts}`<br>`packages/openbridge-webcomponents/src/charthelpers/advice-area-plugin.ts`<br>`packages/openbridge-webcomponents/src/building-blocks/advice/**` | Advice design layer, mixin/bundle, the four renderers and the area plugin |
 | [ar](docs/agents/ar.md) | `packages/openbridge-webcomponents/src/ar/**` | Augmented-reality POI overlay — controller, layer stack, overlap resolution, and the POI composition chain |
 | [automation-components](docs/agents/automation-components.md) | `packages/openbridge-webcomponents/src/automation/**` | Automation devices, valves, lines, tanks, badges |
 | [building-blocks](docs/agents/building-blocks.md) | `packages/openbridge-webcomponents/src/{building-blocks,svghelpers}/**` | SVG-based building block components and shared utilities |

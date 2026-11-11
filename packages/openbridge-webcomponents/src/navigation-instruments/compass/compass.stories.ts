@@ -17,7 +17,6 @@ import {
   storyHint,
   widthDecorator,
 } from '../../storybook-util.js';
-import {AdviceType} from '../watch/advice.js';
 import {VesselImage} from '../watch/watch.js';
 import {
   customVesselPngSrc,
@@ -35,14 +34,7 @@ const meta: Meta<typeof ObcCompass> = {
     width: 512,
     heading: 311,
     courseOverGround: 338,
-    headingAdvices: [
-      {
-        minAngle: 20,
-        maxAngle: 50,
-        type: AdviceType.advice,
-        hinted: false,
-      },
-    ],
+    headingAdvices: [{min: 20, max: 50, category: 'optimal'}],
     headingSetpoint: 311,
     currentWindSpeedKnots: 20,
     windFromDirection: 45,
@@ -157,6 +149,18 @@ export const HeadingUpInCommand: Story = {
 export const CourseUpInCommand: Story = {
   args: {
     direction: CompassDirection.CourseUp,
+  },
+};
+
+/**
+ * A point advice on the course over ground: the dot sits on the ring at the
+ * course, `active` until the heading reaches it.
+ */
+export const CourseAdvicePoint: Story = {
+  args: {
+    heading: 311,
+    courseOverGround: 338,
+    headingAdvices: [{value: 338, category: 'optimal', state: 'active'}],
   },
 };
 
@@ -401,5 +405,20 @@ export const SizingPlayground: StoryObj<SizingPlaygroundArgs> = {
         {width: 680, height: 400}
       )}
     `;
+  },
+};
+
+/** Icons outside the ring at each band's mid-angle, upright under the heading-up rotation. */
+export const AdviceIcons: Story = {
+  args: {
+    heading: 40,
+    courseOverGround: 60,
+    direction: CompassDirection.HeadingUp,
+    headingAdvices: [
+      {min: 20, max: 60, category: 'optimal', showIcon: true},
+      {min: 100, max: 130, category: 'caution', showIcon: true},
+      {min: 200, max: 240, category: 'alarm', showIcon: true},
+      {value: 300, category: 'eco', showIcon: true},
+    ],
   },
 };
