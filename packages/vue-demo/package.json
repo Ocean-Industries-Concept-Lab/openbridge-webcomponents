@@ -43,7 +43,7 @@
     "zod": "^4.6.7"
   },
   "devDependencies": {
-    "@playwright/test": "^1.63.0",
+    "@playwright/test": "^1.65.0",
     "@tsconfig/node24": "^24.0.5",
     "@types/geojson": "^7946.0.16",
     "@types/jsdom": "^30.0.0",
