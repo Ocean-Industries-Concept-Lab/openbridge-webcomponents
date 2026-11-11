@@ -9,6 +9,7 @@ import {
 import customElements from '../custom-elements.json';
 import {withActions} from './action-handler.js';
 import {availableWhenEnhancer} from './manifest-docs.js';
+import {setAlertStandard} from '../src/alert-system/configured-alert-standard.js';
 
 setCustomElementsManifest(customElements);
 
@@ -37,6 +38,8 @@ export const decorators: DecoratorFunction[] = [
 ];
 
 const preview: Preview = {
+  // Each alert story sets its own standard; none carries over to the next.
+  beforeEach: () => setAlertStandard(undefined),
   globalTypes: {
     componentSize: {
       name: 'Component Size',

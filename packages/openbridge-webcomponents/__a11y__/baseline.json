@@ -15,37 +15,52 @@
   "application-components-alerts-alert-list-details--small": [
     "aria-allowed-role"
   ],
-  "application-components-alerts-alert-list-details-experimental--cycle-with-descendants": [
-    "aria-allowed-role",
-    "obc-composite-one-tab-stop"
-  ],
-  "application-components-alerts-alert-list-details-experimental--cyclic-grouping": [
-    "aria-allowed-role",
-    "obc-composite-one-tab-stop"
-  ],
-  "application-components-alerts-alert-list-details-experimental--grouped-alerts": [
-    "aria-allowed-role",
-    "obc-composite-one-tab-stop"
-  ],
-  "application-components-alerts-alert-list-details-experimental--level-categories": [
+  "application-components-alerts-alert-list-details-experimental-custom-standard--custom-standard": [
     "aria-allowed-role"
   ],
-  "application-components-alerts-alert-list-details-experimental--one-item": [
-    "aria-allowed-role"
-  ],
-  "application-components-alerts-alert-list-details-experimental--regular": [
-    "aria-allowed-role"
-  ],
-  "application-components-alerts-alert-list-details-experimental--selected-row": [
+  "application-components-alerts-alert-list-details-experimental-iec-62923--cycle-with-descendants": [
     "aria-allowed-role",
     "obc-composite-one-tab-stop"
   ],
-  "application-components-alerts-alert-list-details-experimental--slotted-ack-buttons": [
+  "application-components-alerts-alert-list-details-experimental-iec-62923--cyclic-grouping": [
     "aria-allowed-role",
     "obc-composite-one-tab-stop"
   ],
-  "application-components-alerts-alert-list-details-experimental--small": [
+  "application-components-alerts-alert-list-details-experimental-iec-62923--grouped-alerts": [
+    "aria-allowed-role",
+    "obc-composite-one-tab-stop"
+  ],
+  "application-components-alerts-alert-list-details-experimental-iec-62923--one-item": [
     "aria-allowed-role"
+  ],
+  "application-components-alerts-alert-list-details-experimental-iec-62923--regular": [
+    "aria-allowed-role"
+  ],
+  "application-components-alerts-alert-list-details-experimental-iec-62923--selected-row": [
+    "aria-allowed-role",
+    "obc-composite-one-tab-stop"
+  ],
+  "application-components-alerts-alert-list-details-experimental-iec-62923--slotted-ack-buttons": [
+    "aria-allowed-role",
+    "obc-composite-one-tab-stop"
+  ],
+  "application-components-alerts-alert-list-details-experimental-iec-62923--small": [
+    "aria-allowed-role"
+  ],
+  "application-components-alerts-alert-list-details-experimental-isa-18-2--filter-modes": [
+    "aria-allowed-role"
+  ],
+  "application-components-alerts-alert-list-details-experimental-isa-18-2--level-categories": [
+    "aria-allowed-role"
+  ],
+  "application-components-alerts-alert-list-details-experimental-service-view--service-view": [
+    "aria-allowed-role"
+  ],
+  "application-components-alerts-alert-list-experimental-iec-62923--regular": [
+    "nested-interactive"
+  ],
+  "application-components-alerts-alert-list-experimental-iec-62923--unacked": [
+    "nested-interactive"
   ],
   "application-components-alerts-alert-menu--ack-all-after-scroll-test": [
     "nested-interactive"
@@ -67,6 +82,15 @@
     "nested-interactive"
   ],
   "application-components-alerts-alert-menu--regular": ["nested-interactive"],
+  "application-components-alerts-alert-menu-experimental-iec-62923--regular": [
+    "nested-interactive"
+  ],
+  "application-components-alerts-alert-menu-experimental-isa-18-2--automation": [
+    "nested-interactive"
+  ],
+  "application-components-alerts-alert-menu-experimental-isa-18-2--tabs": [
+    "nested-interactive"
+  ],
   "application-components-alerts-alert-menu-item--default": [
     "nested-interactive"
   ],
@@ -98,6 +122,12 @@
     "nested-interactive"
   ],
   "application-components-alerts-alert-menu-item--with-secondary-action": [
+    "nested-interactive"
+  ],
+  "application-components-alerts-alert-menu-item-experimental-iec-62923--regular": [
+    "nested-interactive"
+  ],
+  "application-components-alerts-alert-menu-item-experimental-isa-18-2--two-actions": [
     "nested-interactive"
   ],
   "application-components-alerts-diagnostic-menu--no-diagnostic-list-button": [
@@ -552,6 +582,19 @@
   "pages-alert-list-small--no-shelf": ["aria-allowed-role", "select-name"],
   "pages-alert-list-small--one-item": ["aria-allowed-role", "select-name"],
   "pages-alert-list-small--regular": ["aria-allowed-role", "select-name"],
+  "pages-alert-list-small-experimental-iec-62923--empty": ["select-name"],
+  "pages-alert-list-small-experimental-iec-62923--regular": [
+    "aria-allowed-role",
+    "select-name"
+  ],
+  "pages-alert-list-small-experimental-iec-62923--unacked": [
+    "aria-allowed-role",
+    "select-name"
+  ],
+  "pages-alert-list-small-experimental-isa-18-2--automation": [
+    "aria-allowed-role",
+    "select-name"
+  ],
   "ui-components-buttons-app-button--small-hide-label": ["button-name"],
   "ui-components-buttons-dropdown-button--disabled": ["select-name"],
   "ui-components-buttons-dropdown-button--disabled-with-icon": ["select-name"],
