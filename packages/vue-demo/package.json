@@ -59,7 +59,7 @@
     "jsdom": "^31.0.0",
     "npm-run-all2": "^9.0.4",
     "prettier": "^3.10.0",
-    "typescript": "^5.9.3",
+    "typescript": "^6.0.3",
     "vite": "^8.3.8",
     "vite-plugin-pwa": "^2.0.0",
     "vue-eslint-parser": "^10.4.2",
