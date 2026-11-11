@@ -16,7 +16,7 @@
   "license": "AGPL-3.0-only",
   "devDependencies": {
     "husky": "^9.1.7",
-    "lint-staged": "^17.5.1"
+    "lint-staged": "^17.6.0"
   },
   "lint-staged": {
     "packages/openbridge-webcomponents/src/**/*.ts": [
