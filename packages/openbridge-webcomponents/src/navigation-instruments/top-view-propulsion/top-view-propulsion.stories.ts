@@ -45,6 +45,22 @@ export const PowerAtSetpoint: Story = {
   },
 };
 
+export const PortStarboardPositive: Story = {
+  args: {
+    power: 70,
+    powerSetpoint: 70,
+    portStarboard: true,
+  },
+};
+
+export const PortStarboardNegative: Story = {
+  args: {
+    power: -70,
+    powerSetpoint: -70,
+    portStarboard: true,
+  },
+};
+
 export const PowerInput: Story = {
   args: {
     power: 62.5,
