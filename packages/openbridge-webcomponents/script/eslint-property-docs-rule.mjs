@@ -1,10 +1,11 @@
 const TAG_BLOCK_RE =
   /^@(slot|fires|event|ignore|stable|beta|experimental|deprecated|attr|attribute|csspart|cssprop|cssproperty|cssstate|tag|tagname)\b/;
 const PROP_LINE_RE = /^@(?:property|prop)\s+(\{[^}]*\}\s+)?([\w$]+)/;
-// A header tag that carries text after the name, which cem uses as the
-// member's description; a bare `@property name` gives it none.
+// A header tag that carries text after the name and its separator, which
+// cem uses as the member's description; `@property name` and
+// `@property name -` give it none.
 const PROP_DESCRIBED_RE =
-  /^@(?:property|prop)\s+(?:\{[^}]*\}\s+)?[\w$]+\s+(?:-\s+)?\S/;
+  /^@(?:property|prop)\s+(?:\{[^}]*\}\s+)?[\w$]+\s+(?:-\s+)?(?!-\s*$)\S/;
 const AVAIL_LINE_RE = /^@availableWhen\s+([\w$]+)\s+(.+)$/;
 const ANY_TAG_RE = /^@(\w+)(?:\s+(.*))?$/;
 const MARKDOWN_RE = /^(\s*[-*+] |\s*\d+\. |\s*\||#|```)/;

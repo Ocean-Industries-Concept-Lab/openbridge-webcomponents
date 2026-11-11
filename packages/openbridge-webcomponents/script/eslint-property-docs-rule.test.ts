@@ -164,10 +164,19 @@ describe('property-docs-in-class-jsdoc — reports', () => {
           errors: [{messageId: 'missingHeader'}],
           output: null,
         },
-        // A bare header tag names the member but gives it no description.
+        // A bare header tag, or one with only the separator, names the member
+        // but gives it no description.
         {
           code: cls(
             ' * Thing.\n * @property value\n * @stable',
+            '  /** @deprecated use other */\n  @property({type: Number}) value = 0;'
+          ),
+          errors: [{messageId: 'missingHeader'}],
+          output: null,
+        },
+        {
+          code: cls(
+            ' * Thing.\n * @property value -\n * @stable',
             '  /** @deprecated use other */\n  @property({type: Number}) value = 0;'
           ),
           errors: [{messageId: 'missingHeader'}],
