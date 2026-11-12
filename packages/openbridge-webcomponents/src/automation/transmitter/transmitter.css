@@ -6,7 +6,7 @@
   display: block;
 }
 
-.transmitter {
+.transmitter:not(.no-line) {
   @mixin transmitter-leader;
 }
 
@@ -25,6 +25,15 @@
 /* Top orientation places the id-tag above the chip (leader line below). */
 .orientation-top .content {
   flex-direction: column-reverse;
+}
+
+/* Without a line, left/right put the id-tag beside the chip on that side. */
+.no-line.orientation-left .content {
+  flex-direction: row-reverse;
+}
+
+.no-line.orientation-right .content {
+  flex-direction: row;
 }
 
 .body {
