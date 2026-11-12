@@ -1,0 +1,90 @@
+import {Meta} from '@storybook/addon-docs/blocks';
+import {
+  isStable,
+  NORVAR_STORYBOOK_STABLE_URL,
+  NORVAR_STORYBOOK_DEVELOP_URL,
+  OPENBRIDGE_STORYBOOK_URL,
+} from '../.storybook/channels.js';
+
+<Meta title="Introduction" />
+
+# NORVAR components for OpenBridge
+
+<div
+  style={{
+    padding: '16px',
+    backgroundColor: 'rgba(245, 124, 0, 0.1)',
+    border: '1px solid rgb(245, 124, 0)',
+    borderRadius: '4px',
+    marginBottom: '24px',
+    color: 'inherit',
+  }}
+>
+  <strong>Not part of the OpenBridge standard.</strong> The components in this
+  package draw the symbols of the NORVAR standard. They are built on OpenBridge
+  Web Components and follow its themes and states, but OpenBridge does not
+  define, review or maintain the symbols.
+</div>
+
+`@oicl/openbridge-norvar` holds web components for process diagrams of water
+and wastewater systems that have to follow the NORVAR standard: **NORVAR
+report 153/2007 from Norsk Vann BA**. The report defines the symbols; this
+package draws them as interactive components with the OpenBridge alert,
+state and readout behaviour.
+
+The components have no `obc-` prefix, so a page shows at a glance which
+elements come from OpenBridge and which from NORVAR.
+
+## The NORVAR standard
+
+NORVAR report 153/2007 is published by [Norsk Vann](https://www.norskvann.no),
+the Norwegian water industry association. Use the report as the reference for
+what each symbol means and when to use it. Where this package and the report
+disagree, the report is right.
+
+## OpenBridge Web Components
+
+The components extend the automation button of
+[OpenBridge Web Components](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents),
+which this package depends on. Everything else, from the palette and the
+themes to the valves, pumps and lines of the OpenBridge standard, lives there:
+
+- **<a href={OPENBRIDGE_STORYBOOK_URL}>OpenBridge Web Components Storybook</a>**
+  — the main library.
+- [openbridge.no](https://www.openbridge.no/) — the OpenBridge Design System.
+
+## Components
+
+| Element                     | What it draws                                                                   |
+| --------------------------- | ------------------------------------------------------------------------------- |
+| `norvar-valve`              | On/off valve with the actuator of the valve type                                |
+| `norvar-water-station`      | Drinking water facility, square                                                 |
+| `norvar-wastewater-station` | Wastewater facility, round                                                      |
+| `norvar-map-symbol`         | Culvert, precipitation station, watercourse metering station or discharge point |
+
+## Installation
+
+```bash
+npm install @oicl/openbridge-norvar @oicl/openbridge-webcomponents
+```
+
+```ts
+import '@oicl/openbridge-webcomponents/dist/openbridge.css';
+import '@oicl/openbridge-norvar/dist/norvar-valve/norvar-valve.js';
+```
+
+```html
+<norvar-valve open tag="#0012"></norvar-valve>
+```
+
+The package is not published to npm yet.
+
+## Release channels
+
+The package is released together with OpenBridge Web Components, with the
+same version number.
+
+- **<a href={NORVAR_STORYBOOK_STABLE_URL}>Stable Storybook</a>**{' '}
+  {isStable && <em>(You are here)</em>} — built from the `stable` branch.
+- **<a href={NORVAR_STORYBOOK_DEVELOP_URL}>Develop Storybook</a>**{' '}
+  {!isStable && <em>(You are here)</em>} — built from the `develop` branch.

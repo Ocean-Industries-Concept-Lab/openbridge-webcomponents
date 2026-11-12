@@ -1,0 +1,64 @@
+{
+  "name": "@oicl/openbridge-norvar",
+  "version": "0.0.0-development",
+  "description": "Web components drawn after the NORVAR symbol standard, built on OpenBridge Web Components. Not part of the OpenBridge standard.",
+  "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents.git",
+    "directory": "packages/openbridge-norvar"
+  },
+  "homepage": "https://openbridge-norvar-storybook.web.app",
+  "license": "AGPL-3.0-only",
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "check": "npm run typecheck && npm run format:check && npm run test:browser -- --run",
+    "typecheck": "tsc --noEmit",
+    "format": "prettier \"**/*.{json,md,mdx,ts,tsx}\" --write",
+    "format:check": "prettier \"**/*.{json,md,mdx,ts,tsx}\" --check",
+    "test:browser": "vitest --config=vitest.browser.config.ts",
+    "analyze": "cem analyze",
+    "storybook": "npm run analyze && storybook dev -p 6008 --no-open",
+    "build-storybook": "npm run analyze && storybook build",
+    "test-storybook": "npm run analyze && vitest --project=storybook",
+    "test-storybook:watch": "vitest --project=storybook --watch",
+    "prepack": "npm run build && npm run analyze",
+    "clean": "rm -rf node_modules dist storybook-static custom-elements.json"
+  },
+  "dependencies": {
+    "@oicl/openbridge-webcomponents": "*",
+    "lit": "^3.3.3"
+  },
+  "devDependencies": {
+    "@custom-elements-manifest/analyzer": "^0.11.0",
+    "@storybook/addon-docs": "10.6.0",
+    "@storybook/addon-themes": "10.6.0",
+    "@storybook/addon-vitest": "10.6.0",
+    "@storybook/web-components-vite": "10.6.0",
+    "@types/node": "^26.6.1",
+    "@vitest/browser-playwright": "^4.1.11",
+    "playwright": "^1.63.0",
+    "prettier": "^3.9.8",
+    "storybook": "10.6.0",
+    "storybook-addon-vis": "3.0.1",
+    "typescript": "^5.9.3",
+    "vite": "^8.3.0",
+    "vitest": "^4.1.11"
+  },
+  "types": "./dist/index.d.ts",
+  "main": "./dist/index.js",
+  "files": [
+    "dist",
+    "custom-elements.json",
+    "LICENSE.txt",
+    "LICENSE-AGPL.txt",
+    "LICENSE-APACHE.txt"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "customElements": "custom-elements.json",
+  "overrides": {
+    "storybook": "$storybook"
+  }
+}

@@ -10,14 +10,14 @@
 
 ## 1. Repository Overview
 
-| Item              | Value                                                                                                |
-| ----------------- | ---------------------------------------------------------------------------------------------------- |
-| Name              | **Openbridge Web Components**                                                                        |
-| Repo              | `Ocean-Industries-Concept-Lab/openbridge-webcomponents`                                              |
-| License           | AGPL-3.0-only, each version additionally under Apache-2.0 from its change date (`LICENSE.txt`)       |
-| Runtime           | Lit 3 + TypeScript (web components)                                                                  |
-| Package manager   | npm (workspaces)                                                                                     |
-| Monorepo packages | `openbridge-webcomponents` (core), generated wrappers, `react-demo`, `vue-demo`, `connector-diagram` |
+| Item              | Value                                                                                                                     |
+| ----------------- | ------------------------------------------------------------------------------------------------------------------------- |
+| Name              | **Openbridge Web Components**                                                                                             |
+| Repo              | `Ocean-Industries-Concept-Lab/openbridge-webcomponents`                                                                   |
+| License           | AGPL-3.0-only, each version additionally under Apache-2.0 from its change date (`LICENSE.txt`)                            |
+| Runtime           | Lit 3 + TypeScript (web components)                                                                                       |
+| Package manager   | npm (workspaces)                                                                                                          |
+| Monorepo packages | `openbridge-webcomponents` (core), generated wrappers, `openbridge-norvar`, `react-demo`, `vue-demo`, `connector-diagram` |
 
 The library provides maritime navigation and automation UI components.
 Framework wrappers are **auto-generated** — never edit them directly.
@@ -159,6 +159,7 @@ The table below is generated too. Edit `docs/agents/*.md`, never this block.
 | [integration-systems](docs/agents/integration-systems.md) | `packages/openbridge-webcomponents/src/integration-systems/**` | Integration bar, fleet and vessel selection components built on the shared integration-button primitive |
 | [jsdoc](docs/agents/jsdoc.md) | `packages/openbridge-webcomponents/src/**/*.ts`<br>`!packages/openbridge-webcomponents/src/{icons,generated,manual-icon}/**`<br>`!packages/openbridge-webcomponents/src/**/{*.stories.ts,*.spec.ts}` | JSDoc template, slot/event tags, lifecycle tags, and the three documentation patterns |
 | [line-area-charts](docs/agents/line-area-charts.md) | `packages/openbridge-webcomponents/src/building-blocks/chart-line/**`<br>`packages/openbridge-webcomponents/src/bars-graphs/{line-graph,area-graph}/**`<br>`packages/openbridge-webcomponents/src/navigation-instruments/{gauge-trend,depth}/**` | Line/area charts, the composite gauge-trend and the depth instrument built on it |
+| [norvar](docs/agents/norvar.md) | `packages/openbridge-norvar/**` | The NORVAR package — components drawn after NORVAR report 153/2007, outside the OpenBridge standard, built on the core's dist |
 | [pages](docs/agents/pages.md) | `packages/openbridge-webcomponents/src/pages/**` | Full-page composite examples that assemble many components into one screen |
 | [readout-components](docs/agents/readout-components.md) | `packages/openbridge-webcomponents/src/components/textbox/**`<br>`packages/openbridge-webcomponents/src/building-blocks/readout-block/**`<br>`packages/openbridge-webcomponents/src/navigation-instruments/{readout-list-item,readout-list}/**`<br>`packages/openbridge-webcomponents/src/navigation-instruments/readout/{readout.ts,readout-formatters.ts,readout-shared.ts}` | Readout composition stack (textbox → block → list-item → list) and its value/format contracts |
 | [setpoint](docs/agents/setpoint.md) | `packages/openbridge-webcomponents/src/svghelpers/{setpoint.ts,setpoint-mixin.ts,setpoint-bundle.ts}`<br>`packages/openbridge-webcomponents/src/building-blocks/setpoint/**` | Setpoint design layer, mixin/bundle, confirm animation |
