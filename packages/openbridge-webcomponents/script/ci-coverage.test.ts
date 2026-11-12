@@ -42,6 +42,7 @@ const NOT_IN_CI: Record<string, string> = {
   'connector-diagram:test-storybook:watch': 'watch mode',
   'connector-diagram:build':
     'the package is not published; typecheck runs the same compiler',
+  'openbridge-norvar:test-storybook:watch': 'watch mode',
   'connector-diagram:build-storybook':
     'test-storybook renders every story; the static build is not published',
 };

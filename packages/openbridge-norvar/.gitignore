@@ -1,0 +1,12 @@
+node_modules/
+dist/
+storybook-static/
+custom-elements.json
+__vis__/**/__results__/
+__vis__/**/__diffs__/
+__vis__/local
+src/**/__screenshots__/
+.vitest-attachments/
+.firebase
+.DS_Store
+*.log

@@ -1,5 +1,5 @@
-# Deploys Storybook and the vue demo to the live sites: develop to
-# openbridge-next-*, stable to openbridge-*. The firebase.json files name the
+# Deploys Storybook, the NORVAR Storybook and the vue demo to the live sites:
+# develop to openbridge-next-*, stable to openbridge-*. The firebase.json files name the
 # next sites; a stable deploy rewrites the site before deploying.
 #
 # It runs after the Release workflow rather than on the push, and checks out
@@ -124,3 +124,53 @@ jobs:
           channelId: live
           projectId: openbridge-demo
           entrypoint: "packages/openbridge-webcomponents"
+  build_and_deploy_norvar_storybook:
+    if: >-
+      (github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success') &&
+      contains(fromJSON('["develop", "stable"]'), github.event.workflow_run.head_branch || github.ref_name)
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+      checks: write
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: ${{ env.BRANCH }}
+
+      - name: Set up Node
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      # The NORVAR package imports the core's build output.
+      - name: Build openbridge-webcomponents
+        run: cd packages/openbridge-webcomponents && npm run build:translations && npm run build:ts
+
+      - name: Build NORVAR storybook
+        run: cd packages/openbridge-norvar && npm run build-storybook
+        env:
+          VITE_STORYBOOK_BRANCH: ${{ env.BRANCH }}
+
+      - name: Point firebase.json at the stable site
+        if: env.BRANCH == 'stable'
+        working-directory: packages/openbridge-norvar
+        run: jq '.hosting.site = "openbridge-norvar-storybook"' firebase.json > firebase.tmp.json && mv firebase.tmp.json firebase.json
+
+      # Same pin as the Storybook deploy above (Node 24.17.0 keep-alive bug).
+      - name: Pin Node for Firebase deploy
+        uses: actions/setup-node@v6
+        with:
+          node-version: "24.18.0"
+
+      - uses: FirebaseExtended/action-hosting-deploy@v0
+        with:
+          repoToken: "${{ secrets.GITHUB_TOKEN }}"
+          firebaseServiceAccount: "${{ secrets.FIREBASE_SERVICE_ACCOUNT_OPENBRIDGE_DEMO }}"
+          channelId: live
+          projectId: openbridge-demo
+          entrypoint: "packages/openbridge-norvar"

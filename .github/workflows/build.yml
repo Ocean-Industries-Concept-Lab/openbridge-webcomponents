@@ -98,6 +98,45 @@ jobs:
         run: npm run test:rules
         working-directory: packages/openbridge-webcomponents
 
+  # The NORVAR package imports the core's build output, so the core is built
+  # before the package is typechecked or tested.
+  openbridge-norvar:
+    container:
+      image: mcr.microsoft.com/playwright:v1.63.0-noble
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Set up Node
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build openbridge-webcomponents
+        run: npm run build:translations && npm run build:ts
+        working-directory: packages/openbridge-webcomponents
+
+      - name: Typecheck openbridge-norvar
+        run: npm run typecheck
+        working-directory: packages/openbridge-norvar
+
+      - name: Check formatting openbridge-norvar
+        run: npm run format:check
+        working-directory: packages/openbridge-norvar
+
+      - name: Run unit tests openbridge-norvar
+        run: npm run test:browser -- --run
+        working-directory: packages/openbridge-norvar
+
+      - name: Build openbridge-norvar
+        run: npm run build
+        working-directory: packages/openbridge-norvar
+
   build:
     runs-on: ubuntu-latest
     steps:
