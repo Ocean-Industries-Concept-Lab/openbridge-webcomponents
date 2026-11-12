@@ -171,9 +171,11 @@ export const WithControls: Story = {
             newItem.title = 'New alert';
             newItem.description = 'New alert description';
             newItem.time = '09:18:00';
-            newItem.innerHTML = `
-          <obc-alert-icon slot="alert-icon" type="alarm" active></obc-alert-icon>
-        `;
+            const icon = document.createElement('obc-alert-icon');
+            icon.slot = 'alert-icon';
+            icon.setAttribute('type', 'alarm');
+            icon.toggleAttribute('active', true);
+            newItem.append(icon);
             newItem.addEventListener('ack-click', () => {
               list.removeChild(newItem);
             });

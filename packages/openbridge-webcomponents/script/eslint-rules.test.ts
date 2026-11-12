@@ -484,3 +484,65 @@ describe('openbridge/no-event-like-property-name', () => {
     );
   });
 });
+
+// Runs the real lint:eslint config, so the guard cannot be dropped from it
+// unnoticed.
+describe('markup sinks, through lint:eslint', () => {
+  const packageDir = path.resolve(
+    path.dirname(fileURLToPath(import.meta.url)),
+    '..'
+  );
+  const eslint = new ESLint({
+    cwd: packageDir,
+    overrideConfigFile: path.join(packageDir, 'eslint.config.mjs'),
+  });
+  const sinks = async (code: string, file = 'src/probe.ts') => {
+    const [result] = await eslint.lintText(code, {
+      filePath: path.join(packageDir, file),
+    });
+    return result.messages
+      .map((m) => m.ruleId)
+      .filter((id) => id?.startsWith('no-restricted-'));
+  };
+  const write = (sink: string) =>
+    `export const f = (el: Element, s: string) => { ${sink}; };\n`;
+
+  it('rejects an HTML string written to an element', async () => {
+    for (const sink of [
+      'el.innerHTML = s',
+      'el.outerHTML = s',
+      "el.insertAdjacentHTML('beforeend', s)",
+    ]) {
+      expect(await sinks(write(sink)), sink).toEqual(['no-restricted-syntax']);
+    }
+  });
+
+  it("rejects Lit's unsafe directives and unsafeStatic", async () => {
+    for (const name of ['unsafe-html', 'unsafe-svg']) {
+      const code = `import * as d from 'lit/directives/${name}.js';\nexport {d};\n`;
+      expect(await sinks(code), name).toEqual(['no-restricted-imports']);
+    }
+    expect(
+      await sinks(
+        "import {unsafeStatic} from 'lit/static-html.js';\nexport {unsafeStatic};\n"
+      )
+    ).toEqual(['no-restricted-imports']);
+    expect(
+      await sinks(
+        "import {literal} from 'lit/static-html.js';\nexport {literal};\n"
+      )
+    ).toEqual([]);
+  });
+
+  it('allows reading markup, and writing it in specs only', async () => {
+    expect(
+      await sinks('export const f = (el: Element) => el.innerHTML;\n')
+    ).toEqual([]);
+    expect(await sinks(write('el.innerHTML = s'), 'src/probe.spec.ts')).toEqual(
+      []
+    );
+    expect(
+      await sinks(write('el.innerHTML = s'), 'src/probe.stories.ts')
+    ).toEqual(['no-restricted-syntax']);
+  });
+});

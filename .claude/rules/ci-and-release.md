@@ -62,6 +62,28 @@ wrappers, `openbridge-webcomponents-ng/dist`, and the full-bundle directory. The
 wrapper versions are synced first by `scripts/prepare-wrappers.js` (see below).
 `packages/connector-diagram` is not among them: it is not in `.releaserc.json`.
 
+## Security releases
+
+A vulnerability is fixed in private and released on both lines at once.
+`SECURITY.md` is the public half of this.
+
+- Nothing public before the release: no issue, no pull request, no branch on
+  this repository, no commit subject that names the weakness. The fix stays
+  on a local branch until a maintainer opens a draft security advisory and
+  its temporary private fork.
+- One pull request per release line in that fork, to `stable` and to
+  `develop`, each titled with the `fix:` subject semantic-release reads.
+  GitHub merges every open pull request of the fork together, from the
+  advisory, and accepts only one that targets `develop`.
+- No workflow runs in the fork and the rulesets do not apply. Run
+  `npm run check` and the touched snapshot filters locally on both branches;
+  nothing else checks the fix before it is released.
+- Keep the `stable` pull request to the fix. Lint rules, docs and anything
+  else that goes with it ride on the `develop` one.
+- Publish the advisory once npm shows the patched version of all six packages
+  on both dist-tags. The core and the full bundle carry component code, the
+  four wrappers only depend on the core.
+
 ## The nine workflows
 
 | Workflow                                   | Trigger                                     | Purpose                                                                                                                                    |

@@ -1,5 +1,5 @@
 import type {Meta, StoryObj} from '@storybook/web-components-vite';
-import {html} from 'lit';
+import {html, render} from 'lit';
 import './gauge-trend.js';
 import {AdviceType} from '../watch/advice.js';
 import {
@@ -1040,43 +1040,48 @@ export const RealtimeShifting: Story = {
   render: (_args) => {
     // Create wrapper container
     const wrapper = document.createElement('div');
-    wrapper.innerHTML = `
-      <style>
-        .realtime-wrapper {
-          display: flex;
-          flex-direction: row;
-          gap: 24px;
-          padding: 16px;
-          flex-wrap: wrap;
-        }
-        .realtime-column {
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-        }
-        .realtime-label {
-          font-family: var(--font-family-main);
-          font-size: 12px;
-          color: var(--instrument-frame-tertiary-color);
-          margin-bottom: 8px;
-          text-align: center;
-        }
-      </style>
-      <div class="realtime-wrapper">
-        <div class="realtime-column">
-          <div class="realtime-label">With bar (enhanced)</div>
-          <div class="gauge-container-1"></div>
+    render(
+      html`
+        <style>
+          .realtime-wrapper {
+            display: flex;
+            flex-direction: row;
+            gap: 24px;
+            padding: 16px;
+            flex-wrap: wrap;
+          }
+          .realtime-column {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+          }
+          .realtime-label {
+            font-family: var(--font-family-main);
+            font-size: 12px;
+            color: var(--instrument-frame-tertiary-color);
+            margin-bottom: 8px;
+            text-align: center;
+          }
+        </style>
+        <div class="realtime-wrapper">
+          <div class="realtime-column">
+            <div class="realtime-label">With bar (enhanced)</div>
+            <div class="gauge-container-1"></div>
+          </div>
+          <div class="realtime-column">
+            <div class="realtime-label">Without bar (scale only + dot)</div>
+            <div class="gauge-container-2"></div>
+          </div>
+          <div class="realtime-column">
+            <div class="realtime-label">
+              Condensed scale (labels only + dot)
+            </div>
+            <div class="gauge-container-3"></div>
+          </div>
         </div>
-        <div class="realtime-column">
-          <div class="realtime-label">Without bar (scale only + dot)</div>
-          <div class="gauge-container-2"></div>
-        </div>
-        <div class="realtime-column">
-          <div class="realtime-label">Condensed scale (labels only + dot)</div>
-          <div class="gauge-container-3"></div>
-        </div>
-      </div>
-    `;
+      `,
+      wrapper
+    );
 
     // Create three gauge elements
     const gauge1 = document.createElement('obc-gauge-trend');

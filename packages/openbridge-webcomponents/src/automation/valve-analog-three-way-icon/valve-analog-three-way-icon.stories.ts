@@ -1,8 +1,8 @@
 import type {Meta, StoryObj} from '@storybook/web-components-vite';
 import {html, type LitElement} from 'lit';
-import {unsafeHTML} from 'lit/directives/unsafe-html.js';
 import {ObcValveAnalogThreeWayIcon} from './valve-analog-three-way-icon.js';
 import './valve-analog-three-way-icon.js';
+import {cssColorIcon} from '../../storybook-util.js';
 import {ThreewayValveOrientation} from '../threeway-valve-shared/threeway-valve-shared.js';
 
 import '../../icons/icon-threeway-analog-closed.js';
@@ -148,9 +148,7 @@ export const MatchesIcons: Story = {
       ${columns.map(
         ({icon}) =>
           html`<div style="width: 48px; height: 48px">
-            ${unsafeHTML(
-              `<obi-threeway-analog-${icon} usecsscolor></obi-threeway-analog-${icon}>`
-            )}
+            ${cssColorIcon(`obi-threeway-analog-${icon}`)}
           </div>`
       )}
       ${columns.map(
