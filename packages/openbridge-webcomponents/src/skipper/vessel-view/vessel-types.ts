@@ -1,7 +1,7 @@
 import {nothing, svg, html, type TemplateResult} from 'lit';
 import {Colors} from '../interfaces.js';
 // import {VesselTypes, ViewType, SensorView, SensorType} from './vessel.js';
-import {VesselTypes, SensorView, SensorType} from './vessel.js';
+import {VesselTypes, SensorView, SensorType, SystemType} from './vessel.js';
 import {sensorTypeSelector} from './sensors-types.js';
 
 type VesselTypeData = {
@@ -57,7 +57,7 @@ type getSideViewParams = {
     textX: number;
   }; //!!!
 
-  toggleSLAndDLSensor: boolean;
+  systemType: SystemType;
   textOffset: number; //!!!
   ccrpX: number; //!!!
 
@@ -72,7 +72,7 @@ type getTopDownViewParams = {
   sensorX: number;
   ccrpX: number;
   sensorHeightOverKeel: number;
-  toggleSLAndDLSensor: boolean;
+  systemType: SystemType;
   vesselLengthComputed: number;
 
   sensorYTopView: number;
@@ -351,7 +351,7 @@ function sternCCRPBowDimLine(sternBowDimParams: getSideViewParams) {
 
 function keelArrowLinesVertical(
   upArrowDimParams: upArrowDimParams,
-  toggleSLAndDLSensor: boolean
+  systemType: SystemType
 ) {
   const upArrowDim = upArrowDimParams;
 
@@ -359,7 +359,7 @@ function keelArrowLinesVertical(
       <svg xmlns="http://www.w3.org/2000/svg" width="6" height="174" viewBox="0 0 6 174" fill="none">
         <g id="Keel arrows">
           ${
-            !toggleSLAndDLSensor
+            systemType === SystemType.SL
               ? svg`
           <rect x="0.5" y="0.5" width="5" height="173"/>
           <path id="up" d="
@@ -401,7 +401,7 @@ function sensorHeights(sensorHeightsParams: getSideViewParams) {
       <g id="sensor-heights">
         <rect x="0.5" y="0.5" width="55" height="173"/>
         ${
-          !sensorHeightsParams.toggleSLAndDLSensor
+          sensorHeightsParams.systemType === SystemType.SL
             ? svg`
           <g id="top">
             <text id="A: 14.7" fill="${Colors.elementActiveColor}" style="white-space: pre" xml:space="preserve" font-family="Noto Sans" font-size="12" letter-spacing="0px"><tspan x="1" y="${sensorLabelY - 20}">A: ${sensorHeightsParams.sensorHeightOverKeel} m</tspan></text>
@@ -415,7 +415,7 @@ function sensorHeights(sensorHeightsParams: getSideViewParams) {
         </g>
         <g id="below">
          ${
-           sensorHeightsParams.toggleSLAndDLSensor
+           sensorHeightsParams.systemType === SystemType.DL
              ? svg`
             <text id="H: -1.4 m" fill="${Colors.elementActiveColor}" style="white-space: pre" xml:space="preserve" font-family="Noto Sans" font-size="12" letter-spacing="0px"><tspan x="1" y="157.656">A: ${sensorHeightsParams.sensorBelowKeel} m</tspan></text>
           `
@@ -548,7 +548,7 @@ export function getSideView(
     <div class="draft-line-horizontal">${draftLine()}</div>
     <div class="keel-line-horizontal">${keelLineHorizontal()}</div>
     ${VESSEL_TYPE.side}
-    ${!sideViewParams.toggleSLAndDLSensor
+    ${sideViewParams.systemType === SystemType.SL
       ? html` <div
           class="mast-line"
           style="left:${sideViewParams.sensorX - 2}px;
@@ -562,7 +562,7 @@ export function getSideView(
       ${verticalCCRPLine()}
     </div>
     <div class="keel-arrow-lines">
-      ${keelArrowLinesVertical(upArrowDim, sideViewParams.toggleSLAndDLSensor)}
+      ${keelArrowLinesVertical(upArrowDim, sideViewParams.systemType)}
     </div>
     ${toggleSensorA
       ? html` <div

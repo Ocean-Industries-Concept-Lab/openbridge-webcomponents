@@ -1,6 +1,12 @@
 import type {Meta, StoryObj} from '@storybook/web-components-vite';
 import {widthDecorator} from '../../storybook-util.js';
-import {Vessel, VesselTypes, ViewType, SensorType} from './vessel.js';
+import {
+  Vessel,
+  VesselTypes,
+  ViewType,
+  SensorType,
+  SystemType,
+} from './vessel.js';
 import './vessel.js';
 
 const meta: Meta<typeof Vessel> = {
@@ -30,6 +36,10 @@ const meta: Meta<typeof Vessel> = {
         VesselTypes.PSV,
         VesselTypes.CRUISE,
       ],
+      control: {type: 'select'},
+    },
+    systemType: {
+      options: [SystemType.DL, SystemType.SL],
       control: {type: 'select'},
     },
     sensorType: {
@@ -70,11 +80,11 @@ export const Vessel_tanker: Story = {
     portToCCRP: 15,
     starboardToCCRP: 16,
     sensorPortStarboardOffset: 0,
-    vesselType: 'TANKER',
-    sensorType: 'ECHO',
-    viewMode: 'BOTH',
+    vesselType: VesselTypes.TANKER,
+    sensorType: SensorType.EML,
+    viewMode: ViewType.BOTH,
     toggleSensorA: true,
-    toggleSLAndDLSensor: false,
+    systemType: SystemType.DL,
   },
 };
 

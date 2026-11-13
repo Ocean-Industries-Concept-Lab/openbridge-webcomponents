@@ -36,6 +36,11 @@ export enum SensorType {
   DOPPLER = 'DOPPLER',
 }
 
+export enum SystemType {
+  SL = 'SL',
+  DL = 'DL',
+}
+
 @customElement('ob-vessel-view')
 export class Vessel extends LitElement {
   @property({type: Number}) vesselWidth: number = 30;
@@ -52,7 +57,7 @@ export class Vessel extends LitElement {
   @property({type: String}) viewMode: ViewType = ViewType.TOP;
   @property({type: Number}) sensorPortStarboardOffset: number = 0;
   @property({type: Boolean}) toggleSensorA: boolean = false;
-  @property({type: Boolean}) toggleSLAndDLSensor: boolean = false;
+  @property({type: String}) systemType: SystemType = SystemType.DL;
   //values for SIDE_VIEW
   private readonly MIN_X = 12.1333;
   private readonly MAX_X = 247.867;
@@ -291,7 +296,7 @@ export class Vessel extends LitElement {
     this.sensorBelowKeel = this.sensorHeightOverKeel;
 
     this.sensorBelowKeel =
-      this.toggleSLAndDLSensor && this.sensorHeightOverKeel <= 0
+      this.systemType === SystemType.DL && this.sensorHeightOverKeel <= 0
         ? (this.sensorBelowKeel = this.sensorHeightOverKeel)
         : (this.sensorBelowKeel = 0);
 
@@ -304,14 +309,15 @@ export class Vessel extends LitElement {
 
     // ✅ map directly into dimension scale
 
-    let sensorY = this.toggleSLAndDLSensor
-      ? vesselTypeData.sideBottomY // ✅ DL mode → glued to keel
-      : dimBottomY - ratio * dimHeightPx;
+    let sensorY =
+      this.systemType === SystemType.DL
+        ? vesselTypeData.sideBottomY // ✅ DL mode → glued to keel
+        : dimBottomY - ratio * dimHeightPx;
     // console.log(vesselTypeData.)
     //console.log(dimBottomY, 'DL mode is off: ', this.toggleSLAndDLSensor)
     //sensor Y top limits
     sensorY = Math.max(this.SENSOR_TOP_LIMIT, sensorY);
-    if (!this.toggleSLAndDLSensor) {
+    if (this.systemType === SystemType.SL) {
       sensorY = Math.min(dimBottomY, sensorY);
     }
 
@@ -323,7 +329,7 @@ export class Vessel extends LitElement {
     const dimEndX = Math.max(sensorX, ccrpX);
     let DIM_Y: number;
 
-    if (this.toggleSLAndDLSensor) {
+    if (this.systemType === SystemType.SL) {
       // halfway between mid-height and bottom dim line
       const midY = (this.DIM_TOP_Y + this.VESSEL_BOTTOM_Y) / 2;
 
@@ -391,7 +397,7 @@ export class Vessel extends LitElement {
         bowLine,
         sensorToCCRP: this.sensorToCCRP,
         dim,
-        toggleSLAndDLSensor: this.toggleSLAndDLSensor,
+        systemType: this.systemType,
         textOffset,
         ccrpX,
         vesselLengthComputed: this.vesselLengthComputed,
@@ -423,7 +429,7 @@ export class Vessel extends LitElement {
         sensorX,
         ccrpX,
         sensorHeightOverKeel: this.sensorHeightOverKeel,
-        toggleSLAndDLSensor: this.toggleSLAndDLSensor,
+        systemType: this.systemType,
         vesselLengthComputed: this.vesselLengthComputed,
         sensorYTopView,
         sensorPortStarboardOffset: this.sensorPortStarboardOffset,
