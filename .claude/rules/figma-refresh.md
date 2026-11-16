@@ -91,8 +91,8 @@ tokens that do not resolve or fall back to hex, and the tripwires fire.
 5. `npm run lint:variables` names every consumer of a removed token. Follow
    renames in the consuming CSS as a third commit; a rename with an
    identical value changes no rendering, so say so in the commit.
-6. `fonts.css`: paste the `Font exports` output wholesale, then
-   `npm run lint:mixins`. A mixin the plugin no longer emits fails loudly
+6. `fonts.css`: paste the `Font exports` output wholesale under the file's
+   header comment, then `npm run lint:mixins`. A mixin the plugin no longer emits fails loudly
    there instead of expanding to nothing. Hand-curated mixins live in
    `src/mixins/font-extras.css`, never in `fonts.css`.
 7. Run the full snapshot suite once without `--update`. A palette export
@@ -229,15 +229,10 @@ the semantic diff (renamed, removed, changed per block) belong there too.
     The dusk, night and bright primitives export that way (`WCAG`,
     `WCAG Amber`, `WCAG AAA`); whether those are the intended modes is open
     with the design team.
-- The `Font exports` codegen names every instrument and automation mixin
-  `font-instrument-deprecated-*` / `font-automation-deprecated-*`, because
-  the design team moved those text styles under a Deprecated group; the
-  values are unchanged. `fonts.css` keeps the names the components read
-  until the design team names their replacements: when an export changes
-  anything else, paste it and fold those names back by hand.
 - The plugin shortens an `On-` name to `--on-…` while only one variable
   claims it: `Color/Automation/Symbol/On-line-color` exports as
   `--on-line-color`, next to `--automation-symbol-off-line-color`. The icon
-  map points at the short name, so a second family adding `On-line-color`
-  renames it and the icons that bind it fall back to hex.
+  map and the valve handle (`valve-handle.ts`) point at the short name, so a
+  second family adding `On-line-color` renames it and the icons that bind it
+  fall back to hex.
 - Token typos in Figma (#985).

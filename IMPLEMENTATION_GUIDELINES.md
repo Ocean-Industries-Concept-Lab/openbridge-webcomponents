@@ -470,36 +470,36 @@ For buttons, labels, body text, and headings:
 | `@mixin font-subtitle`        | Subtitles                  |
 | `@mixin font-title`           | Titles                     |
 
-#### Instrument fonts
+#### General fonts
 
-For numeric readouts, units, and scale labels in gauges and instruments:
+For values, units, labels and readouts in instruments, automation symbols and data components: the design file's General ramp, each size in regular, semibold and bold (`@mixin font-general-<size>-<weight>`).
 
-| Mixin                                           | Typical use                    |
-| ----------------------------------------------- | ------------------------------ |
-| `@mixin font-instrument-value-small-active`     | Small active numeric value     |
-| `@mixin font-instrument-value-small-neutral`    | Small neutral numeric value    |
-| `@mixin font-instrument-value-regular-active`   | Regular active numeric value   |
-| `@mixin font-instrument-value-regular-neutral`  | Regular neutral numeric value  |
-| `@mixin font-instrument-value-m-active`         | Medium active numeric value    |
-| `@mixin font-instrument-value-m-neutral`        | Medium neutral numeric value   |
-| `@mixin font-instrument-value-enhanced-active`  | Enhanced active numeric value  |
-| `@mixin font-instrument-value-enhanced-neutral` | Enhanced neutral numeric value |
-| `@mixin font-instrument-label`                  | Instrument labels and units    |
-| `@mixin font-instrument-unit`                   | Unit suffixes (%, °, kn)       |
-| `@mixin font-instrument-tick-mark`              | Scale tick labels              |
-| `@mixin font-instrument-tick-mark-active`       | Active scale tick labels       |
+| Size | Font size / line height at `regular` |
+| ---- | ------------------------------------ |
+| `xs` | 11.5 / 16 px                         |
+| `s`  | 16.5 / 20 px                         |
+| `m`  | 23 / 24 px                           |
+| `l`  | 34 / 32 px                           |
+| `xl` | 45.5 / 40 px                         |
 
-#### Automation fonts
+The design file trims every General style to the cap height. The mixins do not; `obc-textbox` trims where the readout family needs it.
 
-For automation readouts and state labels:
+The instrument and automation styles are deprecated in the design file. `fonts.css` still carries them as `font-instrument-deprecated-*` and `font-automation-deprecated-*` because the export does, and nothing in the library uses them. Their replacements, as the design file maps them (node `53209:38919`):
 
-| Mixin                                      | Typical use                      |
-| ------------------------------------------ | -------------------------------- |
-| `@mixin font-automation-value-small`       | Small automation readout (on)    |
-| `@mixin font-automation-value-small-off`   | Small automation readout (off)   |
-| `@mixin font-automation-value-regular`     | Regular automation readout (on)  |
-| `@mixin font-automation-value-regular-off` | Regular automation readout (off) |
-| `@mixin font-automation-value-enhanced`    | Enhanced automation readout      |
+| Deprecated style                                   | General mixin                              |
+| -------------------------------------------------- | ------------------------------------------ |
+| instrument `value-small-neutral` / `-active`       | `font-general-xs-regular` / `-xs-semibold` |
+| instrument `value-regular-neutral` / `-active`     | `font-general-s-regular` / `-s-semibold`   |
+| instrument `value-m-neutral` / `-active`           | `font-general-m-regular` / `-m-semibold`   |
+| instrument `value-enhanced-neutral` / `-active`    | `font-general-l-regular` / `-l-semibold`   |
+| instrument `label`                                 | `font-general-xs-semibold`                 |
+| instrument `unit`, `tick-mark`                     | `font-general-xs-regular`                  |
+| instrument `tick-mark-active`                      | `font-general-xs-bold`                     |
+| automation `value-small-off` / `value-small`       | `font-general-xs-regular` / `-xs-semibold` |
+| automation `value-regular-off` / `value-regular`   | `font-general-s-regular` / `-s-semibold`   |
+| automation `value-enhanced-off` / `value-enhanced` | `font-general-l-regular` / `-l-semibold`   |
+| automation `label`, `unit-small`                   | `font-general-xs-regular`                  |
+| automation `unit-regular`, `unit-enhanced`         | `font-general-s-regular`                   |
 
 #### Overlay font
 
