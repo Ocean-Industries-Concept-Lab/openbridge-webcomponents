@@ -210,7 +210,7 @@
       @mixin font-general-s-semibold;
 
       .size-small & {
-        font-size: var(--global-typography-instrument-label-font-size);
+        font-size: var(--global-typography-general-xs-font-size);
       }
 
       .state-flat & {
@@ -229,19 +229,17 @@
       color: var(--element-neutral-color);
 
       .title-description & {
-        font-size: var(--global-typography-instrument-value-regular-font-size);
+        font-size: var(--global-typography-general-s-font-size);
       }
 
       .size-small & {
-        font-size: var(--global-typography-instrument-label-font-size);
+        font-size: var(--global-typography-general-xs-font-size);
       }
     }
 
     .state-flat & {
       .title-text {
-        font-weight: var(
-          --global-typography-instrument-value-regular-font-weight-regular
-        );
+        font-weight: var(--global-typography-general-s-font-weight-regular);
       }
 
       .subtitle-text {
@@ -266,8 +264,8 @@
     font-weight: var(--font-weight-regular);
 
     .size-small & {
-      font-size: var(--global-typography-instrument-value-small-font-size);
-      line-height: var(--global-typography-instrument-value-small-line-height);
+      font-size: var(--global-typography-general-xs-font-size);
+      line-height: var(--global-typography-general-xs-line-height);
     }
   }
 
