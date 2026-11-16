@@ -8,6 +8,9 @@ import {
 const EXPORT = `:root,
 .obc-component-size-regular {
   --global-size-spacing-touch-target-min: 48px;
+  --global-typography-general-xs-font-size: var(
+    --typography-primitives-font-size-071
+  );
 }
 .obc-component-size-desktop {
   --global-size-spacing-touch-target-min: 40px;
@@ -17,6 +20,9 @@ const EXPORT = `:root,
 }
 .obc-component-size-medium {
   --global-size-spacing-touch-target-min: 56px;
+  --global-typography-general-xs-font-size: 0px;
+  --global-typography-general-xs-font-weight-regular: 0;
+  --global-typography-general-s-font-size: 18px;
 }
 * {
   --typography-font-weight-regular: 370;
@@ -80,13 +86,24 @@ describe('stripPaletteExport', () => {
     expect(css).toContain('.obc-component-size-medium');
   });
 
+  it('drops the General typography a size class leaves at 0, keeps real values', () => {
+    expect(css).not.toContain('general-xs-font-size: 0px');
+    expect(css).not.toContain('general-xs-font-weight-regular: 0');
+    expect(css).toContain(
+      '.obc-component-size-medium {\n  --global-size-spacing-touch-target-min: 56px;\n  --global-typography-general-s-font-size: 18px;\n}'
+    );
+    expect(css).toContain(
+      '--global-typography-general-xs-font-size: var(\n    --typography-primitives-font-size-071\n  );'
+    );
+  });
+
   it('keeps the theme and primitive blocks untouched', () => {
     expect(css).toContain(':root,\n:root[data-obc-theme="day"] {');
     expect(css).toContain('* {\n  --typography-font-weight-regular: 370;\n}');
   });
 
   it('names every removed block and is idempotent', () => {
-    expect(removed).toHaveLength(4);
+    expect(removed).toHaveLength(5);
     expect(stripPaletteExport(css)).toEqual({css, removed: []});
   });
 });
