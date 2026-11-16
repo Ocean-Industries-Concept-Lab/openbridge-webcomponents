@@ -232,7 +232,7 @@
 /* Base input element styles */
 @define-mixin base-input-field-input {
   .value-input {
-    @mixin font-instrument-value-regular-neutral;
+    @mixin font-general-s-regular;
     color: var(--on-normal-neutral-color);
     background: transparent;
     border: none;

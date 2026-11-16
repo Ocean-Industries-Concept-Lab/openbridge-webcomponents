@@ -480,13 +480,13 @@
     }
 
     .title {
-      @mixin font-instrument-value-enhanced-active;
+      @mixin font-general-l-semibold;
       display: flex;
       color: var(--element-active-color);
       align-items: baseline;
 
       .unit {
-        @mixin font-instrument-label;
+        @mixin font-general-xs-semibold;
         color: var(--element-neutral-color);
       }
     }

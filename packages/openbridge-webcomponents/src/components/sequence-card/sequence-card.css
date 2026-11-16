@@ -129,7 +129,7 @@
   }
 
   .stamp-container {
-    @mixin font-instrument-value-small-neutral;
+    @mixin font-general-xs-regular;
     margin-top: 25px;
     color: var(--element-inactive-color);
 
@@ -207,7 +207,7 @@
     flex: 1 0 0;
 
     .title-text {
-      @mixin font-instrument-value-regular-active;
+      @mixin font-general-s-semibold;
 
       .size-small & {
         font-size: var(--global-typography-instrument-label-font-size);
@@ -225,7 +225,7 @@
     }
 
     .subtitle-text {
-      @mixin font-instrument-value-small-neutral;
+      @mixin font-general-xs-regular;
       color: var(--element-neutral-color);
 
       .title-description & {
@@ -255,12 +255,12 @@
   }
 
   .time-label {
-    @mixin font-instrument-label;
+    @mixin font-general-xs-semibold;
     color: var(--element-inactive-color);
   }
 
   .time-value {
-    @mixin font-instrument-value-regular-neutral;
+    @mixin font-general-s-regular;
     color: var(--element-inactive-color);
     text-align: center;
     font-weight: var(--font-weight-regular);
