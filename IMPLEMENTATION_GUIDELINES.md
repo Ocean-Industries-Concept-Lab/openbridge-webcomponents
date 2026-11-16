@@ -474,13 +474,15 @@ For buttons, labels, body text, and headings:
 
 For values, units, labels and readouts in instruments, automation symbols and data components: the design file's General ramp, each size in regular, semibold and bold (`@mixin font-general-<size>-<weight>`).
 
-| Size | Font size / line height at `regular` |
-| ---- | ------------------------------------ |
-| `xs` | 11.5 / 16 px                         |
-| `s`  | 16.5 / 20 px                         |
-| `m`  | 23 / 24 px                           |
-| `l`  | 34 / 32 px                           |
-| `xl` | 45.5 / 40 px                         |
+| Size | Font size / line height |
+| ---- | ----------------------- |
+| `xs` | 11.5 / 16 px            |
+| `s`  | 16.5 / 20 px            |
+| `m`  | 23 / 24 px              |
+| `l`  | 34 / 32 px              |
+| `xl` | 45.5 / 40 px            |
+
+The sizes are the same in every size class. The design file has no medium, large or xl values for the General styles yet, and `npm run palette:strip` drops the zeros the export carries for them, so the larger classes inherit the regular sizes.
 
 The design file trims every General style to the cap height. The mixins do not; `obc-textbox` trims where the readout family needs it.
 
@@ -528,7 +530,7 @@ across the four classes), but no class takes any touch target below 48 px.
 Minimum-size rules and the standards behind them live in
 [`docs/agents/a11y.md` § Touch & pointer target size](docs/agents/a11y.md).
 
-Each class overrides the same variable names (`--global-size-spacing-touch-target-min`, `--global-size-spacing-visual-target-min`, `--global-size-spacing-icon-icon-size-regular`, all `--ui-components-*` sizing tokens, typography tokens, etc.) with scaled values.
+Each class overrides the same variable names (`--global-size-spacing-touch-target-min`, `--global-size-spacing-visual-target-min`, `--global-size-spacing-icon-icon-size-regular`, all `--ui-components-*` sizing tokens, typography tokens, etc.) with scaled values. The General typography is the exception for now and keeps its regular sizes ([General fonts](#general-fonts)).
 
 **Usage:** Apply the size class on a parent element; all descendant components automatically resize via CSS variable inheritance:
 

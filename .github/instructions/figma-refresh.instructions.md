@@ -72,6 +72,10 @@ tokens that do not resolve or fall back to hex, and the tripwires fire.
      40 px touch target, below the floor [`a11y.md`](../../docs/agents/a11y.md) § 7
      guarantees. A new class is a decision, then an entry in the script's
      allow-list and a row in the size-class table.
+   - the `--global-typography-general-*` values at 0 in the `medium`,
+     `large` and `xl` blocks, which hide the text; those classes inherit
+     the regular sizes instead. A real value passes through, so the rule
+     matches nothing once Figma fills the modes (see Open).
 4. Diff the content, not the text — prettier wraps long `var(…)` values
    and a mode block adds thousands of lines, so `git diff` is unreadable:
    ```bash
@@ -198,6 +202,10 @@ the semantic diff (renamed, removed, changed per block) belong there too.
 
 ## Open
 
+- The General text styles have no `medium`, `large` or `xl` sizes yet. The
+  design team leaves them out until it settles whether one class up turns S
+  into M, as the instrument ramp did (#1414); `palette:strip` drops the zeros
+  meanwhile. Delete that rule once the export carries real values.
 - The plugin still emits `Component-size` modes the package does not ship,
   two of them with spaces in their names; `palette:strip` covers for it until
   that is fixed at the source. The blink keyframes and the root animation are
