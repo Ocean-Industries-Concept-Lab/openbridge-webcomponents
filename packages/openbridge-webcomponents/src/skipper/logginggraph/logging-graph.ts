@@ -4,6 +4,9 @@ import {customElement} from '../../decorator.js';
 import { Colors } from '../interfaces.js';
 import { loggingGraphStyles } from './logging-graph-styles.js';
 
+/**
+ * @stable
+*/
 @customElement('ob-logging-graph-skipper')
 export class LoggingGraph extends LitElement {
 

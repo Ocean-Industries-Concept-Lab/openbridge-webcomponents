@@ -41,6 +41,9 @@ export enum SystemType {
   DL = 'DL',
 }
 
+/**
+ * @stable
+*/
 @customElement('ob-vessel-view')
 export class Vessel extends LitElement {
   @property({type: Number}) vesselWidth: number = 30;

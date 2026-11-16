@@ -55,6 +55,9 @@ export enum ViewingOptions {
   ActiveSatellitesOnly = 2
 }
 
+/**
+ * @stable
+*/
 @customElement('ob-gnss-skyplot')
 export class GnssSkyplot extends LitElement {
   @property({type: Array}) satellites: SatelliteData[] = [ // this is just for test

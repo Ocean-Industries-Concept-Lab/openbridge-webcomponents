@@ -11,6 +11,9 @@ export const OUTER_RING_RADIUS = 368 / 2;
 const RING2_RADIUS = 528.25 / 2;
 const RING3_RADIUS = 373.25 / 2;
 
+/**
+ * @stable
+*/
 @customElement('ob-speedometer')
 export class Speedometer extends LitElement {
   @property({type: Number}) maxSpeed = 25;

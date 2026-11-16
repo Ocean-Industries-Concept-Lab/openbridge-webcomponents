@@ -12,6 +12,9 @@ export enum TrueRelativeDirection {
   CourseUp = 'courseUp',
 }
 
+/**
+ * @stable
+*/
 @customElement('ob-true-relative')
 export class TrueRelative extends LitElement {
     @property({type: Number}) maxSpeed = 25;

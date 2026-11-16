@@ -19,6 +19,9 @@ interface SignalIconOptions {
   scale?: number;
 }
 
+/**
+ * @stable
+*/
 @customElement('ob-gnss-skyplot-legend')
 export class GnssSkyplotLegend extends LitElement {
 

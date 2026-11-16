@@ -6,6 +6,9 @@ import { Colors, MeasurementPosition, SpeedType, WatchBarArea } from '../interfa
 import { getWindIcon } from '../wind-icons.js';
 import { getCurrentIcon } from '../current-icons.js';
 
+/**
+ * @stable
+*/
 @customElement('ob-long-lat-environmental')
 export class LongLatEnvironmental extends LitElement {
     @property({type: Number}) longMaxSpeed = 25;

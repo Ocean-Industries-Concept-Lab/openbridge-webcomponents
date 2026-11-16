@@ -5,6 +5,9 @@ import { longLatStyles } from './long-lat-styles.js';
 import { Colors, MeasurementPosition, SpeedType } from '../interfaces.js';
 import { InstrumentFieldSize } from '../../navigation-instruments/instrument-field/instrument-field.js';
 
+/**
+ * @stable
+*/
 @customElement('ob-long-lat')
 export class LongLat extends LitElement {
     @property({type: Number}) longMaxSpeed = 25;

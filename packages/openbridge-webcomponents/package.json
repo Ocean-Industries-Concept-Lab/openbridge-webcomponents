@@ -1,6 +1,6 @@
 {
   "name": "@oicl/openbridge-webcomponents",
-  "version": "2.1.0-next.8",
+  "version": "2.1.1-next.8",
   "type": "module",
   "repository": {
     "type": "git",
@@ -78,7 +78,6 @@
   "dependencies": {
     "@lit-labs/observers": "^2.1.0",
     "@lit/localize": "^0.12.2",
-    "@oicl/openbridge-webcomponents": "file:oicl-openbridge-webcomponents-2.0.0-next.29.tgz",
     "chart.js": "^4.5.1",
     "lit": "^3.3.3",
     "uplot": "^1.6.32"
