@@ -12,6 +12,15 @@ export enum VesselTypes {
   TANKER = 'TANKER',
   CARGO = 'CARGO',
   CAR_FERRY = 'CAR_FERRY',
+  CARGO_WIND = 'CARGO_WIND',
+  SOV = 'SOV',
+  PSV = 'PSV',
+  CRUISE = 'CRUISE',
+}
+
+export enum SensorView {
+  TOP = 'TOP',
+  SIDE = 'SIDE',
 }
 
 export enum ViewType {
@@ -20,10 +29,23 @@ export enum ViewType {
   BOTH = 'BOTH',
 }
 
+export enum SensorType {
+  EML = 'EML',
+  ECHO = 'ECHO',
+  SATLOG = 'SATLOG',
+  DOPPLER = 'DOPPLER',
+}
+
+export enum SystemType {
+  SL = 'SL',
+  DL = 'DL',
+}
+
 @customElement('ob-vessel-view')
 export class Vessel extends LitElement {
   @property({type: Number}) vesselWidth: number = 30;
   @property({type: Number}) vesselHeight: number = 50;
+  @property({type: Number}) vesselDraftLevel: number = 2;
   @property({type: Number}) bowToCCRP: number = 12;
   @property({type: Number}) sternToCCRP: number = 13;
   @property({type: Number}) starboardToCCRP: number = 100;
@@ -31,20 +53,25 @@ export class Vessel extends LitElement {
   @property({type: Number}) sensorHeightOverKeel: number = 50;
   @property({type: Number}) sensorToCCRP: number = 0;
   @property({type: String}) vesselType: VesselTypes = VesselTypes.CARGO;
+  @property({type: String}) sensorType: SensorType = SensorType.EML;
   @property({type: String}) viewMode: ViewType = ViewType.TOP;
   @property({type: Number}) sensorPortStarboardOffset: number = 0;
-  @property({type: Boolean}) toggleSLAndDLSensor: boolean = false;
+  @property({type: Boolean}) toggleSensorA: boolean = false;
+  @property({type: String}) systemType: SystemType = SystemType.DL;
   //values for SIDE_VIEW
-  private readonly MIN_X = 37;
-  private readonly MAX_X = 444;
-  private readonly LINE_Y = 303;
+  private readonly MIN_X = 12.1333;
+  private readonly MAX_X = 247.867;
+  private readonly LINE_Y = 18;
   private readonly ARROW_SIZE = 5;
   private readonly VESSEL_BOTTOM_Y = 260;
   private readonly DIM_TOP_Y = 117;
   private readonly ARCH_HEIGHT = 40;
+  private readonly DIM_LINE_GAP = 2;
+  private readonly SENSOR_TOP_LIMIT = 33;
+  private sensorBelowKeel: number = 0;
   //values for TOP_DOWN_VIEW
-  private readonly TOP_Y = 193;
-  private readonly BOTTOM_Y = 271;
+  private readonly TOP_Y = 13;
+  private readonly BOTTOM_Y = 60;
 
   override render() {
     return html` <div class="container">${this.getVessel()}</div> `;
@@ -92,15 +119,15 @@ export class Vessel extends LitElement {
     };
   }
 
-  private getSternLine() {
+  private getSternLine(dimensionLineGap: number) {
     const startX = this.MIN_X;
-    const endX = this.getScaledX(this.sternToCCRP ?? 0);
+    const endX = this.getScaledX(this.sternToCCRP ?? 0) - dimensionLineGap;
 
     return this.buildDimensionLine(startX, endX);
   }
 
-  private getBowLine() {
-    const startX = this.getScaledX(this.sternToCCRP ?? 0);
+  private getBowLine(dimensionLineGap: number) {
+    const startX = this.getScaledX(this.sternToCCRP ?? 0) + dimensionLineGap;
     const endX = this.MAX_X;
 
     return this.buildDimensionLine(startX, endX);
@@ -136,12 +163,22 @@ export class Vessel extends LitElement {
     const t = (x - this.MIN_X) / (this.MAX_X - this.MIN_X);
 
     // curved ends + flat middle
-    const baseY = 210;
+    const baseY = 146;
     const curvature = 25;
+    const draftY = 163;
 
     const curve = curvature * (Math.pow(t - 0.5, 2) * 4); // parabola
 
-    return baseY + curve;
+    // return baseY + curve;
+    return Math.min(draftY, baseY + curve);
+  }
+
+  private buildUpArrowLine(sensorY: number, fixedBottomY: number = 139) {
+    return {
+      arrowTipY: sensorY - 20,
+      arrowBaseY: sensorY + 5,
+      fixedBottomY,
+    };
   }
 
   override updated(changedProps: Map<string, string>) {
@@ -157,6 +194,7 @@ export class Vessel extends LitElement {
       }
     }
   }
+
   ////////
   //TOP DOWN VIEW LOGIC
   ////////
@@ -223,16 +261,13 @@ export class Vessel extends LitElement {
     return this.ARROW_SIZE * 0.577;
   }
 
-  toggleVesselViewer(): void {
-    // this.sideTopDownViewToggle = !this.sideTopDownViewToggle;
-  }
-
   getVessel() {
     const vesselTypeData = getVesselType(this.vesselType);
 
     const dimTopY = vesselTypeData.sideTopY;
     const dimBottomY = vesselTypeData.sideBottomY;
     //vessel height dim line side view
+    /*
     const vesselHeightDim = {
       vesselHeight: this.vesselHeight,
       ...this.buildVerticalDimensionLine(
@@ -241,12 +276,13 @@ export class Vessel extends LitElement {
         dimBottomY // dynamic bottom from vessel type
       ),
     };
+    */
 
     //stern dimensions
-    const sternLine = this.getSternLine();
+    const sternLine = this.getSternLine(this.DIM_LINE_GAP);
     const sternTextX = (sternLine.startX + sternLine.endX) / 2;
     //bow dimensions
-    const bowLine = this.getBowLine();
+    const bowLine = this.getBowLine(this.DIM_LINE_GAP);
     const bowTextX = (bowLine.startX + bowLine.endX) / 2;
     //CCRP line position
     const ccrpX = this.getCCRPX();
@@ -256,9 +292,13 @@ export class Vessel extends LitElement {
       Math.min(this.MAX_X, ccrpX + this.getOffsetInPixels(this.sensorToCCRP))
     );
     const mastEndY = this.getVesselTopY(sensorX);
-    //Sensor Y position
-    // const dimTopY = this.DIM_TOP_Y;
-    // const dimBottomY = this.VESSEL_BOTTOM_Y;
+    //
+    this.sensorBelowKeel = this.sensorHeightOverKeel;
+
+    this.sensorBelowKeel =
+      this.systemType === SystemType.DL && this.sensorHeightOverKeel <= 0
+        ? (this.sensorBelowKeel = this.sensorHeightOverKeel)
+        : (this.sensorBelowKeel = 0);
 
     const dimHeightPx = dimBottomY - dimTopY;
 
@@ -269,16 +309,27 @@ export class Vessel extends LitElement {
 
     // ✅ map directly into dimension scale
 
-    const sensorY = this.toggleSLAndDLSensor
-      ? dimBottomY // ✅ DL mode → glued to keel
-      : dimBottomY - ratio * dimHeightPx;
+    let sensorY =
+      this.systemType === SystemType.DL
+        ? vesselTypeData.sideBottomY // ✅ DL mode → glued to keel
+        : dimBottomY - ratio * dimHeightPx;
+    // console.log(vesselTypeData.)
+    //console.log(dimBottomY, 'DL mode is off: ', this.toggleSLAndDLSensor)
+    //sensor Y top limits
+    sensorY = Math.max(this.SENSOR_TOP_LIMIT, sensorY);
+    if (this.systemType === SystemType.SL) {
+      sensorY = Math.min(dimBottomY, sensorY);
+    }
+
+    //vertical keel to sensor dim line
+    const upArrowDim = this.buildUpArrowLine(sensorY);
 
     //CCRP to sensor DIM line
     const dimStartX = Math.min(sensorX, ccrpX);
     const dimEndX = Math.max(sensorX, ccrpX);
     let DIM_Y: number;
 
-    if (this.toggleSLAndDLSensor) {
+    if (this.systemType === SystemType.SL) {
       // halfway between mid-height and bottom dim line
       const midY = (this.DIM_TOP_Y + this.VESSEL_BOTTOM_Y) / 2;
 
@@ -300,12 +351,7 @@ export class Vessel extends LitElement {
     //vertical dashed indicator line
     const verticalGuideStartY = sensorY;
     const verticalGuideEndY = DIM_Y;
-    //cone dimension
-    const CONE_LENGTH = 40;
-    const coneLeftX = sensorX - CONE_LENGTH * 0.7;
-    const coneRightX = sensorX + CONE_LENGTH * 0.7;
 
-    const coneBottomY = sensorY + CONE_LENGTH;
     ////////
     //TOP DOWN VIEW LOGIC
     ////////
@@ -351,28 +397,30 @@ export class Vessel extends LitElement {
         bowLine,
         sensorToCCRP: this.sensorToCCRP,
         dim,
-        coneLeftX,
-        coneRightX,
-        coneBottomY,
-        toggleSLAndDLSensor: this.toggleSLAndDLSensor,
+        systemType: this.systemType,
         textOffset,
         ccrpX,
         vesselLengthComputed: this.vesselLengthComputed,
         sternToCCRP: this.sternToCCRP,
         bowToCCRP: this.bowToCCRP,
         vesselHeight: this.vesselHeight,
+        vesselDraftLine: this.vesselDraftLevel,
+        sensorBelowKeel: this.sensorBelowKeel,
       },
-      {
-        sensorX,
-        sensorY,
-        sensorHeightOverKeel: this.sensorHeightOverKeel,
-        toggleSLAndDLSensor: this.toggleSLAndDLSensor,
-        sensorToCCRP: this.sensorToCCRP,
-        dim,
-        textOffset,
-        viewMode: this.viewMode,
-      },
-      vesselHeightDim
+      // {
+      //   sensorX,
+      //   sensorY,
+      //   sensorHeightOverKeel: this.sensorHeightOverKeel,
+      //   toggleSLAndDLSensor: this.toggleSLAndDLSensor,
+      //   sensorToCCRP: this.sensorToCCRP,
+      //   dim,
+      //   textOffset,
+      //   viewMode: this.viewMode,
+      // },
+      //vesselHeightDim,
+      this.toggleSensorA,
+      upArrowDim,
+      this.sensorType
     );
 
     const TOP_DOWN_VIEW = getTopDownView(
@@ -381,7 +429,7 @@ export class Vessel extends LitElement {
         sensorX,
         ccrpX,
         sensorHeightOverKeel: this.sensorHeightOverKeel,
-        toggleSLAndDLSensor: this.toggleSLAndDLSensor,
+        systemType: this.systemType,
         vesselLengthComputed: this.vesselLengthComputed,
         sensorYTopView,
         sensorPortStarboardOffset: this.sensorPortStarboardOffset,
@@ -398,50 +446,52 @@ export class Vessel extends LitElement {
         portToCCRP: this.portToCCRP,
         vesselWidthComputed: this.vesselWidthComputed,
       },
-      {
-        portDimensionLine: this.portDimensionLine,
-        getMidY: this.getMidY,
-        portToCCRP: this.portToCCRP,
-        ARROW_SIZE: this.ARROW_SIZE,
-        getArrowHalfHeight: this.getArrowHalfHeight,
-      },
-      {
-        starboardDimensionLine: this.starboardDimensionLine,
-        getMidY: this.getMidY,
-        starboardToCCRP: this.starboardToCCRP,
-        ARROW_SIZE: this.ARROW_SIZE,
-        getArrowHalfHeight: this.getArrowHalfHeight,
-      },
-      {
-        yAxisCCRPPos: this.yAxisCCRPPos,
-      },
-      {
-        xAxisCCRPPos: ccrpX,
-      },
+      // {
+      //   portDimensionLine: this.portDimensionLine,
+      //   getMidY: this.getMidY,
+      //   portToCCRP: this.portToCCRP,
+      //   ARROW_SIZE: this.ARROW_SIZE,
+      //   getArrowHalfHeight: this.getArrowHalfHeight,
+      // },
+      // {
+      //   starboardDimensionLine: this.starboardDimensionLine,
+      //   getMidY: this.getMidY,
+      //   starboardToCCRP: this.starboardToCCRP,
+      //   ARROW_SIZE: this.ARROW_SIZE,
+      //   getArrowHalfHeight: this.getArrowHalfHeight,
+      // },
+      /* {
+         yAxisCCRPPos: this.yAxisCCRPPos,
+       }, */
+      /* {
+         xAxisCCRPPos: ccrpX,
+       },*/
       {
         sensorX,
         sensorYTopView,
-      }
+      },
+      this.toggleSensorA,
+      this.sensorType
     );
 
     if (this.viewMode === ViewType.SIDE) {
       return SIDE_VIEW;
     }
     if (this.viewMode === ViewType.TOP) {
-      return TOP_DOWN_VIEW;
+      return html`<div class="top-down-only">${TOP_DOWN_VIEW}</div>`;
     }
 
-    return html`<div class="both-views">
-      <div class="both-views-inner">
-        <div class="side-view">${SIDE_VIEW}</div>
-        <div class="top-down-view">${TOP_DOWN_VIEW}</div>
+    return html`
+      <div class="both-views">
+        <div class="side-view-container">${SIDE_VIEW}</div>
+        <div class="top-down-view-container">${TOP_DOWN_VIEW}</div>
       </div>
-    </div>`;
+    `;
   }
 }
 
 declare global {
   interface HTMLElementTagNameMap {
-    'ob-vessel-view': Vessel;
+    'ob-vessel': Vessel;
   }
 }

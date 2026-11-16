@@ -1,13 +1,13 @@
 import {css} from 'lit';
 export const vesselStyles = css`
   .container {
-    height: 100%;
     width: 100%;
-  }
-
-  .container > svg {
-    height: 100%;
-    width: 100%;
+    height: auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: auto;
+    // border: 1px solid green;
   }
 
   .satellite-label {
@@ -62,24 +62,113 @@ export const vesselStyles = css`
   }
 
   .both-views {
-    width: 400px;
-    overflow-x: hidden;
-
+    position: relative;
+    // left: -5%;
+    width: 100%;
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
   }
 
-  .both-views-inner {
-    transform: scale(0.69);
-    transform-origin: center;
+  .side-view-container {
+    // padding-right: 10%;
+    // border: 1px solid blue;
+    // width: 100%;
+    // position: relative;
+  }
 
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+  .side-view {
+    //background-color: yellow;
+    position: relative;
+    left: -30px;
+  }
+
+  .side-view svg {
+    display: block;
+  }
+
+  .sensor-heights {
+    position: absolute;
+    top: 32px;
+    right: -76px;
+  }
+
+  .keel-arrow-lines {
+    position: absolute;
+    top: 32px;
+    right: -6px;
+  }
+
+  .keel-line-horizontal {
+    position: absolute;
+    left: 0;
+    top: 173.35px;
+    width: 100%;
+    z-index: -1;
+  }
+
+  .draft-line-horizontal {
+    position: absolute;
+    left: 0;
+    top: 162px;
+    width: 100%;
+    z-index: -1;
+  }
+
+  .vertical-ccrp-line {
+    position: absolute;
+    top: 16px;
+  }
+
+  .sensor-positioning-side-view {
+    position: absolute;
+  }
+
+  .mast-line {
+    position: absolute;
+    top: 50px;
+    z-index: -1;
+    //background-color: red;
   }
 
   .top-down-view {
-    margin-left: 60px;
+    position: relative;
+    left: -30px;
+    // left: -5%;
+    //background-color: yellow;
+  }
+
+  .top-down-only > div {
+    position: relative;
+    left: 0px;
+  }
+
+  .top-down-view svg {
+    display: block;
+  }
+
+  .total-vessel-width {
+    position: absolute;
+    top: 0px;
+    left: -17px;
+  }
+
+  .horizontal-ccrp-line {
+    position: absolute;
+    top: 21px;
+  }
+
+  .port-starboard-side {
+    position: absolute;
+    top: 0px;
+    right: -30px;
+    z-index: -1;
+  }
+
+  .sensor-positioning-top-down-view {
+    position: absolute;
+    //background-color: violet;
+    //top: 0px;
   }
 `;
