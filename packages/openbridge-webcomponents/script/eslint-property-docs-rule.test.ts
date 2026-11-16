@@ -133,6 +133,16 @@ describe('property-docs-in-class-jsdoc — reports', () => {
           ' * Thing.\n * @property value - The value.\n * @stable',
           '  /** @deprecated use other */\n  @property({type: Number}) value = 0;'
         ),
+        // cem reads the tag's text up to the next tag, so a description on
+        // the following line counts, after the separator or without it.
+        cls(
+          ' * Thing.\n * @property value -\n *   The value.\n * @stable',
+          '  /** @deprecated use other */\n  @property({type: Number}) value = 0;'
+        ),
+        cls(
+          ' * Thing.\n * @property value\n *   The value.\n * @stable',
+          '  /** @deprecated use other */\n  @property({type: Number}) value = 0;'
+        ),
         // A class without a JSDoc does not turn it back into a report.
         "import {LitElement} from 'lit';\n@customElement('obc-x')\nexport class ObcX extends LitElement {\n  /**\n   * The value.\n   * @deprecated use other\n   */\n  @property({type: Number}) value = 0;\n}\n",
         // cem reads `default` only from a literal initializer, so the tag is
@@ -177,6 +187,23 @@ describe('property-docs-in-class-jsdoc — reports', () => {
         {
           code: cls(
             ' * Thing.\n * @property value -\n * @stable',
+            '  /** @deprecated use other */\n  @property({type: Number}) value = 0;'
+          ),
+          errors: [{messageId: 'missingHeader'}],
+          output: null,
+        },
+        // An empty line or a lone separator before the next tag is still no description.
+        {
+          code: cls(
+            ' * Thing.\n * @property value -\n *\n * @stable',
+            '  /** @deprecated use other */\n  @property({type: Number}) value = 0;'
+          ),
+          errors: [{messageId: 'missingHeader'}],
+          output: null,
+        },
+        {
+          code: cls(
+            ' * Thing.\n * @property value\n * -\n * @stable',
             '  /** @deprecated use other */\n  @property({type: Number}) value = 0;'
           ),
           errors: [{messageId: 'missingHeader'}],

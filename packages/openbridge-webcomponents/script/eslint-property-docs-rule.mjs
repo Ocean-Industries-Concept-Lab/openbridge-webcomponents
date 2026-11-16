@@ -1,9 +1,9 @@
 const TAG_BLOCK_RE =
   /^@(slot|fires|event|ignore|stable|beta|experimental|deprecated|attr|attribute|csspart|cssprop|cssproperty|cssstate|tag|tagname)\b/;
 const PROP_LINE_RE = /^@(?:property|prop)\s+(\{[^}]*\}\s+)?([\w$]+)/;
-// A header tag that carries text after the name and its separator, which
-// cem uses as the member's description; `@property name` and
-// `@property name -` give it none.
+// A header tag with text after the name and its separator on the same line.
+// cem also reads text that starts on the next line, which the header scan
+// in `create()` counts; a bare `@property name` or `@property name -` has none.
 const PROP_DESCRIBED_RE =
   /^@(?:property|prop)\s+(?:\{[^}]*\}\s+)?[\w$]+\s+(?:-\s+)?(?!-\s*$)\S/;
 const AVAIL_LINE_RE = /^@availableWhen\s+([\w$]+)\s+(.+)$/;
@@ -250,9 +250,18 @@ export const propertyDocsRule = {
         const hasTypedef = headerLines.some((l) => TYPEDEF_RE.test(l));
         const seen = new Set();
         const described = new Set();
+        // cem reads a tag's text up to the next tag, so a description that
+        // starts on the line after `@property name -` describes it too.
+        let awaiting;
         headerLines.forEach((l) => {
           const p = PROP_LINE_RE.exec(l);
           if (p && PROP_DESCRIBED_RE.test(l)) described.add(p[2]);
+          if (/^@\w/.test(l.trim()))
+            awaiting = p && !described.has(p[2]) ? p[2] : undefined;
+          else if (awaiting && /\S/.test(l.replace(/^\s*-(?=\s|$)/, ''))) {
+            described.add(awaiting);
+            awaiting = undefined;
+          }
           if (p) {
             if (p[1])
               context.report({
