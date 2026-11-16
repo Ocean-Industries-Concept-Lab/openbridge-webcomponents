@@ -26,7 +26,7 @@ import {
   calculateFixedHeightChartLayout,
   getChartTooltipOptions,
   formatChartNumber,
-  generateLegendHTML,
+  renderLegend,
   observeLabelThreshold,
 } from '../../charthelpers/index.js';
 import type {FixedHeightChartDimensions} from '../../charthelpers/canvas-layout.js';
@@ -690,7 +690,7 @@ export class ObcPolarChart extends LitElement {
 
     // Guard: Check if dataset has data
     if (!this.data || this.data.length === 0) {
-      this.legendDiv.innerHTML = '';
+      renderLegend(this.legendDiv, []);
       return;
     }
 
@@ -733,8 +733,7 @@ export class ObcPolarChart extends LitElement {
         };
       });
 
-      const legendHTML = generateLegendHTML(legendItems);
-      this.legendDiv.innerHTML = legendHTML;
+      renderLegend(this.legendDiv, legendItems);
     } catch (error) {
       console.debug(
         '[obc-polar-chart] updateLegend: error generating legend HTML',

@@ -36,7 +36,7 @@ import {
   observeThemeChanges,
   formatChartNumber,
   getChartTooltipOptions,
-  generateLegendHTML,
+  renderLegend,
   applyAlphaToColor,
   normalizeXValue,
   formatXValue,
@@ -3321,7 +3321,7 @@ export class ObcChartLineBase extends AdviceMixin(LitElement) {
 
     // Guard: Check if chart has datasets
     if (!this.chart.data.datasets || this.chart.data.datasets.length === 0) {
-      this.legendDiv.innerHTML = '';
+      renderLegend(this.legendDiv, []);
       return;
     }
 
@@ -3354,8 +3354,7 @@ export class ObcChartLineBase extends AdviceMixin(LitElement) {
 
       // Only update legend if we have valid items
       if (legendItems.length > 0) {
-        const legendHTML = generateLegendHTML(legendItems);
-        this.legendDiv.innerHTML = legendHTML;
+        renderLegend(this.legendDiv, legendItems);
       }
     } catch (error) {
       console.debug(

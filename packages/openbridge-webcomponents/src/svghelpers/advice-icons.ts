@@ -1,4 +1,5 @@
 import {svg, type SVGTemplateResult} from 'lit';
+// eslint-disable-next-line no-restricted-imports -- the glyph markup is this module's own constants, never a property value
 import {unsafeSVG} from 'lit/directives/unsafe-svg.js';
 import {
   ADVICE_ICON_SIZE,
