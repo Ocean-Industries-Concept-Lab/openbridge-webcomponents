@@ -121,17 +121,10 @@ export class TrueRelative extends LitElement {
         if (this.direction === TrueRelativeDirection.NorthUp) {
           return 0;
         }
-<<<<<<< HEAD
         else if (this.direction === TrueRelativeDirection.HeadingUp && this.isValidNumber(this.hdgDirection)) {
           return -this.hdgDirection;
         }
         else if (this.direction === TrueRelativeDirection.CourseUp && this.isValidNumber(this.cogDirection)) {
-=======
-        else if (this.direction === TrueRelativeDirection.HeadingUp) {
-          return -this.hdgDirection;
-        }
-        else if (this.direction === TrueRelativeDirection.CourseUp) {
->>>>>>> INS-15-vessel-views
           return -this.cogDirection;
         }
         else {
