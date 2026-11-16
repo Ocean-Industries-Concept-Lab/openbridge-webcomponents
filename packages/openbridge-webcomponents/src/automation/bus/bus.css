@@ -25,8 +25,7 @@
     height: 16px;
     border-radius: 4px;
 
-    @mixin font-instrument-label;
-    font-weight: var(--global-typography-instrument-label-font-weight);
+    @mixin font-general-xs-semibold;
   }
 
   &.size-medium {

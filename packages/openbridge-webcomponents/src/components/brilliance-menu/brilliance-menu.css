@@ -77,7 +77,7 @@
       .label-container {
         display: flex;
         align-items: baseline;
-        @mixin font-instrument-value-enhanced-active;
+        @mixin font-general-l-semibold;
         transition: width 0.1s ease-in-out;
 
         .value {
@@ -85,7 +85,7 @@
         }
 
         .unit {
-          @mixin font-instrument-label;
+          @mixin font-general-xs-semibold;
           color: var(--element-neutral-color);
         }
       }
