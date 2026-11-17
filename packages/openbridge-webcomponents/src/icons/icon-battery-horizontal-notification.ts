@@ -6,7 +6,7 @@ import {customElement} from '../decorator.js';
 export class ObiBatteryHorizontalNotification extends LitElement {
   @property({type: Boolean}) useCssColor = false;
 
-  private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+  private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
 <path d="M13 6H11V14H13V6Z" fill="currentColor"/>
 <path d="M12 16C11.4477 16 11 16.4477 11 17C11 17.5523 11.4477 18 12 18C12.5523 18 13 17.5523 13 17C13 16.4477 12.5523 16 12 16Z" fill="currentColor"/>
 <path d="M4 7H9V9H4L8 15H9V17H4C2.89543 17 2 16.1046 2 15V9C2 7.89543 2.89543 7 4 7Z" fill="currentColor"/>

@@ -1,5 +1,9 @@
 import type {Meta, StoryObj} from '@storybook/web-components-vite';
-import {ObcAlertButton, ObcAlertButtonType} from './alert-button.js';
+import {
+  ObcAlertButton,
+  ObcAlertButtonType,
+  ObcAlertCounterItemType,
+} from './alert-button.js';
 import {AlertType, FlashingSpeed} from '../../types.js';
 import './alert-button.js';
 import {widthDecorator} from '../../storybook-util.js';
@@ -10,6 +14,7 @@ const meta: Meta<typeof ObcAlertButton> = {
   component: 'obc-alert-button',
   args: {
     counter: true,
+    globalCounter: false, // the gate arg, so the global counter controls follow it
     width: 72,
   },
   argTypes: {
@@ -30,6 +35,10 @@ const meta: Meta<typeof ObcAlertButton> = {
     flashingSpeed: {
       options: Object.values(FlashingSpeed),
       control: {type: 'select'},
+    },
+    globalCounterType: {
+      options: Object.values(ObcAlertCounterItemType),
+      control: {type: 'inline-radio'},
     },
     counts: {control: {type: 'object'}},
     shelvedCount: {control: {type: 'number', min: 0}},
@@ -276,5 +285,27 @@ export const GlobalCounterShelvedSilence: Story = {
     shelvedCount: 9,
     showSilenceButton: true,
     width: 244,
+  },
+};
+
+export const GlobalCounterAlertLevel: Story = {
+  args: {
+    globalCounter: true,
+    globalCounterType: ObcAlertCounterItemType.AlertLevel,
+    nAlerts: 26,
+    counts: GLOBAL_COUNTS,
+    width: 232,
+  },
+};
+
+export const GlobalCounterAlertLevelShelvedSilence: Story = {
+  args: {
+    globalCounter: true,
+    globalCounterType: ObcAlertCounterItemType.AlertLevel,
+    nAlerts: 26,
+    counts: GLOBAL_COUNTS,
+    shelvedCount: 9,
+    showSilenceButton: true,
+    width: 336,
   },
 };

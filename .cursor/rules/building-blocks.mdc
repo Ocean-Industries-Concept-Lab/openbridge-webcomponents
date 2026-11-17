@@ -91,10 +91,11 @@ When working with building block components in this directory:
    - Common pattern: generate arrays of SVG elements, then spread into main template
 
 7. **Advice & Annotations**:
-   - Advice/alert regions are typically rendered using masks and patterns
-   - Example pattern: create a mask path, apply it to a patterned area, then render the mask outline
-   - Advice states (hinted, regular, triggered) map to different colors and visual styles
-   - Tickmarks at advice boundaries use consistent styling with the advice state
+   - Advice ranges, points and areas come from one design layer,
+     `svghelpers/advice.ts`, and are placed by `svghelpers/advice-linear.ts`
+     on a linear scale; see [`advice.md`](../../docs/agents/advice.md) for the states, the
+     caps, the patterns and the mask-id rule
+   - Tickmarks at advice boundaries follow the advice state (`tickStyle`)
 
 8. **Tickmarks & Labels**:
    - Tickmarks are typically `<line>` elements with `stroke-width="1"` and `vector-effect="non-scaling-stroke"`
@@ -159,6 +160,7 @@ When working with SVG helper utilities:
    - `roundedArch.ts`: Helpers for rounded arch paths
    - `math.ts`: `clamp`, `clampPercent`, `normalizeAngle`, `degToRad`, `radToDeg` — import them rather than inlining the idiom
    - `setpoint.ts`, `setpoint-mixin.ts`, `setpoint-bundle.ts`: Setpoint marker design layer, state management, and animation. See `setpoint.md` for full documentation.
+   - `advice.ts`, `advice-linear.ts`, `advice-patterns.ts`, `advice-mixin.ts`, `advice-bundle.ts`: Advice design layer, linear renderer, pattern tiles, state management. See `advice.md`.
    - `index.ts`: Export all helpers for convenient importing
    - Organize helpers by shape/concept, not by component
 

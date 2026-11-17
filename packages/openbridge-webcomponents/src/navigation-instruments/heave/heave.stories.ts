@@ -94,3 +94,13 @@ export const WithCustomVesselImage: Story = {
     vesselImageSrc: customVesselForeSvgSrc,
   },
 };
+
+/** The icon beside the band on the linear instrument, triggered by the trend band. */
+export const AdviceIcons: Story = {
+  args: {
+    advices: [
+      {min: -10, max: -2, category: 'caution', showIcon: true},
+      {min: 2, max: 10, category: 'caution', showIcon: true},
+    ],
+  },
+};

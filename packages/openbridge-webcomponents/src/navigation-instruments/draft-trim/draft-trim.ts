@@ -1,14 +1,25 @@
-import {LitElement, html, css, nothing, svg, type SVGTemplateResult} from 'lit';
+import {
+  LitElement,
+  html,
+  css,
+  nothing,
+  svg,
+  type SVGTemplateResult,
+  PropertyValues,
+} from 'lit';
 import {property} from 'lit/decorators.js';
 import {customElement} from '../../decorator.js';
+import {AdviceMixin, syncAdviceAlias} from '../../svghelpers/advice-mixin.js';
+import {
+  negateAdvice,
+  type AdviceInput,
+  type ResolvedAdvice,
+} from '../../svghelpers/advice.js';
 import {
   verticalScaleTickmarks,
   watchfaceLinear,
 } from '../../building-blocks/instrument-linear/instrument-linear.js';
-import {
-  LinearAdvice,
-  resolveLinearAdvice,
-} from '../../building-blocks/instrument-linear/advice.js';
+import {resolveLinearAdvice} from '../../building-blocks/instrument-linear/advice.js';
 import {VesselImage} from '../watch/watch.js';
 import {
   renderVesselArt,
@@ -44,7 +55,7 @@ const VESSEL_OFFSET_Y = 4.5;
  *   left, the left one mirrored so its tick lane faces outward.
  * - Each scale spans `±instrumentRange` around the waterline, so the lower
  *   half reads as draught and the upper half as freeboard.
- * - Optional `advice` zones, shared by both scales and triggered
+ * - Optional `advices`, shared by both scales and triggered
  *   independently by each draught.
  * - `regular` / `enhanced` palette via `priority`, and a selectable
  *   `vesselImage`.
@@ -72,11 +83,12 @@ const VESSEL_OFFSET_Y = 4.5;
  * @experimental
  */
 @customElement('obc-draft-trim')
-export class ObcDraftTrim extends LitElement {
+export class ObcDraftTrim extends AdviceMixin(LitElement) {
   @property({type: Number}) draftFore = 0;
   @property({type: Number}) draftAft = 0;
   @property({type: Number}) instrumentRange = 10;
-  @property({type: Array}) advice: LinearAdvice[] = [];
+  /** @deprecated Alias of `advices`. Ranges in draught units, positive below the waterline. */
+  @property({type: Array}) advice?: AdviceInput[];
   @property({type: String}) vesselImage: VesselImage = VesselImage.psvSide;
   @property({type: Object, attribute: false})
   vesselImageSrc: VesselImageSrc | undefined;
@@ -92,9 +104,17 @@ export class ObcDraftTrim extends LitElement {
     return -draft;
   }
 
-  /** The advice zones mapped into scale space, so they too read downward. */
-  private get scaleAdvice(): LinearAdvice[] {
-    return this.advice.map((a) => ({...a, min: -a.max, max: -a.min}));
+  /**
+   * The advice zones resolved against the draught's trend band, then mapped
+   * into scale space: a resolved range is negated and its ends swap.
+   */
+  private scaleAdvice(draft: number): ResolvedAdvice[] {
+    return resolveLinearAdvice(
+      this.advices,
+      Math.min(0, draft),
+      Math.max(0, draft),
+      {trigger: this.adviceTrigger, emphasis: this.adviceEmphasis}
+    ).map(negateAdvice);
   }
 
   private renderScale(draft: number, mirrored: boolean): SVGTemplateResult {
@@ -117,11 +137,7 @@ export class ObcDraftTrim extends LitElement {
         maskId: mirrored ? 'draftAftMask' : 'draftForeMask',
       },
       verticalScaleTickmarks(this.instrumentRange),
-      resolveLinearAdvice(
-        this.scaleAdvice,
-        Math.min(0, value),
-        Math.max(0, value)
-      )
+      this.scaleAdvice(draft)
     );
     const x = mirrored ? -GAUGE_OFFSET : GAUGE_OFFSET;
     return svg`<g transform="translate(${x}, 0)${mirrored ? ' scale(-1, 1)' : ''}">${gauge}</g>`;
@@ -153,6 +169,11 @@ export class ObcDraftTrim extends LitElement {
         ${this.vesselImage ? renderVesselArt(vesselArt(this.vesselImage, this.vesselImageSrc), this._palette.current) : nothing}
       </g>
     `;
+  }
+
+  override willUpdate(changed: PropertyValues) {
+    super.willUpdate(changed);
+    syncAdviceAlias(this, this.advice);
   }
 
   override render() {

@@ -8,15 +8,11 @@ import '../watch/watch.js';
 import {WatchCircleType} from '../watch/watch.js';
 import {SailType, sailTypeImages} from '../watch/sail-type.js';
 import componentStyle from './wind-propulsion.css?inline';
-import {AngleAdvice, AngleAdviceRaw, AdviceState} from '../watch/advice.js';
+import {AdviceMixin, syncAdviceAlias} from '../../svghelpers/advice-mixin.js';
+import type {AdviceInput, ResolvedAdvice} from '../../svghelpers/advice.js';
 import {Tickmark, TickmarkStyle, TickmarkType} from '../watch/tickmark.js';
 import {renderForceBar} from './force-bar.js';
 import {customElement} from '../../decorator.js';
-
-function mapAngle0to360(angle: number): number {
-  const a = angle % 360;
-  return a >= 0 ? a : a + 360;
-}
 
 export enum WindPropulsionPriorityElement {
   sail = 'sail',
@@ -58,10 +54,13 @@ export enum WindPropulsionPriorityElement {
  *   proportionally (default 100).
  * - For a full-circle compass, use `<obc-compass>` instead.
  *
+ * @property sailAngleAdvices - Sail angle advices: ranges and points in degrees, resolved against `sailAngle` and `sailAngleSetpoint`. The same list as `advices`, the name every instrument shares.
  * @beta
  */
 @customElement('obc-wind-propulsion')
-export class ObcWindPropulsion extends LitElement {
+export class ObcWindPropulsion extends AdviceMixin(LitElement, {
+  angularWraparound: true,
+}) {
   @property({type: Number}) forceAngle = 0;
   @property({type: Number}) sailAngle = 0;
 
@@ -94,8 +93,7 @@ export class ObcWindPropulsion extends LitElement {
   @property({type: Number}) currentWindSpeedKnots: number | null = null;
   @property({type: Number}) currentWindFromDirection: number | null = null;
 
-  @property({type: Array, attribute: false}) sailAngleAdvices: AngleAdvice[] =
-    [];
+  @property({type: Array, attribute: false}) sailAngleAdvices?: AdviceInput[];
 
   private _forceBarMaskId = `wp-fb-${Math.random().toString(36).slice(2, 9)}`;
 
@@ -106,6 +104,7 @@ export class ObcWindPropulsion extends LitElement {
 
   override willUpdate(changed: PropertyValues): void {
     super.willUpdate(changed);
+    syncAdviceAlias(this, this.sailAngleAdvices);
     this._sailAngleSp.sync({
       setpoint: this.sailAngleSetpoint,
       newSetpoint: this.newSailAngleSetpoint,
@@ -150,27 +149,8 @@ export class ObcWindPropulsion extends LitElement {
     return 24;
   }
 
-  private get angleAdviceRaw(): AngleAdviceRaw[] {
-    return this.sailAngleAdvices.map((advice) => {
-      const triggered =
-        this.sailAngleSetpoint !== undefined &&
-        mapAngle0to360(this.sailAngleSetpoint - advice.minAngle) <=
-          mapAngle0to360(advice.maxAngle - advice.minAngle);
-      let state: AdviceState;
-      if (triggered) {
-        state = AdviceState.triggered;
-      } else if (advice.hinted) {
-        state = AdviceState.hinted;
-      } else {
-        state = AdviceState.regular;
-      }
-      return {
-        minAngle: advice.minAngle,
-        maxAngle: advice.maxAngle,
-        type: advice.type,
-        state,
-      };
-    });
+  private get angleAdviceRaw(): ResolvedAdvice[] {
+    return this.resolveAdvices(this.sailAngle, this.sailAngleSetpoint);
   }
 
   private getTickmarks(): Tickmark[] {

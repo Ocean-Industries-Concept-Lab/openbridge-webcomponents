@@ -1,0 +1,42 @@
+* {
+  box-sizing: border-box;
+}
+
+:host {
+  display: inline-flex;
+}
+
+.wrapper {
+  display: flex;
+  align-items: stretch;
+}
+
+.counter-button {
+  appearance: none;
+  background: none;
+  border: none;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  height: var(--ui-components-button-touch-target-size);
+  color: var(--on-normal-neutral-color);
+  @mixin style style=normal visibleWrapperClass=.visible-wrapper;
+}
+
+/* Scoped like the mixin's rules, which it has to outrank for the border */
+.counter-button .visible-wrapper {
+  display: flex;
+  align-items: center;
+  height: var(--ui-components-icon-button-visual-target-size);
+  padding: 0 8px; /* the design's counter frame inset */
+  border-radius: var(--ui-components-button-border-radius-top-left) 0 0
+    var(--ui-components-button-border-radius-bottom-left);
+  border-right: none; /* the list half's left border is the shared edge */
+}
+
+.counter::part(frame) {
+  background: none;
+  border: none;
+  border-radius: 0;
+  padding: 0; /* the counter's own frame gives way to the button's */
+}

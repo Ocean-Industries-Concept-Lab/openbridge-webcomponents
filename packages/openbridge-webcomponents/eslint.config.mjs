@@ -1183,6 +1183,43 @@ export default [
       'openbridge/no-positive-tabindex': 'error',
       'openbridge/positive-boolean-name': 'error',
       'openbridge/no-event-like-property-name': 'error',
+      // A property value written as an HTML string is parsed as markup, so a
+      // label from the consumer's data can carry a script.
+      'no-restricted-syntax': [
+        'error',
+        {
+          selector:
+            'AssignmentExpression[left.property.name=/^(innerHTML|outerHTML)$/]',
+          message:
+            'An HTML string parses its values as markup. Build the nodes and set textContent, or render a Lit template.',
+        },
+        {
+          selector: "CallExpression[callee.property.name='insertAdjacentHTML']",
+          message:
+            'An HTML string parses its values as markup. Build the nodes and set textContent, or render a Lit template.',
+        },
+      ],
+      'no-restricted-imports': [
+        'error',
+        {
+          paths: [
+            ...[
+              'lit/directives/unsafe-html.js',
+              'lit/directives/unsafe-svg.js',
+            ].map((name) => ({
+              name,
+              message:
+                'This directive parses its value as markup. Bind the value in a Lit template instead.',
+            })),
+            {
+              name: 'lit/static-html.js',
+              importNames: ['unsafeStatic'],
+              message:
+                'unsafeStatic splices its value into the template as markup. Use literal, or create the element.',
+            },
+          ],
+        },
+      ],
       'openbridge/storybook-title-case': 'off',
       'openbridge/story-lifecycle-tags': 'off',
       // Disabled because eslint-plugin-file-extension-in-import-ts is not yet
@@ -1274,6 +1311,24 @@ export default [
 
     rules: {
       'openbridge/use-math-helpers': 'off',
+    },
+  },
+  {
+    // A fixture is markup the test wrote itself, never data.
+    files: ['**/*.spec.ts', '**/*.test.ts'],
+
+    rules: {
+      'no-restricted-syntax': 'off',
+      'no-restricted-imports': 'off',
+    },
+  },
+  {
+    // obi-icon makes a tag name of `icon` only after finding it in the
+    // generated icon list.
+    files: ['**/src/icons/icon.ts'],
+
+    rules: {
+      'no-restricted-imports': 'off',
     },
   },
   {

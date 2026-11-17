@@ -2,7 +2,9 @@ import type {Meta, StoryObj} from '@storybook/web-components-vite';
 import {html} from 'lit';
 import {ObcAlertButtonItem, ObcAlertButtonType} from './alert-button-item.js';
 import './alert-button-item.js';
+import {ObcAlertCounterItemType} from '../alert-counter-item/alert-counter-item.js';
 import {AlertType, FlashingSpeed, type AlertCounts} from '../../types.js';
+import '../../icons/icon-placeholder.js';
 
 type ItemArgs = Pick<
   ObcAlertButtonItem,
@@ -11,11 +13,13 @@ type ItemArgs = Pick<
   | 'nAlerts'
   | 'counter'
   | 'globalCounter'
+  | 'globalCounterType'
   | 'counts'
   | 'shelvedCount'
   | 'blinking'
   | 'flashingSpeed'
   | 'fillHeight'
+  | 'activated'
 >;
 
 const SEVERITY_COUNTS: AlertCounts = {
@@ -33,11 +37,15 @@ const renderItem = (args: Partial<ItemArgs>) =>
     .nAlerts=${args.nAlerts ?? 0}
     .counter=${args.counter ?? false}
     .globalCounter=${args.globalCounter ?? false}
+    .globalCounterType=${
+      args.globalCounterType ?? ObcAlertCounterItemType.Badges
+    }
     .counts=${args.counts ?? {}}
     .shelvedCount=${args.shelvedCount ?? 0}
     .blinking=${args.blinking ?? false}
     .flashingSpeed=${args.flashingSpeed ?? FlashingSpeed.Default}
     .fillHeight=${args.fillHeight ?? false}
+    .activated=${args.activated ?? false}
   ></obc-alert-button-item>`;
 
 const meta: Meta<ItemArgs> = {
@@ -59,6 +67,10 @@ const meta: Meta<ItemArgs> = {
     },
     alertType: {control: {type: 'select'}, options: Object.values(AlertType)},
     nAlerts: {control: {type: 'number', min: 0}},
+    globalCounterType: {
+      control: {type: 'inline-radio'},
+      options: Object.values(ObcAlertCounterItemType),
+    },
     counts: {control: {type: 'object'}},
     shelvedCount: {control: {type: 'number', min: 0}},
     flashingSpeed: {
@@ -151,6 +163,25 @@ export const GlobalCounterWithShelved: Story = {
   },
 };
 
+export const GlobalCounterAlertLevel: Story = {
+  args: {
+    globalCounter: true,
+    globalCounterType: ObcAlertCounterItemType.AlertLevel,
+    nAlerts: 12,
+    counts: SEVERITY_COUNTS,
+  },
+};
+
+export const GlobalCounterAlertLevelWithShelved: Story = {
+  args: {
+    globalCounter: true,
+    globalCounterType: ObcAlertCounterItemType.AlertLevel,
+    nAlerts: 12,
+    counts: SEVERITY_COUNTS,
+    shelvedCount: 9,
+  },
+};
+
 export const GlobalCounterLevelSeverities: Story = {
   args: {
     globalCounter: true,
@@ -175,4 +206,14 @@ export const FillHeight: Story = {
         fillHeight: true,
       })}
     </div>`,
+};
+
+export const Activated: Story = {args: {activated: true}};
+
+/** The slot takes any icon; the item then never flashes. */
+export const SlottedIcon: Story = {
+  render: () =>
+    html`<obc-alert-button-item nAlerts="3" counter
+      ><obi-placeholder slot="icon"></obi-placeholder
+    ></obc-alert-button-item>`,
 };

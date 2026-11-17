@@ -6,22 +6,22 @@ import {customElement} from '../decorator.js';
 export class ObiLightLanternStbd extends LitElement {
   @property({type: Boolean}) useCssColor = false;
 
-  private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-<path fill-rule="evenodd" clip-rule="evenodd" d="M19 13H22V11H19V13Z" fill="currentColor"/>
-<path fill-rule="evenodd" clip-rule="evenodd" d="M18.4282 8.86603L21.0263 7.36603L20.0263 5.63397L17.4282 7.13397L18.4282 8.86603Z" fill="currentColor"/>
-<path fill-rule="evenodd" clip-rule="evenodd" d="M17.4273 16.866L20.0254 18.366L21.0254 16.634L18.4273 15.134L17.4273 16.866Z" fill="currentColor"/>
+  private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M19 13H22V11H19V13Z" fill-rule="evenodd" clip-rule="evenodd" fill="currentColor"/>
+<path d="M18.4282 8.86603L21.0263 7.36603L20.0263 5.63397L17.4282 7.13397L18.4282 8.86603Z" fill-rule="evenodd" clip-rule="evenodd" fill="currentColor"/>
+<path d="M17.4273 16.866L20.0254 18.366L21.0254 16.634L18.4273 15.134L17.4273 16.866Z" fill-rule="evenodd" clip-rule="evenodd" fill="currentColor"/>
 <path d="M15 2C15.5523 2 16 2.44772 16 3V4H6V3C6 2.44772 6.44772 2 7 2H15Z" fill="currentColor"/>
-<path fill-rule="evenodd" clip-rule="evenodd" d="M16 8C16 6.89543 15.1046 6 14 6H8C6.89543 6 6 6.89543 6 8V16C6 17.1046 6.89543 18 8 18H14C15.1046 18 16 17.1046 16 16V8ZM14 8H8V16H14V8Z" fill="currentColor"/>
+<path d="M16 8C16 6.89543 15.1046 6 14 6H8C6.89543 6 6 6.89543 6 8V16C6 17.1046 6.89543 18 8 18H14C15.1046 18 16 17.1046 16 16V8ZM14 8H8V16H14V8Z" fill-rule="evenodd" clip-rule="evenodd" fill="currentColor"/>
 <path d="M16 20H4V2H2V21C2 21.5523 2.44772 22 3 22H16V20Z" fill="currentColor"/>
 </svg>
 `;
 
   private iconCss = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path fill-rule="evenodd" clip-rule="evenodd" d="M19 13H22V11H19V13Z" style="fill: var(--element-active-color)"/>
-<path fill-rule="evenodd" clip-rule="evenodd" d="M18.4282 8.86603L21.0263 7.36603L20.0263 5.63397L17.4282 7.13397L18.4282 8.86603Z" style="fill: var(--element-active-color)"/>
-<path fill-rule="evenodd" clip-rule="evenodd" d="M17.4273 16.866L20.0254 18.366L21.0254 16.634L18.4273 15.134L17.4273 16.866Z" style="fill: var(--element-active-color)"/>
+<path d="M19 13H22V11H19V13Z" fill-rule="evenodd" clip-rule="evenodd" style="fill: var(--element-active-color)"/>
+<path d="M18.4282 8.86603L21.0263 7.36603L20.0263 5.63397L17.4282 7.13397L18.4282 8.86603Z" fill-rule="evenodd" clip-rule="evenodd" style="fill: var(--element-active-color)"/>
+<path d="M17.4273 16.866L20.0254 18.366L21.0254 16.634L18.4273 15.134L17.4273 16.866Z" fill-rule="evenodd" clip-rule="evenodd" style="fill: var(--element-active-color)"/>
 <path d="M15 2C15.5523 2 16 2.44772 16 3V4H6V3C6 2.44772 6.44772 2 7 2H15Z" style="fill: var(--element-active-color)"/>
-<path fill-rule="evenodd" clip-rule="evenodd" d="M16 8C16 6.89543 15.1046 6 14 6H8C6.89543 6 6 6.89543 6 8V16C6 17.1046 6.89543 18 8 18H14C15.1046 18 16 17.1046 16 16V8ZM14 8H8V16H14V8Z" style="fill: var(--element-active-color)"/>
+<path d="M16 8C16 6.89543 15.1046 6 14 6H8C6.89543 6 6 6.89543 6 8V16C6 17.1046 6.89543 18 8 18H14C15.1046 18 16 17.1046 16 16V8ZM14 8H8V16H14V8Z" fill-rule="evenodd" clip-rule="evenodd" style="fill: var(--element-active-color)"/>
 <path d="M16 20H4V2H2V21C2 21.5523 2.44772 22 3 22H16V20Z" style="fill: var(--element-active-color)"/>
 </svg>
 `;
