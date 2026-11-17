@@ -337,6 +337,7 @@ automatically when editing a `.css` file.
 24. **No names.** Cite roles, issues and Figma nodes, never people or handles — in comments, docs, commits, PR and issue text ([`docs/agents/coding-standards.md`](docs/agents/coding-standards.md) § Writing style).
 25. **Use the most capable current model** your tool offers; a smaller tier is for mechanical steps only.
 26. **Stop and ask when something is missing.** An unauthenticated Figma MCP, no `FIGMA_TOKEN`, no `gh`, an undefined design state, an unsettled decision: say what is missing and wait — never brute-force around it or continue on a lesser path silently ([`docs/agents/working-method.md` § Missing](docs/agents/working-method.md)).
+27. **A vulnerability stays private.** No public issue, PR, branch or commit subject names it: fix it on a local branch and tell a maintainer, who opens the advisory's private fork ([`SECURITY.md`](SECURITY.md), [`docs/agents/ci-and-release.md` § Security releases](docs/agents/ci-and-release.md)).
 
 ---
 

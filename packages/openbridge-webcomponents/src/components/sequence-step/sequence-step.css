@@ -228,7 +228,7 @@
       }
 
       .content {
-        @mixin font-instrument-value-small-neutral;
+        @mixin font-general-xs-regular;
         padding: 0 4px;
       }
     }
@@ -261,7 +261,7 @@
     .value-active &,
     .value-completed & {
       .content {
-        @mixin font-instrument-label;
+        @mixin font-general-xs-semibold;
       }
     }
 
@@ -373,7 +373,7 @@ button {
   &.value-active,
   &.value-completed {
     .content {
-      @mixin font-instrument-label;
+      @mixin font-general-xs-semibold;
     }
   }
 

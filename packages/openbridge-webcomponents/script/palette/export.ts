@@ -2,17 +2,27 @@
  * @module PaletteExport
  * @description
  * Post-processing for the obc-figma-plugin `cssvariables` output that becomes
- * `src/palettes/variables.css`. The plugin emits three things the package does
+ * `src/palettes/variables.css`. The plugin emits four things the package does
  * not ship, and `stripPaletteExport()` removes them so the committed file is
  * reproducible from the export: the `@keyframes` blink and the `:root`
  * animation rule that #1116 replaced with `src/palettes/blinking.ts` (#1134),
- * and every `Component-size` mode outside the four documented size classes.
+ * every `Component-size` mode outside the four documented size classes, and
+ * the General typography values Figma leaves at 0 in the medium, large and xl
+ * classes, which would hide the text there.
  * `diffPaletteExports()` compares two versions by block, property and value,
  * because the text diff of an export is dominated by reformatting.
  */
 
 const SIZE_CLASSES = new Set(['regular', 'medium', 'large', 'xl']);
 const SIZE_CLASS_PREFIX = '.obc-component-size-';
+
+/**
+ * The design has no medium, large or xl sizes for the General text styles yet.
+ * Without the zeros those classes inherit the regular sizes; a real value
+ * passes through, so the rule matches nothing once Figma fills the modes.
+ */
+const UNSET_GENERAL_TYPOGRAPHY =
+  /\n[ \t]*--global-typography-general-[a-z0-9-]+\s*:\s*0(?:px)?\s*;/g;
 
 export interface CssBlock {
   selector: string;
@@ -74,13 +84,32 @@ export interface StripResult {
   removed: string[];
 }
 
+function isScaledSizeClass(block: CssBlock): boolean {
+  if (!block.selector.startsWith(SIZE_CLASS_PREFIX)) return false;
+  const mode = block.selector.slice(SIZE_CLASS_PREFIX.length);
+  return mode !== 'regular' && SIZE_CLASSES.has(mode);
+}
+
 export function stripPaletteExport(css: string): StripResult {
   const kept: string[] = [];
   const removed: string[] = [];
   for (const block of parseTopLevelBlocks(css)) {
     const reason = rejectionReason(block);
-    if (reason) removed.push(reason);
-    else kept.push(block.text);
+    if (reason) {
+      removed.push(reason);
+      continue;
+    }
+    const unset = isScaledSizeClass(block)
+      ? (block.text.match(UNSET_GENERAL_TYPOGRAPHY)?.length ?? 0)
+      : 0;
+    if (unset === 0) {
+      kept.push(block.text);
+      continue;
+    }
+    removed.push(
+      `${unset} General typography values at 0 in ${block.selector} — the class inherits the regular ones`
+    );
+    kept.push(block.text.replace(UNSET_GENERAL_TYPOGRAPHY, ''));
   }
   return {css: kept.join('\n\n') + '\n', removed};
 }

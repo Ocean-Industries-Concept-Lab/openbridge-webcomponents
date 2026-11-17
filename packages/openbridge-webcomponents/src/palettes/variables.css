@@ -2825,6 +2825,10 @@
   --global-typography-dev-console-m-degree-symbol-width: 8px;
   --global-size-spacing-border-weight-error-frame: 2px;
   --app-components-message-menu-item-gap-horizontal: 16px;
+  --infographic-components-trend-bar-width-regular: 24px;
+  --instrument-components-watchface-frame-main-track-size-indication: 12px;
+  --infographic-components-trend-actual-dot-size: 8px;
+  --infographic-components-trend-actual-dot-stroke-width: 2px;
 }
 
 .obc-component-size-medium {
@@ -5412,48 +5416,6 @@
   --ui-components-indicator-dot-dot-size: 8px;
   --ui-components-indicator-dot-padding: 8px;
   --ui-components-indicator-dot-silhouette-stroke-weight: 2px;
-  --global-typography-general-xs-font-size: 0px;
-  --global-typography-general-xs-font-weight-regular: 0;
-  --global-typography-general-xs-line-height: 0px;
-  --global-typography-general-xs-baseline-offset: 0px;
-  --global-typography-general-xs-letter-spacing: 0px;
-  --global-typography-general-xs-font-weight-semibold: 0;
-  --global-typography-general-xs-font-weight-bold: 0;
-  --global-typography-general-s-font-weight-regular: 0;
-  --global-typography-general-s-font-weight-semibold: 0;
-  --global-typography-general-s-font-weight-bold: 0;
-  --global-typography-general-s-font-size: 0px;
-  --global-typography-general-s-line-height: 0px;
-  --global-typography-general-s-baseline-offset: 0px;
-  --global-typography-general-s-letter-spacing: 0px;
-  --global-typography-general-m-font-weight-regular: 0;
-  --global-typography-general-m-font-weight-medium: 0;
-  --global-typography-general-m-font-weight-bold: 0;
-  --global-typography-general-m-font-size: 0px;
-  --global-typography-general-m-line-height: 0px;
-  --global-typography-general-m-baseline-offset: 0px;
-  --global-typography-general-m-letter-spacing: 0px;
-  --global-typography-general-l-font-weight-regular: 0;
-  --global-typography-general-l-font-weight-medium: 0;
-  --global-typography-general-l-font-weight-bold: 0;
-  --global-typography-general-l-font-size: 0px;
-  --global-typography-general-l-line-height: 0px;
-  --global-typography-general-l-baseline-offset: 0px;
-  --global-typography-general-l-letter-spacing: 0px;
-  --global-typography-general-xl-font-weight-regular: 0;
-  --global-typography-general-xl-font-weight-medium: 0;
-  --global-typography-general-xl-font-weight-bold: 0;
-  --global-typography-general-xl-font-size: 0px;
-  --global-typography-general-xl-line-height: 0px;
-  --global-typography-general-xl-baseline-offset: 0px;
-  --global-typography-general-xl-letter-spacing: 0px;
-  --global-typography-general-xxl-font-weight-regular: 0;
-  --global-typography-general-xxl-font-weight-medium: 0;
-  --global-typography-general-xxl-font-weight-bold: 0;
-  --global-typography-general-xxl-font-size: 0px;
-  --global-typography-general-xxl-line-height: 0px;
-  --global-typography-general-xxl-baseline-offset: 0px;
-  --global-typography-general-xxl-letter-spacing: 0px;
   --automation-components-button-border-stroke: 1.5px;
   --pui-components-cutout-clearance: 2px;
   --pui-components-border-radius-button: 8px;
@@ -5525,6 +5487,10 @@
   --global-typography-dev-console-m-degree-symbol-width: 8px;
   --global-size-spacing-border-weight-error-frame: 2px;
   --app-components-message-menu-item-gap-horizontal: 8px;
+  --infographic-components-trend-bar-width-regular: 48px;
+  --instrument-components-watchface-frame-main-track-size-indication: 24px;
+  --infographic-components-trend-actual-dot-size: 16px;
+  --infographic-components-trend-actual-dot-stroke-width: 4px;
 }
 
 .obc-component-size-large {
@@ -8102,48 +8068,6 @@
   --ui-components-indicator-dot-dot-size: 12px;
   --ui-components-indicator-dot-padding: 8px;
   --ui-components-indicator-dot-silhouette-stroke-weight: 3px;
-  --global-typography-general-xs-font-size: 0px;
-  --global-typography-general-xs-font-weight-regular: 0;
-  --global-typography-general-xs-line-height: 0px;
-  --global-typography-general-xs-baseline-offset: 0px;
-  --global-typography-general-xs-letter-spacing: 0px;
-  --global-typography-general-xs-font-weight-semibold: 0;
-  --global-typography-general-xs-font-weight-bold: 0;
-  --global-typography-general-s-font-weight-regular: 0;
-  --global-typography-general-s-font-weight-semibold: 0;
-  --global-typography-general-s-font-weight-bold: 0;
-  --global-typography-general-s-font-size: 0px;
-  --global-typography-general-s-line-height: 0px;
-  --global-typography-general-s-baseline-offset: 0px;
-  --global-typography-general-s-letter-spacing: 0px;
-  --global-typography-general-m-font-weight-regular: 0;
-  --global-typography-general-m-font-weight-medium: 0;
-  --global-typography-general-m-font-weight-bold: 0;
-  --global-typography-general-m-font-size: 0px;
-  --global-typography-general-m-line-height: 0px;
-  --global-typography-general-m-baseline-offset: 0px;
-  --global-typography-general-m-letter-spacing: 0px;
-  --global-typography-general-l-font-weight-regular: 0;
-  --global-typography-general-l-font-weight-medium: 0;
-  --global-typography-general-l-font-weight-bold: 0;
-  --global-typography-general-l-font-size: 0px;
-  --global-typography-general-l-line-height: 0px;
-  --global-typography-general-l-baseline-offset: 0px;
-  --global-typography-general-l-letter-spacing: 0px;
-  --global-typography-general-xl-font-weight-regular: 0;
-  --global-typography-general-xl-font-weight-medium: 0;
-  --global-typography-general-xl-font-weight-bold: 0;
-  --global-typography-general-xl-font-size: 0px;
-  --global-typography-general-xl-line-height: 0px;
-  --global-typography-general-xl-baseline-offset: 0px;
-  --global-typography-general-xl-letter-spacing: 0px;
-  --global-typography-general-xxl-font-weight-regular: 0;
-  --global-typography-general-xxl-font-weight-medium: 0;
-  --global-typography-general-xxl-font-weight-bold: 0;
-  --global-typography-general-xxl-font-size: 0px;
-  --global-typography-general-xxl-line-height: 0px;
-  --global-typography-general-xxl-baseline-offset: 0px;
-  --global-typography-general-xxl-letter-spacing: 0px;
   --automation-components-button-border-stroke: 1.5px;
   --pui-components-cutout-clearance: 2px;
   --pui-components-border-radius-button: 12px;
@@ -8215,6 +8139,12 @@
   --global-typography-dev-console-m-degree-symbol-width: 8px;
   --global-size-spacing-border-weight-error-frame: 2px;
   --app-components-message-menu-item-gap-horizontal: 12px;
+  --infographic-components-trend-bar-width-regular: 72px;
+  --instrument-components-watchface-frame-main-track-size-indication: var(
+    --frame-track-size
+  );
+  --infographic-components-trend-actual-dot-size: 32px;
+  --infographic-components-trend-actual-dot-stroke-width: 32px;
 }
 
 .obc-component-size-xl {
@@ -10810,48 +10740,6 @@
   --ui-components-indicator-dot-dot-size: 16px;
   --ui-components-indicator-dot-padding: 12px;
   --ui-components-indicator-dot-silhouette-stroke-weight: 4px;
-  --global-typography-general-xs-font-size: 0px;
-  --global-typography-general-xs-font-weight-regular: 0;
-  --global-typography-general-xs-line-height: 0px;
-  --global-typography-general-xs-baseline-offset: 0px;
-  --global-typography-general-xs-letter-spacing: 0px;
-  --global-typography-general-xs-font-weight-semibold: 0;
-  --global-typography-general-xs-font-weight-bold: 0;
-  --global-typography-general-s-font-weight-regular: 0;
-  --global-typography-general-s-font-weight-semibold: 0;
-  --global-typography-general-s-font-weight-bold: 0;
-  --global-typography-general-s-font-size: 0px;
-  --global-typography-general-s-line-height: 0px;
-  --global-typography-general-s-baseline-offset: 0px;
-  --global-typography-general-s-letter-spacing: 0px;
-  --global-typography-general-m-font-weight-regular: 0;
-  --global-typography-general-m-font-weight-medium: 0;
-  --global-typography-general-m-font-weight-bold: 0;
-  --global-typography-general-m-font-size: 0px;
-  --global-typography-general-m-line-height: 0px;
-  --global-typography-general-m-baseline-offset: 0px;
-  --global-typography-general-m-letter-spacing: 0px;
-  --global-typography-general-l-font-weight-regular: 0;
-  --global-typography-general-l-font-weight-medium: 0;
-  --global-typography-general-l-font-weight-bold: 0;
-  --global-typography-general-l-font-size: 0px;
-  --global-typography-general-l-line-height: 0px;
-  --global-typography-general-l-baseline-offset: 0px;
-  --global-typography-general-l-letter-spacing: 0px;
-  --global-typography-general-xl-font-weight-regular: 0;
-  --global-typography-general-xl-font-weight-medium: 0;
-  --global-typography-general-xl-font-weight-bold: 0;
-  --global-typography-general-xl-font-size: 0px;
-  --global-typography-general-xl-line-height: 0px;
-  --global-typography-general-xl-baseline-offset: 0px;
-  --global-typography-general-xl-letter-spacing: 0px;
-  --global-typography-general-xxl-font-weight-regular: 0;
-  --global-typography-general-xxl-font-weight-medium: 0;
-  --global-typography-general-xxl-font-weight-bold: 0;
-  --global-typography-general-xxl-font-size: 0px;
-  --global-typography-general-xxl-line-height: 0px;
-  --global-typography-general-xxl-baseline-offset: 0px;
-  --global-typography-general-xxl-letter-spacing: 0px;
   --automation-components-button-border-stroke: 1.5px;
   --pui-components-cutout-clearance: 2px;
   --pui-components-border-radius-button: 16px;
@@ -10923,6 +10811,12 @@
   --global-typography-dev-console-m-degree-symbol-width: 6px;
   --global-size-spacing-border-weight-error-frame: 2px;
   --app-components-message-menu-item-gap-horizontal: 16px;
+  --infographic-components-trend-bar-width-regular: 96px;
+  --instrument-components-watchface-frame-main-track-size-indication: var(
+    --frame-track-size
+  );
+  --infographic-components-trend-actual-dot-size: 48px;
+  --infographic-components-trend-actual-dot-stroke-width: 48px;
 }
 
 * {
@@ -11369,7 +11263,6 @@
   --primitive-warning-base: rgb(245, 132, 2);
   --primitive-caution-100: rgb(255, 219, 66);
   --primitive-neutral-inverted-1000: rgb(255, 255, 255);
-  --primitive-neutral-1000: rgb(0, 0, 0);
   --primitive-neutral-inverted-500: rgb(156, 156, 156);
   --primitive-neutral-inverted-400: rgb(122, 122, 122);
   --primitive-neutral-inverted-200: rgb(59, 59, 59);
@@ -11410,6 +11303,7 @@
   --primitive-neutral-transparent-150: rgb(0, 0, 0, 0.17000000178813934);
   --primitive-neutral-600: rgb(57, 57, 57);
   --primitive-caution-400: rgb(141, 105, 0);
+  --primitive-neutral-1000: rgb(0, 0, 0);
   --primitive-warning-500: rgb(139, 57, 0);
   --primitive-alarm-050: rgb(255, 234, 231);
   --primitive-alarm-200: rgb(255, 163, 151);
@@ -11606,7 +11500,7 @@
   --alert-warning-color: var(--primitive-warning-base);
   --alert-caution-color: var(--primitive-caution-100);
   --on-alarm-color: var(--primitive-neutral-inverted-1000);
-  --on-warning-color: var(--primitive-neutral-1000);
+  --on-warning-color: var(--primitive-neutral-700);
   --on-caution-color: var(--primitive-neutral-700);
   --element-active-inverted-color: var(--primitive-neutral-inverted-1000);
   --element-neutral-inverted-color: var(--primitive-neutral-inverted-500);
