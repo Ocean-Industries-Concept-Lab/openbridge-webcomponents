@@ -129,7 +129,7 @@
   }
 
   .stamp-container {
-    @mixin font-instrument-value-small-neutral;
+    @mixin font-general-xs-regular;
     margin-top: 25px;
     color: var(--element-inactive-color);
 
@@ -207,10 +207,10 @@
     flex: 1 0 0;
 
     .title-text {
-      @mixin font-instrument-value-regular-active;
+      @mixin font-general-s-semibold;
 
       .size-small & {
-        font-size: var(--global-typography-instrument-label-font-size);
+        font-size: var(--global-typography-general-xs-font-size);
       }
 
       .state-flat & {
@@ -225,23 +225,21 @@
     }
 
     .subtitle-text {
-      @mixin font-instrument-value-small-neutral;
+      @mixin font-general-xs-regular;
       color: var(--element-neutral-color);
 
       .title-description & {
-        font-size: var(--global-typography-instrument-value-regular-font-size);
+        font-size: var(--global-typography-general-s-font-size);
       }
 
       .size-small & {
-        font-size: var(--global-typography-instrument-label-font-size);
+        font-size: var(--global-typography-general-xs-font-size);
       }
     }
 
     .state-flat & {
       .title-text {
-        font-weight: var(
-          --global-typography-instrument-value-regular-font-weight-regular
-        );
+        font-weight: var(--global-typography-general-s-font-weight-regular);
       }
 
       .subtitle-text {
@@ -255,19 +253,19 @@
   }
 
   .time-label {
-    @mixin font-instrument-label;
+    @mixin font-general-xs-semibold;
     color: var(--element-inactive-color);
   }
 
   .time-value {
-    @mixin font-instrument-value-regular-neutral;
+    @mixin font-general-s-regular;
     color: var(--element-inactive-color);
     text-align: center;
     font-weight: var(--font-weight-regular);
 
     .size-small & {
-      font-size: var(--global-typography-instrument-value-small-font-size);
-      line-height: var(--global-typography-instrument-value-small-line-height);
+      font-size: var(--global-typography-general-xs-font-size);
+      line-height: var(--global-typography-general-xs-line-height);
     }
   }
 

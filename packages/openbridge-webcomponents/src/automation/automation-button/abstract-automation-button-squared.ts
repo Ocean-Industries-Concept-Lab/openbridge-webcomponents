@@ -1,4 +1,5 @@
 import {PropertyValues, TemplateResult} from 'lit';
+// eslint-disable-next-line no-restricted-imports -- the tag is one of the subclass's own icon names, never a property value
 import {html, unsafeStatic} from 'lit/static-html.js';
 import {property} from 'lit/decorators.js';
 import {ObcAbstractAutomationButton} from './abstract-automation-button.js';

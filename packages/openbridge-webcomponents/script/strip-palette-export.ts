@@ -32,5 +32,5 @@ if (check) {
 
 fs.writeFileSync(file, css);
 console.log(
-  `[palette] removed ${removed.length} block(s); run prettier and diff before committing`
+  `[palette] removed ${removed.length} item(s); run prettier and diff before committing`
 );
