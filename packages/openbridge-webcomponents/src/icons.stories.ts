@@ -1,5 +1,6 @@
 import type {Meta, StoryObj} from '@storybook/web-components-vite';
 import './icons/index.js';
+// eslint-disable-next-line no-restricted-imports -- every tag is an icon name from the generated list
 import {html, unsafeStatic} from 'lit/static-html.js';
 import {iconIds} from './icons/names.js';
 

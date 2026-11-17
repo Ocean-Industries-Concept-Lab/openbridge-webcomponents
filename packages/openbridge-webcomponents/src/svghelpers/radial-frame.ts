@@ -64,7 +64,7 @@ const LABEL_RADIAL_PAD_UNITS = 3;
 const LABEL_ANCHOR_OFFSET_PX = 9;
 /** Breathing room between the label's far edge and the viewBox edge, in px. */
 const LABEL_EDGE_PAD_PX = 4;
-/** Approximate digit advance at 12px font-instrument-label. */
+/** Approximate digit advance of the 12px tick labels. */
 export const DIGIT_WIDTH_PX = 7;
 /** Compass NSWE label width assumed by label.ts (`labelWidth = 16`). */
 export const NSWE_LABEL_WIDTH_PX = 16;

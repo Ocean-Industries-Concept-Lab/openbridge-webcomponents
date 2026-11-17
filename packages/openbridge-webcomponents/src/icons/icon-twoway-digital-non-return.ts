@@ -6,17 +6,15 @@ import {customElement} from '../decorator.js';
 export class ObiTwowayDigitalNonReturn extends LitElement {
   @property({type: Boolean}) useCssColor = false;
 
-  private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-<path fill-rule="evenodd" clip-rule="evenodd" d="M13 10.0004V14.0004H11L3.5547 18.9639C2.89015 19.4069 2 18.9305 2 18.1318V5.86887C2 5.07017 2.89015 4.59378 3.5547 5.03682L11 10.0004H13ZM10.6972 11.0004H12V13.0004H10.6972L3 18.1318L3 5.86887L10.6972 11.0004Z" fill="currentColor"/>
-<path d="M14 13.9999V9.99986L20.4 5.19986C21.0592 4.70544 22 5.17582 22 5.99986V17.9999C22 18.8239 21.0592 19.2943 20.4 18.7999L14 13.9999Z" fill="currentColor"/>
-<path d="M10.6972 10.9996H12V12.9996H10.6972L3 18.1311V5.86816L10.6972 10.9996Z" fill="currentColor"/>
+  private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M20.375 5.29979C21.0298 4.77598 22 5.24253 22 6.08104V17.9199C21.9998 18.7582 21.0297 19.2239 20.375 18.7002L12 12L20.375 5.29979Z" fill="currentColor" stroke="currentColor"/>
+<path d="M2 6.08128C2 5.24278 2.97024 4.77622 3.625 5.30003L9.92387 10.3388C10.1027 10.4818 10.3251 10.5591 10.5541 10.5578L19.9912 10.5057C20.5435 10.5027 20.9937 10.9479 20.9967 11.5002L21.0023 12.5002C21.0053 13.0525 20.5601 13.5027 20.0078 13.5058L10.3956 13.5589C10.1704 13.5601 9.95218 13.6373 9.77633 13.7781L3.625 18.7004C2.97024 19.2242 2 18.7577 2 17.9192V6.08128Z" fill="currentColor" stroke="currentColor"/>
 </svg>
 `;
 
   private iconCss = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path fill-rule="evenodd" clip-rule="evenodd" d="M13 10.0004V14.0004H11L3.5547 18.9639C2.89015 19.4069 2 18.9305 2 18.1318V5.86887C2 5.07017 2.89015 4.59378 3.5547 5.03682L11 10.0004H13ZM10.6972 11.0004H12V13.0004H10.6972L3 18.1318L3 5.86887L10.6972 11.0004Z" style="fill: var(--automation-symbol-static-background-color)"/>
-<path d="M14 13.9999V9.99986L20.4 5.19986C21.0592 4.70544 22 5.17582 22 5.99986V17.9999C22 18.8239 21.0592 19.2943 20.4 18.7999L14 13.9999Z" style="fill: var(--automation-symbol-static-background-color)"/>
-<path d="M10.6972 10.9996H12V12.9996H10.6972L3 18.1311V5.86816L10.6972 10.9996Z" style="fill: var(--automation-symbol-on-background-color)"/>
+<path d="M20.375 5.29979C21.0298 4.77598 22 5.24253 22 6.08104V17.9199C21.9998 18.7582 21.0297 19.2239 20.375 18.7002L12 12L20.375 5.29979Z" style="fill: var(--automation-symbol-on-border-color); stroke: var(--automation-symbol-off-line-color)"/>
+<path d="M2 6.08128C2 5.24278 2.97024 4.77622 3.625 5.30003L9.92387 10.3388C10.1027 10.4818 10.3251 10.5591 10.5541 10.5578L19.9912 10.5057C20.5435 10.5027 20.9937 10.9479 20.9967 11.5002L21.0023 12.5002C21.0053 13.0525 20.5601 13.5027 20.0078 13.5058L10.3956 13.5589C10.1704 13.5601 9.95218 13.6373 9.77633 13.7781L3.625 18.7004C2.97024 19.2242 2 18.7577 2 17.9192V6.08128Z" style="fill: var(--automation-symbol-on-background-color); stroke: var(--automation-symbol-on-border-color)"/>
 </svg>
 `;
 

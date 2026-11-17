@@ -53,5 +53,5 @@
 }
 
 .legend-unit {
-  font-size: var(--global-typography-instrument-unit-font-size);
+  font-size: var(--global-typography-general-xs-font-size);
 }

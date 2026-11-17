@@ -6,13 +6,13 @@ import {customElement} from '../decorator.js';
 export class ObiResistor2 extends LitElement {
   @property({type: Boolean}) useCssColor = false;
 
-  private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-<path fill-rule="evenodd" clip-rule="evenodd" d="M16 2H13V0H11V2H8L12 8H4V11H1V13H4V16H20V13H23V11H20V8H12L16 2ZM6 14V10H18V14H6Z" fill="currentColor"/>
+  private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M16 2H13V0H11V2H8L12 8H4V11H1V13H4V16H20V13H23V11H20V8H12L16 2ZM6 14V10H18V14H6Z" fill-rule="evenodd" clip-rule="evenodd" fill="currentColor"/>
 </svg>
 `;
 
   private iconCss = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path fill-rule="evenodd" clip-rule="evenodd" d="M16 2H13V0H11V2H8L12 8H4V11H1V13H4V16H20V13H23V11H20V8H12L16 2ZM6 14V10H18V14H6Z" style="fill: var(--automation-symbol-static-background-color)"/>
+<path d="M16 2H13V0H11V2H8L12 8H4V11H1V13H4V16H20V13H23V11H20V8H12L16 2ZM6 14V10H18V14H6Z" fill-rule="evenodd" clip-rule="evenodd" style="fill: var(--automation-symbol-static-background-color)"/>
 </svg>
 `;
 
