@@ -82,6 +82,7 @@ export {RotType, RotPosition};
  * @availableWhen unit hasReadout==true
  * @property fractionDigits - Number of fraction digits shown in the readout. Default `0`.
  * @availableWhen fractionDigits hasReadout==true
+ * @property rotationsPerMinute - Legacy visual input, read only while `rateOfTurnDegreesPerMinute` is unset: the dot ring's spin in rotations per minute; the track bar ignores it. A measured rate of turn goes in `rateOfTurnDegreesPerMinute`.
  * @stable
  */
 @customElement('obc-rate-of-turn')
@@ -95,7 +96,7 @@ export class ObcRateOfTurn extends LitElement {
    * `rotDotAnimationFactor`) instead. Takes effect only when
    * `rateOfTurnDegreesPerMinute` is `undefined`.
    */
-  @property({type: Number}) rotationsPerMinute: number = 1;
+  @property({type: Number}) rotationsPerMinute: number = 0;
 
   @property({type: String}) rotType: RotType = RotType.dots;
   @property({type: String}) rotPosition: RotPosition = RotPosition.scale;

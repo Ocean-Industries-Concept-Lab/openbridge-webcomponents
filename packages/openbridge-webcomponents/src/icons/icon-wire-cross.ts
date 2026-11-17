@@ -6,7 +6,7 @@ import {customElement} from '../decorator.js';
 export class ObiWireCross extends LitElement {
   @property({type: Boolean}) useCssColor = false;
 
-  private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+  private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
 <path d="M10 0H14V7.41604C15.1534 7.92 16.08 8.84656 16.584 10H24V14H16.584C16.08 15.1534 15.1534 16.08 14 16.584V24H10V16.584C8.84656 16.08 7.92 15.1534 7.41604 14H0V10H7.41604C7.92 8.84656 8.84656 7.92 10 7.41604V0Z" fill="currentColor"/>
 <path d="M10 7.41604C8.84656 7.92 7.92 8.84656 7.41604 10H0V11H8.07041L8.3324 10.4004C8.7355 9.47778 9.47778 8.7355 10.4004 8.3324L11 8.07041V0H10V7.41604Z" fill="currentColor"/>
 <path d="M7.41604 14C7.92 15.1534 8.84656 16.08 10 16.584V24H11V15.9296L10.4004 15.6676C9.47778 15.2645 8.7355 14.5222 8.3324 13.5996L8.07041 13H0V14H7.41604Z" fill="currentColor"/>

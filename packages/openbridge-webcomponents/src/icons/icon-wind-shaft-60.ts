@@ -6,7 +6,7 @@ import {customElement} from '../decorator.js';
 export class ObiWindShaft60 extends LitElement {
   @property({type: Boolean}) useCssColor = false;
 
-  private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+  private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
 <path d="M12.2373 1.03603L12.3672 1.06044L19.8545 2.93251C20.9654 3.21025 20.9654 4.78954 19.8545 5.06728L13 6.78017V8H19C19.5523 8 20 8.44773 20 9C20 9.55228 19.5523 10 19 10H13V23.9999H11V2.12783C11.0001 1.45694 11.5913 0.953184 12.2373 1.03603Z" fill="currentColor"/>
 </svg>
 `;

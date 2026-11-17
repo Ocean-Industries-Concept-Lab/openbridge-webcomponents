@@ -45,6 +45,7 @@ const fullBundlePackage = {
     'src',
     'docs',
     'custom-elements.json',
+    'custom-elements-manifest.config.mjs',
     'tsconfig.json',
     'eslint.config.mjs',
     'vite.config.ts',
@@ -82,6 +83,8 @@ for (const dirName of [
 
 for (const file of [
   'custom-elements.json',
+  // prepack runs `cem analyze` here: without the config it reads dist and bundle too
+  'custom-elements-manifest.config.mjs',
   'tsconfig.json',
   'vite.config.ts',
   'eslint.config.mjs',

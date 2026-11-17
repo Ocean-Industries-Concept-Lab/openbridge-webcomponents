@@ -6,7 +6,7 @@ import {customElement} from '../decorator.js';
 export class ObiScreenFill extends LitElement {
   @property({type: Boolean}) useCssColor = false;
 
-  private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+  private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
 <path d="M5.5 7.58749V10.0875H7.5V7.58749H10.5V5.58749H7.5C6.95 5.58749 6.47917 5.78333 6.0875 6.17499C5.69583 6.56666 5.5 7.03749 5.5 7.58749Z" fill="currentColor"/>
 <path d="M5.5 16.5875V14.0875H7.5V16.5875H10.5V18.5875H7.5C6.95 18.5875 6.47917 18.3917 6.0875 18C5.69583 17.6083 5.5 17.1375 5.5 16.5875Z" fill="currentColor"/>
 <path d="M18.5 7.5875V10.0875H16.5V7.5875H13.5V5.5875H16.5C17.05 5.5875 17.5208 5.78333 17.9125 6.175C18.3042 6.56667 18.5 7.0375 18.5 7.5875Z" fill="currentColor"/>

@@ -31,10 +31,10 @@
 
 /* Unit */
 .unit-text {
-  @mixin font-instrument-unit;
+  @mixin font-general-xs-regular;
   color: var(--element-inactive-color);
   white-space: nowrap;
-  height: var(--global-typography-instrument-unit-line-height);
+  height: var(--global-typography-general-xs-line-height);
   user-select: none;
 
   &.external {

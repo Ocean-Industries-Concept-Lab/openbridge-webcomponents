@@ -6,7 +6,7 @@ import {customElement} from '../decorator.js';
 export class ObiAddRowAbove extends LitElement {
   @property({type: Boolean}) useCssColor = false;
 
-  private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+  private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
 <path d="M5 19H19V14H5V19ZM21 20C21 20.5523 20.5523 21 20 21H4C3.44772 21 3 20.5523 3 20V4C3 3.44772 3.44772 3 4 3H5V12H19V3H20C20.5523 3 21 3.44772 21 4V20ZM11 10V7H8V5H11V2H13V5H16V7H13V10H11Z" fill="currentColor"/>
 </svg>
 `;

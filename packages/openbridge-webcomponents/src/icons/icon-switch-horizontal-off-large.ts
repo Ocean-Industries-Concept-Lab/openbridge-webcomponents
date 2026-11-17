@@ -6,13 +6,29 @@ import {customElement} from '../decorator.js';
 export class ObiSwitchHorizontalOffLarge extends LitElement {
   @property({type: Boolean}) useCssColor = false;
 
-  private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-<path d="M19.5705 6.06699C20.2879 5.65277 21.2053 5.89859 21.6195 6.61603C22.0338 7.33346 21.7879 8.25085 21.0705 8.66506L4.61603 18.1651C3.89859 18.5793 2.9812 18.3335 2.56699 17.616C2.15277 16.8986 2.39859 15.9812 3.11603 15.567L19.5705 6.06699Z" fill="currentColor" stroke="currentColor"/>
+  private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<use xlink:href="#stroke0_2234_109" fill="currentColor"/>
+<mask id="stroke1_2234_109" maskUnits="userSpaceOnUse" x="1.13397" y="4.63397" width="21.9186" height="14.9641" fill="black">
+<rect fill="white" x="1.13397" y="4.63397" width="21.9186" height="14.9641"/>
+<use xlink:href="#stroke0_2234_109"/>
+</mask>
+<path d="M3 17.366C2.72386 16.8877 2.88773 16.2761 3.36603 16L19.8205 6.5C20.2988 6.22386 20.9104 6.38773 21.1865 6.86603C21.4627 7.34432 21.2988 7.95591 20.8205 8.23205L4.36603 17.7321C3.88773 18.0082 3.27614 17.8443 3 17.366Z" stroke-width="2" stroke="currentColor" mask="url(#stroke1_2234_109)"/>
+<defs>
+<path id="stroke0_2234_109" d="M3 17.366C2.72386 16.8877 2.88773 16.2761 3.36603 16L19.8205 6.5C20.2988 6.22386 20.9104 6.38773 21.1865 6.86603C21.4627 7.34432 21.2988 7.95591 20.8205 8.23205L4.36603 17.7321C3.88773 18.0082 3.27614 17.8443 3 17.366Z"/>
+</defs>
 </svg>
 `;
 
-  private iconCss = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M19.5705 6.06699C20.2879 5.65277 21.2053 5.89859 21.6195 6.61603C22.0338 7.33346 21.7879 8.25085 21.0705 8.66506L4.61603 18.1651C3.89859 18.5793 2.9812 18.3335 2.56699 17.616C2.15277 16.8986 2.39859 15.9812 3.11603 15.567L19.5705 6.06699Z" style="fill: var(--automation-symbol-off-background-color); stroke: var(--automation-symbol-off-border-color)"/>
+  private iconCss = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<use xlink:href="#stroke0_2234_109" style="fill: var(--automation-symbol-off-background-color)"/>
+<mask id="stroke1_2234_109" maskUnits="userSpaceOnUse" x="1.13397" y="4.63397" width="21.9186" height="14.9641" fill="black">
+<rect fill="white" x="1.13397" y="4.63397" width="21.9186" height="14.9641"/>
+<use xlink:href="#stroke0_2234_109"/>
+</mask>
+<path d="M3 17.366C2.72386 16.8877 2.88773 16.2761 3.36603 16L19.8205 6.5C20.2988 6.22386 20.9104 6.38773 21.1865 6.86603C21.4627 7.34432 21.2988 7.95591 20.8205 8.23205L4.36603 17.7321C3.88773 18.0082 3.27614 17.8443 3 17.366Z" stroke-width="2" style="stroke: var(--automation-symbol-off-border-color)" mask="url(#stroke1_2234_109)"/>
+<defs>
+<path id="stroke0_2234_109" d="M3 17.366C2.72386 16.8877 2.88773 16.2761 3.36603 16L19.8205 6.5C20.2988 6.22386 20.9104 6.38773 21.1865 6.86603C21.4627 7.34432 21.2988 7.95591 20.8205 8.23205L4.36603 17.7321C3.88773 18.0082 3.27614 17.8443 3 17.366Z"/>
+</defs>
 </svg>
 `;
 

@@ -9,6 +9,11 @@ import {
   ReadoutStacking,
   type ObcReadout,
 } from './readout.js';
+import {
+  ObcAlertFrameMode,
+  ObcAlertFrameType,
+} from '../../components/alert-frame/alert-frame.js';
+import {AlertType} from '../../types.js';
 
 /**
  * A horizontal readout given a `size` other than `large` warns once per
@@ -131,5 +136,45 @@ describe('obc-readout height', () => {
       contentHeight(root),
       0
     );
+  });
+});
+
+/**
+ * The value alert frame sits on the value reading's own box, as the design
+ * file pins its frame to the readout block (Figma 46282:102156): the stroke
+ * straddles the reading's edge and only the inline padding keeps it off the
+ * digits. Same rule as `obc-readout-list-item`.
+ */
+describe('obc-readout value alert frame', () => {
+  it('shares the reading box edges vertically and pads 4px inline', async () => {
+    const screen = render(
+      html`<obc-readout
+        .size=${ReadoutSize.small}
+        .value=${230}
+        label="Voltage"
+        unit="V"
+        .valueOptions=${{
+          alert: {
+            status: AlertType.Alarm,
+            mode: ObcAlertFrameMode.ackedActive,
+            type: ObcAlertFrameType.Regular,
+          },
+        }}
+      ></obc-readout>`
+    );
+    const el = screen.container.querySelector('obc-readout') as ObcReadout;
+    await el.updateComplete;
+    const reading = el
+      .shadowRoot!.querySelector('.value-reading')!
+      .getBoundingClientRect();
+    const frame = el
+      .shadowRoot!.querySelector('obc-alert-frame')!
+      .shadowRoot!.querySelector('.wrapper')!
+      .getBoundingClientRect();
+
+    expect(frame.top).toBeCloseTo(reading.top, 2);
+    expect(frame.bottom).toBeCloseTo(reading.bottom, 2);
+    expect(frame.left).toBeCloseTo(reading.left - 4, 2);
+    expect(frame.right).toBeCloseTo(reading.right + 4, 2);
   });
 });

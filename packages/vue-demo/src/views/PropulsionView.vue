@@ -12,10 +12,10 @@ import { useSim } from '../composables/useSim'
 import { computed } from 'vue'
 import { useDemoConfigStore } from '../stores/demoConfig'
 import {
-  type AngleAdvice,
-  AdviceType
-} from '@oicl/openbridge-webcomponents/dist/navigation-instruments/watch/advice.js'
-import { type LinearAdvice } from '@oicl/openbridge-webcomponents/dist/navigation-instruments/thruster/advice.js'
+  AdviceCategory,
+  AdviceState,
+  type AdviceInput
+} from '@oicl/openbridge-webcomponents/dist/svghelpers/advice.js'
 const sim = useSim()
 
 const configStore = useDemoConfigStore()
@@ -27,46 +27,46 @@ const popUpSetpointOptions = { interaction: 'pop-up' }
 const rudderInstrumentAngle = computed(() => sim.propulsion.rudder.value)
 const rudderInstrumentAngleSetpoint = computed(() => sim.propulsion.rudderSet.value)
 
-const rudderAdive = computed((): AngleAdvice[] => {
+const rudderAdvice = computed((): AdviceInput[] => {
   if (sim.controllers.showAdvice.value) {
     return [
       {
-        minAngle: 10,
-        maxAngle: 30,
-        type: AdviceType.caution,
-        hinted: true
+        min: 10,
+        max: 30,
+        category: AdviceCategory.caution,
+        state: AdviceState.hinted
       },
       {
-        minAngle: -30,
-        maxAngle: -10,
-        type: AdviceType.caution,
-        hinted: true
+        min: -30,
+        max: -10,
+        category: AdviceCategory.caution,
+        state: AdviceState.hinted
       }
     ]
   }
   return []
 })
 
-const thrusterAdvice = computed((): LinearAdvice[] => {
+const thrusterAdvice = computed((): AdviceInput[] => {
   if (sim.controllers.showAdvice.value) {
     return [
       {
         min: 80,
         max: 100,
-        type: AdviceType.caution,
-        hinted: true
+        category: AdviceCategory.caution,
+        state: AdviceState.hinted
       },
       {
         min: 40,
         max: 60,
-        type: AdviceType.advice,
-        hinted: true
+        category: AdviceCategory.optimal,
+        state: AdviceState.hinted
       },
       {
         min: -100,
         max: -20,
-        type: AdviceType.caution,
-        hinted: true
+        category: AdviceCategory.caution,
+        state: AdviceState.hinted
       }
     ]
   }
@@ -132,7 +132,7 @@ const thrusterAdvice = computed((): LinearAdvice[] => {
       :angle="rudderInstrumentAngle"
       :setpoint="rudderInstrumentAngleSetpoint"
       :max-angle="30"
-      :advices="rudderAdive"
+      :advices="rudderAdvice"
     />
     <ObcRudder
       class="rudder-2"
@@ -142,7 +142,7 @@ const thrusterAdvice = computed((): LinearAdvice[] => {
       :angle="rudderInstrumentAngle"
       :setpoint="rudderInstrumentAngleSetpoint"
       :max-angle="30"
-      :advices="rudderAdive"
+      :advices="rudderAdvice"
     />
     <div class="readout-grid">
       <div class="tunnel-index readout-container single">

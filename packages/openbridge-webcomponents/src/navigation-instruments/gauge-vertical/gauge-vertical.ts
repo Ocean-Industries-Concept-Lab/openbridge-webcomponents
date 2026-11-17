@@ -10,10 +10,7 @@ import {
   BorderRadiusPosition,
   Priority,
 } from '../types.js';
-import type {
-  ExternalScaleAdvice,
-  ExternalScaleConfig,
-} from '../../building-blocks/external-scale/external-scale.js';
+import type {ExternalScaleConfig} from '../../building-blocks/external-scale/external-scale.js';
 import {
   computeExternalScaleViewBox,
   computeFixedAspectRatioScale,
@@ -29,7 +26,8 @@ import {
   ExternalScaleSide,
 } from '../../building-blocks/external-scale/external-scale.js';
 import {SetpointMixin} from '../../svghelpers/setpoint-mixin.js';
-import type {LinearAdvice} from '../../building-blocks/instrument-linear/advice.js';
+import {AdviceMixin} from '../../svghelpers/advice-mixin.js';
+import {nextAdviceMaskId} from '../../svghelpers/advice.js';
 
 // Re-export shared enums for convenience
 export {
@@ -145,13 +143,16 @@ export {
  * @property highlightCurrentValue - When true, displays a dot indicator at the current value position.
  *   The dot is rendered in the scale band, touching its inner edge (towards the chart).
  *   This provides an alternative to bar fill for highlighting the current value.
+ * @property focused - Earlier name for `touching`: a change to it sets `touching`, unless `touching` changes in the same update, which then wins. It is not updated from `touching`, so it does not read back the current value.
  * @fires {CustomEvent} scale-dimensions-changed - Fired when layout-affecting properties change, providing dimension info for parent chart integration. It bubbles to the chart slot the gauge sits in and does not leave the shadow root around it.
  * @stable
  */
 @customElement('obc-gauge-vertical')
-export class ObcGaugeVertical extends SetpointMixin(LitElement, {
-  defaultDeadband: 1,
-}) {
+export class ObcGaugeVertical extends AdviceMixin(
+  SetpointMixin(LitElement, {
+    defaultDeadband: 1,
+  })
+) {
   @property({type: Number}) minValue = 0;
   @property({type: Number}) maxValue = 100;
   @property({type: Boolean}) reverse = false;
@@ -253,7 +254,8 @@ export class ObcGaugeVertical extends SetpointMixin(LitElement, {
   @property({type: Boolean}) focused = false;
 
   private readonly advicePosition: AdvicePosition = AdvicePosition.inner;
-  @property({type: Array, attribute: false}) advices?: LinearAdvice[] = [];
+  // Mask ids are document-scoped, so each gauge names its own.
+  private readonly _adviceMaskPrefix = nextAdviceMaskId('gauge');
 
   @property({type: Boolean}) highlightCurrentValue = false;
 
@@ -299,7 +301,10 @@ export class ObcGaugeVertical extends SetpointMixin(LitElement, {
       touching: this.touching,
       setpointOverride: this.setpointOverride,
       advicePosition: this.advicePosition,
-      advices: this.advices as ExternalScaleAdvice[],
+      advices: this.advices,
+      adviceTrigger: this.adviceTrigger,
+      adviceEmphasis: this.adviceEmphasis,
+      adviceMaskPrefix: this._adviceMaskPrefix,
       fixedAspectRatio: this.fixedAspectRatio,
       // Gauges are always in instrument mode - they use fixed borderRadius (8px)
       // and don't respond to .obc-component-size-* CSS classes for border radius
@@ -390,6 +395,7 @@ export class ObcGaugeVertical extends SetpointMixin(LitElement, {
       labelThickness: this.labelThickness,
       length: this.height,
       scaleType: this.scaleType,
+      hasAdviceIcon: !!this.advices?.some((a) => a.showIcon),
       hasSetpoint:
         this.setpoint !== undefined ||
         this.newSetpoint !== undefined ||

@@ -1,6 +1,7 @@
-import {LitElement, html, nothing, unsafeCSS} from 'lit';
+import {LitElement, PropertyValues, html, nothing, unsafeCSS} from 'lit';
 import {property} from 'lit/decorators.js';
 import {classMap} from 'lit/directives/class-map.js';
+import {ifDefined} from 'lit/directives/if-defined.js';
 import {localized, msg} from '@lit/localize';
 import componentStyle from './alert-button-item.css?inline';
 import {customElement} from '../../decorator.js';
@@ -60,11 +61,16 @@ export enum ObcAlertButtonType {
  *   `nAlerts` of 0 shows the idle bell.
  * - **Counter:** `counter` shows `nAlerts` next to the bell, except in `flat`.
  * - **Global counter:** `globalCounter` shows the per-severity `counts` as
- *   badges, then the bell and `nAlerts`, always in the normal style.
+ *   badges, then the bell and `nAlerts`, always in the normal style;
+ *   `globalCounterType` picks filled badges or the severity shapes.
  * - **Flashing:** `blinking` flashes the bell at the tempo `flashingSpeed`
  *   resolves (#1224).
  * - **Fill height:** `fillHeight` stretches the visible button to the host
  *   height, as the tall `obc-alert-button` does.
+ * - **Icon slot:** the `icon` slot replaces the bell with any icon; the item
+ *   then never flashes.
+ * - **Activated:** `activated` draws the selected style, for a button whose
+ *   panel is showing.
  *
  * ---
  *
@@ -104,6 +110,8 @@ export enum ObcAlertButtonType {
  * @property counter - Shows `nAlerts` next to the bell (not in `flat`).
  * @availableWhen counter globalCounter==false
  * @property globalCounter - Shows the per-severity counts, the bell and the total instead of a single alert status.
+ * @property globalCounterType - How the global counter draws each count: `badges` (filled severity badges, default) or `alert-level` (the severity shape beside the count).
+ * @availableWhen globalCounterType globalCounter==true
  * @property counts - Alert count per severity for the global counter badges.
  * @availableWhen counts globalCounter==true
  * @property shelvedCount - Number of shelved alerts, shown after the global counter badges.
@@ -113,7 +121,10 @@ export enum ObcAlertButtonType {
  * @property flashingSpeed - Flash tempo while `blinking` is on: `default` resolves from `alertType`, `fast`, `slow`, `very-slow` force a tempo, `fixed` never flashes.
  * @availableWhen flashingSpeed blinking==true
  * @property fillHeight - Stretches the visible button to the host height instead of the 32 px visual target.
+ * @property activated - Draws the button in the selected style, for a button whose panel is showing.
  * @property ariaLabel - Accessible name forwarded to the inner `<button>`, mapped to the `aria-label` attribute; replaces the generated label. `aria-labelledby` is not supported: ID references cannot cross the shadow boundary.
+ * @property ariaExpanded - Whether the panel the button opens is showing, forwarded to the inner `<button>` as `aria-expanded`; mapped to the `aria-expanded` attribute. Set it with `activated` from the flag that drives the panel; left unset, the button announces no panel.
+ * @slot icon - Replaces the bell. The flash cross-fades two bells, so a slotted icon never flashes and `blinking` has no effect while the slot is filled.
  * @fires click - Fired when the button is clicked.
  * @experimental
  */
@@ -126,16 +137,31 @@ export class ObcAlertButtonItem extends LitElement {
   @property({type: Number}) nAlerts = 0;
   @property({type: Boolean}) counter = false;
   @property({type: Boolean}) globalCounter = false;
+  @property({type: String}) globalCounterType: ObcAlertCounterItemType =
+    ObcAlertCounterItemType.Badges;
   @property({type: Object, attribute: false}) counts: AlertCounts = {};
   @property({type: Number}) shelvedCount = 0;
   @property({type: Boolean}) blinking = false;
   @property({type: String}) flashingSpeed: FlashingSpeed =
     FlashingSpeed.Default;
   @property({type: Boolean}) fillHeight = false;
+  @property({type: Boolean}) activated = false;
 
   // Reactive so a consumer changing the name re-renders the shadow button.
   @property({type: String, attribute: 'aria-label'})
   override ariaLabel: string | null = null;
+
+  @property({type: String, attribute: 'aria-expanded'})
+  override ariaExpanded: string | null = null;
+
+  private hasSlottedIcon = false;
+
+  protected override willUpdate(changedProperties: PropertyValues<this>) {
+    super.willUpdate(changedProperties);
+    // Read before the first paint, so the flash is never installed for an
+    // icon that replaces the bell; the slot's change event re-runs it.
+    this.hasSlottedIcon = this.querySelector(':scope > [slot="icon"]') !== null;
+  }
 
   protected readonly flashing = new FlashingController(
     this,
@@ -145,6 +171,7 @@ export class ObcAlertButtonItem extends LitElement {
   get resolvedFlashingSpeed(): ResolvedFlashingSpeed {
     if (
       this.globalCounter ||
+      this.hasSlottedIcon ||
       !this.blinking ||
       this.nAlerts <= 0 ||
       this.alertType === undefined
@@ -235,7 +262,7 @@ export class ObcAlertButtonItem extends LitElement {
       return nothing;
     }
     return html`<obc-alert-counter-item
-      .type=${ObcAlertCounterItemType.Badges}
+      .type=${this.globalCounterType}
       .counts=${this.counts}
       .shelvedCount=${this.shelvedCount}
     ></obc-alert-counter-item>`;
@@ -259,9 +286,15 @@ export class ObcAlertButtonItem extends LitElement {
           counter: showCount && !this.globalCounter,
           'global-counter': this.globalCounter,
           'fill-height': this.fillHeight,
+          selected: this.activated,
           [`flash-${tempo}`]: true,
         })}
         aria-label=${this.accessibleName}
+        aria-expanded=${ifDefined(
+          this.ariaExpanded === 'true' || this.ariaExpanded === 'false'
+            ? this.ariaExpanded
+            : undefined
+        )}
       >
         ${
           tempo === FlashingSpeed.Fixed
@@ -276,7 +309,9 @@ export class ObcAlertButtonItem extends LitElement {
         <div class="visible-wrapper">
           ${this.globalCounter ? this.renderCounts() : nothing}
           <div class="content">
-            ${this.renderIcon(styleType, false)}
+            <slot name="icon" @slotchange=${() => this.requestUpdate()}
+              >${this.renderIcon(styleType, false)}</slot
+            >
             ${showCount ? this.renderCount() : nothing}
           </div>
         </div>

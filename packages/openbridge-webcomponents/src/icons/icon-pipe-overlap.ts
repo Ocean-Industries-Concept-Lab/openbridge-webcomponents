@@ -6,7 +6,7 @@ import {customElement} from '../decorator.js';
 export class ObiPipeOverlap extends LitElement {
   @property({type: Boolean}) useCssColor = false;
 
-  private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+  private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
 <path d="M15 0H9V24H15V0Z" fill="currentColor"/>
 <path d="M0 9H7V15H0V9Z" fill="currentColor"/>
 <path d="M17 9H24V15H17V9Z" fill="currentColor"/>

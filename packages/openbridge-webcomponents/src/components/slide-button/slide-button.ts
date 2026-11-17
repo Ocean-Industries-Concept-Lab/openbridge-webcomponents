@@ -141,7 +141,10 @@ export class ObcSlideButton extends LitElement {
     }
 
     this.dragCurrentX = clientX;
-    this.dragOffset = this.dragCurrentX - this.dragStartX;
+    // clientX is viewport px; the thumb's `left` is CSS px, which an ancestor
+    // `zoom` scales again, so the delta is divided by that zoom.
+    this.dragOffset =
+      (this.dragCurrentX - this.dragStartX) / (this.currentCSSZoom ?? 1);
     this.requestUpdate();
   };
 
