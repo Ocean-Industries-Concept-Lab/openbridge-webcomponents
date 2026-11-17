@@ -1,5 +1,5 @@
-import {CustomElementDecorator} from '@lit/reactive-element/decorators/custom-element';
-import {Constructor} from '@lit/reactive-element/decorators/base';
+import {CustomElementDecorator} from '@lit/reactive-element/decorators/custom-element.js';
+import {Constructor} from '@lit/reactive-element/decorators/base.js';
 
 type CustomElementClass = Omit<typeof HTMLElement, 'new'>;
 

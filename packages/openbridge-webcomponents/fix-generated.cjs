@@ -90,6 +90,9 @@ function fixPackageJson(packageName, directory) {
 
     const tsConfigFile = require(`../${directory}/tsconfig.json`);
     tsConfigFile.compilerOptions.skipLibCheck = true;
+    // The generator writes `moduleResolution: "node"`, which TypeScript 6
+    // rejects as deprecated unless the deprecation is acknowledged.
+    tsConfigFile.compilerOptions.ignoreDeprecations = '6.0';
     fs.writeFileSync(
       `../${directory}/tsconfig.json`,
       JSON.stringify(tsConfigFile, null, 2)
