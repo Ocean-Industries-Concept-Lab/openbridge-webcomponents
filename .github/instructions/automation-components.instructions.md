@@ -219,12 +219,12 @@ The abstract button base, `obc-automation-tank`, the specialty-tank base and `ob
 
 The abstract base exposes four **enum-driven** badge properties (defined in `abstract-automation-button.ts`) that render an `<obc-automation-badge>` in a fixed corner slot. Each defaults to `None` (no badge); a non-`None` value resolves to a specific `ObcAutomationBadgeType`. The legacy `badge-top-*` / `badge-bottom-*` slots still work and override the enum default for backward compatibility.
 
-| Property             | Enum                                 | Values                                                         | Corner       |
-| -------------------- | ------------------------------------ | -------------------------------------------------------------- | ------------ |
-| `badgeControl`       | `AutomationButtonBadgeControl`       | `none`, `local`, `local-only`, `manual`, `manual-only`, `auto` | top-left     |
-| `badgeAlert`         | `AutomationButtonBadgeAlert`         | `none`, `silence`, `shelved`, `caution`, `warning`, `alarm`    | top-right    |
-| `badgeInterlock`     | `AutomationButtonBadgeInterlock`     | `none`, `interlock`, `interlock-inhibit`, `simulation`         | bottom-left  |
-| `badgeCommandLocked` | `AutomationButtonBadgeCommandLocked` | `none`, `command-locked`, `simulation`                         | bottom-right |
+| Property             | Enum                                 | Values                                                                                                                                       | Corner       |
+| -------------------- | ------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------- | ------------ |
+| `badgeControl`       | `AutomationButtonBadgeControl`       | `none`, `local`, `local-only`, `manual`, `manual-only`, `auto`                                                                               | top-left     |
+| `badgeAlert`         | `AutomationButtonBadgeAlert`         | `none`, `silence`, `shelved`, `caution`, `warning`, `alarm`, `level-critical`, `level-high`, `level-medium`, `level-low`, `level-diagnostic` | top-right    |
+| `badgeInterlock`     | `AutomationButtonBadgeInterlock`     | `none`, `interlock`, `interlock-inhibit`, `simulation`                                                                                       | bottom-left  |
+| `badgeCommandLocked` | `AutomationButtonBadgeCommandLocked` | `none`, `command-locked`, `simulation`                                                                                                       | bottom-right |
 
 Badge spacer logic is computed from readout position and which badges are present (enum-resolved or slotted). Do not hard-code spacer visibility.
 
