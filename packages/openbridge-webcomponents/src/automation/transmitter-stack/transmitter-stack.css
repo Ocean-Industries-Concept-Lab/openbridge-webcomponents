@@ -6,7 +6,7 @@
   display: block;
 }
 
-.transmitter {
+.transmitter:not(.no-line) {
   @mixin transmitter-leader;
 }
 
