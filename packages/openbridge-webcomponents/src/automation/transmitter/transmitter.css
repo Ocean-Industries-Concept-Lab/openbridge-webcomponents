@@ -10,6 +10,10 @@
   @mixin transmitter-leader;
 }
 
+.transmitter.no-line {
+  width: fit-content; /* a full-width box would centre the chip away from its placement point */
+}
+
 .content {
   position: relative; /* containing block for the left/right id tag (transmitter-leader) */
   display: flex;

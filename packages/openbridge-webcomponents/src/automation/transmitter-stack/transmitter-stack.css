@@ -10,6 +10,10 @@
   @mixin transmitter-leader;
 }
 
+.transmitter.no-line {
+  width: fit-content; /* a full-width box would stretch the 1fr segments across the container */
+}
+
 .values {
   display: grid;
   grid-auto-flow: column;
