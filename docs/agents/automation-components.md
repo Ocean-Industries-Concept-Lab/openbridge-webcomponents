@@ -53,6 +53,7 @@ Rules:
 - Provide both horizontal and vertical icon variants when `this.vertical` is true
 - Apply rotation via a wrapper `div` with `style="transform: rotate(90deg)"`, not on the icon itself
 - Switch between on/off icon variants based on `this.turnedOn`
+- A two-state device (`ObcAbstractAutomationButtonSquared`) keeps a `SquaredDeviceIcons` table per `alternativeIcon` and renders it with `renderDeviceIcon()`, which shows the `static` icon when `static` is set. Leave `static` out of an entry only when the icons file has no static symbol, and say so in a `TODO(designer)`
 
 ## State and Readout Getters
 
@@ -195,7 +196,7 @@ A valve can carry a handle or actuator next to its symbol: `obc-digital-valve` t
 - **`handleSize`** lives on the subclasses that have a handle. `small` puts the stem's end on the symbol's centre, as the design draws it on a bare symbol.
 - **The default readout is below the symbol, or to its left on a vertical pipe** (`_isVertical`). Three-way valves put it on the side without a port.
 - **The directional valves show no state row:** they act on their own, so the system has no open or closed state to report. Without a tag their button takes its name from `equipmentName`.
-- **`--automation-symbol-*-line-color`** is hand-written in `manual.css` until the next palette export carries it; remove it there then.
+- **The handle line colours come from the palette export:** `--automation-symbol-off-line-color` and `--automation-symbol-static-line-color`, and `--on-line-color` for the on state, the short name the plugin gives `Color/Automation/Symbol/On-line-color` ([`figma-refresh.md`](figma-refresh.md) § Open).
 
 ## Alert frame properties
 

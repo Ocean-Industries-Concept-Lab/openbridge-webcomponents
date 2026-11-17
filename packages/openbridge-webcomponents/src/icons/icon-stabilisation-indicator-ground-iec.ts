@@ -6,7 +6,7 @@ import {customElement} from '../decorator.js';
 export class ObiStabilisationIndicatorGroundIec extends LitElement {
   @property({type: Boolean}) useCssColor = false;
 
-  private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+  private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
 <path d="M16 16H14L12 12L10 16H8L12 8L16 16Z" fill="currentColor"/>
 <path d="M14 22L12 18L10 22H8L12 14L16 22H14Z" fill="currentColor"/>
 </svg>

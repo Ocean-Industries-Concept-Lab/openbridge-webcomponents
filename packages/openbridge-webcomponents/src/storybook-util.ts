@@ -50,6 +50,13 @@ export function iconIdToIconHtml(
   }
 }
 
+/** An icon element by tag name, coloured from CSS, for a story that picks its icons from a list. */
+export function cssColorIcon(tag: string): HTMLElement {
+  const icon = document.createElement(tag);
+  icon.toggleAttribute('usecsscolor', true);
+  return icon;
+}
+
 export function crossDecorator(
   story: () => unknown,
   context: {globals?: {cross?: boolean} | Record<string, unknown>}

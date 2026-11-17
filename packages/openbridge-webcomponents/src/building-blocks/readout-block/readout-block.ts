@@ -98,6 +98,7 @@ export enum ReadoutBlockDataQuality {
  * implemented yet. Both flagged as "may change" in the 6.1 review.
  */
 export enum ReadoutAdviceCategory {
+  /** No advice on the value. The other members are `AdviceCategory`'s names (`svghelpers/advice.ts`); `exclusion` has no readout style yet. */
   regular = 'regular',
   optimal = 'optimal',
   eco = 'eco',

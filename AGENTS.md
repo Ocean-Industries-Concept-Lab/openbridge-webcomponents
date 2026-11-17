@@ -94,7 +94,8 @@ Key points:
    tag per public property (no type), after the Markdown sections and before
    `@slot`/`@fires`, with `@availableWhen name condition` under a conditional one.
    No inline JSDoc above `@property()` fields (`npm run lint:comments` fails;
-   `--fix` hoists them; the exceptions are in [`docs/agents/jsdoc.md`](docs/agents/jsdoc.md)).
+   `--fix` hoists them; an inline `@deprecated` / `@default` is the exception and keeps
+   its description in the class block — [`docs/agents/jsdoc.md`](docs/agents/jsdoc.md)).
    A tag naming a property that does not exist fails `npm run lint:slots`.
 7. **Tone:** Do NOT mention "maritime", "industrial", "bridge", or domain qualifiers; keep text domain-agnostic.
 8. If purpose is unclear, insert `**TODO(designer)**` instead of guessing.
@@ -141,6 +142,7 @@ The table below is generated too. Edit `docs/agents/*.md`, never this block.
 | Doc | Scope (globs) | Description |
 | --- | --- | --- |
 | [a11y](docs/agents/a11y.md) | `packages/openbridge-webcomponents/src/{components,automation,internal}/**` | Accessibility (WCAG 2.1 AA + 2.2 § 2.5.8 target size) — keyboard nav, ARIA, focus |
+| [advice](docs/agents/advice.md) | `packages/openbridge-webcomponents/src/svghelpers/{advice.ts,advice-linear.ts,advice-patterns.ts,advice-mixin.ts,advice-bundle.ts}`<br>`packages/openbridge-webcomponents/src/charthelpers/advice-area-plugin.ts`<br>`packages/openbridge-webcomponents/src/building-blocks/advice/**` | Advice design layer, mixin/bundle, the four renderers and the area plugin |
 | [ar](docs/agents/ar.md) | `packages/openbridge-webcomponents/src/ar/**` | Augmented-reality POI overlay — controller, layer stack, overlap resolution, and the POI composition chain |
 | [automation-components](docs/agents/automation-components.md) | `packages/openbridge-webcomponents/src/automation/**` | Automation devices, valves, lines, tanks, badges |
 | [building-blocks](docs/agents/building-blocks.md) | `packages/openbridge-webcomponents/src/{building-blocks,svghelpers}/**` | SVG-based building block components and shared utilities |
@@ -336,6 +338,7 @@ automatically when editing a `.css` file.
 24. **No names.** Cite roles, issues and Figma nodes, never people or handles — in comments, docs, commits, PR and issue text ([`docs/agents/coding-standards.md`](docs/agents/coding-standards.md) § Writing style).
 25. **Use the most capable current model** your tool offers; a smaller tier is for mechanical steps only.
 26. **Stop and ask when something is missing.** An unauthenticated Figma MCP, no `FIGMA_TOKEN`, no `gh`, an undefined design state, an unsettled decision: say what is missing and wait — never brute-force around it or continue on a lesser path silently ([`docs/agents/working-method.md` § Missing](docs/agents/working-method.md)).
+27. **A vulnerability stays private.** No public issue, PR, branch or commit subject names it: fix it on a local branch and tell a maintainer, who opens the advisory's private fork ([`SECURITY.md`](SECURITY.md), [`docs/agents/ci-and-release.md` § Security releases](docs/agents/ci-and-release.md)).
 
 ---
 

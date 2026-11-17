@@ -1,19 +1,42 @@
-import {html} from 'lit';
 import {property} from 'lit/decorators.js';
 import '../../icons/icon-ground-1-on.js';
 import '../../icons/icon-ground-1-off.js';
+import '../../icons/icon-ground-1.js';
 import '../../icons/icon-ground-2-on.js';
 import '../../icons/icon-ground-2-off.js';
+import '../../icons/icon-ground-2.js';
 import '../../icons/icon-ground-3-on.js';
 import '../../icons/icon-ground-3-off.js';
+import '../../icons/icon-ground-3.js';
 import {customElement} from '../../decorator.js';
-import {ObcAbstractAutomationButtonSquared} from '../automation-button/abstract-automation-button-squared.js';
+import {
+  ObcAbstractAutomationButtonSquared,
+  SquaredDeviceIcons,
+} from '../automation-button/abstract-automation-button-squared.js';
 
 export enum GroundAlternativeIcon {
   ground1 = 'ground1',
   ground2 = 'ground2',
   ground3 = 'ground3',
 }
+
+const icons: Record<GroundAlternativeIcon, SquaredDeviceIcons> = {
+  [GroundAlternativeIcon.ground1]: {
+    on: 'ground-1-on',
+    off: 'ground-1-off',
+    static: 'ground-1',
+  },
+  [GroundAlternativeIcon.ground2]: {
+    on: 'ground-2-on',
+    off: 'ground-2-off',
+    static: 'ground-2',
+  },
+  [GroundAlternativeIcon.ground3]: {
+    on: 'ground-3-on',
+    off: 'ground-3-off',
+    static: 'ground-3',
+  },
+};
 
 /**
  * @stable
@@ -24,68 +47,9 @@ export class ObcGround extends ObcAbstractAutomationButtonSquared {
     GroundAlternativeIcon.ground1;
 
   override get icon() {
-    switch (this.alternativeIcon) {
-      case GroundAlternativeIcon.ground2:
-        if (this.turnedOn) {
-          return html`<obi-ground-2-on
-              usecsscolor
-              slot="icon"
-            ></obi-ground-2-on>
-            <obi-ground-2-on
-              usecsscolor
-              slot="icon-silhouette"
-            ></obi-ground-2-on>`;
-        } else {
-          return html`<obi-ground-2-off
-              usecsscolor
-              slot="icon"
-            ></obi-ground-2-off>
-            <obi-ground-2-off
-              usecsscolor
-              slot="icon-silhouette"
-            ></obi-ground-2-off>`;
-        }
-      case GroundAlternativeIcon.ground3:
-        if (this.turnedOn) {
-          return html`<obi-ground-3-on
-              usecsscolor
-              slot="icon"
-            ></obi-ground-3-on>
-            <obi-ground-3-on
-              usecsscolor
-              slot="icon-silhouette"
-            ></obi-ground-3-on>`;
-        } else {
-          return html`<obi-ground-3-off
-              usecsscolor
-              slot="icon"
-            ></obi-ground-3-off>
-            <obi-ground-3-off
-              usecsscolor
-              slot="icon-silhouette"
-            ></obi-ground-3-off>`;
-        }
-      default:
-        if (this.turnedOn) {
-          return html`<obi-ground-1-on
-              usecsscolor
-              slot="icon"
-            ></obi-ground-1-on>
-            <obi-ground-1-on
-              usecsscolor
-              slot="icon-silhouette"
-            ></obi-ground-1-on>`;
-        } else {
-          return html`<obi-ground-1-off
-              usecsscolor
-              slot="icon"
-            ></obi-ground-1-off>
-            <obi-ground-1-off
-              usecsscolor
-              slot="icon-silhouette"
-            ></obi-ground-1-off>`;
-        }
-    }
+    return this.renderDeviceIcon(
+      icons[this.alternativeIcon] ?? icons[GroundAlternativeIcon.ground1]
+    );
   }
 }
 
