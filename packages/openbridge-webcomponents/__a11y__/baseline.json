@@ -1,4 +1,34 @@
 {
+  "application-components-alerts-alert-button--global-counter": [
+    "label-content-name-mismatch"
+  ],
+  "application-components-alerts-alert-button--global-counter-alert-level": [
+    "label-content-name-mismatch"
+  ],
+  "application-components-alerts-alert-button--global-counter-alert-level-shelved-silence": [
+    "label-content-name-mismatch"
+  ],
+  "application-components-alerts-alert-button--global-counter-shelved-silence": [
+    "label-content-name-mismatch"
+  ],
+  "application-components-alerts-alert-button-item--enabled-variants": [
+    "label-content-name-mismatch"
+  ],
+  "application-components-alerts-alert-button-item--global-counter": [
+    "label-content-name-mismatch"
+  ],
+  "application-components-alerts-alert-button-item--global-counter-alert-level": [
+    "label-content-name-mismatch"
+  ],
+  "application-components-alerts-alert-button-item--global-counter-alert-level-with-shelved": [
+    "label-content-name-mismatch"
+  ],
+  "application-components-alerts-alert-button-item--global-counter-level-severities": [
+    "label-content-name-mismatch"
+  ],
+  "application-components-alerts-alert-button-item--global-counter-with-shelved": [
+    "label-content-name-mismatch"
+  ],
   "application-components-alerts-alert-list--primary": ["nested-interactive"],
   "application-components-alerts-alert-list--with-controls": [
     "nested-interactive"
@@ -100,6 +130,12 @@
   "application-components-alerts-alert-menu-item--with-secondary-action": [
     "nested-interactive"
   ],
+  "application-components-alerts-alert-subsystem-button--level-severities": [
+    "label-content-name-mismatch"
+  ],
+  "application-components-alerts-alert-subsystem-button--with-label": [
+    "label-content-name-mismatch"
+  ],
   "application-components-alerts-diagnostic-menu--no-diagnostic-list-button": [
     "nested-interactive"
   ],
@@ -118,42 +154,74 @@
     "select-name"
   ],
   "application-components-calendar-calendar--without-footer": ["select-name"],
-  "application-components-calendar-calendar--xlarge": ["nested-interactive"],
-  "application-components-calendar-date-item--auto-aggregation": [
+  "application-components-calendar-calendar--xlarge": [
+    "label-content-name-mismatch",
     "nested-interactive"
   ],
-  "application-components-calendar-date-item--large": ["nested-interactive"],
-  "application-components-calendar-date-item--large-regular-checked": [
+  "application-components-calendar-date-item--auto-aggregation": [
+    "label-content-name-mismatch",
     "nested-interactive"
+  ],
+  "application-components-calendar-date-item--large": [
+    "label-content-name-mismatch",
+    "nested-interactive"
+  ],
+  "application-components-calendar-date-item--large-checked-disabled": [
+    "label-content-name-mismatch"
+  ],
+  "application-components-calendar-date-item--large-regular-checked": [
+    "label-content-name-mismatch",
+    "nested-interactive"
+  ],
+  "application-components-calendar-date-item--large-regular-disabled": [
+    "label-content-name-mismatch"
   ],
   "application-components-calendar-date-item--large-regular-enabled": [
+    "label-content-name-mismatch",
     "nested-interactive"
   ],
   "application-components-calendar-date-item--large-today-checked": [
+    "label-content-name-mismatch",
     "nested-interactive"
   ],
+  "application-components-calendar-date-item--large-today-disabled": [
+    "label-content-name-mismatch"
+  ],
   "application-components-calendar-date-item--large-today-enabled": [
+    "label-content-name-mismatch",
     "nested-interactive"
   ],
   "application-components-calendar-date-item--large-with-aggregated-event": [
+    "label-content-name-mismatch",
     "nested-interactive"
   ],
   "application-components-calendar-date-item--large-with-color-coded-event": [
+    "label-content-name-mismatch",
     "nested-interactive"
   ],
+  "application-components-calendar-date-item--large-with-disabled-event": [
+    "label-content-name-mismatch"
+  ],
   "application-components-calendar-date-item--large-with-double-line-event": [
+    "label-content-name-mismatch",
     "nested-interactive"
   ],
   "application-components-calendar-date-item--large-with-event": [
+    "label-content-name-mismatch",
     "nested-interactive"
   ],
   "application-components-calendar-date-item--large-with-multiple-events": [
+    "label-content-name-mismatch",
     "nested-interactive"
   ],
   "application-components-calendar-date-item--test-event-count": [
+    "label-content-name-mismatch",
     "nested-interactive"
   ],
-  "application-components-calendar-date-item--today": ["nested-interactive"],
+  "application-components-calendar-date-item--today": [
+    "label-content-name-mismatch",
+    "nested-interactive"
+  ],
   "application-components-containers-modal-window-sizing--fixed-height": [
     "scrollable-region-focusable"
   ],
@@ -281,6 +349,54 @@
   ],
   "application-components-menus-system-menu--small-screen-microphone": [
     "button-name"
+  ],
+  "application-components-menus-user-menu--loading-sign-in-regular": [
+    "label-content-name-mismatch"
+  ],
+  "application-components-menus-user-menu--loading-sign-in-small": [
+    "label-content-name-mismatch"
+  ],
+  "application-components-menus-user-menu--sign-in-regular": [
+    "label-content-name-mismatch"
+  ],
+  "application-components-menus-user-menu--sign-in-small": [
+    "label-content-name-mismatch"
+  ],
+  "application-components-menus-user-menu--signed-in-regular": [
+    "label-content-name-mismatch"
+  ],
+  "application-components-menus-user-menu--signed-in-small": [
+    "label-content-name-mismatch"
+  ],
+  "application-components-menus-user-menu--signed-in-with-role": [
+    "label-content-name-mismatch"
+  ],
+  "application-components-menus-user-menu--signed-in-without-actions": [
+    "label-content-name-mismatch"
+  ],
+  "application-components-menus-user-menu--user-sign-in-regular": [
+    "label-content-name-mismatch"
+  ],
+  "application-components-menus-user-menu--user-sign-in-small": [
+    "label-content-name-mismatch"
+  ],
+  "application-components-menus-user-menu--user-sign-in-small-ignores-role": [
+    "label-content-name-mismatch"
+  ],
+  "application-components-menus-user-menu--user-sign-in-small-without-use-another-account": [
+    "label-content-name-mismatch"
+  ],
+  "application-components-menus-user-menu--user-sign-in-with-roles": [
+    "label-content-name-mismatch"
+  ],
+  "application-components-menus-user-menu--user-sign-in-without-password-regular": [
+    "label-content-name-mismatch"
+  ],
+  "application-components-menus-user-menu--user-sign-in-without-password-small": [
+    "label-content-name-mismatch"
+  ],
+  "application-components-menus-user-menu--user-sign-in-without-use-another-account": [
+    "label-content-name-mismatch"
   ],
   "application-components-notifications-advice-menu-item--double-line": [
     "nested-interactive"
@@ -472,19 +588,84 @@
     "aria-required-children",
     "aria-required-parent"
   ],
+  "automation-tanks-tank--activated": ["label-content-name-mismatch"],
+  "automation-tanks-tank--advice-use-case": ["label-content-name-mismatch"],
+  "automation-tanks-tank--atmospheric-with-badges": [
+    "label-content-name-mismatch"
+  ],
+  "automation-tanks-tank--bar-with-advice": ["label-content-name-mismatch"],
+  "automation-tanks-tank--bar-with-advice-icons": [
+    "label-content-name-mismatch"
+  ],
+  "automation-tanks-tank--bar-with-graph-icon": ["label-content-name-mismatch"],
+  "automation-tanks-tank--battery": ["label-content-name-mismatch"],
+  "automation-tanks-tank--battery-with-graph-icon": [
+    "label-content-name-mismatch"
+  ],
+  "automation-tanks-tank--compact-activated": ["label-content-name-mismatch"],
+  "automation-tanks-tank--compact-atmospheric": ["label-content-name-mismatch"],
+  "automation-tanks-tank--compact-with-setpoint": [
+    "label-content-name-mismatch"
+  ],
+  "automation-tanks-tank--dashboard-row": ["label-content-name-mismatch"],
+  "automation-tanks-tank--generic": ["label-content-name-mismatch"],
+  "automation-tanks-tank--graph": ["label-content-name-mismatch"],
+  "automation-tanks-tank--graph-and-bar": ["label-content-name-mismatch"],
+  "automation-tanks-tank--graph-and-bar-with-advice-icons": [
+    "label-content-name-mismatch"
+  ],
+  "automation-tanks-tank--graph-and-bar-with-setpoint": [
+    "label-content-name-mismatch"
+  ],
+  "automation-tanks-tank--graph-with-advice": ["label-content-name-mismatch"],
+  "automation-tanks-tank--horizontal-atmospheric": [
+    "label-content-name-mismatch"
+  ],
+  "automation-tanks-tank--horizontal-compact-atmospheric": [
+    "label-content-name-mismatch"
+  ],
+  "automation-tanks-tank--horizontal-graph-and-bar": [
+    "label-content-name-mismatch"
+  ],
+  "automation-tanks-tank--horizontal-graph-and-bar-with-graph-icon": [
+    "label-content-name-mismatch"
+  ],
+  "automation-tanks-tank--horizontal-rich": ["label-content-name-mismatch"],
+  "automation-tanks-tank--pressurized": ["label-content-name-mismatch"],
+  "automation-tanks-tank--responsive": ["label-content-name-mismatch"],
+  "automation-tanks-tank--rich": ["label-content-name-mismatch"],
+  "automation-tanks-tank--with-alert-alarm": ["label-content-name-mismatch"],
+  "automation-tanks-tank--with-alert-caution-compact": [
+    "label-content-name-mismatch"
+  ],
+  "automation-tanks-tank--with-alert-level-critical": [
+    "label-content-name-mismatch"
+  ],
+  "automation-tanks-tank--with-alert-level-diagnostic": [
+    "label-content-name-mismatch"
+  ],
+  "automation-tanks-tank--with-alert-warning-horizontal": [
+    "label-content-name-mismatch"
+  ],
+  "automation-tanks-tank--with-fraction-digits": [
+    "label-content-name-mismatch"
+  ],
   "bars-and-graphs-bar-vertical--fixed-aspect-ratio-comparison": [
     "scrollable-region-focusable"
+  ],
+  "building-blocks-chart-sizing-battleground--container-shapes": [
+    "label-content-name-mismatch"
+  ],
+  "building-blocks-chart-sizing-battleground--resize-stress": [
+    "label-content-name-mismatch"
+  ],
+  "building-blocks-chart-sizing-battleground--zoom-levels": [
+    "label-content-name-mismatch"
   ],
   "building-blocks-external-scale--fixed-aspect-ratio-comparison": [
     "scrollable-region-focusable"
   ],
-  "building-blocks-instrument-radial--equal-circumference-mixed-digits": [
-    "scrollable-region-focusable"
-  ],
   "building-blocks-watch--tickmarks-test-rotation": [
-    "scrollable-region-focusable"
-  ],
-  "instruments-speed-gauge--label-room-high-speed": [
     "scrollable-region-focusable"
   ],
   "integration-systems-app-bar--primary": ["button-name"],
@@ -583,7 +764,37 @@
   "ui-components-buttons-notification-badge-button--mute-open-right": [
     "button-name"
   ],
+  "ui-components-buttons-user-button--disabled-with-initials": [
+    "label-content-name-mismatch"
+  ],
+  "ui-components-buttons-user-button--initials-normal": [
+    "label-content-name-mismatch"
+  ],
+  "ui-components-buttons-user-button--initials-selected": [
+    "label-content-name-mismatch"
+  ],
+  "ui-components-buttons-user-button--invalid-initials": [
+    "label-content-name-mismatch"
+  ],
+  "ui-components-buttons-user-button--large-with-initials": [
+    "label-content-name-mismatch"
+  ],
+  "ui-components-buttons-user-button--large-with-initials-selected": [
+    "label-content-name-mismatch"
+  ],
+  "ui-components-buttons-user-button--large-with-sublabel": [
+    "label-content-name-mismatch"
+  ],
   "ui-components-buttons-user-button--static-icon": ["aria-prohibited-attr"],
+  "ui-components-buttons-user-button--too-many-initials": [
+    "label-content-name-mismatch"
+  ],
+  "ui-components-buttons-user-button--with-initials": [
+    "label-content-name-mismatch"
+  ],
+  "ui-components-buttons-user-button--with-sublabel": [
+    "label-content-name-mismatch"
+  ],
   "ui-components-communication-communication-table--no-description-icon": [
     "aria-allowed-role"
   ],
