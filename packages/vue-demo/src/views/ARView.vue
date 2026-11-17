@@ -32,8 +32,6 @@
 </template>
 
 <script setup lang="ts">
-import 'video.js/dist/video-js.css'
-
 import { onMounted, ref, onBeforeUnmount, computed } from 'vue'
 import ObcPoiData from '@oicl/openbridge-webcomponents-vue/ar/poi/ObcPoiData.vue'
 import Hls from 'hls.js'
@@ -310,13 +308,5 @@ onBeforeUnmount(() => {
 
 .fast {
   z-index: 2;
-}
-
-.vjs-control-bar {
-  display: none !important;
-}
-
-.vjs-big-play-button {
-  display: none !important;
 }
 </style>
