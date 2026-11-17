@@ -95,7 +95,7 @@
   flex: 0 0 auto;
   padding: 0 2px;
   text-align: center;
-  @mixin font-instrument-label;
+  @mixin font-general-xs-semibold;
   color: var(--element-neutral-color);
   white-space: nowrap; /* a tag is an identifier; it never wraps */
 }

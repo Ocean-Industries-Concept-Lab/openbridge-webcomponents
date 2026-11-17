@@ -231,7 +231,7 @@
 .name-wrapper {
   position: absolute;
   top: calc(100% - var(--label-y-offset));
-  @mixin font-instrument-value-small-neutral;
+  @mixin font-general-xs-regular;
   color: var(--element-active-color);
   text-wrap: nowrap;
   transition:
@@ -255,7 +255,7 @@
 .state-alarm {
   .number-wrapper,
   .name-wrapper {
-    @mixin font-instrument-value-small-active;
+    @mixin font-general-xs-semibold;
   }
 }
 
