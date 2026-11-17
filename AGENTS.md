@@ -10,14 +10,14 @@
 
 ## 1. Repository Overview
 
-| Item              | Value                                                                                                                     |
-| ----------------- | ------------------------------------------------------------------------------------------------------------------------- |
-| Name              | **Openbridge Web Components**                                                                                             |
-| Repo              | `Ocean-Industries-Concept-Lab/openbridge-webcomponents`                                                                   |
-| License           | AGPL-3.0-only, each version additionally under Apache-2.0 from its change date (`LICENSE.txt`)                            |
-| Runtime           | Lit 3 + TypeScript (web components)                                                                                       |
-| Package manager   | npm (workspaces)                                                                                                          |
-| Monorepo packages | `openbridge-webcomponents` (core), generated wrappers, `openbridge-norvar`, `react-demo`, `vue-demo`, `connector-diagram` |
+| Item              | Value                                                                                            |
+| ----------------- | ------------------------------------------------------------------------------------------------ |
+| Name              | **Openbridge Web Components**                                                                    |
+| Repo              | `Ocean-Industries-Concept-Lab/openbridge-webcomponents`                                          |
+| License           | AGPL-3.0-only, each version additionally under Apache-2.0 from its change date (`LICENSE.txt`)   |
+| Runtime           | Lit 3 + TypeScript (web components)                                                              |
+| Package manager   | npm (workspaces)                                                                                 |
+| Monorepo packages | `openbridge-webcomponents` (core), wrappers, `openbridge-norvar`, `connector-diagram`, two demos |
 
 The library provides maritime navigation and automation UI components.
 Framework wrappers are **auto-generated** — never edit them directly.
