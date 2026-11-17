@@ -60,7 +60,7 @@ describe('norvar-map-symbol', () => {
   });
 
   it.each([
-    [{}, '--automation-symbol-on-line-color'],
+    [{}, '--on-line-color'],
     [{state: NorvarStationState.running}, '--alert-running-color'],
     [
       {state: NorvarStationState.unmonitored},

@@ -48,7 +48,7 @@ export interface Paint {
 }
 
 export const ON_PAINT: Paint = {
-  line: 'var(--automation-symbol-on-line-color)',
+  line: 'var(--on-line-color)',
   fill: 'var(--automation-symbol-on-background-color)',
   border: 'var(--automation-symbol-on-border-color)',
 };
