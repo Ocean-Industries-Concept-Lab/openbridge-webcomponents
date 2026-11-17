@@ -15,7 +15,6 @@ import {kebabToUpperCamelCase} from './convert-icons.js';
 
 /** Old icon name to the name it carries now. */
 export const RENAMED_ICONS: Record<string, string> = {
-  'alarm-acknowledged-outlined': 'alarm-unacknowledged-outlined',
   'converter-acdc': 'converter-acdc-static',
   'converter-dcac': 'converter-dcac-static',
   'log-open-google': 'log-open',

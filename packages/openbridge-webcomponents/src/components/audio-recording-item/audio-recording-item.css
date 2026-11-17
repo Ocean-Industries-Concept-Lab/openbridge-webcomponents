@@ -86,7 +86,7 @@
 }
 
 .duration-label {
-  @mixin font-instrument-value-regular-neutral;
+  @mixin font-general-s-regular;
 }
 
 /* Enhanced style - only changes the waveform bar color */

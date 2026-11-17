@@ -130,6 +130,23 @@ A test is never skipped: `.skip`, `.only` and `.todo` on `it`, `test` or
 `describe` fail `npm run lint:eslint`. A behaviour a component lacks is
 written down (a11y.md § 9), not parked in a test that no longer runs.
 
+## Text from properties
+
+A label, a unit, a name or a colour that arrives through a property is the
+consumer's data, and often their users' data. It reaches the page as text: a
+Lit template binding, `textContent`, or one value on `element.style`. An HTML
+string would parse it as markup, and a label carrying an `onerror` attribute
+would run as script in the consumer's page.
+
+`npm run lint:eslint` rejects an assignment to `innerHTML` or `outerHTML`, a
+call to `insertAdjacentHTML`, and an import of Lit's `unsafeHTML`, `unsafeSVG`
+or `unsafeStatic`, in source and in stories. Specs are exempt: a fixture is
+markup the test wrote itself. The few places that keep one take markup or a
+tag name from their own constants or from the generated icon list, and each
+carries its suppression with that reason. Reading `innerHTML` is not a write
+and passes. `charthelpers/legend.spec.ts` pins the chart legends,
+`script/eslint-rules.test.ts` the rule.
+
 ## Boolean property naming
 
 Always name boolean properties and parameters using **positive** (affirmative) phrasing — `true` means the feature is on — whatever the default is. Most positive booleans default to `false` (opt-in); the ones below default to `true`, which is why they also need the `attribute: false` rule further down.

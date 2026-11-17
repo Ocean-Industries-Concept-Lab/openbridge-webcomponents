@@ -42,7 +42,7 @@ interface HandlePaint {
 
 const PAINT: Record<ValveHandleState, HandlePaint> = {
   [ValveHandleState.on]: {
-    line: 'var(--automation-symbol-on-line-color)',
+    line: 'var(--on-line-color)',
     fill: 'var(--automation-symbol-on-background-color)',
     border: 'var(--automation-symbol-on-border-color)',
   },
