@@ -32,6 +32,7 @@ const meta: Meta<typeof ObcTransmitter> = {
     type: TransmitterType.value,
     size: TransmitterButtonSize.regular,
     lineType: LineType.fluid,
+    showLine: true,
     value: 12.3,
     unit: 'C',
     fractionDigits: 1,
@@ -105,6 +106,7 @@ function renderComponent(args: ObcTransmitter) {
       .orientation=${args.orientation}
       .type=${args.type}
       .lineType=${args.lineType}
+      .showLine=${args.showLine}
       .size=${args.size}
       .value=${args.value}
       .unit=${args.unit}
@@ -158,6 +160,26 @@ export const Left: Story = {
 
 export const Right: Story = {
   args: {orientation: TransmitterOrientation.right},
+  render: (args) => renderComponent(args as ObcTransmitter),
+};
+
+export const WithoutLine: Story = {
+  args: {showLine: false},
+  render: (args) => renderComponent(args as ObcTransmitter),
+};
+
+export const WithoutLineTop: Story = {
+  args: {showLine: false, orientation: TransmitterOrientation.top},
+  render: (args) => renderComponent(args as ObcTransmitter),
+};
+
+export const WithoutLineLeft: Story = {
+  args: {showLine: false, orientation: TransmitterOrientation.left},
+  render: (args) => renderComponent(args as ObcTransmitter),
+};
+
+export const WithoutLineRight: Story = {
+  args: {showLine: false, orientation: TransmitterOrientation.right},
   render: (args) => renderComponent(args as ObcTransmitter),
 };
 
