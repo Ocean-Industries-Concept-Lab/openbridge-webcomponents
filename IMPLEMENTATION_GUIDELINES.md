@@ -472,7 +472,7 @@ For buttons, labels, body text, and headings:
 
 #### General fonts
 
-For values, units, labels and readouts in instruments, automation symbols and data components: the design file's General ramp, each size in regular, semibold and bold (`@mixin font-general-<size>-<weight>`).
+The design file's text ramp, each size in regular, semibold and bold (`@mixin font-general-<size>-<weight>`). `obc-gnss-skyplot` reads it, and the readout family takes its weights through `obc-textbox`.
 
 | Size | Font size / line height |
 | ---- | ----------------------- |
@@ -482,26 +482,28 @@ For values, units, labels and readouts in instruments, automation symbols and da
 | `l`  | 34 / 32 px              |
 | `xl` | 45.5 / 40 px            |
 
-The sizes are the same in every size class. The design file has no medium, large or xl values for the General styles yet, and `npm run palette:strip` drops the zeros the export carries for them, so the larger classes inherit the regular sizes.
+The sizes are the same in every size class. The design file has no medium, large or xl values for the General styles yet, and `npm run palette:strip` drops the zeros the export carries for them, so the larger classes inherit the regular sizes. That is why the instrument and automation text stays on the styles below: moving it onto the General styles took the size ramp away from the readouts, tags and units (#1420).
 
 The design file trims every General style to the cap height. The mixins do not; `obc-textbox` trims where the readout family needs it.
 
-The instrument and automation styles are deprecated in the design file. `fonts.css` still carries them as `font-instrument-deprecated-*` and `font-automation-deprecated-*` because the export does, and nothing in the library uses them. Their replacements, as the design file maps them (node `53209:38919`):
+#### Instrument and automation fonts
 
-| Deprecated style                                   | General mixin                              |
-| -------------------------------------------------- | ------------------------------------------ |
-| instrument `value-small-neutral` / `-active`       | `font-general-xs-regular` / `-xs-semibold` |
-| instrument `value-regular-neutral` / `-active`     | `font-general-s-regular` / `-s-semibold`   |
-| instrument `value-m-neutral` / `-active`           | `font-general-m-regular` / `-m-semibold`   |
-| instrument `value-enhanced-neutral` / `-active`    | `font-general-l-regular` / `-l-semibold`   |
-| instrument `label`                                 | `font-general-xs-semibold`                 |
-| instrument `unit`, `tick-mark`                     | `font-general-xs-regular`                  |
-| instrument `tick-mark-active`                      | `font-general-xs-bold`                     |
-| automation `value-small-off` / `value-small`       | `font-general-xs-regular` / `-xs-semibold` |
-| automation `value-regular-off` / `value-regular`   | `font-general-s-regular` / `-s-semibold`   |
-| automation `value-enhanced-off` / `value-enhanced` | `font-general-l-regular` / `-l-semibold`   |
-| automation `label`, `unit-small`                   | `font-general-xs-regular`                  |
-| automation `unit-regular`, `unit-enhanced`         | `font-general-s-regular`                   |
+The text of instruments, automation symbols and data components: values, units, labels and tick marks. The styles are deprecated in the design file and `fonts.css` carries them as `font-instrument-deprecated-*` and `font-automation-deprecated-*`, the names the export gives them, but their variables carry a value in every size class, so the text grows with `.obc-component-size-medium`, `-large` and `-xl`. They move to the General styles once the design file gives those medium, large and xl values; the map, as the design file publishes it (node `53209:38919`):
+
+| Mixin (`font-instrument-deprecated-*` / `font-automation-deprecated-*`) | General style, once it has every size      |
+| ----------------------------------------------------------------------- | ------------------------------------------ |
+| instrument `value-small-neutral` / `-active`                            | `font-general-xs-regular` / `-xs-semibold` |
+| instrument `value-regular-neutral` / `-active`                          | `font-general-s-regular` / `-s-semibold`   |
+| instrument `value-m-neutral` / `-active`                                | `font-general-m-regular` / `-m-semibold`   |
+| instrument `value-enhanced-neutral` / `-active`                         | `font-general-l-regular` / `-l-semibold`   |
+| instrument `label`                                                      | `font-general-xs-semibold`                 |
+| instrument `unit`, `tick-mark`                                          | `font-general-xs-regular`                  |
+| instrument `tick-mark-active`                                           | `font-general-xs-bold`                     |
+| automation `value-small-off` / `value-small`                            | `font-general-xs-regular` / `-xs-semibold` |
+| automation `value-regular-off` / `value-regular`                        | `font-general-s-regular` / `-s-semibold`   |
+| automation `value-enhanced-off` / `value-enhanced`                      | `font-general-l-regular` / `-l-semibold`   |
+| automation `label`, `unit-small`                                        | `font-general-xs-regular`                  |
+| automation `unit-regular`, `unit-enhanced`                              | `font-general-s-regular`                   |
 
 #### Overlay font
 
