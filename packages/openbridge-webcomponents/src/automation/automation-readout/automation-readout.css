@@ -76,7 +76,7 @@
     padding: 3px 7px;
     border-radius: 6px;
 
-    @mixin font-general-s-regular;
+    @mixin font-instrument-deprecated-value-regular-neutral;
 
     .value {
       color: var(--instrument-enhanced-secondary-color);
@@ -84,7 +84,7 @@
     }
 
     .unit {
-      @mixin font-general-xs-regular;
+      @mixin font-instrument-deprecated-unit;
       margin-left: 2px;
       color: var(--on-normal-neutral-color);
     }
