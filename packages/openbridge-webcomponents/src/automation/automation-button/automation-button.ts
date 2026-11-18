@@ -1,7 +1,8 @@
 import {HTMLTemplateResult, LitElement, html, nothing, unsafeCSS} from 'lit';
 import {property} from 'lit/decorators.js';
-import compentStyle from './automation-button.css?inline';
+import componentStyle from './automation-button.css?inline';
 import {classMap} from 'lit/directives/class-map.js';
+import {ifDefined} from 'lit/directives/if-defined.js';
 import '../../icons/icon-forward.js';
 import '../../icons/icon-forward-fast.js';
 import '../../icons/icon-forward-stopped.js';
@@ -96,6 +97,27 @@ export enum AutomationButtonPositioning {
   button = 'button',
 }
 
+export enum AutomationButtonHandlePosition {
+  none = 'none',
+  top = 'top',
+  bottom = 'bottom',
+  left = 'left',
+  right = 'right',
+}
+
+export enum AutomationButtonHandleSize {
+  regular = 'regular',
+  small = 'small',
+}
+
+export enum AutomationButtonSelfActuationLine {
+  left = 'left',
+  right = 'right',
+  top = 'top',
+  bottom = 'bottom',
+  none = 'none',
+}
+
 /**
  * @property activated - Enables the activated background color, used to indicate that the button is activated/selected.
  * @availableWhen readouts showReadoutStack==true
@@ -112,12 +134,19 @@ export enum AutomationButtonPositioning {
  * @availableWhen progressValue progress==true && progressMode in [determinate, progressive-indeterminate]
  * @availableWhen direction variant in [double, forward, flatForward]
  * @property hasBadgeSpacer - Badge spacer should be set to true if there is a badge on the same side as the label
+ * @property handlePosition - Side of the symbol the handle sits on; `none` hides the handle and the self-actuation line.
+ * @property handleSize - `small` draws the handle from the symbol's centre, for symbols without a button around them.
+ * @availableWhen handleSize handlePosition!=none
+ * @property selfActuationLine - Side of the symbol the self-actuation line runs to from the handle. Drawn only on a side next to the handle.
+ * @availableWhen selfActuationLine handlePosition!=none
+ * @property accessibleName - Name for assistive technology when the button shows no text of its own, such as a symbol without a tag.
  * @slot badge-top-right - Content projected into the top-right badge position of the button.
  * @slot badge-top-left - Content projected into the top-left badge position of the button.
  * @slot badge-bottom-left - Content projected into the bottom-left badge position of the button.
  * @slot badge-bottom-right - Content projected into the bottom-right badge position of the button.
  * @slot icon - Primary icon shown inside the button (regular, double, flat and square variants).
  * @slot icon-silhouette - Silhouette/outline icon shown behind the primary icon (flat variant only).
+ * @slot handle - Handle or actuator drawn for the `top` side, 24 × 24 units; it turns with `handlePosition`.
  * @slot alert-icon - Custom icon for the alert frame, shown when alert==true and positioning=="point".
  * @slot alert-label - Label for the alert frame, shown when alert==true and positioning=="point".
  * @slot alert-timer - Timer for the alert frame, shown when alert==true and positioning=="point".
@@ -163,6 +192,15 @@ export class ObcAutomationButton extends LitElement {
   @property({type: String}) orientation: AutomationButtonOrientation =
     AutomationButtonOrientation.horizontal;
   @property({type: Boolean}) hasBadgeSpacer: boolean = false;
+  @property({type: String}) handlePosition: AutomationButtonHandlePosition =
+    AutomationButtonHandlePosition.none;
+  @property({type: String}) handleSize: AutomationButtonHandleSize =
+    AutomationButtonHandleSize.regular;
+  @property({type: String})
+  selfActuationLine: AutomationButtonSelfActuationLine =
+    AutomationButtonSelfActuationLine.none;
+
+  @property({type: String}) accessibleName: string | null = null;
 
   override render() {
     const effectiveVariant = this.effectiveVariant;
@@ -172,6 +210,7 @@ export class ObcAutomationButton extends LitElement {
 
     return this.wrapContent(html`
       <button
+        aria-label=${ifDefined(this.accessibleName ?? undefined)}
         class=${classMap({
           wrapper: true,
           ['positioning-' + this.positioning]: true,
@@ -184,10 +223,15 @@ export class ObcAutomationButton extends LitElement {
           progress: this.progress,
           static: this.static,
           activated: this.activated,
+          ['orientation-' + this.orientation]: true,
+          ['handle-position-' + this.handlePosition]: true,
+          ['handle-size-' + this.handleSize]: true,
+          'handle-space-box': this.handleSpace === 'box',
+          'handle-space-spacer': this.handleSpace === 'spacer',
         })}
       >
         <div class="icon-touch-target">
-          ${this.renderIconHolder()}
+          ${this.renderHandleFrame()} ${this.renderIconHolder()}
           <div class="badge-top-right">
             <slot name="badge-top-right"></slot>
           </div>
@@ -265,13 +309,33 @@ export class ObcAutomationButton extends LitElement {
     return innerContent;
   }
 
-  static override styles = unsafeCSS(compentStyle);
+  static override styles = unsafeCSS(componentStyle);
 
   private get effectiveVariant(): AutomationButtonVariant {
     if (this.progress) {
       return AutomationButtonVariant.regular;
     }
     return this.variant;
+  }
+
+  /**
+   * Where the room for the handle comes from: flat symbols are small enough to
+   * hold it in their touch target, on the readout's side the gap to the readout
+   * makes the room, and elsewhere the button box grows around it.
+   */
+  private get handleSpace(): 'none' | 'spacer' | 'box' {
+    const effectiveVariant = this.effectiveVariant;
+    if (
+      this.handlePosition === AutomationButtonHandlePosition.none ||
+      effectiveVariant === AutomationButtonVariant.flat ||
+      effectiveVariant === AutomationButtonVariant.flatForward
+    ) {
+      return 'none';
+    }
+    return this.showReadoutStack &&
+      String(this.handlePosition) === this.readoutPosition
+      ? 'spacer'
+      : 'box';
   }
 
   private renderIconHolder(): HTMLTemplateResult {
@@ -452,6 +516,90 @@ export class ObcAutomationButton extends LitElement {
       return IdTagOrientation.top;
     }
     return IdTagOrientation.bottom;
+  }
+
+  private renderHandleFrame(): typeof nothing | HTMLTemplateResult {
+    if (this.handlePosition === AutomationButtonHandlePosition.none) {
+      return nothing;
+    }
+    return html`<div class="handle-frame handle-frame-${this.handlePosition}">
+      ${this.renderSelfActuationLine()}
+      <div class="handle"><slot name="handle"></slot></div>
+    </div>`;
+  }
+
+  /**
+   * The line is drawn for a handle on top running to the right, and the
+   * frame turns it with the handle; a line ending on the side counter-clockwise
+   * of the handle is the mirror image.
+   */
+  private renderSelfActuationLine(): typeof nothing | HTMLTemplateResult {
+    const sides = ['top', 'right', 'bottom', 'left'];
+    const handle = sides.indexOf(this.handlePosition);
+    const line = sides.indexOf(this.selfActuationLine);
+    if (line === -1) {
+      return nothing;
+    }
+    const step = (line - handle + 4) % 4;
+    if (step !== 1 && step !== 3) {
+      return nothing;
+    }
+    const flat = this.effectiveVariant === AutomationButtonVariant.flat;
+    const className = classMap({
+      'self-actuation-line': true,
+      flat,
+      mirrored: step === 3,
+    });
+    // TODO(designer): the flat line keeps its older shape; the updated design only draws the regular one.
+    if (flat) {
+      return html`<svg
+        class=${className}
+        width="20"
+        height="20"
+        viewBox="0 0 20 20"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M19 16.5C19 17.8807 17.8807 19 16.5 19C15.1193 19 14 17.8807 14 16.5C14 15.1193 15.1193 14 16.5 14C17.8807 14 19 15.1193 19 16.5Z"
+          fill="var(--element-active-color)"
+          stroke="var(--border-silhouette-color)"
+        />
+        <path
+          d="M4.5 0.5H6.5M7.5 0.5H9.5M10.5 0.5H12.5M13.5 0.5H14.5C14.8644 0.5 15.206 0.59743 15.5002 0.767657M16.2323 1.49984C16.4026 1.79405 16.5 2.13565 16.5 2.5V3.43333M16.5 4.36667V6.23333M16.5 7.16667V9.03333M16.5 9.96667V11.8333M16.5 12.7667V14.6333"
+          stroke="var(--element-active-color)"
+        />
+      </svg>`;
+    }
+    return html`<div class=${className}>
+      <svg
+        class="self-actuation-run"
+        viewBox="0 0 27 31"
+        preserveAspectRatio="none"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M0 0.5H1.04762M24 25.5476V23.4524M2.09524 0.5H4.19048M5.2381 0.5H7.33333M8.38095 0.5H10.4762M11.5238 0.5H13.619M14.6667 0.5H16.7619M17.8095 0.5H19.9048M20.9524 0.5H22C22.3644 0.5 22.706 0.597429 23.0002 0.767657M23.7323 1.49984C23.9026 1.79405 24 2.13565 24 2.5V3.54762M24 4.59524V6.69048M24 7.7381V9.83333M24 10.881V12.9762M24 14.0238V16.119M24 17.1667V19.2619M24 20.3095V22.4048"
+          stroke="var(--element-active-color)"
+          vector-effect="non-scaling-stroke"
+        />
+      </svg>
+      <svg
+        class="self-actuation-dot"
+        width="6"
+        height="6"
+        viewBox="21 25 6 6"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M26.5 28C26.5 29.3807 25.3807 30.5 24 30.5C22.6193 30.5 21.5 29.3807 21.5 28C21.5 26.6193 22.6193 25.5 24 25.5C25.3807 25.5 26.5 26.6193 26.5 28Z"
+          fill="var(--element-active-color)"
+          stroke="var(--border-silhouette-color)"
+        />
+      </svg>
+    </div>`;
   }
 }
 

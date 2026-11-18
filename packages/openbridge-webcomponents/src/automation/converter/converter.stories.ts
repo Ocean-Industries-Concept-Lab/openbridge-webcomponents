@@ -62,3 +62,9 @@ export const MultipleReadouts: Story = {
     ],
   },
 };
+
+export const Static: Story = {
+  args: {
+    static: true,
+  },
+};

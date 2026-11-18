@@ -6,13 +6,13 @@ import {customElement} from '../decorator.js';
 export class ObiWifistrengt3Google extends LitElement {
   @property({type: Boolean}) useCssColor = false;
 
-  private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-<path fill-rule="evenodd" clip-rule="evenodd" d="M0 8.48C3.07 5.4 7.31 3.5 12 3.5C16.69 3.5 20.93 5.4 24 8.48L12 20.5L0 8.48ZM12 5.5C8.67 5.5 5.51 6.58 2.92 8.57L4.29443 9.94746C6.4324 8.4106 9.10163 7.5 12 7.5C14.8984 7.5 17.5676 8.4106 19.7056 9.94746L21.08 8.57C18.49 6.58 15.33 5.5 12 5.5Z" fill="currentColor"/>
+  private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M0 8.48C3.07 5.4 7.31 3.5 12 3.5C16.69 3.5 20.93 5.4 24 8.48L12 20.5L0 8.48ZM12 5.5C8.67 5.5 5.51 6.58 2.92 8.57L4.29443 9.94746C6.4324 8.4106 9.10163 7.5 12 7.5C14.8984 7.5 17.5676 8.4106 19.7056 9.94746L21.08 8.57C18.49 6.58 15.33 5.5 12 5.5Z" fill-rule="evenodd" clip-rule="evenodd" fill="currentColor"/>
 </svg>
 `;
 
   private iconCss = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path fill-rule="evenodd" clip-rule="evenodd" d="M0 8.48C3.07 5.4 7.31 3.5 12 3.5C16.69 3.5 20.93 5.4 24 8.48L12 20.5L0 8.48ZM12 5.5C8.67 5.5 5.51 6.58 2.92 8.57L4.29443 9.94746C6.4324 8.4106 9.10163 7.5 12 7.5C14.8984 7.5 17.5676 8.4106 19.7056 9.94746L21.08 8.57C18.49 6.58 15.33 5.5 12 5.5Z" style="fill: var(--element-active-color)"/>
+<path d="M0 8.48C3.07 5.4 7.31 3.5 12 3.5C16.69 3.5 20.93 5.4 24 8.48L12 20.5L0 8.48ZM12 5.5C8.67 5.5 5.51 6.58 2.92 8.57L4.29443 9.94746C6.4324 8.4106 9.10163 7.5 12 7.5C14.8984 7.5 17.5676 8.4106 19.7056 9.94746L21.08 8.57C18.49 6.58 15.33 5.5 12 5.5Z" fill-rule="evenodd" clip-rule="evenodd" style="fill: var(--element-active-color)"/>
 </svg>
 `;
 
