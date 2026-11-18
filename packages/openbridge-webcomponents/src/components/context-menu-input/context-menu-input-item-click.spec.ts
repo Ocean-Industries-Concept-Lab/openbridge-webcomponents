@@ -28,10 +28,11 @@ afterEach(() => {
   clicked = [];
 });
 
-async function setup() {
+async function setup(multiSelect = false) {
   const screen = render(
     html`<obc-context-menu-input
       .type=${ContextMenuType.Flyout}
+      .multiSelect=${multiSelect}
       .options=${options}
       @item-click=${(e: CustomEvent<{value: string}>) =>
         clicked.push(e.detail.value)}
@@ -62,6 +63,20 @@ describe('obc-context-menu-input flyout item-click', () => {
     await userEvent.click(item);
 
     expect(clicked).toEqual(['new']);
+  });
+
+  it('does not report the header for a checkbox item of a multi-select submenu', async () => {
+    const {group} = await setup(true);
+    group.open();
+    await group.updateComplete;
+    const item = group.querySelector(
+      'obc-checkbox-item[data-menu-value="new"]'
+    ) as HTMLElement & {updateComplete: Promise<unknown>};
+    await item.updateComplete;
+
+    await userEvent.click(item);
+
+    expect(clicked).not.toContain('file');
   });
 
   it('still reports a click on the submenu header with the header value', async () => {
