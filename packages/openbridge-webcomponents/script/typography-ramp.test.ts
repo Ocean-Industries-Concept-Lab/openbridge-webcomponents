@@ -1,9 +1,11 @@
 import {describe, expect, it} from 'vitest';
+import {stripComments} from './source-links.js';
 import {
   mixinTokens,
   rampGaps,
+  readPalette,
   readTokens,
-  sizeClassBlocks,
+  resolveLength,
 } from './typography/ramp.js';
 
 const VARIABLES = `:root,
@@ -13,24 +15,28 @@ const VARIABLES = `:root,
   --global-typography-value-font-weight: 570;
   --global-typography-label-font-size: 12px;
   --global-typography-title-font-size: 24px;
+  --automation-components-typography-unit-font-size: var(--font-size-100);
 }
 .obc-component-size-medium {
   --global-typography-value-font-size: 22px;
   --global-typography-value-line-height: 24px;
   --global-typography-value-font-weight: 0;
   --global-typography-title-font-size: 32px;
+  --automation-components-typography-unit-font-size: 24px;
 }
 .obc-component-size-large {
   --global-typography-value-font-size: 34px;
   --global-typography-value-line-height: 32px;
   --global-typography-label-font-size: 22px;
   --global-typography-title-font-size: 44px;
+  --automation-components-typography-unit-font-size: 32px;
 }
 .obc-component-size-xl {
   --global-typography-value-font-size: 40px;
   --global-typography-value-line-height: 48px;
   --global-typography-label-font-size: 32px;
-  --global-typography-title-font-size: 0px;
+  --global-typography-title-font-size: 0.0px;
+  --automation-components-typography-unit-font-size: var(--font-size-100);
 }
 * {
   --font-size-100: 16px;
@@ -49,13 +55,21 @@ const MIXINS = `@define-mixin font-value {
   @mixin font-label;
   color: red;
 }
+@define-mixin empty-state {
+  .icon {
+    height: 96px;
+  }
+  .title {
+    @mixin font-label;
+  }
+}
 @define-mixin style $style, $wrapper: .x {
   outline: 1px solid var(--global-typography-title-font-size);
 }
 `;
 
 const mixins = mixinTokens([MIXINS]);
-const blocks = sizeClassBlocks(VARIABLES);
+const palette = readPalette(VARIABLES);
 
 describe('mixinTokens', () => {
   it('collects the tokens of a mixin and of the mixins it applies', () => {
@@ -71,6 +85,12 @@ describe('mixinTokens', () => {
     );
     expect(mixins.get('style')).toEqual(
       new Set(['--global-typography-title-font-size'])
+    );
+  });
+
+  it('reads the whole body, past a nested rule', () => {
+    expect(mixins.get('empty-state')).toEqual(
+      new Set(['--global-typography-label-font-size'])
     );
   });
 });
@@ -95,20 +115,49 @@ describe('readTokens', () => {
       )
     ).toEqual(new Set(['--global-typography-value-font-size']));
   });
+
+  it('does not count a name in a TypeScript comment once comments are stripped', () => {
+    const source =
+      "// was --global-typography-title-font-size\nconst a = '--global-typography-value-font-size';";
+    expect(readTokens(stripComments(source), mixins)).toEqual(
+      new Set(['--global-typography-value-font-size'])
+    );
+  });
 });
 
-describe('sizeClassBlocks', () => {
-  it('finds the four blocks, the regular one shared with :root', () => {
-    expect(blocks.regular.get('--global-typography-value-font-size')).toBe(
-      'var(--font-size-100)'
+describe('readPalette', () => {
+  it('finds the four blocks, the regular one shared with :root, and the primitives', () => {
+    expect(
+      palette.classes.regular.get('--global-typography-value-font-size')
+    ).toBe('var(--font-size-100)');
+    expect(palette.classes.xl.get('--global-typography-title-font-size')).toBe(
+      '0.0px'
     );
-    expect(blocks.xl.get('--global-typography-title-font-size')).toBe('0px');
+    expect(palette.primitives.get('--font-size-100')).toBe('16px');
   });
 
   it('throws when a size class block is missing', () => {
-    expect(() => sizeClassBlocks(':root { --a: 1px; }')).toThrow(
+    expect(() => readPalette(':root { --a: 1px; }')).toThrow(
       '.obc-component-size-regular'
     );
+  });
+});
+
+describe('resolveLength', () => {
+  it('follows var() to the primitive and reads its number and unit', () => {
+    expect(
+      resolveLength(
+        'var(--font-size-100)',
+        palette.classes.xl,
+        palette.primitives
+      )
+    ).toEqual({n: 16, unit: 'px'});
+    expect(
+      resolveLength('0.0px', palette.classes.xl, palette.primitives)
+    ).toEqual({n: 0, unit: 'px'});
+    expect(
+      resolveLength('normal', palette.classes.xl, palette.primitives)
+    ).toBeUndefined();
   });
 });
 
@@ -119,41 +168,100 @@ describe('rampGaps', () => {
     ['--global-typography-value-font-weight', new Set(['a.css'])],
     ['--global-typography-label-font-size', new Set(['b.css', 'c.ts'])],
     ['--global-typography-title-font-size', new Set(['d.css'])],
+    ['--automation-components-typography-unit-font-size', new Set(['e.css'])],
+    ['--component-local-font-size', new Set(['f.css'])],
   ]);
 
-  it('reports a size token a block leaves undeclared or at 0, with its readers', () => {
-    expect(rampGaps(readers, blocks).gaps).toEqual([
+  it('reports a size token a class leaves undeclared, at 0 or smaller than the class before', () => {
+    expect(rampGaps(readers, palette).gaps).toEqual([
       {
         token: '--global-typography-label-font-size',
         sizeClass: 'medium',
+        kind: 'missing',
         value: undefined,
+        sizes: undefined,
         readers: ['b.css', 'c.ts'],
       },
       {
         token: '--global-typography-title-font-size',
         sizeClass: 'xl',
-        value: '0px',
+        kind: 'zero',
+        value: '0.0px',
+        sizes: undefined,
         readers: ['d.css'],
+      },
+      {
+        token: '--automation-components-typography-unit-font-size',
+        sizeClass: 'xl',
+        kind: 'shrinks',
+        value: 'var(--font-size-100)',
+        sizes: ['16px', '32px'],
+        readers: ['e.css'],
       },
     ]);
   });
 
-  it('ignores tokens that do not size text, and tokens nothing reads', () => {
+  it('ignores tokens that do not size text, and tokens no size class declares', () => {
     const {gaps} = rampGaps(
-      new Map([['--global-typography-value-font-weight', new Set(['a.css'])]]),
-      blocks
+      new Map([
+        ['--global-typography-value-font-weight', new Set(['a.css'])],
+        ['--component-local-font-size', new Set(['f.css'])],
+      ]),
+      palette
     );
     expect(gaps).toEqual([]);
   });
 
-  it('keeps a known gap out of the report and flags a stale entry', () => {
-    const {gaps, stale} = rampGaps(readers, blocks, {
-      '--global-typography-title-font-size': 'no XL value yet (#1422)',
-      '--global-typography-value-font-size': 'filled since',
+  it('accepts a known gap only in the classes it names', () => {
+    const {gaps, stale} = rampGaps(readers, palette, {
+      '--global-typography-title-font-size': {
+        classes: ['medium', 'xl'],
+        reason: 'no XL value yet (#1422)',
+      },
     });
-    expect(gaps.map((g) => g.token)).toEqual([
-      '--global-typography-label-font-size',
+    expect(gaps.map((g) => `${g.token} ${g.sizeClass}`)).not.toContain(
+      '--global-typography-title-font-size xl'
+    );
+    expect(stale).toEqual([
+      {
+        token: '--global-typography-title-font-size',
+        detail: 'it has a value in medium',
+      },
     ]);
-    expect(stale).toEqual(['--global-typography-value-font-size']);
+  });
+
+  it('reports a reader a known gap does not list', () => {
+    const {gaps, stale} = rampGaps(readers, palette, {
+      '--global-typography-label-font-size': {
+        classes: ['medium'],
+        readers: ['b.css', 'gone.css'],
+        reason: 'b.css reads it by design',
+      },
+    });
+    expect(
+      gaps.find((g) => g.token === '--global-typography-label-font-size')
+        ?.readers
+    ).toEqual(['c.ts']);
+    expect(stale).toEqual([
+      {
+        token: '--global-typography-label-font-size',
+        detail: 'gone.css no longer reads it',
+      },
+    ]);
+  });
+
+  it('flags an entry for a token nothing reads', () => {
+    const {stale} = rampGaps(readers, palette, {
+      '--global-typography-unread-font-size': {
+        classes: ['xl'],
+        reason: 'left over',
+      },
+    });
+    expect(stale).toEqual([
+      {
+        token: '--global-typography-unread-font-size',
+        detail: 'nothing reads it',
+      },
+    ]);
   });
 });

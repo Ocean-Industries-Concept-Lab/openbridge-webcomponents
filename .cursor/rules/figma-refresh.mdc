@@ -96,9 +96,10 @@ tokens that do not resolve or fall back to hex, and the tripwires fire.
    deprecates stays in use until its replacement has a value in every size
    class the consumers render in: `npm run lint:typography` fails on a
    component reading a font-size or line-height token a class leaves
-   undeclared or at 0, and a token the design file cannot fill yet goes in
-   the script's `KNOWN_GAPS` with its issue, never a value written in code
-   (#1420, #1422).
+   undeclared, at 0, or smaller than in the class before, and a token the
+   design file cannot fill yet goes in the script's `KNOWN_GAPS` with the
+   classes it gaps in and its issue, never a value written in code (#1420,
+   #1422).
 7. Run the full snapshot suite once without `--update`. A palette export
    moves on the order of a hundred baselines; attribute each failing family
    to a value in the changed list before regenerating
