@@ -11,8 +11,26 @@
  *
  * @module
  */
-import {html, HTMLTemplateResult, svg, SVGTemplateResult} from 'lit';
+import {html, HTMLTemplateResult, svg} from 'lit';
 import {Paint} from '../norvar-valve/norvar-valve-art.js';
+import {
+  Draw,
+  PUMP_LARGE,
+  PUMP_SMALL,
+  SILHOUETTE_PAINT,
+  dot,
+  filled,
+  fullSquareFrame,
+  mapFrame,
+  ring,
+  roundFrame,
+  solid,
+  solidDot,
+  solidSquare,
+  square,
+  squareFrame,
+  stroked,
+} from '../norvar-shared/norvar-draw.js';
 
 export enum NorvarWaterStationType {
   reservoir = 'reservoir',
@@ -69,8 +87,6 @@ export const NORVAR_ALARM_OUTLINE_COLOR = 'var(--alert-alarm-outline-color)';
 export const NORVAR_UNMONITORED_COLOR =
   'var(--automation-symbol-static-line-color)';
 
-type Draw = (paint: Paint) => SVGTemplateResult;
-
 export interface NorvarStationArt {
   /** The symbol inside a button. */
   button: Draw;
@@ -85,16 +101,6 @@ export interface NorvarMapSymbolArt extends NorvarStationArt {
   round: boolean;
 }
 
-const SILHOUETTE_PAINT: Paint = {
-  line: 'inherit',
-  fill: 'inherit',
-  border: 'inherit',
-};
-
-const PUMP_LARGE =
-  'M5 3.80425V20.1958C5 20.9812 5.86395 21.46 6.53 21.0438L19.6432 12.848C20.2699 12.4563 20.2699 11.5437 19.6432 11.152L6.53 2.95625C5.86395 2.53997 5 3.01881 5 3.80425Z';
-const PUMP_SMALL =
-  'M8 6.92066V17.0793C8 17.8884 8.91069 18.3625 9.57346 17.8986L16.8297 12.8192C17.3984 12.4211 17.3984 11.5789 16.8297 11.1808L9.57346 6.10142C8.91069 5.63748 8 6.11163 8 6.92066Z';
 const METER_BUTTON =
   'M11.9998 15C16.2156 15 19.8746 17.3731 21.7211 20.8549C21.7561 20.921 21.7079 21 21.6332 21H2.36637C2.29164 21 2.24345 20.921 2.27847 20.8549C4.12496 17.3731 7.78402 15 11.9998 15ZM21.6332 3C21.7079 3 21.7561 3.07904 21.7211 3.14506C19.8746 6.62692 16.2156 9 11.9998 9C7.78402 8.99997 4.12496 6.62693 2.27847 3.14506C2.24345 3.07904 2.29163 3 2.36637 3H21.6332Z';
 const METER_WATER_FLAT =
@@ -141,118 +147,6 @@ const DISCHARGE_DASHES_BUTTON =
   'M19.0719 4.92537L16.2434 7.7538M14.8292 9.16801L12.7079 11.2893M11.2937 12.7035L9.17237 14.8249M7.75815 16.2391L4.92973 19.0675';
 const DISCHARGE_DASHES_FLAT =
   'M19.7796 4.21829L16.9512 7.04672M15.537 8.46093L12.7086 11.2894M11.2944 12.7036L8.46593 15.532M7.05172 16.9462L4.22329 19.7746';
-
-/** A filled shape with a thin outline, the button drawing of most stations. */
-const solid =
-  (d: string): Draw =>
-  ({line, border}) =>
-    svg`<path
-      d=${d}
-      fill=${line}
-      stroke=${border}
-      vector-effect="non-scaling-stroke"
-    />`;
-
-const filled =
-  (d: string): Draw =>
-  ({line}) =>
-    svg`<path d=${d} fill=${line} />`;
-
-const stroked =
-  (d: string, width: number): Draw =>
-  ({line}) =>
-    svg`<path
-      d=${d}
-      stroke=${line}
-      stroke-width=${width}
-      stroke-linecap="round"
-      vector-effect="non-scaling-stroke"
-    />`;
-
-const square =
-  (size: number, radius: number): Draw =>
-  ({line}) =>
-    svg`<rect
-      x=${12 - size / 2}
-      y=${12 - size / 2}
-      width=${size}
-      height=${size}
-      rx=${radius}
-      fill=${line}
-    />`;
-
-/** A 16-unit square or an 18-unit disc whose outline sits inside its size, as the design draws it. */
-const solidSquare: Draw = ({line, border}) =>
-  svg`<rect
-    x="4.5"
-    y="4.5"
-    width="15"
-    height="15"
-    rx="0.5"
-    fill=${line}
-    stroke=${border}
-    vector-effect="non-scaling-stroke"
-  />`;
-
-const solidDot =
-  (radius: number): Draw =>
-  ({line, border}) =>
-    svg`<circle
-      cx="12"
-      cy="12"
-      r=${radius - 0.5}
-      fill=${line}
-      stroke=${border}
-      vector-effect="non-scaling-stroke"
-    />`;
-
-const dot =
-  (radius: number): Draw =>
-  ({line}) =>
-    svg`<circle cx="12" cy="12" r=${radius} fill=${line} />`;
-
-const ring =
-  (radius: number, width: number): Draw =>
-  ({line}) =>
-    svg`<circle
-      cx="12"
-      cy="12"
-      r=${radius}
-      stroke=${line}
-      stroke-width=${width}
-      vector-effect="non-scaling-stroke"
-    />`;
-
-const frameRect = (inset: number, radius: number): Draw => {
-  return ({fill, border}) =>
-    svg`<rect
-      x=${inset}
-      y=${inset}
-      width=${24 - 2 * inset}
-      height=${24 - 2 * inset}
-      rx=${radius}
-      fill=${fill}
-      stroke=${border}
-      vector-effect="non-scaling-stroke"
-    />`;
-};
-
-const roundFrame: Draw = ({fill, border}) =>
-  svg`<circle
-    cx="12"
-    cy="12"
-    r="11.5"
-    fill=${fill}
-    stroke=${border}
-    vector-effect="non-scaling-stroke"
-  />`;
-
-/** Frame of the symbols with room around their mark. */
-const squareFrame = frameRect(1.5, 1.5);
-/** Frame of the symbols whose mark runs into the corners. */
-const fullSquareFrame = frameRect(0.5, 0.5);
-/** Frame of the map symbols. */
-const mapFrame = frameRect(2, 2);
 
 /**
  * A mark on a thick outline, the overflow drawings.
