@@ -48,6 +48,18 @@ package, have their own Storybook, and have tags without the `obc-` prefix.
 - **The state colours the symbol:** `state` gives black, green or grey, `alert` red with a darker outline. An unmonitored symbol also gets the grey button of a static device, through the base's `_static` getter. There is no state row. `flat` is the default, like `norvar-valve`.
 - **`static` shows the medium:** light blue for water; brown or grey for wastewater, chosen by `medium`; grey for the map symbols, which carry none.
 
+`norvar-pump`, `norvar-motor` and `norvar-fan` share `ObcNorvarMotorizedBase` (on the core's motorized button) and `norvar-motorized-art.ts`.
+
+- **Running and stopped are two shapes:** the pump's arrow turns down, the motor's bar lies down, the fan's triangle turns right. A stopped flat symbol sits on a dark disc.
+- **`availability` is separate from `turnedOn`:** `disabled` and `safety-off` (crossed out) are grey and draw the stopped shape. `alert` wins over both and keeps the running or stopped shape. Only a running device that is available or in alarm gets the white button.
+
+The HVAC (VVS) and boiler symbols are one component each (`norvar-damper`, `norvar-fire-damper`, `norvar-compressor`, `norvar-air-filter`, `norvar-strainer`, `norvar-heating-coil`, `norvar-cooling-coil`, `norvar-heat-exchanger`, `norvar-boiler`). They share `ObcNorvarSymbolBase`, which colours them as the stations do, and `norvar-hvac-art.ts`.
+
+- **Square, except the compressor,** which overrides `round`. `static` is grey.
+- **The damper's blade shows the position;** `regulating` or `progress` draws it at an angle.
+
+The drawing helpers of every art file live in `src/norvar-shared/norvar-draw.ts`; that module is not exported from the package.
+
 ## Build and test
 
 From `packages/openbridge-norvar`, after building the core:
