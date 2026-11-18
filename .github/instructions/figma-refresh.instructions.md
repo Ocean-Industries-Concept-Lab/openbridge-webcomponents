@@ -208,7 +208,10 @@ the semantic diff (renamed, removed, changed per block) belong there too.
   meanwhile, and the instrument and automation text stays on the
   `-deprecated-` mixins, whose variables ramp in every class (#1420). Once the
   export carries real values: delete that rule, and move the consumers along
-  the map in `IMPLEMENTATION_GUIDELINES.md` § Instrument and automation fonts.
+  the map in `IMPLEMENTATION_GUIDELINES.md` § Instrument and automation fonts,
+  the direct `--global-typography-instrument-*` token uses with them
+  (`git grep -n -- '--global-typography-instrument-' src`): the heights,
+  weights and sizes they set have to match the new text's metrics.
 - The plugin still emits `Component-size` modes the package does not ship,
   two of them with spaces in their names; `palette:strip` covers for it until
   that is fixed at the source. The blink keyframes and the root animation are
