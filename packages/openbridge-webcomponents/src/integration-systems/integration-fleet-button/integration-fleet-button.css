@@ -95,7 +95,7 @@
 
         .readout-value {
           grid-area: value;
-          @mixin font-general-s-semibold;
+          @mixin font-instrument-deprecated-value-regular-active;
           color: var(--integration-on-normal-active-color);
           text-align: right;
         }
@@ -103,7 +103,7 @@
         .readout-unit {
           grid-area: unit;
           text-align: left;
-          @mixin font-general-s-regular;
+          @mixin font-automation-deprecated-unit-regular;
         }
 
         .readout-label {
