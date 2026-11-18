@@ -209,8 +209,14 @@ the semantic diff (renamed, removed, changed per block) belong there too.
 
 - The General text styles have no `medium`, `large` or `xl` sizes yet. The
   design team leaves them out until it settles whether one class up turns S
-  into M, as the instrument ramp did (#1414); `palette:strip` drops the zeros
-  meanwhile. Delete that rule once the export carries real values.
+  into M, as the instrument ramp does (#1414); `palette:strip` drops the zeros
+  meanwhile, and the instrument and automation text stays on the
+  `-deprecated-` mixins, whose variables ramp in every class (#1420). Once the
+  export carries real values: delete that rule, and move the consumers along
+  the map in `IMPLEMENTATION_GUIDELINES.md` § Instrument and automation fonts,
+  the direct `--global-typography-instrument-*` token uses with them
+  (`git grep -n -- '--global-typography-instrument-' src`): the heights,
+  weights and sizes they set have to match the new text's metrics.
 - The plugin still emits `Component-size` modes the package does not ship,
   two of them with spaces in their names; `palette:strip` covers for it until
   that is fixed at the source. The blink keyframes and the root animation are

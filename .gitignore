@@ -46,3 +46,5 @@ docs/superpowers/
 /.env
 packages/openbridge-webcomponents/screenshots/
 .playwright-mcp
+# hunkwise
+.vscode/hunkwise/

@@ -188,6 +188,33 @@ describe('obc-transmitter-stack', () => {
     expect(narrow).toBeCloseTo(wide, 0);
   });
 
+  it('keeps line-less segments at their reading width in a wider container', async () => {
+    const screen = render(
+      html`<div style="width: 600px">
+        <obc-transmitter-stack
+          .showLine=${false}
+          .values=${[
+            {value: 1, unit: 'm'},
+            {value: 2, unit: 'm'},
+          ]}
+        ></obc-transmitter-stack>
+      </div>`
+    );
+    const el = screen.container.querySelector(
+      'obc-transmitter-stack'
+    ) as ObcTransmitterStack;
+    await el.updateComplete;
+    await Promise.all(segments(el).map((segment) => segment.updateComplete));
+    const host = el.getBoundingClientRect();
+    const [first, second] = segments(el).map((segment) =>
+      segment.getBoundingClientRect()
+    );
+
+    expect(first.width).toBeGreaterThan(0);
+    expect(first.left).toBeCloseTo(host.left, 0);
+    expect(second.right - first.left).toBeLessThan(host.width / 2);
+  });
+
   it('keeps each segment at or above the 24 px pointer-target floor', async () => {
     const el = await setup([{value: 1, unit: 'm'}]);
     const [segment] = segments(el);
