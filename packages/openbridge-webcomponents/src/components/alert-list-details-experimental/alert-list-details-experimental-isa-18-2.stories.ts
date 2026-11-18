@@ -7,6 +7,7 @@ import {
   timeColumn,
   typeColumn,
   type AlertAcknowledgedByField,
+  type ObcAlertListCellClickEvent,
 } from './alert-list-details-experimental.js';
 import {setAlertStandard} from '../../alert-system/configured-alert-standard.js';
 import {
@@ -211,6 +212,21 @@ export const FilterModes: Story = {
   },
   render: (args) => {
     setAlertStandard(isa182AlertStandard);
+    const moveClickedAlert =
+      moveClickedAlertToStateAfterAction<Isa182ListAlert>((alarm, actionId) =>
+        isa182AlertAfterAction(alarm, actionId)
+      );
+    // Every panel lists the same alarms, so an action in one shows in all.
+    const actOnAlarm = (event: ObcAlertListCellClickEvent) => {
+      moveClickedAlert(event);
+      const list = event.currentTarget as ObcAlertListDetailsExperimental;
+      list
+        .closest('.filters')
+        ?.querySelectorAll('obc-alert-list-details-experimental')
+        .forEach((panel) => {
+          panel.alerts = list.alerts;
+        });
+    };
     return html`<style>
         .filters {
           display: grid;
@@ -234,9 +250,7 @@ export const FilterModes: Story = {
                 .alerts=${args.alerts}
                 .columns=${[statusColumn(), actionColumn()]}
                 .showHeader=${false}
-                @cell-click=${moveClickedAlertToStateAfterAction<Isa182ListAlert>(
-                  (alarm, actionId) => isa182AlertAfterAction(alarm, actionId)
-                )}
+                @cell-click=${actOnAlarm}
               ></obc-alert-list-details-experimental>
             </section>`
         )}
