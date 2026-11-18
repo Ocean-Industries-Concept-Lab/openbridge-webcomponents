@@ -665,6 +665,9 @@
   "building-blocks-external-scale--fixed-aspect-ratio-comparison": [
     "scrollable-region-focusable"
   ],
+  "building-blocks-watch--port-starboard-face-rotated": [
+    "scrollable-region-focusable"
+  ],
   "building-blocks-watch--tickmarks-test-rotation": [
     "scrollable-region-focusable"
   ],
