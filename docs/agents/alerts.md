@@ -1,6 +1,6 @@
 ---
 name: alerts
-description: Alert standards, and the experimental alert icon, menu item, lists, menu and page drawn by them
+description: Alert standards and the experimental alert components drawn from them
 globs:
   - packages/openbridge-webcomponents/src/alert-system/**
   - packages/openbridge-webcomponents/src/**/alert-*-experimental/**
