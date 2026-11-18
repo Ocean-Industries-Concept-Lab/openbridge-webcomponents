@@ -6,7 +6,7 @@ import {customElement} from '../decorator.js';
 export class ObiCommandShared extends LitElement {
   @property({type: Boolean}) useCssColor = false;
 
-  private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+  private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
 <path d="M4.00019 4C4.00019 2.9 4.90019 2 6.00019 2C7.10019 2 8.00019 2.9 8.00019 4C8.00019 5.1 7.10019 6 6.00019 6C4.90019 6 4.00019 5.1 4.00019 4Z" fill="currentColor"/>
 <path d="M8.78019 7.58C7.93019 7.21 6.99019 7 6.00019 7C5.01019 7 4.07019 7.21 3.22019 7.58C2.48019 7.9 2.00019 8.62 2.00019 9.43V10H10.0002V9.43C10.0002 8.62 9.52019 7.9 8.78019 7.58Z" fill="currentColor"/>
 <path d="M20.0002 4C20.0002 5.1 19.1002 6 18.0002 6C16.9002 6 16.0002 5.1 16.0002 4C16.0002 2.9 16.9002 2 18.0002 2C19.1002 2 20.0002 2.9 20.0002 4Z" fill="currentColor"/>

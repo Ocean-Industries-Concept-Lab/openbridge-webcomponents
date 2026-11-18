@@ -563,19 +563,19 @@
     .value {
       color: var(--element-active-color);
       text-align: center;
-      @mixin font-instrument-value-small-active;
+      @mixin font-instrument-deprecated-value-small-active;
     }
 
     .label {
       color: var(--element-neutral-color);
       text-align: center;
-      @mixin font-instrument-label;
+      @mixin font-instrument-deprecated-label;
     }
 
     .unit {
       color: var(--element-neutral-color);
       text-align: center;
-      @mixin font-instrument-unit;
+      @mixin font-instrument-deprecated-unit;
     }
 
     &:not(:last-child)::after {

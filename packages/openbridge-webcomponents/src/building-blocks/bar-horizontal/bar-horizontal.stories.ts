@@ -1131,3 +1131,22 @@ export const Reversed: Story = {
     secondaryTickmarkInterval: 1,
   },
 };
+
+/** The vertical bar's icon story mirrored: the icons sit in the labels' row. */
+export const WithAdviceIcons: Story = {
+  args: {
+    minValue: 0,
+    maxValue: 100,
+    width: 520,
+    hasBar: true,
+    value: 55,
+    primaryTickmarkInterval: 25,
+    secondaryTickmarkInterval: 5,
+    advices: [
+      {min: 85, max: 100, category: 'alarm', showIcon: true},
+      {min: 70, max: 85, category: 'caution', showIcon: true},
+      {min: 40, max: 70, category: 'optimal', showIcon: true},
+      {value: 20, category: 'eco', showIcon: true},
+    ],
+  },
+};

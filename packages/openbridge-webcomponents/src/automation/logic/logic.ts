@@ -1,19 +1,27 @@
-import {html} from 'lit';
 import {property} from 'lit/decorators.js';
 import '../../icons/icon-logic-01-on.js';
 import '../../icons/icon-logic-01-off.js';
+import '../../icons/icon-logic-01.js';
 import '../../icons/icon-logic-02-on.js';
 import '../../icons/icon-logic-02-off.js';
+import '../../icons/icon-logic-02.js';
 import '../../icons/icon-logic-03-on.js';
 import '../../icons/icon-logic-03-off.js';
+import '../../icons/icon-logic-03.js';
 import '../../icons/icon-logic-04-on.js';
 import '../../icons/icon-logic-04-off.js';
+import '../../icons/icon-logic-04.js';
 import '../../icons/icon-logic-05-on.js';
 import '../../icons/icon-logic-05-off.js';
+import '../../icons/icon-logic-05.js';
 import '../../icons/icon-logic-06-on.js';
 import '../../icons/icon-logic-06-off.js';
+import '../../icons/icon-logic-06.js';
 import {customElement} from '../../decorator.js';
-import {ObcAbstractAutomationButtonSquared} from '../automation-button/abstract-automation-button-squared.js';
+import {
+  ObcAbstractAutomationButtonSquared,
+  SquaredDeviceIcons,
+} from '../automation-button/abstract-automation-button-squared.js';
 
 export enum LogicAlternativeIcon {
   logic01 = 'logic01',
@@ -24,6 +32,39 @@ export enum LogicAlternativeIcon {
   logic06 = 'logic06',
 }
 
+const icons: Record<LogicAlternativeIcon, SquaredDeviceIcons> = {
+  [LogicAlternativeIcon.logic01]: {
+    on: 'logic-01-on',
+    off: 'logic-01-off',
+    static: 'logic-01',
+  },
+  [LogicAlternativeIcon.logic02]: {
+    on: 'logic-02-on',
+    off: 'logic-02-off',
+    static: 'logic-02',
+  },
+  [LogicAlternativeIcon.logic03]: {
+    on: 'logic-03-on',
+    off: 'logic-03-off',
+    static: 'logic-03',
+  },
+  [LogicAlternativeIcon.logic04]: {
+    on: 'logic-04-on',
+    off: 'logic-04-off',
+    static: 'logic-04',
+  },
+  [LogicAlternativeIcon.logic05]: {
+    on: 'logic-05-on',
+    off: 'logic-05-off',
+    static: 'logic-05',
+  },
+  [LogicAlternativeIcon.logic06]: {
+    on: 'logic-06-on',
+    off: 'logic-06-off',
+    static: 'logic-06',
+  },
+};
+
 /**
  * @stable
  */
@@ -33,128 +74,9 @@ export class ObcLogic extends ObcAbstractAutomationButtonSquared {
     LogicAlternativeIcon.logic01;
 
   override get icon() {
-    switch (this.alternativeIcon) {
-      case LogicAlternativeIcon.logic02:
-        if (this.turnedOn) {
-          return html`<obi-logic-02-on
-              usecsscolor
-              slot="icon"
-            ></obi-logic-02-on>
-            <obi-logic-02-on
-              usecsscolor
-              slot="icon-silhouette"
-            ></obi-logic-02-on>`;
-        } else {
-          return html`<obi-logic-02-off
-              usecsscolor
-              slot="icon"
-            ></obi-logic-02-off>
-            <obi-logic-02-off
-              usecsscolor
-              slot="icon-silhouette"
-            ></obi-logic-02-off>`;
-        }
-      case LogicAlternativeIcon.logic03:
-        if (this.turnedOn) {
-          return html`<obi-logic-03-on
-              usecsscolor
-              slot="icon"
-            ></obi-logic-03-on>
-            <obi-logic-03-on
-              usecsscolor
-              slot="icon-silhouette"
-            ></obi-logic-03-on>`;
-        } else {
-          return html`<obi-logic-03-off
-              usecsscolor
-              slot="icon"
-            ></obi-logic-03-off>
-            <obi-logic-03-off
-              usecsscolor
-              slot="icon-silhouette"
-            ></obi-logic-03-off>`;
-        }
-      case LogicAlternativeIcon.logic04:
-        if (this.turnedOn) {
-          return html`<obi-logic-04-on
-              usecsscolor
-              slot="icon"
-            ></obi-logic-04-on>
-            <obi-logic-04-on
-              usecsscolor
-              slot="icon-silhouette"
-            ></obi-logic-04-on>`;
-        } else {
-          return html`<obi-logic-04-off
-              usecsscolor
-              slot="icon"
-            ></obi-logic-04-off>
-            <obi-logic-04-off
-              usecsscolor
-              slot="icon-silhouette"
-            ></obi-logic-04-off>`;
-        }
-      case LogicAlternativeIcon.logic05:
-        if (this.turnedOn) {
-          return html`<obi-logic-05-on
-              usecsscolor
-              slot="icon"
-            ></obi-logic-05-on>
-            <obi-logic-05-on
-              usecsscolor
-              slot="icon-silhouette"
-            ></obi-logic-05-on>`;
-        } else {
-          return html`<obi-logic-05-off
-              usecsscolor
-              slot="icon"
-            ></obi-logic-05-off>
-            <obi-logic-05-off
-              usecsscolor
-              slot="icon-silhouette"
-            ></obi-logic-05-off>`;
-        }
-      case LogicAlternativeIcon.logic06:
-        if (this.turnedOn) {
-          return html`<obi-logic-06-on
-              usecsscolor
-              slot="icon"
-            ></obi-logic-06-on>
-            <obi-logic-06-on
-              usecsscolor
-              slot="icon-silhouette"
-            ></obi-logic-06-on>`;
-        } else {
-          return html`<obi-logic-06-off
-              usecsscolor
-              slot="icon"
-            ></obi-logic-06-off>
-            <obi-logic-06-off
-              usecsscolor
-              slot="icon-silhouette"
-            ></obi-logic-06-off>`;
-        }
-      default:
-        if (this.turnedOn) {
-          return html`<obi-logic-01-on
-              usecsscolor
-              slot="icon"
-            ></obi-logic-01-on>
-            <obi-logic-01-on
-              usecsscolor
-              slot="icon-silhouette"
-            ></obi-logic-01-on>`;
-        } else {
-          return html`<obi-logic-01-off
-              usecsscolor
-              slot="icon"
-            ></obi-logic-01-off>
-            <obi-logic-01-off
-              usecsscolor
-              slot="icon-silhouette"
-            ></obi-logic-01-off>`;
-        }
-    }
+    return this.renderDeviceIcon(
+      icons[this.alternativeIcon] ?? icons[LogicAlternativeIcon.logic01]
+    );
   }
 }
 

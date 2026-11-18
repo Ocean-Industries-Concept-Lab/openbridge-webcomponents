@@ -24,7 +24,8 @@
   }
 }
 
-.icon {
+.icon,
+::slotted([slot="icon"]) {
   display: block;
   width: var(--app-components-alert-button-item-icon-size);
   height: var(--app-components-alert-button-item-icon-size);
@@ -172,6 +173,17 @@
   @mixin style style=notification visibleWrapperClass=.visible-wrapper;
   & .visible-wrapper {
     color: var(--on-notification-active-color);
+  }
+}
+
+/* After the type rules, which it ties on specificity. Not named .activated:
+   the mixin's own activated state would match twice, and the selected style
+   has no tokens for it. */
+.alert-button.selected {
+  @mixin style style=selected visibleWrapperClass=.visible-wrapper;
+
+  & .visible-wrapper {
+    color: var(--on-selected-active-color);
   }
 }
 

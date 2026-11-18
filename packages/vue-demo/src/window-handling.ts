@@ -10,9 +10,10 @@ export type MenuName =
  * bar's buttons looking pressed while their menu is up. `onMenuClose` is what
  * puts a flag back when a menu closed on its own.
  *
- * Nothing here guards against a second click on the same button. While a
- * menu is open it covers the page, that button included, so the click that
- * closes the menu never reaches the top bar.
+ * Nothing here guards against a second click on the same button. The top bar
+ * stays reachable while a menu is open, and the browser closes the menu
+ * before that click reaches the bar: the click then flips the flag to false,
+ * and `onMenuClose` finds it already there.
  */
 export function useWindowHandling() {
   const showNavigation = ref(false)

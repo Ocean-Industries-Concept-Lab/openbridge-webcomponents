@@ -62,3 +62,9 @@ export const OrientationVerticalLeft: Story = {
     orientation: AutomationButtonOrientation.verticalLeft,
   },
 };
+
+export const Static: Story = {
+  args: {
+    static: true,
+  },
+};

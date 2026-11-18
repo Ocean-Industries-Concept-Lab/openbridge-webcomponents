@@ -2,16 +2,19 @@
 
 This tutorial will guide you through creating an OpenBridge-based application using Angular. We will start with an empty folder and end with a multi-view application.
 
-## Creating a Angular Project
+## Creating an Angular Project
 
-To create a new Angular project, run the following command:
+The wrapper supports Angular 20 (it declares `@angular/core` `^20.0.1` as a
+peer dependency). A plain `ng new` uses the newest Angular CLI, and `npm` then
+refuses to install the wrapper with an `ERESOLVE` peer-dependency error. Pin
+the CLI to version 20 when creating the project:
 
 ```sh
-npm install -g @angular/cli
-ng new maritime-app
+npx @angular/cli@20 new maritime-app
 ```
 
-This will set up a new Angular project named `maritime-app`.
+This will set up a new Angular 20 project named `maritime-app`. The default
+answers to the prompts are fine.
 
 ## Running the Project
 
@@ -26,44 +29,32 @@ This will start a development server, typically accessible at `http://localhost:
 
 ## Install OpenBridge web components angular wrapper
 
-To use the components in your project, you can install the package from GitHub package repo.
-
-Start by creating a classic personal access token in GitHub
-Go to [GitHub settings](https://github.com/settings/tokens/new) to make a classic token. Give the token the `read:packages` permission. Click "Generate token" and copy the token.
-
-Login into GitHub package repo:
-
-```bash
-npm login --registry https://npm.pkg.github.com/ --scope=@oicl
-```
-
-Use our GitHub username as username and past in the generated token as password.
-
-You can now install the package:
+The package is published on the public npm registry. It also installs the
+core `@oicl/openbridge-webcomponents` package as a dependency:
 
 ```bash
 npm install @oicl/openbridge-webcomponents-ng
 ```
 
-## Include the wrapper in the tsconfig
+Use `@oicl/openbridge-webcomponents-ng@next` to try the latest pre-release.
 
-The angular wrapper requires that the project builds the wrapper components. Open `tsconfig.app.json` and add `"./node_modules/@oicl/openbridge-webcomponents-ng/src/**/*.ts"` to the `include` array.
+The wrapper ships precompiled, so no `tsconfig` changes are needed. Every
+component and icon has its own entry point, named after its tag:
 
-To make it easier to import the components you can also add a path mapping. In the same file, in the `compilerOptions` add:
-
-```json
-    "paths": {
-      "@obc/*": ["./node_modules/@oicl/openbridge-webcomponents-ng/src/*"],
-    }
+```ts
+import { ObcTopBar } from "@oicl/openbridge-webcomponents-ng/obc-top-bar";
+import { ObiAlerts } from "@oicl/openbridge-webcomponents-ng/obi-alerts";
 ```
+
+Each entry point also re-exports the component's event and value types, for
+example `ObcPaletteChangeEvent` from `obc-brilliance-menu`. The package root
+exports nothing useful, so always import from a component's entry point.
 
 ## Start making an app
 
 ### Clean up the generated project
 
-Remove content in app.html
-
-app.html:
+Replace the content of `src/app/app.html` with:
 
 ```html
 <router-outlet />
@@ -71,12 +62,12 @@ app.html:
 
 ### Add topbar
 
-Import the topbar to the `app.ts`
+Import the topbar in `src/app/app.ts`
 
-```ts {1,8-10}
+```ts
 import { Component } from "@angular/core";
 import { RouterOutlet } from "@angular/router";
-import { ObcTopBar } from "@obc/components/top-bar/top-bar";
+import { ObcTopBar } from "@oicl/openbridge-webcomponents-ng/obc-top-bar";
 
 @Component({
   selector: "app-root",
@@ -84,7 +75,7 @@ import { ObcTopBar } from "@obc/components/top-bar/top-bar";
   templateUrl: "./app.html",
   styleUrl: "./app.css",
 })
-export class AppComponent {
+export class App {
   title = "OpenBridge-angular";
 }
 ```
@@ -131,9 +122,9 @@ This could be `regular`, `medium`, `large`, or `xl`. It sets the component size 
 
 ## Load font
 
-Lastly Noto Sans needs to be added. You can download it from the [OpenBridge repo](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/raw/refs/heads/stable/packages/openbridge-webcomponents/public/NotoSans.ttf). Place the NotoSans.ttf file in the public folder.
+Lastly Noto Sans needs to be added. You can download it from the [OpenBridge repo](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/raw/refs/heads/stable/packages/openbridge-webcomponents/public/NotoSans.ttf), or copy it from `node_modules/@oicl/openbridge-webcomponents/dist/NotoSans.ttf`. Place the NotoSans.ttf file in the `public` folder.
 
-Next this file must be loaded by the css. So add it to styles.css:
+Next this file must be loaded by the css. So add it to `src/styles.css`:
 
 ```css
 @font-face {
@@ -191,7 +182,10 @@ For instance add these properties:
 <obc-top-bar [appTitle]="title" [showDimmingButton]="true" [showClock]="true" />
 ```
 
-Where title is a variable of the component.
+Where `title` is a field of the component. Replace the generated
+`title = signal(...)` with a plain string: `title = "OpenBridge-angular";`.
+
+The clock stays empty for now. It is added in [Set the time](#set-the-time).
 
 ## Add background
 
@@ -232,8 +226,8 @@ We can now add the brilliance menu and the dimming button to the top bar
 ```ts
 import { Component } from "@angular/core";
 import { RouterOutlet } from "@angular/router";
-import { ObcTopBar } from "@obc/components/top-bar/top-bar";
-import { ObcBrillianceMenu } from "@obc/components/brilliance-menu/brilliance-menu";
+import { ObcTopBar } from "@oicl/openbridge-webcomponents-ng/obc-top-bar";
+import { ObcBrillianceMenu } from "@oicl/openbridge-webcomponents-ng/obc-brilliance-menu";
 
 @Component({
   selector: "app-root",
@@ -241,7 +235,7 @@ import { ObcBrillianceMenu } from "@obc/components/brilliance-menu/brilliance-me
   templateUrl: "./app.html",
   styleUrl: "./app.css",
 })
-export class AppComponent {
+export class App {
   title = "OpenBridge-angular";
 }
 ```
@@ -263,7 +257,7 @@ export class AppComponent {
 </main>
 ```
 
-It's location is a bit of.
+Its location is a bit off.
 
 And add the css to `app.css`
 
@@ -282,11 +276,11 @@ Find the event name under events in [storybook](https://openbridge-storybook.web
 ```ts
 import { Component } from "@angular/core";
 import { RouterOutlet } from "@angular/router";
-import { ObcTopBar } from "@obc/components/top-bar/top-bar";
+import { ObcTopBar } from "@oicl/openbridge-webcomponents-ng/obc-top-bar";
 import {
   ObcBrillianceMenu,
   type ObcPaletteChangeEvent,
-} from "@obc/components/brilliance-menu/brilliance-menu";
+} from "@oicl/openbridge-webcomponents-ng/obc-brilliance-menu";
 
 @Component({
   selector: "app-root",
@@ -294,7 +288,7 @@ import {
   templateUrl: "./app.html",
   styleUrl: "./app.css",
 })
-export class AppComponent {
+export class App {
   title = "OpenBridge-angular";
   showBrillianceMenu = false;
 
@@ -326,7 +320,8 @@ Notice that the event type is also imported from the component.
   <obc-brilliance-menu
     class="brilliance"
     (paletteChangedEvent)="onPaletteChange($event)"
-  />}
+  />
+  }
   <router-outlet />
 </main>
 ```
@@ -335,7 +330,8 @@ Notice here that the `dimmingButtonActivated` must be set. This is used to highl
 
 # Set the time
 
-You may have notice that the clock is not set correctly. Add this service to `src/core/services/date.service.ts`:
+The top bar has a `clock` slot. Put an `obc-clock` in it and give the clock an
+ISO date string. Add this service to `src/app/core/services/date.service.ts`:
 
 ```ts
 import { Injectable } from "@angular/core";
@@ -365,25 +361,26 @@ export class DateService {
 }
 ```
 
-It returns a ISO time string every minute. Set that as property for the top bar.
+It returns an ISO time string every minute. Import `ObcClock` and pass the date to it.
 
 ```ts
 import { Component, OnInit } from "@angular/core";
 import { RouterOutlet } from "@angular/router";
-import { ObcTopBar } from "@obc/components/top-bar/top-bar";
+import { ObcTopBar } from "@oicl/openbridge-webcomponents-ng/obc-top-bar";
+import { ObcClock } from "@oicl/openbridge-webcomponents-ng/obc-clock";
 import {
   ObcBrillianceMenu,
   type ObcPaletteChangeEvent,
-} from "@obc/components/brilliance-menu/brilliance-menu";
+} from "@oicl/openbridge-webcomponents-ng/obc-brilliance-menu";
 import { DateService } from "./core/services/date.service";
 
 @Component({
   selector: "app-root",
-  imports: [RouterOutlet, ObcTopBar, ObcBrillianceMenu],
+  imports: [RouterOutlet, ObcTopBar, ObcClock, ObcBrillianceMenu],
   templateUrl: "./app.html",
   styleUrl: "./app.css",
 })
-export class AppComponent {
+export class App implements OnInit {
   title = "OpenBridge-angular";
   showBrillianceMenu = false;
   date: string = "";
@@ -414,8 +411,9 @@ export class AppComponent {
     [showClock]="true"
     [dimmingButtonActivated]="showBrillianceMenu"
     (dimmingButtonClickedEvent)="handleDimmingButtonClicked()"
-    [date]="date"
-  />
+  >
+    <obc-clock slot="clock" [date]="date" />
+  </obc-top-bar>
 </header>
 
 <main>
@@ -423,7 +421,8 @@ export class AppComponent {
   <obc-brilliance-menu
     class="brilliance"
     (paletteChangedEvent)="onPaletteChange($event)"
-  />}
+  />
+  }
   <router-outlet />
 </main>
 ```
@@ -432,27 +431,41 @@ export class AppComponent {
 
 We can now add a navigation menu. Start by looking it up in [storybook](https://openbridge-storybook.web.app/?path=/docs/menu-navigation-menu--docs). Click on "Show code" to view the example code.
 
-Start by making an new component. Run `ng generate component` in the command line. Give it NavMenu as name. Copy the example file into the new html file:
+Start by making a new component:
+
+```sh
+npx ng generate component nav-menu
+```
+
+This creates `src/app/nav-menu/nav-menu.ts`, `nav-menu.html` and `nav-menu.css`.
+Copy the example into `nav-menu.html`. In Angular, boolean inputs are bound with
+`[input]="true"`. Navigation items only show their icon when `hasIcon` is set:
 
 ```html
 <obc-navigation-menu>
-  <obc-navigation-item slot="main" label="Apps" href="#">
+  <obc-navigation-item [hasIcon]="true" slot="main" label="Apps" href="#">
     <obi-applications slot="icon"></obi-applications>
   </obc-navigation-item>
-  <obc-navigation-item slot="main" checked="" label="Alerts" href="#">
+  <obc-navigation-item
+    [hasIcon]="true"
+    slot="main"
+    [checked]="true"
+    label="Alerts"
+    href="#"
+  >
     <obi-alerts slot="icon"></obi-alerts>
   </obc-navigation-item>
-  <obc-navigation-item slot="main" label="Dimming" href="#">
+  <obc-navigation-item [hasIcon]="true" slot="main" label="Dimming" href="#">
     <obi-palette-dimming slot="icon"></obi-palette-dimming>
   </obc-navigation-item>
 
-  <obc-navigation-item slot="footer" label="Help" href="#">
+  <obc-navigation-item [hasIcon]="true" slot="footer" label="Help" href="#">
     <obi-support-google slot="icon"></obi-support-google>
   </obc-navigation-item>
-  <obc-navigation-item slot="footer" label="Settings" href="#">
+  <obc-navigation-item [hasIcon]="true" slot="footer" label="Settings" href="#">
     <obi-settings-iec slot="icon"></obi-settings-iec>
   </obc-navigation-item>
-  <obc-navigation-item slot="footer" label="Alert" href="#">
+  <obc-navigation-item [hasIcon]="true" slot="footer" label="Alert" href="#">
     <obi-alert-list slot="icon"></obi-alert-list>
   </obc-navigation-item>
 
@@ -464,14 +477,14 @@ Import the wrapper components:
 
 ```ts
 import { Component } from "@angular/core";
-import { ObcNavigationMenu } from "@obc/components/navigation-menu/navigation-menu";
-import { ObcNavigationItem } from "@obc/components/navigation-item/navigation-item";
-import { ObiApplications } from "@obc/icons/icon-applications";
-import { ObiAlerts } from "@obc/icons/icon-alerts";
-import { ObiPaletteDimming } from "@obc/icons/icon-palette-dimming";
-import { ObiSupportGoogle } from "@obc/icons/icon-support-google";
-import { ObiSettingsIec } from "@obc/icons/icon-settings-iec";
-import { ObiAlertList } from "@obc/icons/icon-alert-list";
+import { ObcNavigationMenu } from "@oicl/openbridge-webcomponents-ng/obc-navigation-menu";
+import { ObcNavigationItem } from "@oicl/openbridge-webcomponents-ng/obc-navigation-item";
+import { ObiApplications } from "@oicl/openbridge-webcomponents-ng/obi-applications";
+import { ObiAlerts } from "@oicl/openbridge-webcomponents-ng/obi-alerts";
+import { ObiPaletteDimming } from "@oicl/openbridge-webcomponents-ng/obi-palette-dimming";
+import { ObiSupportGoogle } from "@oicl/openbridge-webcomponents-ng/obi-support-google";
+import { ObiSettingsIec } from "@oicl/openbridge-webcomponents-ng/obi-settings-iec";
+import { ObiAlertList } from "@oicl/openbridge-webcomponents-ng/obi-alert-list";
 
 @Component({
   selector: "app-nav-menu",
@@ -485,32 +498,33 @@ import { ObiAlertList } from "@obc/icons/icon-alert-list";
     ObiSettingsIec,
     ObiAlertList,
   ],
-  templateUrl: "./nav-menu.component.html",
-  styleUrl: "./nav-menu.component.css",
+  templateUrl: "./nav-menu.html",
+  styleUrl: "./nav-menu.css",
 })
-export class NavMenuComponent {}
+export class NavMenu {}
 ```
 
-Add this component to the `app.ts` include logic for toggeling the menu. Notice that clicking the navigation menu should close the brilliance menu and vica versa.
+Add this component to `app.ts` and include logic for toggling the menu. Notice that clicking the navigation menu should close the brilliance menu and vice versa.
 
 ```ts
-import { Component } from "@angular/core";
+import { Component, OnInit } from "@angular/core";
 import { RouterOutlet } from "@angular/router";
-import { ObcTopBar } from "@obc/components/top-bar/top-bar";
+import { ObcTopBar } from "@oicl/openbridge-webcomponents-ng/obc-top-bar";
+import { ObcClock } from "@oicl/openbridge-webcomponents-ng/obc-clock";
 import {
   ObcBrillianceMenu,
   type ObcPaletteChangeEvent,
-} from "@obc/components/brilliance-menu/brilliance-menu";
+} from "@oicl/openbridge-webcomponents-ng/obc-brilliance-menu";
 import { DateService } from "./core/services/date.service";
-import { NavMenuComponent } from "./nav-menu/nav-menu.component";
+import { NavMenu } from "./nav-menu/nav-menu";
 
 @Component({
   selector: "app-root",
-  imports: [RouterOutlet, ObcTopBar, ObcBrillianceMenu, NavMenuComponent],
+  imports: [RouterOutlet, ObcTopBar, ObcClock, ObcBrillianceMenu, NavMenu],
   templateUrl: "./app.html",
   styleUrl: "./app.css",
 })
-export class AppComponent {
+export class App implements OnInit {
   title = "OpenBridge-angular";
   showBrillianceMenu = false;
   showNavMenu = false;
@@ -552,8 +566,9 @@ Update `app.html`
     (dimmingButtonClickedEvent)="handleDimmingButtonClicked()"
     (menuButtonClickedEvent)="handleNavMenuButtonClicked()"
     [menuButtonActivated]="showNavMenu"
-    [date]="date"
-  />
+  >
+    <obc-clock slot="clock" [date]="date" />
+  </obc-top-bar>
 </header>
 
 <main>
@@ -561,14 +576,15 @@ Update `app.html`
   <obc-brilliance-menu
     class="brilliance"
     (paletteChangedEvent)="onPaletteChange($event)"
-  />} @if (showNavMenu) {
-  <app-nav-menu class="navigation-menu "></app-nav-menu> }
+  />
+  } @if (showNavMenu) {
+  <app-nav-menu class="navigation-menu" />
+  }
   <router-outlet />
 </main>
 ```
 
-We need to position the navigation menu. In this case we will do it from the NavigationMenu component.
-Add app.css:
+We need to position the navigation menu. Add this to `app.css`:
 
 ```css
 .navigation-menu {
@@ -579,45 +595,43 @@ Add app.css:
 }
 ```
 
-And import it in `NavigationMenu.tsx`
-
-```ts
-import "./NavigationMenu.css";
-```
-
 # Add some content
 
 We would now like to use the navigation menu to switch between components.
-Use `ng generate component` to generate a component with name azimuth-demo.
+Generate a component for the first page:
 
-Import the azimuth thruster
+```sh
+npx ng generate component azimuth-demo
+```
+
+Import the azimuth thruster in `src/app/azimuth-demo/azimuth-demo.ts`
 
 ```ts
 import { Component } from "@angular/core";
-import { ObcAzimuthThruster } from "@obc/navigation-instruments/azimuth-thruster/azimuth-thruster";
+import { ObcAzimuthThruster } from "@oicl/openbridge-webcomponents-ng/obc-azimuth-thruster";
 
 @Component({
-  selector: "app-azumuth-demo",
+  selector: "app-azimuth-demo",
   imports: [ObcAzimuthThruster],
-  templateUrl: "./azumuth-demo.component.html",
-  styleUrl: "./azumuth-demo.component.css",
+  templateUrl: "./azimuth-demo.html",
+  styleUrl: "./azimuth-demo.css",
 })
-export class AzumuthDemoComponent {}
+export class AzimuthDemo {}
 ```
 
-and render it:
+and render it in `azimuth-demo.html`:
 
 ```html
 <obc-azimuth-thruster [angle]="30" [thrust]="50"></obc-azimuth-thruster>
 ```
 
-import it to `app.router.ts`
+Add it to `src/app/app.routes.ts`
 
-```tsx
+```ts
 import { Routes } from "@angular/router";
-import { AzumuthDemoComponent } from "./azumuth-demo/azumuth-demo.component";
+import { AzimuthDemo } from "./azimuth-demo/azimuth-demo";
 
-export const routes: Routes = [{ path: "", component: AzumuthDemoComponent }];
+export const routes: Routes = [{ path: "", component: AzimuthDemo }];
 ```
 
 Play with the input parameters of the azimuth.
@@ -634,8 +648,9 @@ Try opening the navigation menu. Notice that the component is rendered above the
     (dimmingButtonClickedEvent)="handleDimmingButtonClicked()"
     (menuButtonClickedEvent)="handleNavMenuButtonClicked()"
     [menuButtonActivated]="showNavMenu"
-    [date]="date"
-  />
+  >
+    <obc-clock slot="clock" [date]="date" />
+  </obc-top-bar>
 </header>
 
 <main>
@@ -644,28 +659,38 @@ Try opening the navigation menu. Notice that the component is rendered above the
   <obc-brilliance-menu
     class="brilliance"
     (paletteChangedEvent)="onPaletteChange($event)"
-  />} @if (showNavMenu) {
-  <app-nav-menu class="navigation-menu "></app-nav-menu> }
+  />
+  } @if (showNavMenu) {
+  <app-nav-menu class="navigation-menu" />
+  }
 </main>
 ```
 
 # Add another page
 
-Add another page name it `TunnelDemo`
+Add another page:
+
+```sh
+npx ng generate component tunnel-demo
+```
+
+`tunnel-demo.ts`:
 
 ```ts
 import { Component } from "@angular/core";
 
-import { ObcThruster } from "@obc/navigation-instruments/thruster/thruster";
+import { ObcThruster } from "@oicl/openbridge-webcomponents-ng/obc-thruster";
 
 @Component({
   selector: "app-tunnel-demo",
   imports: [ObcThruster],
-  templateUrl: "./tunnel-demo.component.html",
-  styleUrl: "./tunnel-demo.component.css",
+  templateUrl: "./tunnel-demo.html",
+  styleUrl: "./tunnel-demo.css",
 })
-export class TunnelDemoComponent {}
+export class TunnelDemo {}
 ```
+
+`tunnel-demo.html`:
 
 ```html
 <obc-thruster [tunnel]="true" [thrust]="-30" />
@@ -675,12 +700,12 @@ Add it to the router:
 
 ```ts
 import { Routes } from "@angular/router";
-import { AzumuthDemoComponent } from "./azumuth-demo/azumuth-demo.component";
-import { TunnelDemoComponent } from "./tunnel-demo/tunnel-demo.component";
+import { AzimuthDemo } from "./azimuth-demo/azimuth-demo";
+import { TunnelDemo } from "./tunnel-demo/tunnel-demo";
 
 export const routes: Routes = [
-  { path: "", component: AzumuthDemoComponent },
-  { path: "tunnel", component: TunnelDemoComponent },
+  { path: "", component: AzimuthDemo },
+  { path: "tunnel", component: TunnelDemo },
 ];
 ```
 
@@ -692,18 +717,21 @@ We can now use these path in the navigation menu:
 
 - set the href to the path in router
 - find some good labels and [icons](https://openbridge-demo.web.app/icons)
+- put the company logo in `public/`. The example uses
+  [companylogo-day.png](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/raw/refs/heads/stable/packages/openbridge-webcomponents/public/companylogo-day.png)
 
 ```html
 <obc-navigation-menu>
-  <obc-navigation-item slot="main" label="Apps" href="/">
+  <obc-navigation-item [hasIcon]="true" slot="main" label="Azimuth" href="/">
     <obi-propulsion-azimuth-thruster
       slot="icon"
     ></obi-propulsion-azimuth-thruster>
   </obc-navigation-item>
   <obc-navigation-item
+    [hasIcon]="true"
     slot="main"
     [checked]="true"
-    label="Alerts"
+    label="Tunnel"
     href="/tunnel"
   >
     <obi-propulsion-tunnel-thruster
@@ -711,13 +739,13 @@ We can now use these path in the navigation menu:
     ></obi-propulsion-tunnel-thruster>
   </obc-navigation-item>
 
-  <obc-navigation-item slot="footer" label="Help" href="#">
+  <obc-navigation-item [hasIcon]="true" slot="footer" label="Help" href="#">
     <obi-support-google slot="icon"></obi-support-google>
   </obc-navigation-item>
-  <obc-navigation-item slot="footer" label="Settings" href="#">
+  <obc-navigation-item [hasIcon]="true" slot="footer" label="Settings" href="#">
     <obi-settings-iec slot="icon"></obi-settings-iec>
   </obc-navigation-item>
-  <obc-navigation-item slot="footer" label="Alert" href="#">
+  <obc-navigation-item [hasIcon]="true" slot="footer" label="Alert" href="#">
     <obi-alert-list slot="icon"></obi-alert-list>
   </obc-navigation-item>
 
@@ -727,13 +755,13 @@ We can now use these path in the navigation menu:
 
 ```ts
 import { Component } from "@angular/core";
-import { ObcNavigationMenu } from "@obc/components/navigation-menu/navigation-menu";
-import { ObcNavigationItem } from "@obc/components/navigation-item/navigation-item";
-import { ObiSupportGoogle } from "@obc/icons/icon-support-google";
-import { ObiSettingsIec } from "@obc/icons/icon-settings-iec";
-import { ObiAlertList } from "@obc/icons/icon-alert-list";
-import { ObiPropulsionAzimuthThruster } from "@obc/icons/icon-propulsion-azimuth-thruster";
-import { ObiPropulsionTunnelThruster } from "@obc/icons/icon-propulsion-tunnel-thruster";
+import { ObcNavigationMenu } from "@oicl/openbridge-webcomponents-ng/obc-navigation-menu";
+import { ObcNavigationItem } from "@oicl/openbridge-webcomponents-ng/obc-navigation-item";
+import { ObiSupportGoogle } from "@oicl/openbridge-webcomponents-ng/obi-support-google";
+import { ObiSettingsIec } from "@oicl/openbridge-webcomponents-ng/obi-settings-iec";
+import { ObiAlertList } from "@oicl/openbridge-webcomponents-ng/obi-alert-list";
+import { ObiPropulsionAzimuthThruster } from "@oicl/openbridge-webcomponents-ng/obi-propulsion-azimuth-thruster";
+import { ObiPropulsionTunnelThruster } from "@oicl/openbridge-webcomponents-ng/obi-propulsion-tunnel-thruster";
 
 @Component({
   selector: "app-nav-menu",
@@ -746,10 +774,10 @@ import { ObiPropulsionTunnelThruster } from "@obc/icons/icon-propulsion-tunnel-t
     ObiPropulsionAzimuthThruster,
     ObiPropulsionTunnelThruster,
   ],
-  templateUrl: "./nav-menu.component.html",
-  styleUrl: "./nav-menu.component.css",
+  templateUrl: "./nav-menu.html",
+  styleUrl: "./nav-menu.css",
 })
-export class NavMenuComponent {}
+export class NavMenu {}
 ```
 
 Try to use the navigation menu.
@@ -767,13 +795,13 @@ Import the RouterLink directive into the nav-menu component
 
 ```ts
 import { Component } from "@angular/core";
-import { ObcNavigationMenu } from "@obc/components/navigation-menu/navigation-menu";
-import { ObcNavigationItem } from "@obc/components/navigation-item/navigation-item";
-import { ObiSupportGoogle } from "@obc/icons/icon-support-google";
-import { ObiSettingsIec } from "@obc/icons/icon-settings-iec";
-import { ObiAlertList } from "@obc/icons/icon-alert-list";
-import { ObiPropulsionAzimuthThruster } from "@obc/icons/icon-propulsion-azimuth-thruster";
-import { ObiPropulsionTunnelThruster } from "@obc/icons/icon-propulsion-tunnel-thruster";
+import { ObcNavigationMenu } from "@oicl/openbridge-webcomponents-ng/obc-navigation-menu";
+import { ObcNavigationItem } from "@oicl/openbridge-webcomponents-ng/obc-navigation-item";
+import { ObiSupportGoogle } from "@oicl/openbridge-webcomponents-ng/obi-support-google";
+import { ObiSettingsIec } from "@oicl/openbridge-webcomponents-ng/obi-settings-iec";
+import { ObiAlertList } from "@oicl/openbridge-webcomponents-ng/obi-alert-list";
+import { ObiPropulsionAzimuthThruster } from "@oicl/openbridge-webcomponents-ng/obi-propulsion-azimuth-thruster";
+import { ObiPropulsionTunnelThruster } from "@oicl/openbridge-webcomponents-ng/obi-propulsion-tunnel-thruster";
 import { RouterLink } from "@angular/router";
 
 @Component({
@@ -788,22 +816,28 @@ import { RouterLink } from "@angular/router";
     ObiPropulsionTunnelThruster,
     RouterLink,
   ],
-  templateUrl: "./nav-menu.component.html",
-  styleUrl: "./nav-menu.component.css",
+  templateUrl: "./nav-menu.html",
+  styleUrl: "./nav-menu.css",
 })
-export class NavMenuComponent {}
+export class NavMenu {}
 ```
 
 and replace the `href` with `routerLink`
 
 ```html
 <obc-navigation-menu>
-  <obc-navigation-item slot="main" label="Azimuth" routerLink="/">
+  <obc-navigation-item
+    [hasIcon]="true"
+    slot="main"
+    label="Azimuth"
+    routerLink="/"
+  >
     <obi-propulsion-azimuth-thruster
       slot="icon"
     ></obi-propulsion-azimuth-thruster>
   </obc-navigation-item>
   <obc-navigation-item
+    [hasIcon]="true"
     slot="main"
     [checked]="true"
     label="Tunnel"
@@ -814,13 +848,13 @@ and replace the `href` with `routerLink`
     ></obi-propulsion-tunnel-thruster>
   </obc-navigation-item>
 
-  <obc-navigation-item slot="footer" label="Help" href="#">
+  <obc-navigation-item [hasIcon]="true" slot="footer" label="Help" href="#">
     <obi-support-google slot="icon"></obi-support-google>
   </obc-navigation-item>
-  <obc-navigation-item slot="footer" label="Settings" href="#">
+  <obc-navigation-item [hasIcon]="true" slot="footer" label="Settings" href="#">
     <obi-settings-iec slot="icon"></obi-settings-iec>
   </obc-navigation-item>
-  <obc-navigation-item slot="footer" label="Alert" href="#">
+  <obc-navigation-item [hasIcon]="true" slot="footer" label="Alert" href="#">
     <obi-alert-list slot="icon"></obi-alert-list>
   </obc-navigation-item>
 
@@ -836,13 +870,13 @@ We can use `Router` to check if the selected route is active
 
 ```ts
 import { Component } from "@angular/core";
-import { ObcNavigationMenu } from "@obc/components/navigation-menu/navigation-menu";
-import { ObcNavigationItem } from "@obc/components/navigation-item/navigation-item";
-import { ObiSupportGoogle } from "@obc/icons/icon-support-google";
-import { ObiSettingsIec } from "@obc/icons/icon-settings-iec";
-import { ObiAlertList } from "@obc/icons/icon-alert-list";
-import { ObiPropulsionAzimuthThruster } from "@obc/icons/icon-propulsion-azimuth-thruster";
-import { ObiPropulsionTunnelThruster } from "@obc/icons/icon-propulsion-tunnel-thruster";
+import { ObcNavigationMenu } from "@oicl/openbridge-webcomponents-ng/obc-navigation-menu";
+import { ObcNavigationItem } from "@oicl/openbridge-webcomponents-ng/obc-navigation-item";
+import { ObiSupportGoogle } from "@oicl/openbridge-webcomponents-ng/obi-support-google";
+import { ObiSettingsIec } from "@oicl/openbridge-webcomponents-ng/obi-settings-iec";
+import { ObiAlertList } from "@oicl/openbridge-webcomponents-ng/obi-alert-list";
+import { ObiPropulsionAzimuthThruster } from "@oicl/openbridge-webcomponents-ng/obi-propulsion-azimuth-thruster";
+import { ObiPropulsionTunnelThruster } from "@oicl/openbridge-webcomponents-ng/obi-propulsion-tunnel-thruster";
 import { Router, RouterLink } from "@angular/router";
 
 @Component({
@@ -857,10 +891,10 @@ import { Router, RouterLink } from "@angular/router";
     ObiPropulsionTunnelThruster,
     RouterLink,
   ],
-  templateUrl: "./nav-menu.component.html",
-  styleUrl: "./nav-menu.component.css",
+  templateUrl: "./nav-menu.html",
+  styleUrl: "./nav-menu.css",
 })
-export class NavMenuComponent {
+export class NavMenu {
   constructor(private router: Router) {}
 
   isActive(route: string): boolean {
@@ -872,6 +906,7 @@ export class NavMenuComponent {
 ```html
 <obc-navigation-menu>
   <obc-navigation-item
+    [hasIcon]="true"
     slot="main"
     [checked]="isActive('/')"
     label="Azimuth"
@@ -882,6 +917,7 @@ export class NavMenuComponent {
     ></obi-propulsion-azimuth-thruster>
   </obc-navigation-item>
   <obc-navigation-item
+    [hasIcon]="true"
     slot="main"
     [checked]="isActive('/tunnel')"
     label="Tunnel"
@@ -892,13 +928,13 @@ export class NavMenuComponent {
     ></obi-propulsion-tunnel-thruster>
   </obc-navigation-item>
 
-  <obc-navigation-item slot="footer" label="Help" href="#">
+  <obc-navigation-item [hasIcon]="true" slot="footer" label="Help" href="#">
     <obi-support-google slot="icon"></obi-support-google>
   </obc-navigation-item>
-  <obc-navigation-item slot="footer" label="Settings" href="#">
+  <obc-navigation-item [hasIcon]="true" slot="footer" label="Settings" href="#">
     <obi-settings-iec slot="icon"></obi-settings-iec>
   </obc-navigation-item>
-  <obc-navigation-item slot="footer" label="Alert" href="#">
+  <obc-navigation-item [hasIcon]="true" slot="footer" label="Alert" href="#">
     <obi-alert-list slot="icon"></obi-alert-list>
   </obc-navigation-item>
 
@@ -906,27 +942,27 @@ export class NavMenuComponent {
 </obc-navigation-menu>
 ```
 
-The router link should now be refacto out to a seperate component. That is left to the reader.
+Refactoring the router-aware navigation item into a separate component is left to the reader.
 
 # Add an input
 
-To show how to use output data from an component we can add a slider to the `azimuth-demo` page.
+To show how to use output data from a component we can add a slider to the `azimuth-demo` page.
 
 ```ts
 import { Component } from "@angular/core";
-import { ObcAzimuthThruster } from "@obc/navigation-instruments/azimuth-thruster/azimuth-thruster";
+import { ObcAzimuthThruster } from "@oicl/openbridge-webcomponents-ng/obc-azimuth-thruster";
 import {
   ObcSlider,
   type ObcSliderValueEvent,
-} from "@obc/components/slider/slider";
+} from "@oicl/openbridge-webcomponents-ng/obc-slider";
 
 @Component({
-  selector: "app-azumuth-demo",
+  selector: "app-azimuth-demo",
   imports: [ObcAzimuthThruster, ObcSlider],
-  templateUrl: "./azumuth-demo.component.html",
-  styleUrl: "./azumuth-demo.component.css",
+  templateUrl: "./azimuth-demo.html",
+  styleUrl: "./azimuth-demo.css",
 })
-export class AzumuthDemoComponent {
+export class AzimuthDemo {
   angle = 30;
 
   onAngleChange(event: ObcSliderValueEvent) {
@@ -940,8 +976,15 @@ export class AzumuthDemoComponent {
   [min]="0"
   [max]="360"
   [step]="1"
-  [value]="0"
+  [value]="angle"
   (valueEvent)="onAngleChange($event)"
 ></obc-slider>
-<obc-azimuth-thruster [angle]="angle" [thrust]="50"> </obc-azimuth-thruster>
+<obc-azimuth-thruster [angle]="angle" [thrust]="50"></obc-azimuth-thruster>
 ```
+
+## Production build
+
+`npx ng build` warns that the initial bundle exceeds the default 500 kB budget.
+That is expected with the OpenBridge styles and components. Raise
+`maximumWarning` and `maximumError` for the `initial` budget in `angular.json`
+if the warning bothers you.

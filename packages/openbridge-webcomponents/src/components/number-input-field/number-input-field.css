@@ -31,7 +31,7 @@
 
 /* Unit */
 .unit-text {
-  @mixin font-instrument-unit;
+  @mixin font-instrument-deprecated-unit;
   color: var(--element-inactive-color);
   white-space: nowrap;
   height: var(--global-typography-instrument-unit-line-height);
