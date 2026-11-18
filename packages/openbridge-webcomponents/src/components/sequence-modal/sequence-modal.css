@@ -15,7 +15,7 @@
 }
 
 .type-regular obc-sequence-card::part(title-text) {
-  @mixin font-general-m-regular;
+  @mixin font-instrument-deprecated-value-m-neutral;
   color: var(--element-active-color);
 }
 

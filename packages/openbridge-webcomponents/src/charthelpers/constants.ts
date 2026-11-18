@@ -47,18 +47,19 @@ export const OUTER_LABEL_CONFIG = {
  */
 export const CENTER_READOUT_CONFIG = {
   value: {
-    fontSizeVar: '--global-typography-general-l-font-size',
-    fontWeightVar: '--global-typography-general-l-font-weight-medium',
+    fontSizeVar: '--global-typography-instrument-value-large-font-size',
+    fontWeightVar:
+      '--global-typography-instrument-value-regular-font-weight-active',
     fontColorVar: '--element-neutral-color',
   },
   label: {
-    fontSizeVar: '--global-typography-general-xs-font-size',
-    fontWeightVar: '--global-typography-general-xs-font-weight-semibold',
+    fontSizeVar: '--global-typography-instrument-label-font-size',
+    fontWeightVar: '--global-typography-instrument-label-font-weight',
     fontColorVar: '--instrument-regular-secondary-color',
   },
   unit: {
-    fontSizeVar: '--global-typography-general-xs-font-size',
-    fontWeightVar: '--global-typography-general-xs-font-weight-regular',
+    fontSizeVar: '--global-typography-instrument-unit-font-size',
+    fontWeightVar: '--global-typography-instrument-unit-font-weight',
     fontColorVar: '--instrument-regular-secondary-color',
   },
 } as const;
@@ -72,13 +73,13 @@ export const TOOLTIP_CONFIG = {
   BORDER_RADIUS: 6,
   fontColorVar: '--element-neutral-color',
   label: {
-    fontSizeVar: '--global-typography-general-xs-font-size',
-    fontWeightVar: '--global-typography-general-xs-font-weight-semibold',
+    fontSizeVar: '--global-typography-instrument-label-font-size',
+    fontWeightVar: '--global-typography-instrument-label-font-weight',
     fontColorVar: '--instrument-regular-secondary-color',
   },
   unit: {
-    fontSizeVar: '--global-typography-general-xs-font-size',
-    fontWeightVar: '--global-typography-general-xs-font-weight-regular',
+    fontSizeVar: '--global-typography-instrument-unit-font-size',
+    fontWeightVar: '--global-typography-instrument-unit-font-weight',
     fontColorVar: '--instrument-regular-secondary-color',
   },
 } as const;
