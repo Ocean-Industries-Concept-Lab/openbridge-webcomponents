@@ -26,6 +26,10 @@
   min-width: 0; /* lets the label shrink below its text width */
 }
 
+.leading-container.no-leading {
+  display: none; /* no label and no icon: the badges take the whole frame, with no leading hole */
+}
+
 .icon {
   flex-shrink: 0;
   width: var(--global-size-spacing-icon-icon-size-regular);

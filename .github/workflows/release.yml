@@ -61,3 +61,33 @@ jobs:
           GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
           NPM_CONFIG_PROVENANCE: "true"
         run: npx semantic-release
+
+      # A real merge commit, never a squashed PR: develop's next prerelease is
+      # numbered from the newest tag in its own history.
+      - name: Merge stable back into develop
+        if: github.ref == 'refs/heads/stable'
+        env:
+          GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
+        run: |
+          remote="https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
+          git config user.name "semantic-release-bot"
+          git config user.email "semantic-release-bot@martynus.net"
+          manual="Merge it by hand with a merge commit (git merge origin/stable on develop, then push), not a squashed pull request."
+          git fetch --tags "$remote" \
+            +refs/heads/develop:refs/remotes/origin/develop \
+            +refs/heads/stable:refs/remotes/origin/stable
+          if git merge-base --is-ancestor origin/stable origin/develop; then
+            echo "develop already contains stable"
+            exit 0
+          fi
+          git worktree add --detach "$RUNNER_TEMP/backmerge" origin/develop
+          cd "$RUNNER_TEMP/backmerge"
+          tag=$(git describe --tags --abbrev=0 origin/stable)
+          if ! git merge --no-ff origin/stable -m "chore: merge stable into develop after ${tag}"; then
+            echo "::error::stable does not merge cleanly into develop. $manual"
+            exit 1
+          fi
+          if ! git push "$remote" HEAD:develop; then
+            echo "::error::Pushing the merge to develop failed. $manual"
+            exit 1
+          fi

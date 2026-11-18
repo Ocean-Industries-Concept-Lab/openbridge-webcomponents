@@ -6,13 +6,13 @@ import {customElement} from '../decorator.js';
 export class ObiSignStairsRight extends LitElement {
   @property({type: Boolean}) useCssColor = false;
 
-  private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-<path fill-rule="evenodd" clip-rule="evenodd" d="M18 7H22V5H16V9H11V13H6V17H2V19H8V15H13V11H18V7Z" fill="currentColor"/>
+  private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M18 7H22V5H16V9H11V13H6V17H2V19H8V15H13V11H18V7Z" fill-rule="evenodd" clip-rule="evenodd" fill="currentColor"/>
 </svg>
 `;
 
   private iconCss = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path fill-rule="evenodd" clip-rule="evenodd" d="M18 7H22V5H16V9H11V13H6V17H2V19H8V15H13V11H18V7Z" style="fill: var(--element-active-color)"/>
+<path d="M18 7H22V5H16V9H11V13H6V17H2V19H8V15H13V11H18V7Z" fill-rule="evenodd" clip-rule="evenodd" style="fill: var(--element-active-color)"/>
 </svg>
 `;
 

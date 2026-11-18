@@ -5,6 +5,7 @@
     "module": "esnext",
     "moduleResolution": "bundler",
     "jsx": "react",
+    "types": ["node", "vite/client"],
     "noEmit": true,
     "declaration": false,
     "declarationMap": false,

@@ -1,19 +1,27 @@
-import {html} from 'lit';
 import {property} from 'lit/decorators.js';
 import '../../icons/icon-diodes-01-on.js';
 import '../../icons/icon-diodes-01-off.js';
+import '../../icons/icon-diodes-01.js';
 import '../../icons/icon-diodes-02-on.js';
 import '../../icons/icon-diodes-02-off.js';
+import '../../icons/icon-diodes-02.js';
 import '../../icons/icon-diodes-03-on.js';
 import '../../icons/icon-diodes-03-off.js';
+import '../../icons/icon-diodes-03.js';
 import '../../icons/icon-diodes-04-on.js';
 import '../../icons/icon-diodes-04-off.js';
+import '../../icons/icon-diodes-04.js';
 import '../../icons/icon-diodes-05-on.js';
 import '../../icons/icon-diodes-05-off.js';
+import '../../icons/icon-diodes-05.js';
 import '../../icons/icon-diodes-06-on.js';
 import '../../icons/icon-diodes-06-off.js';
+import '../../icons/icon-diodes-06.js';
 import {customElement} from '../../decorator.js';
-import {ObcAbstractAutomationButtonSquared} from '../automation-button/abstract-automation-button-squared.js';
+import {
+  ObcAbstractAutomationButtonSquared,
+  SquaredDeviceIcons,
+} from '../automation-button/abstract-automation-button-squared.js';
 
 export enum DiodesAlternativeIcon {
   diodes01 = 'diodes01',
@@ -24,6 +32,39 @@ export enum DiodesAlternativeIcon {
   diodes06 = 'diodes06',
 }
 
+const icons: Record<DiodesAlternativeIcon, SquaredDeviceIcons> = {
+  [DiodesAlternativeIcon.diodes01]: {
+    on: 'diodes-01-on',
+    off: 'diodes-01-off',
+    static: 'diodes-01',
+  },
+  [DiodesAlternativeIcon.diodes02]: {
+    on: 'diodes-02-on',
+    off: 'diodes-02-off',
+    static: 'diodes-02',
+  },
+  [DiodesAlternativeIcon.diodes03]: {
+    on: 'diodes-03-on',
+    off: 'diodes-03-off',
+    static: 'diodes-03',
+  },
+  [DiodesAlternativeIcon.diodes04]: {
+    on: 'diodes-04-on',
+    off: 'diodes-04-off',
+    static: 'diodes-04',
+  },
+  [DiodesAlternativeIcon.diodes05]: {
+    on: 'diodes-05-on',
+    off: 'diodes-05-off',
+    static: 'diodes-05',
+  },
+  [DiodesAlternativeIcon.diodes06]: {
+    on: 'diodes-06-on',
+    off: 'diodes-06-off',
+    static: 'diodes-06',
+  },
+};
+
 /**
  * @stable
  */
@@ -33,128 +74,9 @@ export class ObcDiodes extends ObcAbstractAutomationButtonSquared {
     DiodesAlternativeIcon.diodes01;
 
   override get icon() {
-    switch (this.alternativeIcon) {
-      case DiodesAlternativeIcon.diodes02:
-        if (this.turnedOn) {
-          return html`<obi-diodes-02-on
-              usecsscolor
-              slot="icon"
-            ></obi-diodes-02-on>
-            <obi-diodes-02-on
-              usecsscolor
-              slot="icon-silhouette"
-            ></obi-diodes-02-on>`;
-        } else {
-          return html`<obi-diodes-02-off
-              usecsscolor
-              slot="icon"
-            ></obi-diodes-02-off>
-            <obi-diodes-02-off
-              usecsscolor
-              slot="icon-silhouette"
-            ></obi-diodes-02-off>`;
-        }
-      case DiodesAlternativeIcon.diodes03:
-        if (this.turnedOn) {
-          return html`<obi-diodes-03-on
-              usecsscolor
-              slot="icon"
-            ></obi-diodes-03-on>
-            <obi-diodes-03-on
-              usecsscolor
-              slot="icon-silhouette"
-            ></obi-diodes-03-on>`;
-        } else {
-          return html`<obi-diodes-03-off
-              usecsscolor
-              slot="icon"
-            ></obi-diodes-03-off>
-            <obi-diodes-03-off
-              usecsscolor
-              slot="icon-silhouette"
-            ></obi-diodes-03-off>`;
-        }
-      case DiodesAlternativeIcon.diodes04:
-        if (this.turnedOn) {
-          return html`<obi-diodes-04-on
-              usecsscolor
-              slot="icon"
-            ></obi-diodes-04-on>
-            <obi-diodes-04-on
-              usecsscolor
-              slot="icon-silhouette"
-            ></obi-diodes-04-on>`;
-        } else {
-          return html`<obi-diodes-04-off
-              usecsscolor
-              slot="icon"
-            ></obi-diodes-04-off>
-            <obi-diodes-04-off
-              usecsscolor
-              slot="icon-silhouette"
-            ></obi-diodes-04-off>`;
-        }
-      case DiodesAlternativeIcon.diodes05:
-        if (this.turnedOn) {
-          return html`<obi-diodes-05-on
-              usecsscolor
-              slot="icon"
-            ></obi-diodes-05-on>
-            <obi-diodes-05-on
-              usecsscolor
-              slot="icon-silhouette"
-            ></obi-diodes-05-on>`;
-        } else {
-          return html`<obi-diodes-05-off
-              usecsscolor
-              slot="icon"
-            ></obi-diodes-05-off>
-            <obi-diodes-05-off
-              usecsscolor
-              slot="icon-silhouette"
-            ></obi-diodes-05-off>`;
-        }
-      case DiodesAlternativeIcon.diodes06:
-        if (this.turnedOn) {
-          return html`<obi-diodes-06-on
-              usecsscolor
-              slot="icon"
-            ></obi-diodes-06-on>
-            <obi-diodes-06-on
-              usecsscolor
-              slot="icon-silhouette"
-            ></obi-diodes-06-on>`;
-        } else {
-          return html`<obi-diodes-06-off
-              usecsscolor
-              slot="icon"
-            ></obi-diodes-06-off>
-            <obi-diodes-06-off
-              usecsscolor
-              slot="icon-silhouette"
-            ></obi-diodes-06-off>`;
-        }
-      default:
-        if (this.turnedOn) {
-          return html`<obi-diodes-01-on
-              usecsscolor
-              slot="icon"
-            ></obi-diodes-01-on>
-            <obi-diodes-01-on
-              usecsscolor
-              slot="icon-silhouette"
-            ></obi-diodes-01-on>`;
-        } else {
-          return html`<obi-diodes-01-off
-              usecsscolor
-              slot="icon"
-            ></obi-diodes-01-off>
-            <obi-diodes-01-off
-              usecsscolor
-              slot="icon-silhouette"
-            ></obi-diodes-01-off>`;
-        }
-    }
+    return this.renderDeviceIcon(
+      icons[this.alternativeIcon] ?? icons[DiodesAlternativeIcon.diodes01]
+    );
   }
 }
 

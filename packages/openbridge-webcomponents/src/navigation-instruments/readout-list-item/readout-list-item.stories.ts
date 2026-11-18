@@ -1651,11 +1651,11 @@ export const Alarm: Story = {
     }),
 };
 
-// The value alert frame now wraps the whole reading — value + degree + unit — and
-// is drawn as a pure overlay (4px/2px padding, stroke centred on that line), so
-// toggling it changes neither the row height nor the value/unit column positions.
-// Each combo is shown unframed then framed so the constant geometry is obvious;
-// the per-item outline marks the layout box (which the frame never grows).
+// The value alert frame wraps the whole reading — value + degree + unit — as a
+// pure overlay on the reading's box (4px inline padding, stroke centred on the
+// box edge), so toggling it moves neither the row height nor the columns. Each
+// combo is shown unframed then framed so the constant geometry is obvious; the
+// per-item outline marks the layout box (which the frame never grows).
 const VALUE_FRAME: AlertFrameConfig = {
   status: AlertType.Warning,
   mode: ObcAlertFrameMode.ackedActive,
@@ -1735,6 +1735,59 @@ export const ValueAlertFrame: Story = {
           `
         )
       )}
+    </div>
+  `,
+};
+
+// Value-only rows stacked with no gap, each carrying a value frame: the frame
+// box is the row box, so neighbours share one stroke instead of drawing two
+// that cross (Figma 46282:102156 pins the frame to the readout block).
+const STACKED_VALUE_FRAME: AlertFrameConfig = {
+  status: AlertType.Alarm,
+  mode: ObcAlertFrameMode.ackedActive,
+  type: ObcAlertFrameType.Regular,
+};
+
+export const StackedValueFrames: Story = {
+  render: () => html`
+    <style>
+      .rli-svf {
+        display: flex;
+        gap: 32px;
+        align-items: flex-start;
+      }
+      .rli-svf-stack {
+        display: inline-flex;
+        flex-direction: column;
+      }
+      .rli-svf-wide {
+        width: 200px;
+      }
+    </style>
+    <div class="rli-svf">
+      <div class="rli-svf-stack">
+        ${[230, 231, 229].map((value) =>
+          renderItem({
+            value,
+            unit: 'V',
+            options: {value: {alert: STACKED_VALUE_FRAME}},
+          })
+        )}
+      </div>
+      <div class="rli-svf-stack rli-svf-wide">
+        ${[
+          {label: 'L1', value: 230},
+          {label: 'L2', value: 231},
+          {label: 'L3', value: 229},
+        ].map(({label, value}) =>
+          renderItem({
+            label,
+            value,
+            unit: 'V',
+            options: {value: {alert: STACKED_VALUE_FRAME}},
+          })
+        )}
+      </div>
     </div>
   `,
 };

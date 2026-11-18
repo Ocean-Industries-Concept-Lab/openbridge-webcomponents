@@ -33,6 +33,7 @@ const meta: Meta<typeof ObcTransmitterStack> = {
   args: {
     orientation: TransmitterOrientation.bottom,
     lineType: LineType.fluid,
+    showLine: true,
     values: designValues,
   },
   argTypes: {
@@ -65,6 +66,7 @@ function renderComponent(args: ObcTransmitterStack) {
     <obc-transmitter-stack
       .orientation=${args.orientation}
       .lineType=${args.lineType}
+      .showLine=${args.showLine}
       .values=${args.values}
     >
       <obi-temperature-air slot="temperature"></obi-temperature-air>
@@ -90,6 +92,16 @@ export const Left: Story = {
 
 export const Right: Story = {
   args: {orientation: TransmitterOrientation.right},
+  render: (args) => renderComponent(args as ObcTransmitterStack),
+};
+
+export const WithoutLine: Story = {
+  args: {showLine: false},
+  render: (args) => renderComponent(args as ObcTransmitterStack),
+};
+
+export const WithoutLineTop: Story = {
+  args: {showLine: false, orientation: TransmitterOrientation.top},
   render: (args) => renderComponent(args as ObcTransmitterStack),
 };
 

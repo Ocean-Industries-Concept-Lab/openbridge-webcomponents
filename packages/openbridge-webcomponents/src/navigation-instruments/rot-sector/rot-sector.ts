@@ -1,7 +1,6 @@
 import {LitElement, html, css, nothing, unsafeCSS} from 'lit';
 import {customElement} from '../../decorator.js';
 import {property} from 'lit/decorators.js';
-import {AdviceType} from '../watch/advice.js';
 import {Priority} from '../types.js';
 import {SetpointMixin} from '../../svghelpers/setpoint-mixin.js';
 import '../../building-blocks/instrument-radial/instrument-radial.js';
@@ -16,12 +15,8 @@ export enum ObcGaugeRadialType {
   needle = 'needle',
 }
 
-export interface GaugeRadialAdvice {
-  minValue: number;
-  maxValue: number;
-  type: AdviceType;
-  hinted: boolean;
-}
+export type {GaugeRadialAdvice} from '../../building-blocks/instrument-radial/instrument-radial.js';
+import {AdviceMixin} from '../../svghelpers/advice-mixin.js';
 
 /**
  * `<obc-rot-sector>` — Rate-of-turn sector gauge for rotational velocity.
@@ -100,7 +95,7 @@ export interface GaugeRadialAdvice {
  * @stable
  */
 @customElement('obc-rot-sector')
-export class ObcRotSector extends SetpointMixin(LitElement) {
+export class ObcRotSector extends AdviceMixin(SetpointMixin(LitElement)) {
   @property({type: Number}) value = 0;
   @property({type: Number}) maxValue = 100;
 
@@ -140,7 +135,6 @@ export class ObcRotSector extends SetpointMixin(LitElement) {
   @property({type: Boolean}) portStarboard: boolean = false;
   @property({type: String}) tickmarkStyle: TickmarkStyle =
     TickmarkStyle.regular;
-  @property({type: Array, attribute: false}) advices: GaugeRadialAdvice[] = [];
   @property({type: Boolean}) zoomToFitArc: boolean = false;
   @property({type: Number}) rotArcExtent: number = 60;
   @property({type: Boolean}) hasReadout: boolean = false;
@@ -218,6 +212,8 @@ export class ObcRotSector extends SetpointMixin(LitElement) {
         .type=${this._type}
         .needleType=${this._type}
         .advices=${this.advices}
+        .adviceTrigger=${this.adviceTrigger}
+        .adviceEmphasis=${this.adviceEmphasis}
         .clipBottom=${50}
         .zoomToFitArc=${this.zoomToFitArc}
       >

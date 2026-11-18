@@ -1,5 +1,6 @@
 import type {Meta, StoryObj} from '@storybook/web-components-vite';
-import {html} from 'lit-html';
+import {html} from 'lit';
+import {ref} from 'lit/directives/ref.js';
 import {IconButtonVariant, ObcIconButton} from './icon-button.js';
 import './icon-button.js';
 import {iconIds, iconIdToIconHtml} from '../../storybook-util.js';
@@ -159,4 +160,53 @@ export const Progress: Story = {
     variant: IconButtonVariant.flat,
     progress: 50,
   },
+};
+
+const PROGRESS_DURATION_MS = 5000;
+
+/**
+ * Drives `progress` from 0 to 100 over five seconds, then stops at 100.
+ * One run, so nothing on the page keeps moving (WCAG 2.2.2).
+ */
+function animateProgress(element: Element | undefined) {
+  if (!(element instanceof ObcIconButton)) return;
+  const button = element;
+  let start: number | undefined;
+  const tick = (now: number) => {
+    if (!button.isConnected) return;
+    start ??= now;
+    const elapsed = now - start;
+    button.progress = Math.min(
+      100,
+      Math.round((elapsed / PROGRESS_DURATION_MS) * 100)
+    );
+    if (elapsed < PROGRESS_DURATION_MS) requestAnimationFrame(tick);
+  };
+  requestAnimationFrame(tick);
+}
+
+export const ProgressAnimated: Story = {
+  tags: ['skip-test'],
+  args: {
+    variant: IconButtonVariant.flat,
+  },
+  argTypes: {
+    progress: {table: {disable: true}},
+  },
+  render: (args) => html`
+    <obc-icon-button
+      ${ref(animateProgress)}
+      aria-label=${args.ariaLabel}
+      variant=${args.variant}
+      ?cornerleft=${args.cornerLeft}
+      ?cornerright=${args.cornerRight}
+      ?activecolor=${args.activeColor}
+      ?activated=${args.activated}
+      ?wide=${args.wide}
+      ?disabled=${args.disabled}
+      .progress=${0}
+    >
+      ${iconIdToIconHtml(args.icon)}
+    </obc-icon-button>
+  `,
 };
