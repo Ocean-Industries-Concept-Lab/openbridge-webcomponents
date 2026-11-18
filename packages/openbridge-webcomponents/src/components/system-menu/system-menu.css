@@ -480,13 +480,13 @@
     }
 
     .title {
-      @mixin font-general-l-semibold;
+      @mixin font-instrument-deprecated-value-enhanced-active;
       display: flex;
       color: var(--element-active-color);
       align-items: baseline;
 
       .unit {
-        @mixin font-general-xs-semibold;
+        @mixin font-instrument-deprecated-label;
         color: var(--element-neutral-color);
       }
     }
