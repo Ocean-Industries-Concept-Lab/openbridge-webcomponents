@@ -1,35 +1,53 @@
-# License
+# Lisens
 
-Copyright (c) OpenBridge Components AS
+Koden: Copyright (c) OpenBridge Components AS. Alle rettigheter forbeholdt.
 
-This software is licensed under the GNU Affero General Public License
-v3.0 only (see LICENSE-AGPL), subject to the additional permission below.
+Symbolene i NORVAR-rapport 153/2007 eies av Norsk Vann BA.
 
-## Change License
+Denne modulen, `@oicl/openbridge-norvar`, er privat. Den tegner symbolene i
+NORVAR-rapport 153/2007 fra Norsk Vann BA og følger lisensreglene til Norsk
+Vann for disse symbolene.
 
-Each version of this software, and each commit in the Licensor's
-official repository at
-https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents,
-becomes additionally available under the Apache License, Version 2.0
-(see LICENSE-APACHE) 180 days after the date it was first made
-publicly available by the Licensor, whether as a release on
-npmjs.com, a tag or release on GitHub, or a commit pushed to the
-official repository, whichever occurs first ("Change Date").
+**Lisensvilkårene er under utredning.** Inntil vilkårene er avklart og
+publisert her, gis ingen rett til å:
 
-This grant is irrevocable. From the Change Date you may use that
-version or commit under either license, at your option. Code first
-made available after that date is not covered until its own
-Change Date.
+- bruke modulen, helt eller delvis, verken til eget bruk eller for andre,
+- kompilere eller bygge modulen,
+- kopiere, endre eller lage avledede verk av den,
+- distribuere modulen i kildekode eller kompilert form.
 
-## Commercial License
+Dette gjelder også symbolene og tegningene i modulen.
 
-Before the Change Date, you may obtain a commercial license that
-permits use of this software without the obligations of the AGPL.
-A commercial license does not grant the right to redistribute the
-software under the Apache License or any other open source license
-before the Change Date. Commercial licenses are available to
-supporters of the project. Contact us:
+Lisensen for OpenBridge Web Components (`@oicl/openbridge-webcomponents`),
+som denne modulen bygger på, gjelder ikke for denne modulen.
 
-- Form: https://docs.google.com/forms/d/e/1FAIpQLSc6JVRyyIease2PkUArirNkG0DeTB__YnWEovjVwISlaYdktA/viewform
-- Email: torstein.bo@openstudio.no
-- Slack: https://join.slack.com/t/openbridgegroup/shared_invite/zt-2e4clvl6s-uZLkN5L3g8O~c1UZCN1reQ
+Spørsmål om bruk: torstein.bo@openstudio.no
+
+---
+
+# License (English translation)
+
+The code: Copyright (c) OpenBridge Components AS. All rights reserved.
+
+The symbols of NORVAR report 153/2007 are owned by Norsk Vann BA.
+
+This module, `@oicl/openbridge-norvar`, is private. It draws the symbols of
+NORVAR report 153/2007 from Norsk Vann BA and follows Norsk Vann's licensing
+rules for those symbols.
+
+**The license terms are under consideration.** Until they are settled and
+published here, no right is granted to:
+
+- use the module, in whole or in part, for your own use or for others,
+- compile or build the module,
+- copy, modify or create derivative works of it,
+- distribute the module in source or compiled form.
+
+This also applies to the symbols and drawings in the module.
+
+The license of OpenBridge Web Components (`@oicl/openbridge-webcomponents`),
+which this module builds on, does not apply to this module.
+
+Questions about use: torstein.bo@openstudio.no
+
+If the Norwegian and English texts differ, the Norwegian text applies.

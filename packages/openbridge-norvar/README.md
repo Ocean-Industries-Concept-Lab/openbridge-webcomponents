@@ -11,7 +11,14 @@ Web components drawn with the symbols of the NORVAR standard (NORVAR report
 - Storybook (develop): https://openbridge-next-norvar-storybook.web.app
 - OpenBridge Web Components Storybook: https://openbridge-storybook.web.app
 
-The package is not published to npm yet.
+The package is not published to npm.
+
+## License
+
+**Private.** The NORVAR symbols are owned by Norsk Vann BA. The module follows
+Norsk Vann's licensing rules for them, and its license terms are under consideration. Until they are
+settled, the module may not be used, compiled or distributed, neither for
+your own use nor for others. See [LICENSE.txt](LICENSE.txt).
 
 ## Components
 

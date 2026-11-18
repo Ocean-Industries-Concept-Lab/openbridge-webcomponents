@@ -9,7 +9,8 @@
     "directory": "packages/openbridge-norvar"
   },
   "homepage": "https://openbridge-norvar-storybook.web.app",
-  "license": "AGPL-3.0-only",
+  "license": "SEE LICENSE IN LICENSE.txt",
+  "private": true,
   "scripts": {
     "build": "tsc -p tsconfig.build.json",
     "check": "npm run typecheck && npm run format:check && npm run test:browser -- --run",
@@ -50,13 +51,8 @@
   "files": [
     "dist",
     "custom-elements.json",
-    "LICENSE.txt",
-    "LICENSE-AGPL.txt",
-    "LICENSE-APACHE.txt"
+    "LICENSE.txt"
   ],
-  "publishConfig": {
-    "access": "public"
-  },
   "customElements": "custom-elements.json",
   "overrides": {
     "storybook": "$storybook"
