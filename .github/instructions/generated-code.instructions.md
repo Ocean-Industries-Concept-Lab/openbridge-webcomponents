@@ -118,6 +118,12 @@ Two more refresh gotchas:
   hand-curated `src/mixins/font-extras.css`, **not** in `fonts.css`. Run
   `npm run lint:mixins` after regenerating `fonts.css`; a dropped definition
   fails loudly rather than expanding to nothing.
+- **A size token at 0 or missing in a size class** → the variable has no value
+  in that mode of the design file; the export writes a literal 0 for it. Ask
+  the design side to fill the mode and keep the consumers on a style whose
+  variables carry every class meanwhile; `npm run lint:typography` fails on a
+  component reading such a token, and `KNOWN_GAPS` in
+  `script/check-typography-ramp.ts` holds the ones tracked by an issue.
 - **A wrong wrapper binding** (a missing `onX` prop, an undocumented slot) →
   the wrapper is a symptom. `lit labs gen` reads the **source JSDoc**, so the
   fix is a `@fires` or `@slot` tag on the component class, followed by

@@ -92,7 +92,13 @@ tokens that do not resolve or fall back to hex, and the tripwires fire.
 6. `fonts.css`: paste the `Font exports` output wholesale under the file's
    header comment, then `npm run lint:mixins`. A mixin the plugin no longer emits fails loudly
    there instead of expanding to nothing. Hand-curated mixins live in
-   `src/mixins/font-extras.css`, never in `fonts.css`.
+   `src/mixins/font-extras.css`, never in `fonts.css`. A style the export
+   deprecates stays in use until its replacement has a value in every size
+   class the consumers render in: `npm run lint:typography` fails on a
+   component reading a font-size or line-height token a class leaves
+   undeclared or at 0, and a token the design file cannot fill yet goes in
+   the script's `KNOWN_GAPS` with its issue, never a value written in code
+   (#1420, #1422).
 7. Run the full snapshot suite once without `--update`. A palette export
    moves on the order of a hundred baselines; attribute each failing family
    to a value in the changed list before regenerating
