@@ -1,5 +1,5 @@
 import {afterEach, beforeEach, describe, expect, it} from 'vitest';
-import {html} from 'lit';
+import {html, render} from 'lit';
 import {
   defineAlertStandard,
   type AlertStandard,
@@ -57,6 +57,26 @@ describe.each(BUILT_IN_STANDARDS)('the $name standard', ({standard}) => {
     for (const [name, definition] of everyStateDefinitionOf(standard)) {
       if (definition.flashingSpeed !== undefined) {
         expect(definition.glyph.flashFrame, name).toBeDefined();
+      }
+    }
+  });
+
+  it('draws every glyph frame in the palette colours', () => {
+    for (const [name, definition] of everyStateDefinitionOf(standard)) {
+      const {frame, flashFrame} = definition.glyph;
+      for (const template of [frame, flashFrame]) {
+        if (!template) continue;
+        const host = document.createElement('div');
+        render(template, host);
+        const icons = host.querySelectorAll('*');
+        expect(icons.length, name).toBeGreaterThan(0);
+        for (const icon of icons) {
+          if (!icon.localName.startsWith('obi-')) continue;
+          expect(
+            icon.hasAttribute('usecsscolor'),
+            `${name} ${icon.localName}`
+          ).toBe(true);
+        }
       }
     }
   });
