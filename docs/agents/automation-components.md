@@ -201,7 +201,7 @@ A valve can carry a handle or actuator next to its symbol: `obc-digital-valve` a
 
 ## Alert frame properties
 
-The abstract button base, `obc-automation-tank`, the specialty-tank base and `obc-transmitter` take one alert-frame API under the same names: the gate (`alert`, or `hasAlert` on the transmitter), `alertFrameType`, `alertFrameThickness`, `alertFrameStatus`, `alertFrameMode`, `showAlertCategoryIcon` and `showAlertIcon`, and the `alert-icon`, `alert-label` and `alert-timer` slots for the frame's flap, which the abstract button base does not forward yet. `obc-accordion-card` takes the same set behind `hasAlert`.
+The abstract button base, `obc-automation-tank`, the specialty-tank base and `obc-transmitter` take one alert-frame API under the same names: the gate (`alert`, or `hasAlert` on the transmitter), `alertFrameType`, `alertFrameThickness`, `alertFrameStatus`, `alertFrameMode`, `showAlertCategoryIcon` and `showAlertIcon`, and the `alert-icon`, `alert-label` and `alert-timer` slots for the frame's flap. The abstract button base passes the slots on to `obc-automation-button`, which renders one frame for every `positioning`, so all 19 devices can fill a flap. `obc-accordion-card` takes the same set behind `hasAlert`.
 
 - A property added to one member goes to all of them, with its `@availableWhen` line and its story control; a member without it cannot show that state.
 - The default `alertFrameType` follows the component: `small-side-flip` on the buttons and tanks, `regular` on the transmitter and the accordion card, whose frame wraps the whole element.
@@ -251,5 +251,4 @@ Different components have different anchor points:
 ## Open
 
 - Shuffle selectors slide 100 ms on selection change; the Figma frames are WIP and specify no motion, so keep or remove is a designer call (#1171).
-- The abstract button base does not pass on the alert flap slots, so the 19 devices cannot fill a flap (#1334).
 - The analog valve's open symbol carries its own handle bar, turning with `value`; with `handle` set both show. Whether the bar stays, and whether 0 % takes the `twoway-analog-0` icon, is with the design side (#1416).
