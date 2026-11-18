@@ -49,7 +49,7 @@ obc-readout-list-item {
 }
 
 .label {
-  @mixin font-general-s-regular;
+  @mixin font-instrument-deprecated-value-regular-neutral;
   color: var(--element-neutral-color);
 }
 
