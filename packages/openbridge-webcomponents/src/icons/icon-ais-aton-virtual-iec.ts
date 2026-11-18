@@ -6,7 +6,7 @@ import {customElement} from '../decorator.js';
 export class ObiAisAtonVirtualIec extends LitElement {
   @property({type: Boolean}) useCssColor = false;
 
-  private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+  private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
 <path d="M12.0002 2.10049L12.7073 1.39339L12.0002 0.686279L11.2931 1.39339L12.0002 2.10049Z" fill="currentColor"/>
 <path d="M14.8287 4.92892L15.5358 4.22181L14.1216 2.8076L13.4144 3.51471L14.8287 4.92892Z" fill="currentColor"/>
 <path d="M2.10074 12L1.39363 11.2929L0.686523 12L1.39363 12.7071L2.10074 12Z" fill="currentColor"/>

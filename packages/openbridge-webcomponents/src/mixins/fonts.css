@@ -403,7 +403,7 @@
     "ss04" on;
 }
 
-@define-mixin font-instrument-value-small-active {
+@define-mixin font-instrument-deprecated-value-small-active {
   font-family: var(--global-typography-font-family);
   font-size: var(--global-typography-instrument-value-small-font-size);
   line-height: var(--global-typography-instrument-value-small-line-height);
@@ -413,7 +413,7 @@
     "ss04" on;
 }
 
-@define-mixin font-instrument-value-small-neutral {
+@define-mixin font-instrument-deprecated-value-small-neutral {
   font-family: var(--global-typography-font-family);
   font-size: var(--global-typography-instrument-value-small-font-size);
   line-height: var(--global-typography-instrument-value-small-line-height);
@@ -423,7 +423,7 @@
     "ss04" on;
 }
 
-@define-mixin font-instrument-value-regular-active {
+@define-mixin font-instrument-deprecated-value-regular-active {
   font-family: var(--global-typography-font-family);
   font-weight: var(
     --global-typography-instrument-value-regular-font-weight-active
@@ -436,7 +436,7 @@
     "ss04" on;
 }
 
-@define-mixin font-instrument-value-regular-neutral {
+@define-mixin font-instrument-deprecated-value-regular-neutral {
   font-family: var(--global-typography-font-family);
   font-size: var(--global-typography-instrument-value-regular-font-size);
   line-height: var(--global-typography-instrument-value-regular-line-height);
@@ -446,7 +446,7 @@
     "ss04" on;
 }
 
-@define-mixin font-instrument-value-m-neutral {
+@define-mixin font-instrument-deprecated-value-m-neutral {
   font-family: var(--global-typography-font-family);
   font-size: var(--global-typography-instrument-value-medium-font-size);
   line-height: var(--global-typography-instrument-value-medium-line-height);
@@ -459,7 +459,7 @@
     "ss04" on;
 }
 
-@define-mixin font-instrument-value-m-active {
+@define-mixin font-instrument-deprecated-value-m-active {
   font-family: var(--global-typography-font-family);
   font-size: var(--global-typography-instrument-value-medium-font-size);
   line-height: var(--global-typography-instrument-value-medium-line-height);
@@ -472,7 +472,7 @@
     "ss04" on;
 }
 
-@define-mixin font-instrument-value-enhanced-active {
+@define-mixin font-instrument-deprecated-value-enhanced-active {
   font-family: var(--global-typography-font-family);
   font-weight: var(
     --global-typography-instrument-value-large-font-weight-active
@@ -488,7 +488,7 @@
     "ss04" on;
 }
 
-@define-mixin font-instrument-value-enhanced-neutral {
+@define-mixin font-instrument-deprecated-value-enhanced-neutral {
   font-family: var(--global-typography-font-family);
   font-size: var(--global-typography-instrument-value-large-font-size);
   line-height: var(--global-typography-instrument-value-large-line-height);
@@ -501,7 +501,7 @@
     "ss04" on;
 }
 
-@define-mixin font-instrument-label {
+@define-mixin font-instrument-deprecated-label {
   font-family: var(--global-typography-font-family);
   font-size: var(--global-typography-instrument-label-font-size);
   line-height: var(--global-typography-instrument-label-line-height);
@@ -511,7 +511,7 @@
     "ss04" on;
 }
 
-@define-mixin font-instrument-unit {
+@define-mixin font-instrument-deprecated-unit {
   font-family: var(--global-typography-font-family);
   font-size: var(--global-typography-instrument-unit-font-size);
   line-height: var(--global-typography-instrument-unit-line-height);
@@ -521,7 +521,7 @@
     "ss04" on;
 }
 
-@define-mixin font-instrument-tick-mark {
+@define-mixin font-instrument-deprecated-tick-mark {
   font-family: var(--global-typography-font-family);
   font-weight: var(--global-typography-ui-label-font-weight);
   font-size: var(--global-typography-instrument-tick-mark-font-size);
@@ -532,7 +532,7 @@
     "ss04" on;
 }
 
-@define-mixin font-instrument-tick-mark-active {
+@define-mixin font-instrument-deprecated-tick-mark-active {
   font-family: var(--global-typography-font-family);
   font-weight: var(--global-typography-instrument-tick-mark-active-font-weight);
   font-size: var(--global-typography-instrument-tick-mark-active-font-size);
@@ -543,7 +543,7 @@
     "ss04" on;
 }
 
-@define-mixin font-automation-value-small {
+@define-mixin font-automation-deprecated-value-small {
   font-family: var(--font-family-main);
   font-weight: var(--automation-components-typography-value-small-font-weight);
   font-size: var(--automation-components-typography-value-small-font-size);
@@ -553,7 +553,7 @@
     "ss04" on;
 }
 
-@define-mixin font-automation-value-small-off {
+@define-mixin font-automation-deprecated-value-small-off {
   font-family: var(--font-family-main);
   font-size: var(--automation-components-typography-value-small-font-size);
   font-feature-settings:
@@ -562,7 +562,7 @@
     "ss04" on;
 }
 
-@define-mixin font-automation-value-regular-off {
+@define-mixin font-automation-deprecated-value-regular-off {
   font-family: var(--font-family-main);
   font-size: var(--automation-components-typography-value-regular-font-size);
   font-feature-settings:
@@ -571,7 +571,7 @@
     "ss04" on;
 }
 
-@define-mixin font-automation-value-regular {
+@define-mixin font-automation-deprecated-value-regular {
   font-family: var(--font-family-main);
   font-weight: var(
     --automation-components-typography-value-regular-font-weight
@@ -583,7 +583,7 @@
     "ss04" on;
 }
 
-@define-mixin font-automation-value-enhanced {
+@define-mixin font-automation-deprecated-value-enhanced {
   font-family: var(--font-family-main);
   font-weight: var(
     --automation-components-typography-value-enhanced-font-weight
@@ -595,7 +595,7 @@
     "ss04" on;
 }
 
-@define-mixin font-automation-value-enhanced-off {
+@define-mixin font-automation-deprecated-value-enhanced-off {
   font-family: var(--font-family-main);
   font-size: var(--automation-components-typography-value-enhanced-font-size);
   font-feature-settings:
@@ -604,7 +604,7 @@
     "ss04" on;
 }
 
-@define-mixin font-automation-unit-small {
+@define-mixin font-automation-deprecated-unit-small {
   font-family: var(--font-family-main);
   font-weight: var(--automation-components-typography-unit-small-font-weight);
   font-size: var(--automation-components-typography-unit-small-font-size);
@@ -614,7 +614,7 @@
     "ss04" on;
 }
 
-@define-mixin font-automation-unit-regular {
+@define-mixin font-automation-deprecated-unit-regular {
   font-family: var(--font-family-main);
   font-weight: var(--automation-components-typography-unit-regular-font-weight);
   font-size: var(--automation-components-typography-unit-regular-font-size);
@@ -624,7 +624,7 @@
     "ss04" on;
 }
 
-@define-mixin font-automation-unit-enhanced {
+@define-mixin font-automation-deprecated-unit-enhanced {
   font-family: var(--font-family-main);
   font-weight: var(
     --automation-components-typography-unit-enhanced-font-weight
@@ -636,7 +636,7 @@
     "ss04" on;
 }
 
-@define-mixin font-automation-label {
+@define-mixin font-automation-deprecated-label {
   font-family: var(--font-family-main);
   font-weight: var(--automation-components-typography-label-font-weight);
   font-size: var(--automation-components-typography-label-font-size);

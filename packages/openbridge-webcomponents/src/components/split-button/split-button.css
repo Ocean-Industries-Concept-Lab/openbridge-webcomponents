@@ -41,6 +41,13 @@
   }
 }
 
+.wrapper.open-left {
+  .positioned-menu {
+    right: anchor(right);
+    left: unset;
+  }
+}
+
 .dropdown-button::part(visible-wrapper) {
   box-sizing: border-box;
 }

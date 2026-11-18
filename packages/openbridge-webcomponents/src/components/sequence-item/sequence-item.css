@@ -170,7 +170,7 @@
   }
 
   .description {
-    @mixin font-instrument-unit;
+    @mixin font-instrument-deprecated-unit;
     color: var(--element-inactive-color);
     margin-bottom: 0;
   }
@@ -185,7 +185,7 @@
   }
 
   .meta {
-    @mixin font-instrument-value-small-neutral;
+    @mixin font-instrument-deprecated-value-small-neutral;
     display: flex;
     flex-direction: column;
     gap: var(--ui-components-badge-label-spacing);
@@ -222,7 +222,7 @@
     &.label-small {
       .title,
       .subtitle {
-        @mixin font-instrument-value-small-active;
+        @mixin font-instrument-deprecated-value-small-active;
       }
     }
   }
@@ -231,7 +231,7 @@
   &.label-small {
     .title,
     .subtitle {
-      @mixin font-instrument-value-small-neutral;
+      @mixin font-instrument-deprecated-value-small-neutral;
     }
     .meta-row {
       @mixin font-label;

@@ -1,5 +1,6 @@
+import {html} from 'lit';
 import type {Meta, StoryObj} from '@storybook/web-vite';
-import {ObcAnalogValve} from './analog-valve.js';
+import {ObcAnalogValve, ObcValveHandle} from './analog-valve.js';
 import {
   AutomationButtonLabelDirection,
   AutomationButtonReadoutPosition,
@@ -38,6 +39,10 @@ const meta: Meta<typeof ObcAnalogValve> = {
       control: {type: 'radio'},
     },
     value: {control: {type: 'range', min: 0, max: 100, step: 1}},
+    handle: {
+      options: Object.values(ObcValveHandle),
+      control: {type: 'radio'},
+    },
   },
 } as Meta<typeof ObcAnalogValve>;
 
@@ -75,4 +80,56 @@ export const WithBadges: Story = {
     badgeInterlock: AutomationButtonBadgeInterlock.Interlock,
     badgeCommandLocked: AutomationButtonBadgeCommandLocked.CommandLocked,
   },
+};
+
+export const ClosedWithHandle: Story = {
+  args: {
+    open: false,
+    value: 0,
+    handle: ObcValveHandle.manual,
+  },
+};
+
+export const OpenWithHandle: Story = {
+  args: {
+    open: true,
+    value: 20,
+    handle: ObcValveHandle.manual,
+  },
+};
+
+export const HandleOnEverySide: Story = {
+  render: () => html`
+    <div style="display: flex; gap: 48px;">
+      ${[false, true].map((vertical) =>
+        [false, true].map(
+          (invertHandlePosition) =>
+            html`<obc-analog-valve
+              positioning="button"
+              tag=${`${vertical ? 'vertical' : 'horizontal'}${invertHandlePosition ? ' inverted' : ''}`}
+              .vertical=${vertical}
+              .invertHandlePosition=${invertHandlePosition}
+              .handle=${ObcValveHandle.manual}
+            ></obc-analog-valve>`
+        )
+      )}
+    </div>
+  `,
+};
+
+export const AllHandles: Story = {
+  render: () => html`
+    <div style="display: flex; flex-wrap: wrap; gap: 48px; width: 480px;">
+      ${Object.values(ObcValveHandle)
+        .filter((handle) => handle !== ObcValveHandle.none)
+        .map(
+          (handle) =>
+            html`<obc-analog-valve
+              positioning="button"
+              tag=${handle}
+              .handle=${handle}
+            ></obc-analog-valve>`
+        )}
+    </div>
+  `,
 };

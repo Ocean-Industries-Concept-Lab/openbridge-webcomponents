@@ -132,9 +132,10 @@ export interface ReadoutBlockState {
  * Per-value options. Unlike setpoint/advice, the value's `alert` frame AND
  * `dataQuality` chip wrap the whole reading — value (+ value-icon) + degree +
  * trailing unit — rather than the value alone. The alert frame is a pure overlay
- * (4px/2px padding, stroke centred on that line); the data-quality chip reuses
- * the block chip's `outline` styling with no extra padding. Neither shifts
- * content or changes the row height / column alignment (Figma 58:10120).
+ * on the reading's box (4px inline padding, stroke centred on the box edge, so
+ * touching rows share one stroke); the data-quality chip reuses the block
+ * chip's `outline` styling with no extra padding. Neither shifts content or
+ * changes the row height / column alignment (Figma 46282:102156).
  */
 export interface ReadoutValueOptions extends ReadoutBlockState {
   /**
@@ -919,10 +920,10 @@ export class ObcReadoutListItem extends LitElement {
   /**
    * The value alert frame, drawn as a pure overlay around the value reading
    * (value + degree + unit). It reserves no space — the `obc-alert-frame` sits in
-   * an absolutely-positioned box offset outward (see `.value-alert-overlay` in
-   * the CSS) so its stroke is centred on the 4px/2px padding line and toggling it
-   * never shifts content or row height. Renders only when `valueOptions.alert` is
-   * a config object.
+   * an absolutely-positioned box on the reading's edges, padded inline only
+   * (see `.value-alert-overlay` in the CSS), so toggling it never shifts
+   * content or row height. Renders only when `valueOptions.alert` is a config
+   * object.
    */
   private renderValueAlertOverlay(): TemplateResult | typeof nothing {
     const alert = this.valueOptions?.alert;

@@ -53,6 +53,10 @@ export enum TransmitterType {
  *   paired with a `horizontal-graph` (beside) or `vertical-graph` (below).
  * - **`orientation`** – `top`, `right`, `bottom`, `left`; controls which edge
  *   the leader line attaches to.
+ * - **`showLine`** – draw the leader line (default). Set `false` when the
+ *   line is drawn by other tools: the transmitter is then a plain box with no
+ *   padding or anchor offset, and `orientation` only sets the side of the
+ *   chip the id tag sits on.
  * - **Segments** – opt into a leading advice segment with `hasAdvice`/
  *   `adviceValue` and a setpoint segment with `hasSetPoint`/`setpointValue`;
  *   both are read-only and shown in the value chip for non-`indicator` types.
@@ -86,6 +90,9 @@ export enum TransmitterType {
  *   only while a value is negative, so the chip's width does not change
  *   across zero.
  * @property hasDegree - Show a degree column between the value and the unit (e.g. `12.3°` then `C`).
+ * @property showLine - Draw the leader line. Set `false` when the line is drawn by other tools;
+ *   the transmitter is then a plain box with no padding or anchor offset, and
+ *   `orientation` only sets the side of the chip the id tag sits on.
  * @property hasAlert - Wrap the transmitter in an `<obc-alert-frame>` when true.
  * @property alertFrameStatus - Severity of the alert frame, which picks its colour and flap badge:
  *   `alarm` (default), `warning`, `caution` or one of the `level-*` severities.
@@ -121,6 +128,7 @@ export class ObcTransmitter extends LitElement {
     TransmitterOrientation.bottom;
   @property({type: String}) type: TransmitterType = TransmitterType.value;
   @property({type: String}) lineType: LineType | undefined = undefined;
+  @property({type: Boolean, attribute: false}) showLine = true;
 
   @property({type: Number}) value?: number | null;
   @property({type: String}) unit = '';
@@ -259,6 +267,7 @@ export class ObcTransmitter extends LitElement {
         class=${classMap({
           transmitter: true,
           'has-alert': this.hasAlert,
+          'no-line': !this.showLine,
           [`orientation-${this.orientation}`]: true,
           [`type-${this.type}`]: true,
         })}

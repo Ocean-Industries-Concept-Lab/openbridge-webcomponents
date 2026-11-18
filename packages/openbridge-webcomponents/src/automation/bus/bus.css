@@ -25,7 +25,7 @@
     height: 16px;
     border-radius: 4px;
 
-    @mixin font-instrument-label;
+    @mixin font-instrument-deprecated-label;
     font-weight: var(--global-typography-instrument-label-font-weight);
   }
 
