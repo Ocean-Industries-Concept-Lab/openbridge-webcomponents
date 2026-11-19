@@ -65,7 +65,7 @@ get _on(): boolean { return this.turnedOn; }
 
 override get extraReadouts(): AutomationButtonReadoutStack[] {
   return this.turnedOn
-    ? [{type: 'state-on', value: 'On', hasIcon: this.showStateIcon}]
+    ? [{type: 'state-on', value: 'On', hasIcon: this.showStatusIcon}]
     : [];
 }
 ```
@@ -73,7 +73,7 @@ override get extraReadouts(): AutomationButtonReadoutStack[] {
 - `_on` maps the component's state to the base class's `open`/`closed` AutomationButtonState
 - `extraReadouts` provides state-derived readout entries (On/Off, speed percentage, etc.)
 - A state row (`On`, `Off`, `Open`, `Closed`) takes `hasIcon` from the base
-  class's `showStateIcon`, so the on/off symbol is hidden unless the
+  class's `showStatusIcon`, so the on/off symbol is hidden unless the
   application asks for it; `obc-gauge-valve` carries the same property
 - Do not set readouts as properties — compute them from state
 - The deprecated `on` is a plain field with no default that `willUpdate` copies

@@ -89,6 +89,8 @@ export enum AutomationButtonBadgeCommandLocked {
  * @property static - Draws the device as present with its state unknown: a grey button, and the static icon where the device has one.
  * @availableWhen readoutPosition showReadoutStack==true
  * @availableWhen showStatus showReadoutStack==true
+ * @property showStatusIcon - Shows the on/off symbol before the `On`, `Off`, `Open` and `Closed` state text. Hidden by default.
+ * @availableWhen showStatusIcon showReadoutStack==true && showStatus==true
  * @availableWhen readoutSize showReadoutStack==true
  * @availableWhen tag showReadoutStack==true
  * @property activated - Enables the activated background color, used to indicate that the button is activated/selected.
