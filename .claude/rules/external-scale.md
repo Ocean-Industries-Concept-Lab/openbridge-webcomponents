@@ -221,15 +221,27 @@ When adding new features or fixing bugs:
 
 2. **Fixed vs Configurable Properties**:
    - **Fixed** (not exposed): height/width (384px), padding (32px), barThickness (48px), tickThickness (28px), labelThickness (60px), scaleType, frameStyle, hasBar (true), hasScale (true)
-   - **Configurable**: minValue, maxValue, value, setpoint, fillMode, advice, tick intervals, enhanced, state, side
+   - **Configurable**: minValue, maxValue, reverse, value, setpoint, fillMode, advices, tick intervals, showLabels, priority, state, side, highlightCurrentValue, fixedAspectRatio, scaleReferenceSize
 
-3. **Implementation Pattern**:
+3. **384 is a reference, not a constraint**. In pixel mode a gauge is a
+   384 px SVG, the length the design is drawn at. With `fixedAspectRatio`
+   it fills its host like a vector image — the host is what to size — and
+   `scaleReferenceSize` is the host length at which it draws 1:1; the labels
+   keep their font size through the `--scale` counter-scale. A scale whose
+   length should follow the layout while the bands keep their design
+   thickness is `bar-vertical` / `bar-horizontal` with `height` / `width`
+   from a ResizeObserver, as `obc-automation-tank` does. The gauges carry
+   the bars' host styles, scale recompute, reference-length rule and scaled
+   report, so a change to that code in one wrapper is a change to all four
+   (`gauge-vertical.spec.ts`, `gauge-horizontal.spec.ts` pin it).
+
+4. **Implementation Pattern**:
    - Import and delegate to same `external-scale.ts` functions as bar components
    - Hardcode fixed values in render config
    - Expose limited property subset
    - Same lifecycle/dimension reporting as bar wrappers
 
-4. **Relationship to Bar Components**:
+5. **Relationship to Bar Components**:
    - Gauges are conceptually bar components with locked configuration
    - Not subclasses - parallel implementations to avoid inheritance complexity
    - Share the same renderer (`external-scale.ts`)
