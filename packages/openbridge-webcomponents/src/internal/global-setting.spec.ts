@@ -15,6 +15,24 @@ class SettingHost extends LitElement {
 }
 customElements.define('test-global-setting-host', SettingHost);
 
+/** Leaves the page from inside its own update, and changes the setting before the update completes. */
+class SelfRemovingHost extends SettingHost {
+  private removedOnce = false;
+
+  override update(changed: Map<PropertyKey, unknown>) {
+    super.update(changed);
+    if (!this.removedOnce) {
+      this.removedOnce = true;
+      this.remove();
+      label.set('two');
+    }
+  }
+}
+customElements.define(
+  'test-global-setting-self-removing-host',
+  SelfRemovingHost
+);
+
 function mount(): SettingHost {
   const host = document.createElement(
     'test-global-setting-host'
@@ -68,6 +86,22 @@ describe('GlobalSetting', () => {
     await host.updateComplete;
     expect(host.renders).toBe(2);
     expect(host.shadowRoot!.textContent).toBe('two');
+  });
+
+  it('counts a change during a render that left the page as not rendered', async () => {
+    const host = document.createElement(
+      'test-global-setting-self-removing-host'
+    ) as SelfRemovingHost;
+    document.body.appendChild(host);
+    await host.updateComplete;
+    expect(host.isConnected).toBe(false);
+    expect(host.shadowRoot!.textContent).toBe('one');
+
+    document.body.appendChild(host);
+    await host.updateComplete;
+
+    expect(host.shadowRoot!.textContent).toBe('two');
+    expect(host.renders).toBe(2);
   });
 
   it('does not re-render a host reattached while nothing changed', async () => {
