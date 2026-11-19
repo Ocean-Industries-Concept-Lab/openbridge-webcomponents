@@ -31,10 +31,8 @@ const meta: Meta = {
     hasScale: {table: {disable: true}},
     scaleBackground: {table: {disable: true}},
     advicePosition: {table: {disable: true}},
-    // Demonstrated by Fixed Aspect Ratio Comparison: on a story root with no
-    // height the fixed-aspect gauge would grow to the viewport width.
-    fixedAspectRatio: {control: false},
-    scaleReferenceSize: {control: false},
+    fixedAspectRatio: {control: {type: 'boolean'}},
+    scaleReferenceSize: {control: {type: 'range', min: 96, max: 768, step: 8}},
     minValue: {control: {type: 'range', min: -100, max: 100}},
     maxValue: {control: {type: 'range', min: 0, max: 1000}},
     reverse: {control: {type: 'boolean'}},
@@ -70,6 +68,8 @@ const meta: Meta = {
     advices: {control: {type: 'object'}},
   },
   args: {
+    fixedAspectRatio: false,
+    scaleReferenceSize: 384,
     minValue: 0,
     maxValue: 100,
     reverse: false,
@@ -94,8 +94,12 @@ const meta: Meta = {
     side: 'right',
     advices: [],
   },
-  render: (args) => html`
-    <obc-gauge-vertical
+  // A fixed-aspect gauge fills its host, so the toggle only shows something
+  // inside a sized box; off, the gauge renders bare and the baselines hold.
+  render: (args) => {
+    const gauge = html`<obc-gauge-vertical
+      .fixedAspectRatio=${args.fixedAspectRatio}
+      .scaleReferenceSize=${args.scaleReferenceSize ?? 384}
       .minValue=${args.minValue}
       .maxValue=${args.maxValue}
       .reverse=${args.reverse}
@@ -120,8 +124,11 @@ const meta: Meta = {
       .side=${args.side}
       .advices=${args.advices}
     >
-    </obc-gauge-vertical>
-  `,
+    </obc-gauge-vertical>`;
+    return args.fixedAspectRatio
+      ? html`<div style="height: 480px">${gauge}</div>`
+      : gauge;
+  },
 } satisfies Meta;
 
 export default meta;
