@@ -19,6 +19,7 @@ import {
   toExternalScaleLayoutConfig,
   computeScaleDimensionsForReport,
   computeExternalScaleEffectiveBarThickness,
+  readContentBox,
   ScaleType,
   FillMode,
   AdvicePosition,
@@ -482,14 +483,14 @@ export class ObcGaugeHorizontal extends AdviceMixin(
     }
   }
 
-  /** Reads the host's size into the scale; false while the host has no size yet. */
+  /** Reads the host's content box into the scale; false while the host has no size yet. */
   private _measureScale(): boolean {
-    const containerWidth = this.clientWidth;
-    if (containerWidth <= 0) return false;
+    const {width, height} = readContentBox(this);
+    if (width <= 0) return false;
     this._scale = computeFixedAspectRatioScale({
       orientation: ExternalScaleOrientation.horizontal,
-      containerMainAxisSize: containerWidth,
-      containerCrossAxisSize: this.clientHeight,
+      containerMainAxisSize: width,
+      containerCrossAxisSize: height,
       scaleReferenceSize: this.scaleReferenceSize,
       viewBoxThickness: this._viewBoxThickness,
     });

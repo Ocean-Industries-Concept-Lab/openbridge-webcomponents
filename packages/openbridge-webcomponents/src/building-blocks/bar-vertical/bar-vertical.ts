@@ -23,6 +23,7 @@ import {
   computeExternalScaleEffectiveBarThickness,
   readExternalScaleBorderRadiusPx,
   startExternalScaleBorderRadiusObserver,
+  readContentBox,
   ScaleType,
   FillMode,
   AdvicePosition,
@@ -503,14 +504,14 @@ export class ObcBarVertical extends AdviceMixin(
     this.style.width = '';
   }
 
-  /** Reads the host's size into the scale; false while the host has no size yet. */
+  /** Reads the host's content box into the scale; false while the host has no size yet. */
   private _measureScale(): boolean {
-    const containerHeight = this.clientHeight;
-    if (containerHeight <= 0) return false;
+    const {width, height} = readContentBox(this);
+    if (height <= 0) return false;
     this._scale = computeFixedAspectRatioScale({
       orientation: ExternalScaleOrientation.vertical,
-      containerMainAxisSize: containerHeight,
-      containerCrossAxisSize: this.clientWidth,
+      containerMainAxisSize: height,
+      containerCrossAxisSize: width,
       scaleReferenceSize: this.scaleReferenceSize,
       viewBoxThickness: this._viewBoxThickness,
     });
@@ -544,19 +545,8 @@ export class ObcBarVertical extends AdviceMixin(
 
     // In fixed-aspect-ratio mode, recompute scale when border radius changes
     // (border radius affects effective bar thickness and therefore viewBox)
-    if (this.fixedAspectRatio) {
-      const rect = this.getBoundingClientRect();
-      if (rect.height > 0) {
-        this._scale = computeFixedAspectRatioScale({
-          orientation: ExternalScaleOrientation.vertical,
-          containerMainAxisSize: rect.height,
-          containerCrossAxisSize: rect.width,
-          scaleReferenceSize: this.scaleReferenceSize,
-          viewBoxThickness: this._viewBoxThickness,
-        });
-        // Report updated dimensions
-        this.reportDimensions();
-      }
+    if (this.fixedAspectRatio && this._measureScale()) {
+      this.reportDimensions();
     }
   }
 

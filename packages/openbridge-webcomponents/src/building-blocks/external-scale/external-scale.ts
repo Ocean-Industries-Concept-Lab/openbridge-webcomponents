@@ -879,6 +879,27 @@ export function computeFixedAspectRatioScale(
 }
 
 /**
+ * The element's content box in CSS px: the box a `100%` × `100%` SVG child
+ * fills, and what a ResizeObserver's `contentRect` reports. `clientWidth` /
+ * `clientHeight` include the padding, and `getBoundingClientRect()` is scaled
+ * by any ancestor CSS `zoom`, so neither is the box the drawing is painted in.
+ *
+ * @param el The host element
+ * @returns Content width and height in CSS px, 0 × 0 while the element has no layout box
+ */
+export function readContentBox(el: HTMLElement): {
+  width: number;
+  height: number;
+} {
+  const style = getComputedStyle(el);
+  const px = (value: string): number => parseFloat(value) || 0;
+  return {
+    width: el.clientWidth - px(style.paddingLeft) - px(style.paddingRight),
+    height: el.clientHeight - px(style.paddingTop) - px(style.paddingBottom),
+  };
+}
+
+/**
  * Compute scaled dimensions for reporting when in fixed aspect ratio mode.
  *
  * When fixedAspectRatio is true, the reported thickness should be scaled

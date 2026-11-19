@@ -79,8 +79,24 @@ describe('obc-bar-horizontal fixed aspect ratio', () => {
     );
     await until(() => Math.abs(scaleOf(el) - 100 / 132) < 1e-3);
     // 180 + 24 + 60 = 264 tall: the same 100 px now holds less than half
+    reports.length = 0;
     el.barThickness = 180;
     await until(() => Math.abs(scaleOf(el) - 100 / 264) < 1e-3);
     await until(() => reports[reports.length - 1] === 100);
+  });
+
+  it('measures the content box of a padded host', async () => {
+    const el = await mount('display: flex; width: 600px; height: 100px');
+    el.style.padding = '20px';
+    const reports: number[] = [];
+    el.addEventListener('scale-dimensions-changed', (e) =>
+      reports.push((e as CustomEvent<{thickness: number}>).detail.thickness)
+    );
+    // 60 px of content height for the 132-tall drawing
+    await until(() => Math.abs(scaleOf(el) - 60 / 132) < 1e-3);
+    reports.length = 0;
+    el.barThickness = 180;
+    await until(() => Math.abs(scaleOf(el) - 60 / 264) < 1e-3);
+    await until(() => reports[reports.length - 1] === 60);
   });
 });

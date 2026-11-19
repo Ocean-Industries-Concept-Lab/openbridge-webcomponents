@@ -250,8 +250,39 @@ describe('obc-gauge-horizontal sizing', () => {
     await until(() => Math.abs(scaleOf(el) - 100 / 132) < 1e-3);
     // 48 + 24 = 72 tall without labels, still more than 100 px at the width's
     // 1.5625, so the height keeps deciding
+    reports.length = 0;
     el.showLabels = false;
     await until(() => Math.abs(scaleOf(el) - 100 / 72) < 1e-3);
     await until(() => reports[reports.length - 1] === 100);
+  });
+
+  it('measures the content box of a padded host', async () => {
+    const screen = render(
+      html`<div style="display: flex; width: 600px; height: 100px">
+        <obc-gauge-horizontal
+          style="flex: 1; padding: 20px"
+          .minValue=${0}
+          .maxValue=${100}
+          .value=${40}
+          .primaryTickmarkInterval=${20}
+          .fixedAspectRatio=${true}
+        ></obc-gauge-horizontal>
+      </div>`
+    );
+    const el = screen.container.querySelector(
+      'obc-gauge-horizontal'
+    ) as ObcGaugeHorizontal;
+    await el.updateComplete;
+    const reports: number[] = [];
+    el.addEventListener('scale-dimensions-changed', (e) =>
+      reports.push((e as CustomEvent<{thickness: number}>).detail.thickness)
+    );
+    // 60 px of content height for the 132-tall drawing
+    await until(() => Math.abs(scaleOf(el) - 60 / 132) < 1e-3);
+    reports.length = 0;
+    // 72 tall without labels: 60 / 72 is still under the width's 560 / 384
+    el.showLabels = false;
+    await until(() => Math.abs(scaleOf(el) - 60 / 72) < 1e-3);
+    await until(() => reports[reports.length - 1] === 60);
   });
 });

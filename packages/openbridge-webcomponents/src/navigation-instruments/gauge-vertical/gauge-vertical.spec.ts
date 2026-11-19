@@ -251,4 +251,34 @@ describe('obc-gauge-vertical sizing', () => {
     await until(() => Math.abs(scaleOf(el) - 600 / 384) < 1e-3);
     await until(() => reports[reports.length - 1] === 113);
   });
+
+  it('measures the content box of a padded host', async () => {
+    const screen = render(
+      html`<div style="display: block; width: 120px; height: 600px">
+        <obc-gauge-vertical
+          style="padding: 20px"
+          .minValue=${0}
+          .maxValue=${100}
+          .value=${40}
+          .primaryTickmarkInterval=${20}
+          .fixedAspectRatio=${true}
+        ></obc-gauge-vertical>
+      </div>`
+    );
+    const el = screen.container.querySelector(
+      'obc-gauge-vertical'
+    ) as ObcGaugeVertical;
+    await el.updateComplete;
+    const reports: number[] = [];
+    el.addEventListener('scale-dimensions-changed', (e) =>
+      reports.push((e as CustomEvent<{thickness: number}>).detail.thickness)
+    );
+    // 80 px of content width for the 132-wide drawing
+    await until(() => Math.abs(scaleOf(el) - 80 / 132) < 1e-3);
+    reports.length = 0;
+    // 72 wide without labels: 80 / 72 is still under the height's 1.5625
+    el.showLabels = false;
+    await until(() => Math.abs(scaleOf(el) - 80 / 72) < 1e-3);
+    await until(() => reports[reports.length - 1] === 80);
+  });
 });
