@@ -44,6 +44,25 @@ export const Off: Story = {
   },
 };
 
+export const MultipleReadouts: Story = {
+  args: {
+    turnedOn: true,
+    showStatus: false,
+    readoutValues: [
+      {
+        value: 300,
+        unit: 'V',
+        nDigits: 3,
+      },
+      {
+        value: 20,
+        unit: 'A',
+        nDigits: 3,
+      },
+    ],
+  },
+};
+
 export const Static: Story = {
   args: {
     static: true,

@@ -26,6 +26,7 @@ import {
 import {
   AutomationButtonReadoutStack,
   AutomationButtonReadoutStackSize,
+  AutomationButtonReadoutStackValue,
 } from '../../components/automation-button-readout-stack/automation-button-readout-stack.js';
 import {
   ObcAlertFrameThickness,
@@ -70,6 +71,13 @@ export enum AutomationButtonBadgeCommandLocked {
   CommandLocked = 'command-locked',
 }
 
+export interface AutomationButtonReadoutValue {
+  value: number;
+  fractionDigits?: number;
+  nDigits?: number;
+  unit: string;
+}
+
 /**
  * Base class for the automation device buttons.
  *
@@ -82,7 +90,7 @@ export enum AutomationButtonBadgeCommandLocked {
  *
  * Not registered as a custom element. A subclass supplies the device
  * rendering through `icon`, `_on` and `_variant`, and may add rows to the
- * readout stack through `extraReadouts`. `ObcAbstractAutomationButtonSquared`
+ * readout stack through `extraReadouts` or `readoutValues`. `ObcAbstractAutomationButtonSquared`
  * and `ObcAbstractAutomationButtonMotorized` extend it further;
  * `obc-analog-valve` and `obc-digital-valve` extend it directly.
  *
@@ -91,6 +99,8 @@ export enum AutomationButtonBadgeCommandLocked {
  * @availableWhen showStatus showReadoutStack==true
  * @availableWhen readoutSize showReadoutStack==true
  * @availableWhen tag showReadoutStack==true
+ * @property readoutValues - Values rendered as extra rows in the readout stack, each with a unit and optional digit counts.
+ * @availableWhen readoutValues showReadoutStack==true
  * @property activated - Enables the activated background color, used to indicate that the button is activated/selected.
  * @availableWhen alertFrameType alert==true
  * @availableWhen alertFrameThickness alert==true
@@ -112,6 +122,8 @@ export class ObcAbstractAutomationButton extends LitElement {
   @property({type: String}) readoutSize: AutomationButtonReadoutStackSize =
     AutomationButtonReadoutStackSize.regular;
   @property({type: String}) tag: string | null = null;
+  @property({type: Array, attribute: false})
+  readoutValues?: AutomationButtonReadoutValue[];
 
   @property({type: String}) positioning: AutomationButtonPositioning =
     AutomationButtonPositioning.point;
@@ -327,7 +339,21 @@ export class ObcAbstractAutomationButton extends LitElement {
   }
 
   override render() {
-    const readouts: AutomationButtonReadoutStack[] = [...this.extraReadouts];
+    const readoutValues: AutomationButtonReadoutStackValue[] = (
+      this.readoutValues ?? []
+    ).map((value) => ({
+      type: 'value',
+      value: value.value,
+      nDigits: value.nDigits ?? 0,
+      fractionDigits: value.fractionDigits ?? 0,
+      unit: value.unit,
+      direction: 'none',
+      icon: 'none',
+    }));
+    const readouts: AutomationButtonReadoutStack[] = [
+      ...this.extraReadouts,
+      ...readoutValues,
+    ];
     const badgeAlertType = this.getBadgeAlertType();
     const badgeControlType = this.getBadgeControlType();
     const badgeInterlockType = this.getBadgeInterlockType();
