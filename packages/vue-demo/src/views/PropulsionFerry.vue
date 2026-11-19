@@ -8,10 +8,10 @@ import { useSim } from '../composables/useSim'
 import { computed } from 'vue'
 import { useDemoConfigStore } from '../stores/demoConfig'
 import {
-  type AngleAdvice,
-  AdviceType
-} from '@oicl/openbridge-webcomponents/dist/navigation-instruments/watch/advice.js'
-import { type LinearAdvice } from '@oicl/openbridge-webcomponents/dist/navigation-instruments/thruster/advice.js'
+  AdviceCategory,
+  AdviceState,
+  type AdviceInput
+} from '@oicl/openbridge-webcomponents/dist/svghelpers/advice.js'
 import { PropellerType } from '@oicl/openbridge-webcomponents/dist/navigation-instruments/thruster/propeller.js'
 const sim = useSim()
 
@@ -29,40 +29,40 @@ const angleSetpoint = computed(() => {
   return (sim.propulsion.rudderSet.value * 180) / 30
 })
 
-const rudderAdive = computed((): AngleAdvice[] => {
+const rudderAdvice = computed((): AdviceInput[] => {
   if (!sim.controllers.showAdvice.value) {
     return [
       {
-        minAngle: 90,
-        maxAngle: 270,
-        type: AdviceType.caution,
-        hinted: true
+        min: 90,
+        max: 270,
+        category: AdviceCategory.caution,
+        state: AdviceState.hinted
       }
     ]
   }
   return []
 })
 
-const thrusterAdvice = computed((): LinearAdvice[] => {
+const thrusterAdvice = computed((): AdviceInput[] => {
   if (!sim.controllers.showAdvice.value) {
     return [
       {
         min: 80,
         max: 100,
-        type: AdviceType.caution,
-        hinted: true
+        category: AdviceCategory.caution,
+        state: AdviceState.hinted
       },
       {
         min: 40,
         max: 60,
-        type: AdviceType.advice,
-        hinted: true
+        category: AdviceCategory.optimal,
+        state: AdviceState.hinted
       },
       {
         min: -100,
         max: -20,
-        type: AdviceType.caution,
-        hinted: true
+        category: AdviceCategory.caution,
+        state: AdviceState.hinted
       }
     ]
   }
@@ -109,7 +109,7 @@ const thrusterAdvice = computed((): LinearAdvice[] => {
       :top-propeller="PropellerType.cap"
       :bottom-propeller="PropellerType.single"
       :thrust-advices="thrusterAdvice"
-      :angle-advices="rudderAdive"
+      :angle-advices="rudderAdvice"
     />
     <div class="readout-grid">
       <div class="fore-index readout-container single">

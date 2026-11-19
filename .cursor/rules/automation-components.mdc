@@ -55,6 +55,7 @@ Rules:
 - Provide both horizontal and vertical icon variants when `this.vertical` is true
 - Apply rotation via a wrapper `div` with `style="transform: rotate(90deg)"`, not on the icon itself
 - Switch between on/off icon variants based on `this.turnedOn`
+- A two-state device (`ObcAbstractAutomationButtonSquared`) keeps a `SquaredDeviceIcons` table per `alternativeIcon` and renders it with `renderDeviceIcon()`, which shows the `static` icon when `static` is set. Leave `static` out of an entry only when the icons file has no static symbol, and say so in a `TODO(designer)`
 
 ## State and Readout Getters
 
@@ -191,6 +192,18 @@ of its invariants are invisible in the template.
 - **The diagonal split is one unit-viewBox SVG** with `preserveAspectRatio="none"` and non-scaling strokes, so borders and the gap keep their pixel widths at every aspect ratio. Keep it that way — a stretched viewBox with scaling strokes distorts them.
 - **Stories share `specialty-tank-story-meta.ts`**; add a story there so all three tiles get it.
 
+## Handles and readout position
+
+A valve can carry a handle or actuator next to its symbol: `obc-digital-valve` and `obc-analog-valve` through `handle`, the pressure valves with a fixed pneumatic one. The art is in `automation-button/valve-handle.ts`, drawn for the `top` side; `obc-automation-button` turns it to `handlePosition`.
+
+- **The colours follow the state:** `on`, `off`, or `static` when `static` is set. `renderValveHandle()` on the abstract base picks it, so a subclass only names the handle.
+- **The room for a handle comes from one place** (`handleSpace` in `automation-button.ts`): flat symbols hold it in the touch target, on the readout's side the badge spacer holds it, and elsewhere the button box grows around it. A point button keeps the symbol on the anchor in all three.
+- **`handleSize`** lives on the subclasses that have a handle. `small` puts the stem's end on the symbol's centre, as the design draws it on a bare symbol.
+- **The handle's side follows the pipe:** the digital valve reads `flowDirection`, the analog valve `vertical`; top on a horizontal pipe, right on a vertical one, and `invertHandlePosition` takes the opposite side. The three-way valves have no handle yet: their free side is the readout's (#1418).
+- **The default readout is below the symbol, or to its left on a vertical pipe** (`_isVertical`). Three-way valves put it on the side without a port.
+- **The directional valves show no state row:** they act on their own, so the system has no open or closed state to report. Without a tag their button takes its name from `equipmentName`.
+- **The handle line colours come from the palette export:** `--automation-symbol-off-line-color` and `--automation-symbol-static-line-color`, and `--on-line-color` for the on state, the short name the plugin gives `Color/Automation/Symbol/On-line-color` ([`figma-refresh.md`](../../docs/agents/figma-refresh.md) § Open).
+
 ## Alert frame properties
 
 The abstract button base, `obc-automation-tank`, the specialty-tank base and `obc-transmitter` take one alert-frame API under the same names: the gate (`alert`, or `hasAlert` on the transmitter), `alertFrameType`, `alertFrameThickness`, `alertFrameStatus`, `alertFrameMode`, `showAlertCategoryIcon` and `showAlertIcon`, and the `alert-icon`, `alert-label` and `alert-timer` slots for the frame's flap, which the abstract button base does not forward yet. `obc-accordion-card` takes the same set behind `hasAlert`.
@@ -244,3 +257,4 @@ Different components have different anchor points:
 
 - Shuffle selectors slide 100 ms on selection change; the Figma frames are WIP and specify no motion, so keep or remove is a designer call (#1171).
 - The abstract button base does not pass on the alert flap slots, so the 19 devices cannot fill a flap (#1334).
+- The analog valve's open symbol carries its own handle bar, turning with `value`; with `handle` set both show. Whether the bar stays, and whether 0 % takes the `twoway-analog-0` icon, is with the design side (#1416).

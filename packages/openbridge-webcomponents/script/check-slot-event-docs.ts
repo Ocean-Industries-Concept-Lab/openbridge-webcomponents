@@ -360,7 +360,7 @@ async function run(): Promise<void> {
   // (AGENTS.md § 3.6). A tag naming a property that exists nowhere injects a
   // ghost member into custom-elements.json (issue #1043) — error.
   const decoratedFieldRe =
-    /@property\([^)]*\)\s*(?:accessor\s+|override\s+|public\s+|readonly\s+)*([\w$]+)[?!]?\s*[:=;]/g;
+    /@property\([^)]*\)\s*(?:accessor\s+|override\s+|public\s+|readonly\s+|get\s+|set\s+)*([\w$]+)[?!]?\s*[:=;(]/g;
   const knownFields = new Set<string>();
   for (const rel of files) {
     const source = fs.readFileSync(path.join(cwd, rel), 'utf8');

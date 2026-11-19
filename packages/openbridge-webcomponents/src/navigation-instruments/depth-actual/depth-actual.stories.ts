@@ -86,6 +86,13 @@ export const Advice: Story = {
   },
 };
 
+/** The icon column sits past the label column, and the box grows for it. */
+export const AdviceIcons: Story = {
+  args: {
+    advices: [{min: 0, max: 10, category: 'caution', showIcon: true}],
+  },
+};
+
 export const CustomRange: Story = {
   name: 'Custom Range (0 to 50, off the ladder)',
   parameters: {

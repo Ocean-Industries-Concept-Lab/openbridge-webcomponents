@@ -1,4 +1,3 @@
-import {html} from 'lit';
 import '../../icons/icon-switch-horizontal-on.js';
 import '../../icons/icon-switch-horizontal-off.js';
 import '../../icons/icon-switch-01-on.js';
@@ -8,7 +7,10 @@ import '../../icons/icon-switch-02-off.js';
 import '../../icons/icon-switch-03-on.js';
 import '../../icons/icon-switch-03-off.js';
 import {customElement} from '../../decorator.js';
-import {ObcAbstractAutomationButtonSquared} from '../automation-button/abstract-automation-button-squared.js';
+import {
+  ObcAbstractAutomationButtonSquared,
+  SquaredDeviceIcons,
+} from '../automation-button/abstract-automation-button-squared.js';
 import {property} from 'lit/decorators.js';
 
 export enum SwitchAlternativeIcon {
@@ -18,7 +20,20 @@ export enum SwitchAlternativeIcon {
   s3 = 's3',
 }
 
+const icons: Record<SwitchAlternativeIcon, SquaredDeviceIcons> = {
+  [SwitchAlternativeIcon.regular]: {
+    on: 'switch-horizontal-on',
+    off: 'switch-horizontal-off',
+  },
+  [SwitchAlternativeIcon.s1]: {on: 'switch-01-on', off: 'switch-01-off'},
+  [SwitchAlternativeIcon.s2]: {on: 'switch-02-on', off: 'switch-02-off'},
+  [SwitchAlternativeIcon.s3]: {on: 'switch-03-on', off: 'switch-03-off'},
+};
+
 /**
+ * **TODO(designer):** the icons file has no static switch symbols, so a
+ * `static` switch keeps its on or off icon.
+ *
  * @stable
  */
 @customElement('obc-switch')
@@ -27,88 +42,9 @@ export class ObcSwitch extends ObcAbstractAutomationButtonSquared {
     SwitchAlternativeIcon.regular;
 
   override get icon() {
-    switch (this.alternativeIcon) {
-      case SwitchAlternativeIcon.s1:
-        if (this.turnedOn) {
-          return html`<obi-switch-01-on
-              usecsscolor
-              slot="icon"
-            ></obi-switch-01-on>
-            <obi-switch-01-on
-              usecsscolor
-              slot="icon-silhouette"
-            ></obi-switch-01-on>`;
-        } else {
-          return html`<obi-switch-01-off
-              usecsscolor
-              slot="icon"
-            ></obi-switch-01-off>
-            <obi-switch-01-off
-              usecsscolor
-              slot="icon-silhouette"
-            ></obi-switch-01-off>`;
-        }
-      case SwitchAlternativeIcon.s2:
-        if (this.turnedOn) {
-          return html`<obi-switch-02-on
-              usecsscolor
-              slot="icon"
-            ></obi-switch-02-on>
-            <obi-switch-02-on
-              usecsscolor
-              slot="icon-silhouette"
-            ></obi-switch-02-on>`;
-        } else {
-          return html`<obi-switch-02-off
-              usecsscolor
-              slot="icon"
-            ></obi-switch-02-off>
-            <obi-switch-02-off
-              usecsscolor
-              slot="icon-silhouette"
-            ></obi-switch-02-off>`;
-        }
-      case SwitchAlternativeIcon.s3:
-        if (this.turnedOn) {
-          return html`<obi-switch-03-on
-              usecsscolor
-              slot="icon"
-            ></obi-switch-03-on>
-            <obi-switch-03-on
-              usecsscolor
-              slot="icon-silhouette"
-            ></obi-switch-03-on>`;
-        } else {
-          return html`<obi-switch-03-off
-              usecsscolor
-              slot="icon"
-            ></obi-switch-03-off>
-            <obi-switch-03-off
-              usecsscolor
-              slot="icon-silhouette"
-            ></obi-switch-03-off>`;
-        }
-      default:
-        if (this.turnedOn) {
-          return html`<obi-switch-horizontal-on
-              usecsscolor
-              slot="icon"
-            ></obi-switch-horizontal-on>
-            <obi-switch-horizontal-on
-              usecsscolor
-              slot="icon-silhouette"
-            ></obi-switch-horizontal-on>`;
-        } else {
-          return html`<obi-switch-horizontal-off
-              usecsscolor
-              slot="icon"
-            ></obi-switch-horizontal-off>
-            <obi-switch-horizontal-off
-              usecsscolor
-              slot="icon-silhouette"
-            ></obi-switch-horizontal-off>`;
-        }
-    }
+    return this.renderDeviceIcon(
+      icons[this.alternativeIcon] ?? icons[SwitchAlternativeIcon.regular]
+    );
   }
 }
 

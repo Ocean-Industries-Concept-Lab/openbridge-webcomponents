@@ -40,8 +40,8 @@ jobs:
       - name: Lint CSS mixins openbridge-webcomponents
         run: cd packages/openbridge-webcomponents && npm run lint:mixins
 
-      - name: Lint CSS variables openbridge-webcomponents
-        run: cd packages/openbridge-webcomponents && npm run lint:variables
+      - name: Lint CSS variables and the typography ramp openbridge-webcomponents
+        run: cd packages/openbridge-webcomponents && npm run lint:variables && npm run lint:typography
 
       - name: Check the palette export and the icons
         run: cd packages/openbridge-webcomponents && npm run lint:palette && npm run lint:icons
@@ -75,7 +75,7 @@ jobs:
 
   test-browser:
     container:
-      image: mcr.microsoft.com/playwright:v1.63.0-noble
+      image: mcr.microsoft.com/playwright:v1.65.0-noble
     runs-on: ubuntu-latest
     steps:
       - name: Checkout

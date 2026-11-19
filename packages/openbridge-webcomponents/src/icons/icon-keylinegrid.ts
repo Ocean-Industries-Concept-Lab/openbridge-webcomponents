@@ -6,7 +6,7 @@ import {customElement} from '../decorator.js';
 export class ObiKeylinegrid extends LitElement {
   @property({type: Boolean}) useCssColor = false;
 
-  private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+  private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
 <path d="M8.99999 6.5C8.99999 5.94771 8.55228 5.5 7.99999 5.5H6L6.00009 10.5H9L8.99999 6.5Z" fill="currentColor"/>
 <path d="M18 10.5L18 6.5C18 5.94771 17.5523 5.5 17 5.5H15L15.0001 10.5H18Z" fill="currentColor"/>
 <path d="M13.5 6.5L13.5 10.5H10.5001L10.5 5.5H12.5C13.0523 5.5 13.5 5.94771 13.5 6.5Z" fill="currentColor"/>

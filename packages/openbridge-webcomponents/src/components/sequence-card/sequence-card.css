@@ -129,7 +129,7 @@
   }
 
   .stamp-container {
-    @mixin font-instrument-value-small-neutral;
+    @mixin font-instrument-deprecated-value-small-neutral;
     margin-top: 25px;
     color: var(--element-inactive-color);
 
@@ -207,7 +207,7 @@
     flex: 1 0 0;
 
     .title-text {
-      @mixin font-instrument-value-regular-active;
+      @mixin font-instrument-deprecated-value-regular-active;
 
       .size-small & {
         font-size: var(--global-typography-instrument-label-font-size);
@@ -225,7 +225,7 @@
     }
 
     .subtitle-text {
-      @mixin font-instrument-value-small-neutral;
+      @mixin font-instrument-deprecated-value-small-neutral;
       color: var(--element-neutral-color);
 
       .title-description & {
@@ -255,12 +255,12 @@
   }
 
   .time-label {
-    @mixin font-instrument-label;
+    @mixin font-instrument-deprecated-label;
     color: var(--element-inactive-color);
   }
 
   .time-value {
-    @mixin font-instrument-value-regular-neutral;
+    @mixin font-instrument-deprecated-value-regular-neutral;
     color: var(--element-inactive-color);
     text-align: center;
     font-weight: var(--font-weight-regular);

@@ -1,17 +1,24 @@
-import {html} from 'lit';
 import {property} from 'lit/decorators.js';
 import '../../icons/icon-resistor-1-on.js';
 import '../../icons/icon-resistor-1-off.js';
+import '../../icons/icon-resistor-1.js';
 import '../../icons/icon-resistor-2-on.js';
 import '../../icons/icon-resistor-2-off.js';
+import '../../icons/icon-resistor-2.js';
 import '../../icons/icon-resistor-3-on.js';
 import '../../icons/icon-resistor-3-off.js';
+import '../../icons/icon-resistor-3.js';
 import '../../icons/icon-resistor-4-on.js';
 import '../../icons/icon-resistor-4-off.js';
+import '../../icons/icon-resistor-4.js';
 import '../../icons/icon-resistor-5-on.js';
 import '../../icons/icon-resistor-5-off.js';
+import '../../icons/icon-resistor-5.js';
 import {customElement} from '../../decorator.js';
-import {ObcAbstractAutomationButtonSquared} from '../automation-button/abstract-automation-button-squared.js';
+import {
+  ObcAbstractAutomationButtonSquared,
+  SquaredDeviceIcons,
+} from '../automation-button/abstract-automation-button-squared.js';
 
 export enum ResistorAlternativeIcon {
   resistor1 = 'resistor1',
@@ -20,6 +27,34 @@ export enum ResistorAlternativeIcon {
   resistor4 = 'resistor4',
   resistor5 = 'resistor5',
 }
+
+const icons: Record<ResistorAlternativeIcon, SquaredDeviceIcons> = {
+  [ResistorAlternativeIcon.resistor1]: {
+    on: 'resistor-1-on',
+    off: 'resistor-1-off',
+    static: 'resistor-1',
+  },
+  [ResistorAlternativeIcon.resistor2]: {
+    on: 'resistor-2-on',
+    off: 'resistor-2-off',
+    static: 'resistor-2',
+  },
+  [ResistorAlternativeIcon.resistor3]: {
+    on: 'resistor-3-on',
+    off: 'resistor-3-off',
+    static: 'resistor-3',
+  },
+  [ResistorAlternativeIcon.resistor4]: {
+    on: 'resistor-4-on',
+    off: 'resistor-4-off',
+    static: 'resistor-4',
+  },
+  [ResistorAlternativeIcon.resistor5]: {
+    on: 'resistor-5-on',
+    off: 'resistor-5-off',
+    static: 'resistor-5',
+  },
+};
 
 /**
  * @stable
@@ -30,108 +65,9 @@ export class ObcResistor extends ObcAbstractAutomationButtonSquared {
     ResistorAlternativeIcon.resistor1;
 
   override get icon() {
-    switch (this.alternativeIcon) {
-      case ResistorAlternativeIcon.resistor2:
-        if (this.turnedOn) {
-          return html`<obi-resistor-2-on
-              usecsscolor
-              slot="icon"
-            ></obi-resistor-2-on>
-            <obi-resistor-2-on
-              usecsscolor
-              slot="icon-silhouette"
-            ></obi-resistor-2-on>`;
-        } else {
-          return html`<obi-resistor-2-off
-              usecsscolor
-              slot="icon"
-            ></obi-resistor-2-off>
-            <obi-resistor-2-off
-              usecsscolor
-              slot="icon-silhouette"
-            ></obi-resistor-2-off>`;
-        }
-      case ResistorAlternativeIcon.resistor3:
-        if (this.turnedOn) {
-          return html`<obi-resistor-3-on
-              usecsscolor
-              slot="icon"
-            ></obi-resistor-3-on>
-            <obi-resistor-3-on
-              usecsscolor
-              slot="icon-silhouette"
-            ></obi-resistor-3-on>`;
-        } else {
-          return html`<obi-resistor-3-off
-              usecsscolor
-              slot="icon"
-            ></obi-resistor-3-off>
-            <obi-resistor-3-off
-              usecsscolor
-              slot="icon-silhouette"
-            ></obi-resistor-3-off>`;
-        }
-      case ResistorAlternativeIcon.resistor4:
-        if (this.turnedOn) {
-          return html`<obi-resistor-4-on
-              usecsscolor
-              slot="icon"
-            ></obi-resistor-4-on>
-            <obi-resistor-4-on
-              usecsscolor
-              slot="icon-silhouette"
-            ></obi-resistor-4-on>`;
-        } else {
-          return html`<obi-resistor-4-off
-              usecsscolor
-              slot="icon"
-            ></obi-resistor-4-off>
-            <obi-resistor-4-off
-              usecsscolor
-              slot="icon-silhouette"
-            ></obi-resistor-4-off>`;
-        }
-      case ResistorAlternativeIcon.resistor5:
-        if (this.turnedOn) {
-          return html`<obi-resistor-5-on
-              usecsscolor
-              slot="icon"
-            ></obi-resistor-5-on>
-            <obi-resistor-5-on
-              usecsscolor
-              slot="icon-silhouette"
-            ></obi-resistor-5-on>`;
-        } else {
-          return html`<obi-resistor-5-off
-              usecsscolor
-              slot="icon"
-            ></obi-resistor-5-off>
-            <obi-resistor-5-off
-              usecsscolor
-              slot="icon-silhouette"
-            ></obi-resistor-5-off>`;
-        }
-      default:
-        if (this.turnedOn) {
-          return html`<obi-resistor-1-on
-              usecsscolor
-              slot="icon"
-            ></obi-resistor-1-on>
-            <obi-resistor-1-on
-              usecsscolor
-              slot="icon-silhouette"
-            ></obi-resistor-1-on>`;
-        } else {
-          return html`<obi-resistor-1-off
-              usecsscolor
-              slot="icon"
-            ></obi-resistor-1-off>
-            <obi-resistor-1-off
-              usecsscolor
-              slot="icon-silhouette"
-            ></obi-resistor-1-off>`;
-        }
-    }
+    return this.renderDeviceIcon(
+      icons[this.alternativeIcon] ?? icons[ResistorAlternativeIcon.resistor1]
+    );
   }
 }
 

@@ -6,7 +6,7 @@ import {customElement} from '../decorator.js';
 export class ObiAlertHeaderAggregatedIec extends LitElement {
   @property({type: Boolean}) useCssColor = false;
 
-  private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+  private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
 <path d="M13 2H11V5H8V7H11V10H13V7H16V5H13V2Z" fill="currentColor"/>
 </svg>
 `;

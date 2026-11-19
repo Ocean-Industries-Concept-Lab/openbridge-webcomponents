@@ -51,6 +51,10 @@ export interface TransmitterStackValueClickDetail {
  * ### Features / Variants
  * - **`orientation`** – `top`, `right`, `bottom`, `left`; the edge the leader
  *   line attaches to. `top` places the id tags above the chip.
+ * - **`showLine`** – draw the leader line (default). Set `false` when the
+ *   line is drawn by other tools: the stack is then a plain box with no
+ *   padding or anchor offset, and `orientation` only decides whether the id
+ *   tags sit above (`top`) or below the chip.
  * - **Values** – `value` and `unit` per segment. `idTag` adds a label row under
  *   every segment once any value has one, so the chip stays aligned.
  * - **Formatting** – per value `fractionDigits` (default `1`), `maxDigits`
@@ -79,6 +83,8 @@ export interface TransmitterStackValueClickDetail {
  *
  * @property orientation - Edge of the chip the leader line attaches to.
  * @property lineType - Line the transmitter sits on; offsets the leader line by half its stroke.
+ * @property showLine - Draw the leader line. Set `false` when the line is drawn by other tools;
+ *   the stack is then a plain box with no padding or anchor offset.
  * @property values - One segment per entry, in order.
  * @fires {CustomEvent<TransmitterStackValueClickDetail>} value-click - Fired when a segment is activated, with its value and index.
  * @fires click - Fired when any segment is clicked; `value-click` tells which.
@@ -89,6 +95,7 @@ export class ObcTransmitterStack extends LitElement {
   @property({type: String}) orientation: TransmitterOrientation =
     TransmitterOrientation.bottom;
   @property({type: String}) lineType: LineType | undefined = undefined;
+  @property({type: Boolean, attribute: false}) showLine = true;
   @property({type: Array}) values: TransmitterStackValue[] = [];
 
   private handleValueClick(index: number, value: TransmitterStackValue): void {
@@ -153,6 +160,7 @@ export class ObcTransmitterStack extends LitElement {
       <div
         class=${classMap({
           transmitter: true,
+          'no-line': !this.showLine,
           [`orientation-${this.orientation}`]: true,
         })}
         style="--offset: ${transmitterLeaderOffset(this.lineType)}px;"

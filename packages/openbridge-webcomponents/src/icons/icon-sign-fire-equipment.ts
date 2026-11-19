@@ -6,7 +6,7 @@ import {customElement} from '../decorator.js';
 export class ObiSignFireEquipment extends LitElement {
   @property({type: Boolean}) useCssColor = false;
 
-  private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+  private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
 <path d="M22 9.5C20.2857 9.5 20 7 20 7L19.6833 7.69296C18.8381 9.54163 19.9917 11.6862 22 12V9.5Z" fill="currentColor"/>
 <path d="M22 13.5C20.2857 13.5 18 11 18 11V11.3265C18 13.657 19.6974 15.6402 22 16V13.5Z" fill="currentColor"/>
 <path d="M18 17C18 17 18.6083 17.4907 19.39 18.0705C20.3954 18.8162 21.7545 18.2275 22 17L20.0311 16.2684C19.2662 15.9842 18.408 16.2934 18 17Z" fill="currentColor"/>

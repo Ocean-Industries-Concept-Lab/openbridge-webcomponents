@@ -19,7 +19,10 @@
  *
  * @module
  */
-import {AutomationButtonLabelDirection} from '../automation-button/automation-button.js';
+import {
+  AutomationButtonLabelDirection,
+  AutomationButtonReadoutPosition,
+} from '../automation-button/automation-button.js';
 import {AutomationButtonReadoutStack} from '../../components/automation-button-readout-stack/automation-button-readout-stack.js';
 
 /**
@@ -49,6 +52,22 @@ export function threewayValveRotation(
   }
 }
 
+/** The side without a port, opposite the stem: the readout there covers no pipe. */
+export function threewayValveOpenSide(
+  orientation: ThreewayValveOrientation
+): AutomationButtonReadoutPosition {
+  switch (orientation) {
+    case ThreewayValveOrientation.left:
+      return AutomationButtonReadoutPosition.right;
+    case ThreewayValveOrientation.top:
+      return AutomationButtonReadoutPosition.bottom;
+    case ThreewayValveOrientation.right:
+      return AutomationButtonReadoutPosition.left;
+    default:
+      return AutomationButtonReadoutPosition.top;
+  }
+}
+
 /** A flow readout row with a value: `→ 060 %`. */
 export interface ThreewayValveValueFlow {
   /** Arrow direction on screen; left out or `none` hides the arrow. */
@@ -58,11 +77,11 @@ export interface ThreewayValveValueFlow {
   unit?: string;
 }
 
-/** A flow readout row with a state: `→ Open`, `→ Closed`, or, without a direction, the state text with an optional on/off icon. */
+/** A flow readout row with a state: `→ Open`, `→ Closed`, or without a direction the state alone. */
 export interface ThreewayValveStateFlow {
   /**
    * Arrow direction on screen; left out or `none` shows the on or off icon
-   * instead.
+   * instead while `showStatusIcon` is set.
    */
   direction?: AutomationButtonLabelDirection;
   open: boolean;
@@ -74,19 +93,17 @@ export type ThreewayValveFlow = ThreewayValveValueFlow | ThreewayValveStateFlow;
 /**
  * The readout rows of a three-way valve: `Closed` while no flow can pass,
  * the flow rows while it can, and `Open` when the application gives no flows.
- * `showStateIcon` puts the on/off symbol before a state row that has no
- * direction arrow.
  */
 export function threewayValveReadouts(
   passing: boolean,
   flows: ThreewayValveFlow[],
-  showStateIcon: boolean
+  showStatusIcon: boolean
 ): AutomationButtonReadoutStack[] {
   if (!passing) {
-    return [{type: 'state-off', value: 'Closed', hasIcon: showStateIcon}];
+    return [{type: 'state-off', value: 'Closed', hasIcon: showStatusIcon}];
   }
   if (flows.length === 0) {
-    return [{type: 'state-on', value: 'Open', hasIcon: showStateIcon}];
+    return [{type: 'state-on', value: 'Open', hasIcon: showStatusIcon}];
   }
   return flows.map((flow): AutomationButtonReadoutStack => {
     if ('open' in flow) {
@@ -94,7 +111,7 @@ export function threewayValveReadouts(
         type: flow.open ? 'state-on' : 'state-off',
         value: flow.open ? 'Open' : 'Closed',
         hasIcon:
-          showStateIcon &&
+          showStatusIcon &&
           (flow.direction === undefined ||
             flow.direction === AutomationButtonLabelDirection.none),
         direction: flow.direction,

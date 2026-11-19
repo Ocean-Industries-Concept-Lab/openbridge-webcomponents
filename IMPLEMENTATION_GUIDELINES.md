@@ -470,36 +470,40 @@ For buttons, labels, body text, and headings:
 | `@mixin font-subtitle`        | Subtitles                  |
 | `@mixin font-title`           | Titles                     |
 
-#### Instrument fonts
+#### General fonts
 
-For numeric readouts, units, and scale labels in gauges and instruments:
+The design file's text ramp, each size in regular, semibold and bold (`@mixin font-general-<size>-<weight>`). `obc-gnss-skyplot` reads it, and the readout family takes its weights through `obc-textbox`.
 
-| Mixin                                           | Typical use                    |
-| ----------------------------------------------- | ------------------------------ |
-| `@mixin font-instrument-value-small-active`     | Small active numeric value     |
-| `@mixin font-instrument-value-small-neutral`    | Small neutral numeric value    |
-| `@mixin font-instrument-value-regular-active`   | Regular active numeric value   |
-| `@mixin font-instrument-value-regular-neutral`  | Regular neutral numeric value  |
-| `@mixin font-instrument-value-m-active`         | Medium active numeric value    |
-| `@mixin font-instrument-value-m-neutral`        | Medium neutral numeric value   |
-| `@mixin font-instrument-value-enhanced-active`  | Enhanced active numeric value  |
-| `@mixin font-instrument-value-enhanced-neutral` | Enhanced neutral numeric value |
-| `@mixin font-instrument-label`                  | Instrument labels and units    |
-| `@mixin font-instrument-unit`                   | Unit suffixes (%, °, kn)       |
-| `@mixin font-instrument-tick-mark`              | Scale tick labels              |
-| `@mixin font-instrument-tick-mark-active`       | Active scale tick labels       |
+| Size | Font size / line height |
+| ---- | ----------------------- |
+| `xs` | 11.5 / 16 px            |
+| `s`  | 16.5 / 20 px            |
+| `m`  | 23 / 24 px              |
+| `l`  | 34 / 32 px              |
+| `xl` | 45.5 / 40 px            |
 
-#### Automation fonts
+The sizes are the same in every size class. The design file has no medium, large or xl values for the General styles yet, and `npm run palette:strip` drops the zeros the export carries for them, so the larger classes inherit the regular sizes. That is why the instrument and automation text stays on the styles below: moving it onto the General styles took the size ramp away from the readouts, tags and units (#1420).
 
-For automation readouts and state labels:
+The design file trims every General style to the cap height. The mixins do not; `obc-textbox` trims where the readout family needs it.
 
-| Mixin                                      | Typical use                      |
-| ------------------------------------------ | -------------------------------- |
-| `@mixin font-automation-value-small`       | Small automation readout (on)    |
-| `@mixin font-automation-value-small-off`   | Small automation readout (off)   |
-| `@mixin font-automation-value-regular`     | Regular automation readout (on)  |
-| `@mixin font-automation-value-regular-off` | Regular automation readout (off) |
-| `@mixin font-automation-value-enhanced`    | Enhanced automation readout      |
+#### Instrument and automation fonts
+
+The text of instruments, automation symbols and data components: values, units, labels and tick marks. The styles are deprecated in the design file and `fonts.css` carries them as `font-instrument-deprecated-*` and `font-automation-deprecated-*`, the names the export gives them, but their variables carry a value in every size class, so the text grows with `.obc-component-size-medium`, `-large` and `-xl`; the automation ones fall back to their regular sizes in XL in the design file (#1422). `npm run lint:typography` fails on a component that reads a font-size or line-height token with no value in a size class, or one smaller than in the class before, which is what the move to the General styles would do today. They move to the General styles once the design file gives those medium, large and xl values, together with the direct `--global-typography-instrument-*` token uses (heights, weights and sizes written out in CSS and in `charthelpers/constants.ts`), which have to match the new text's metrics; the map, as the design file publishes it (node `53209:38919`):
+
+| Mixin (`font-instrument-deprecated-*` / `font-automation-deprecated-*`) | General style, once it has every size      |
+| ----------------------------------------------------------------------- | ------------------------------------------ |
+| instrument `value-small-neutral` / `-active`                            | `font-general-xs-regular` / `-xs-semibold` |
+| instrument `value-regular-neutral` / `-active`                          | `font-general-s-regular` / `-s-semibold`   |
+| instrument `value-m-neutral` / `-active`                                | `font-general-m-regular` / `-m-semibold`   |
+| instrument `value-enhanced-neutral` / `-active`                         | `font-general-l-regular` / `-l-semibold`   |
+| instrument `label`                                                      | `font-general-xs-semibold`                 |
+| instrument `unit`, `tick-mark`                                          | `font-general-xs-regular`                  |
+| instrument `tick-mark-active`                                           | `font-general-xs-bold`                     |
+| automation `value-small-off` / `value-small`                            | `font-general-xs-regular` / `-xs-semibold` |
+| automation `value-regular-off` / `value-regular`                        | `font-general-s-regular` / `-s-semibold`   |
+| automation `value-enhanced-off` / `value-enhanced`                      | `font-general-l-regular` / `-l-semibold`   |
+| automation `label`, `unit-small`                                        | `font-general-xs-regular`                  |
+| automation `unit-regular`, `unit-enhanced`                              | `font-general-s-regular`                   |
 
 #### Overlay font
 
@@ -528,7 +532,7 @@ across the four classes), but no class takes any touch target below 48 px.
 Minimum-size rules and the standards behind them live in
 [`docs/agents/a11y.md` § Touch & pointer target size](docs/agents/a11y.md).
 
-Each class overrides the same variable names (`--global-size-spacing-touch-target-min`, `--global-size-spacing-visual-target-min`, `--global-size-spacing-icon-icon-size-regular`, all `--ui-components-*` sizing tokens, typography tokens, etc.) with scaled values.
+Each class overrides the same variable names (`--global-size-spacing-touch-target-min`, `--global-size-spacing-visual-target-min`, `--global-size-spacing-icon-icon-size-regular`, all `--ui-components-*` sizing tokens, typography tokens, etc.) with scaled values. The General typography is the exception for now and keeps its regular sizes ([General fonts](#general-fonts)).
 
 **Usage:** Apply the size class on a parent element; all descendant components automatically resize via CSS variable inheritance:
 

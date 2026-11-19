@@ -77,6 +77,10 @@ tokens that do not resolve or fall back to hex, and the tripwires fire.
      40 px touch target, below the floor [`a11y.md`](a11y.md) § 7
      guarantees. A new class is a decision, then an entry in the script's
      allow-list and a row in the size-class table.
+   - the `--global-typography-general-*` values at 0 in the `medium`,
+     `large` and `xl` blocks, which hide the text; those classes inherit
+     the regular sizes instead. A real value passes through, so the rule
+     matches nothing once Figma fills the modes (see Open).
 4. Diff the content, not the text — prettier wraps long `var(…)` values
    and a mode block adds thousands of lines, so `git diff` is unreadable:
    ```bash
@@ -89,10 +93,17 @@ tokens that do not resolve or fall back to hex, and the tripwires fire.
 5. `npm run lint:variables` names every consumer of a removed token. Follow
    renames in the consuming CSS as a third commit; a rename with an
    identical value changes no rendering, so say so in the commit.
-6. `fonts.css`: paste the `Font exports` output wholesale, then
-   `npm run lint:mixins`. A mixin the plugin no longer emits fails loudly
+6. `fonts.css`: paste the `Font exports` output wholesale under the file's
+   header comment, then `npm run lint:mixins`. A mixin the plugin no longer emits fails loudly
    there instead of expanding to nothing. Hand-curated mixins live in
-   `src/mixins/font-extras.css`, never in `fonts.css`.
+   `src/mixins/font-extras.css`, never in `fonts.css`. A style the export
+   deprecates stays in use until its replacement has a value in every size
+   class the consumers render in: `npm run lint:typography` fails on a
+   component reading a font-size or line-height token a class leaves
+   undeclared, at 0, or smaller than in the class before, and a token the
+   design file cannot fill yet goes in the script's `KNOWN_GAPS` with the
+   classes it gaps in and its issue, never a value written in code (#1420,
+   #1422).
 7. Run the full snapshot suite once without `--update`. A palette export
    moves on the order of a hundred baselines; attribute each failing family
    to a value in the changed list before regenerating
@@ -114,15 +125,15 @@ re-sync changes every key are in
 
 Inputs:
 
-| File / env                             | Tracked | Notes                                                                                                      |
-| -------------------------------------- | ------- | ---------------------------------------------------------------------------------------------------------- |
-| `.env` → `FIGMA_TOKEN`                 | no      | required for any run that calls the API                                                                    |
-| `script/figmavariables.json`           | yes     | `VariableID → token` map; the converter falls back to literal hex for an unknown id                        |
-| `script/.cache-figma.json`             | no      | ~30 MB raw API response, reused across runs                                                                |
-| `script/.cache/icons/*.svg`            | no      | per-icon payloads, cleared each run                                                                        |
-| `script/.cache/unknown-variables.json` | no      | written every run: the ids the map did not resolve, `[]` when clean                                        |
-| `OBC_USE_CACHE=1`                      | —       | reuse the on-disk cache instead of calling the API; for iterating on `convert-icons.ts` or a refreshed map |
-| `OBC_ALLOW_UNRESOLVED_VARS=1`          | —       | let a run with unresolved ids finish writing; `lint:icons` still fails on the hex it leaves behind         |
+| File / env                             | Tracked | Notes                                                                                                                                         |
+| -------------------------------------- | ------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
+| `.env` → `FIGMA_TOKEN`                 | no      | required for any run that calls the API                                                                                                       |
+| `script/figmavariables.json`           | yes     | `VariableID → token` map; the converter falls back to literal hex for an unknown id                                                           |
+| `script/.cache-figma.json`             | no      | ~30 MB raw API response, reused across runs                                                                                                   |
+| `script/.cache/icons/*.svg`            | no      | per-icon payloads; a fresh run rewrites them, `OBC_USE_CACHE=1` fetches only the missing ones; a renamed icon's old file stays behind, unread |
+| `script/.cache/unknown-variables.json` | no      | written every run: the ids the map did not resolve, `[]` when clean                                                                           |
+| `OBC_USE_CACHE=1`                      | —       | reuse the on-disk cache instead of calling the API; for iterating on `convert-icons.ts` or a refreshed map                                    |
+| `OBC_ALLOW_UNRESOLVED_VARS=1`          | —       | let a run with unresolved ids finish writing; `lint:icons` still fails on the hex it leaves behind                                            |
 
 Steps:
 
@@ -203,6 +214,16 @@ the semantic diff (renamed, removed, changed per block) belong there too.
 
 ## Open
 
+- The General text styles have no `medium`, `large` or `xl` sizes yet. The
+  design team leaves them out until it settles whether one class up turns S
+  into M, as the instrument ramp does (#1414); `palette:strip` drops the zeros
+  meanwhile, and the instrument and automation text stays on the
+  `-deprecated-` mixins, whose variables ramp in every class (#1420). Once the
+  export carries real values: delete that rule, and move the consumers along
+  the map in `IMPLEMENTATION_GUIDELINES.md` § Instrument and automation fonts,
+  the direct `--global-typography-instrument-*` token uses with them
+  (`git grep -n -- '--global-typography-instrument-' src`): the heights,
+  weights and sizes they set have to match the new text's metrics.
 - The plugin still emits `Component-size` modes the package does not ship,
   two of them with spaces in their names; `palette:strip` covers for it until
   that is fixed at the source. The blink keyframes and the root animation are
@@ -227,4 +248,10 @@ the semantic diff (renamed, removed, changed per block) belong there too.
     The dusk, night and bright primitives export that way (`WCAG`,
     `WCAG Amber`, `WCAG AAA`); whether those are the intended modes is open
     with the design team.
+- The plugin shortens an `On-` name to `--on-…` while only one variable
+  claims it: `Color/Automation/Symbol/On-line-color` exports as
+  `--on-line-color`, next to `--automation-symbol-off-line-color`. The icon
+  map and the valve handle (`valve-handle.ts`) point at the short name, so a
+  second family adding `On-line-color` renames it and the icons that bind it
+  fall back to hex.
 - Token typos in Figma (#985).

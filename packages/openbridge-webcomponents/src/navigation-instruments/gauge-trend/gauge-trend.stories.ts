@@ -1,5 +1,5 @@
 import type {Meta, StoryObj} from '@storybook/web-components-vite';
-import {html} from 'lit';
+import {html, render} from 'lit';
 import './gauge-trend.js';
 import {AdviceType} from '../watch/advice.js';
 import {
@@ -675,6 +675,52 @@ export const GaugeTrendWithAdvice: Story = {
   `,
 };
 
+export const GaugeTrendWithAdviceArea: Story = {
+  name: 'With Advice Areas',
+  play: async () => {
+    await new Promise((resolve) => setTimeout(resolve, 300));
+  },
+  args: {
+    hasAdvice: true,
+    value: 75,
+    primaryTickmarkInterval: 20,
+    secondaryTickmarkInterval: 10,
+    tertiaryTickmarkInterval: 2,
+    scaleReferenceSize: 384,
+  },
+  render: (_args) => html`
+    <obc-gauge-trend
+      .data=${SAMPLE_DATA}
+      .width=${_args.width}
+      .height=${_args.height}
+      .priority=${_args.priority}
+      .chartFill=${_args.chartFill}
+      .minValue=${0}
+      .maxValue=${100}
+      .value=${_args.value}
+      .hasBar=${_args.hasBar}
+      .hasScale=${_args.hasScale}
+      .hasAdvice=${_args.hasAdvice}
+      .advices=${[
+        {min: 70, max: 90, category: 'caution', showArea: true},
+        {min: 90, max: 100, category: 'alarm', showArea: true},
+        {
+          min: 20,
+          max: 40,
+          category: 'optimal',
+          state: 'active',
+          showArea: true,
+        },
+      ]}
+      .primaryTickmarkInterval=${20}
+      .secondaryTickmarkInterval=${10}
+      .tertiaryTickmarkInterval=${2}
+      .scaleReferenceSize=${_args.scaleReferenceSize}
+    >
+    </obc-gauge-trend>
+  `,
+};
+
 /**
  * Demonstrates a non-standard scale range (25-75) that fits the SAMPLE_DATA values (28-68).
  *
@@ -994,43 +1040,48 @@ export const RealtimeShifting: Story = {
   render: (_args) => {
     // Create wrapper container
     const wrapper = document.createElement('div');
-    wrapper.innerHTML = `
-      <style>
-        .realtime-wrapper {
-          display: flex;
-          flex-direction: row;
-          gap: 24px;
-          padding: 16px;
-          flex-wrap: wrap;
-        }
-        .realtime-column {
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-        }
-        .realtime-label {
-          font-family: var(--font-family-main);
-          font-size: 12px;
-          color: var(--instrument-frame-tertiary-color);
-          margin-bottom: 8px;
-          text-align: center;
-        }
-      </style>
-      <div class="realtime-wrapper">
-        <div class="realtime-column">
-          <div class="realtime-label">With bar (enhanced)</div>
-          <div class="gauge-container-1"></div>
+    render(
+      html`
+        <style>
+          .realtime-wrapper {
+            display: flex;
+            flex-direction: row;
+            gap: 24px;
+            padding: 16px;
+            flex-wrap: wrap;
+          }
+          .realtime-column {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+          }
+          .realtime-label {
+            font-family: var(--font-family-main);
+            font-size: 12px;
+            color: var(--instrument-frame-tertiary-color);
+            margin-bottom: 8px;
+            text-align: center;
+          }
+        </style>
+        <div class="realtime-wrapper">
+          <div class="realtime-column">
+            <div class="realtime-label">With bar (enhanced)</div>
+            <div class="gauge-container-1"></div>
+          </div>
+          <div class="realtime-column">
+            <div class="realtime-label">Without bar (scale only + dot)</div>
+            <div class="gauge-container-2"></div>
+          </div>
+          <div class="realtime-column">
+            <div class="realtime-label">
+              Condensed scale (labels only + dot)
+            </div>
+            <div class="gauge-container-3"></div>
+          </div>
         </div>
-        <div class="realtime-column">
-          <div class="realtime-label">Without bar (scale only + dot)</div>
-          <div class="gauge-container-2"></div>
-        </div>
-        <div class="realtime-column">
-          <div class="realtime-label">Condensed scale (labels only + dot)</div>
-          <div class="gauge-container-3"></div>
-        </div>
-      </div>
-    `;
+      `,
+      wrapper
+    );
 
     // Create three gauge elements
     const gauge1 = document.createElement('obc-gauge-trend');
@@ -1353,6 +1404,54 @@ export const MinMaxLabels: Story = {
       .primaryTickmarkInterval=${0}
       .secondaryTickmarkInterval=${0}
       .scaleType=${ScaleType.condensed}
+    >
+    </obc-gauge-trend>
+  `,
+};
+
+/** The chart's bands with their icons in the scale's label column, the caution band triggered. */
+export const GaugeTrendWithAdviceIcons: Story = {
+  name: 'With Advice Icons',
+  play: async () => {
+    await new Promise((resolve) => setTimeout(resolve, 300));
+  },
+  args: {
+    hasAdvice: true,
+    value: 75,
+    primaryTickmarkInterval: 20,
+    secondaryTickmarkInterval: 10,
+    tertiaryTickmarkInterval: 2,
+    scaleReferenceSize: 384,
+  },
+  render: (_args) => html`
+    <obc-gauge-trend
+      .data=${SAMPLE_DATA}
+      .width=${_args.width}
+      .height=${_args.height}
+      .priority=${_args.priority}
+      .chartFill=${_args.chartFill}
+      .minValue=${0}
+      .maxValue=${100}
+      .value=${_args.value}
+      .hasBar=${_args.hasBar}
+      .hasScale=${_args.hasScale}
+      .hasAdvice=${_args.hasAdvice}
+      .advices=${[
+        {min: 70, max: 90, category: 'caution', showArea: true, showIcon: true},
+        {min: 90, max: 100, category: 'alarm', showArea: true, showIcon: true},
+        {
+          min: 20,
+          max: 40,
+          category: 'optimal',
+          state: 'active',
+          showArea: true,
+          showIcon: true,
+        },
+      ]}
+      .primaryTickmarkInterval=${20}
+      .secondaryTickmarkInterval=${10}
+      .tertiaryTickmarkInterval=${2}
+      .scaleReferenceSize=${_args.scaleReferenceSize}
     >
     </obc-gauge-trend>
   `,

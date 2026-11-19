@@ -35,22 +35,22 @@
 }
 
 .value-number {
-  @mixin font-instrument-value-regular-neutral;
+  @mixin font-instrument-deprecated-value-regular-neutral;
   color: var(--instrument-enhanced-secondary-color, #335483);
 }
 
 .value-unit {
-  @mixin font-instrument-label;
+  @mixin font-instrument-deprecated-label;
   color: var(--instrument-regular-secondary-color, #707070);
 }
 
 .state {
-  @mixin font-instrument-label;
+  @mixin font-instrument-deprecated-label;
   color: var(--instrument-regular-secondary-color, #707070);
 }
 
 .loading-text {
-  @mixin font-instrument-value-regular-neutral;
+  @mixin font-instrument-deprecated-value-regular-neutral;
   color: var(--instrument-regular-primary-color);
   flex: 1 0 0;
   flex-grow: 1;
@@ -150,7 +150,7 @@ obc-circular-progress {
 }
 
 .circular-unit {
-  @mixin font-instrument-unit;
+  @mixin font-instrument-deprecated-unit;
   color: var(--element-neutral-color);
 }
 
