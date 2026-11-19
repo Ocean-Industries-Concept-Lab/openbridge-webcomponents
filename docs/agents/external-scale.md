@@ -152,7 +152,7 @@ When adding new features or fixing bugs:
    - The `scaleReferenceSize` (default: 384px) defines the "native" size at which the scale renders 1:1 (to the Figma design)
    - **Dimension reporting** must use the scaled dimensions, not the reference dimensions:
      - Observers and `scale-dimensions-changed` events should report thickness values **after** proportional scaling is applied
-     - Use `computeFixedAspectRatioScale()` to calculate the scale factor: `actualSize / scaleReferenceSize`
+     - Use `computeFixedAspectRatioScale()` to calculate the scale factor: `mainAxisSize / scaleReferenceSize`, capped at `crossAxisSize / thickness` the way `xMidYMid meet` paints it. Pass both container axes and the laid-out `thickness` from every measurement site (the `ResizeController`, the toggle's `requestAnimationFrame` read, the bars' border-radius refresh): a host narrower than the drawing otherwise paints at one scale while `--scale` counter-scales the labels for another, and the labels shrink. The radial family's `getScale()` is the same rule
      - Reported thickness = `baseThickness * scaleFactor`
    - This ensures parent charts receive accurate padding values that match the visually rendered scale size
 
@@ -225,13 +225,17 @@ When adding new features or fixing bugs:
    384 px SVG, the length the design is drawn at. With `fixedAspectRatio`
    it fills its host like a vector image — the host is what to size — and
    `scaleReferenceSize` is the host length at which it draws 1:1; the labels
-   keep their font size through the `--scale` counter-scale. A scale whose
+   keep their font size through the `--scale` counter-scale, also in a host
+   narrower than the drawing, where the paint and the counter-scale both
+   follow the cross axis. A scale whose
    length should follow the layout while the bands keep their design
    thickness is `bar-vertical` / `bar-horizontal` with `height` / `width`
    from a ResizeObserver, as `obc-automation-tank` does. The gauges carry
    the bars' host styles, scale recompute, reference-length rule and scaled
    report, so a change to that code in one wrapper is a change to all four
-   (`gauge-vertical.spec.ts`, `gauge-horizontal.spec.ts` pin it).
+   (`gauge-vertical.spec.ts`, `gauge-horizontal.spec.ts`,
+   `bar-vertical-fixed-aspect.spec.ts`, `bar-horizontal-fixed-aspect.spec.ts`
+   pin it).
 
 4. **Implementation Pattern**:
    - Import and delegate to same `external-scale.ts` functions as bar components

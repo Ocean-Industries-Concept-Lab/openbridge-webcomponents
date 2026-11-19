@@ -793,6 +793,14 @@ export interface FixedAspectRatioScaleConfig {
   containerMainAxisSize: number;
   /** Reference size at which the scale renders at 1:1 (default: 384) */
   scaleReferenceSize: number;
+  /**
+   * Cross-axis size of the container (width for vertical, height for
+   * horizontal). With `viewBoxThickness` it caps the scale the way
+   * `xMidYMid meet` does once the container is narrower than the drawing.
+   */
+  containerCrossAxisSize?: number;
+  /** The drawing's cross-axis size in viewBox units (`computeExternalScaleLayout().thickness`). */
+  viewBoxThickness?: number;
 }
 
 /**
@@ -807,17 +815,28 @@ export interface FixedAspectRatioScaleConfig {
  * This scale factor is applied to SVG rendering while keeping text labels at constant size
  * by using the CSS variable `--scale` to counter-scale font sizes.
  *
+ * The SVG is painted with `xMidYMid meet`, which takes the smaller of the two
+ * axes' ratios. Pass the container's cross-axis size and the drawing's
+ * thickness so the factor follows the paint when the cross axis is the limit;
+ * without them the main axis alone decides, as it does whenever the cross axis
+ * has room.
+ *
  * Works for all orientations and sides:
  * - Vertical scales (left/right): compare container height vs reference
  * - Horizontal scales (top/bottom): compare container width vs reference
  *
- * @param config Configuration with orientation, container size, and reference size
+ * @param config Configuration with orientation, container sizes, reference size and drawing thickness
  * @returns Scale factor (> 0), defaults to 1 if container size is invalid
  */
 export function computeFixedAspectRatioScale(
   config: FixedAspectRatioScaleConfig
 ): number {
-  const {containerMainAxisSize, scaleReferenceSize} = config;
+  const {
+    containerMainAxisSize,
+    scaleReferenceSize,
+    containerCrossAxisSize,
+    viewBoxThickness,
+  } = config;
 
   // Guard against zero or negative sizes
   if (containerMainAxisSize <= 0 || scaleReferenceSize <= 0) {
@@ -827,7 +846,36 @@ export function computeFixedAspectRatioScale(
   // Scale = container size / reference size
   // e.g., container=480px, reference=384px => scale=1.25 (zoom in)
   // e.g., container=288px, reference=384px => scale=0.75 (zoom out)
-  return containerMainAxisSize / scaleReferenceSize;
+  const mainScale = containerMainAxisSize / scaleReferenceSize;
+
+  if (
+    containerCrossAxisSize === undefined ||
+    containerCrossAxisSize <= 0 ||
+    viewBoxThickness === undefined ||
+    viewBoxThickness <= 0
+  ) {
+    return mainScale;
+  }
+
+  // Integer client sizes round an unconstrained box down by under a pixel;
+  // that is not a constraint.
+  if (containerCrossAxisSize + 1 >= viewBoxThickness * mainScale) {
+    return mainScale;
+  }
+
+  return config.orientation === ExternalScaleOrientation.vertical
+    ? computeMeetScale(
+        viewBoxThickness,
+        scaleReferenceSize,
+        containerCrossAxisSize,
+        containerMainAxisSize
+      )
+    : computeMeetScale(
+        scaleReferenceSize,
+        viewBoxThickness,
+        containerMainAxisSize,
+        containerCrossAxisSize
+      );
 }
 
 /**

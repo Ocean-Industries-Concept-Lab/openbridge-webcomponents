@@ -190,4 +190,38 @@ describe('obc-gauge-horizontal sizing', () => {
     expect(el.style.height).toBe('120px');
     expect(el.style.width).toBe('300px');
   });
+
+  it('follows the painted scale when the host is shorter than the drawing', async () => {
+    const screen = render(
+      html`<div style="display: flex; width: 600px; height: 100px">
+        <obc-gauge-horizontal
+          style="flex: 1"
+          .minValue=${0}
+          .maxValue=${100}
+          .value=${40}
+          .primaryTickmarkInterval=${20}
+          .fixedAspectRatio=${true}
+        ></obc-gauge-horizontal>
+      </div>`
+    );
+    const el = screen.container.querySelector(
+      'obc-gauge-horizontal'
+    ) as ObcGaugeHorizontal;
+    await el.updateComplete;
+    const reports: number[] = [];
+    el.addEventListener('scale-dimensions-changed', (e) =>
+      reports.push((e as CustomEvent<{thickness: number}>).detail.thickness)
+    );
+    // meet: the 132-tall drawing fits 100 px before the 384-long one fits 600
+    await until(() => Math.abs(scaleOf(el) - 100 / 132) < 1e-3);
+    const svg = svgOf(el);
+    const text = svg.querySelector('text')!;
+    const painted = svg.getScreenCTM()!.a;
+    expect(painted).toBeCloseTo(100 / 132, 3);
+    expect(parseFloat(getComputedStyle(text).fontSize) * painted).toBeCloseTo(
+      12,
+      1
+    );
+    await until(() => reports[reports.length - 1] === 100);
+  });
 });

@@ -26,7 +26,7 @@ const scaleOf = (el: Element) =>
 /** Default bands and no setpoint: 48 bar + 24 ticks + 60 labels = 132 thick. */
 async function mount(fixedAspectRatio = false): Promise<ObcGaugeVertical> {
   const screen = render(
-    html`<div style="display: block; width: 300px; height: 600px">
+    html`<div style="display: block; width: 480px; height: 600px">
       <obc-gauge-vertical
         .minValue=${0}
         .maxValue=${100}
@@ -189,5 +189,38 @@ describe('obc-gauge-vertical sizing', () => {
     expect(el.style.display).toBe('inline-block');
     expect(el.style.height).toBe('300px');
     expect(el.style.width).toBe('120px');
+  });
+
+  it('follows the painted scale when the host is narrower than the drawing', async () => {
+    const screen = render(
+      html`<div style="display: block; width: 120px; height: 600px">
+        <obc-gauge-vertical
+          .minValue=${0}
+          .maxValue=${100}
+          .value=${40}
+          .primaryTickmarkInterval=${20}
+          .fixedAspectRatio=${true}
+        ></obc-gauge-vertical>
+      </div>`
+    );
+    const el = screen.container.querySelector(
+      'obc-gauge-vertical'
+    ) as ObcGaugeVertical;
+    await el.updateComplete;
+    const reports: number[] = [];
+    el.addEventListener('scale-dimensions-changed', (e) =>
+      reports.push((e as CustomEvent<{thickness: number}>).detail.thickness)
+    );
+    // meet: the 132-wide drawing fits 120 px before the 384-long one fits 600
+    await until(() => Math.abs(scaleOf(el) - 120 / 132) < 1e-3);
+    const svg = svgOf(el);
+    const text = svg.querySelector('text')!;
+    const painted = svg.getScreenCTM()!.a;
+    expect(painted).toBeCloseTo(120 / 132, 3);
+    expect(parseFloat(getComputedStyle(text).fontSize) * painted).toBeCloseTo(
+      12,
+      1
+    );
+    await until(() => reports[reports.length - 1] === 120);
   });
 });

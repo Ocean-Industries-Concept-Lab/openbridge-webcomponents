@@ -155,6 +155,9 @@ export class ObcBarVertical extends AdviceMixin(
   @state()
   private _scale = 1;
 
+  /** The drawing's width in viewBox units, kept from the last render for the scale measurement. */
+  private _viewBoxThickness = 0;
+
   // ResizeController automatically subscribes/unsubscribes based on component lifecycle
   // @ts-expect-error - Controller is used for side effects, not accessed directly
   private _resizeController = new ResizeController(this, {
@@ -164,14 +167,12 @@ export class ObcBarVertical extends AdviceMixin(
       const entry = entries[0];
       if (!entry) return;
 
-      // Use the centralized function that computes scale based on reference size
-      // For vertical scales, compare container height to reference size
-      const containerMainAxisSize = entry.contentRect.height;
-
       this._scale = computeFixedAspectRatioScale({
         orientation: ExternalScaleOrientation.vertical,
-        containerMainAxisSize,
+        containerMainAxisSize: entry.contentRect.height,
+        containerCrossAxisSize: entry.contentRect.width,
         scaleReferenceSize: this.scaleReferenceSize,
+        viewBoxThickness: this._viewBoxThickness,
       });
 
       // Report scaled dimensions to parent chart
@@ -309,6 +310,7 @@ export class ObcBarVertical extends AdviceMixin(
     const layout = computeExternalScaleLayout(
       toExternalScaleLayoutConfig(config)
     );
+    this._viewBoxThickness = layout.thickness;
 
     const parts = renderExternalScale(config);
 
@@ -510,7 +512,9 @@ export class ObcBarVertical extends AdviceMixin(
         this._scale = computeFixedAspectRatioScale({
           orientation: ExternalScaleOrientation.vertical,
           containerMainAxisSize: containerHeight,
+          containerCrossAxisSize: this.clientWidth,
           scaleReferenceSize: this.scaleReferenceSize,
+          viewBoxThickness: this._viewBoxThickness,
         });
         this.requestUpdate();
         // Report updated dimensions to parent (matches pattern in ResizeController and _refreshBorderRadiusFromCssVar)
@@ -537,7 +541,9 @@ export class ObcBarVertical extends AdviceMixin(
         this._scale = computeFixedAspectRatioScale({
           orientation: ExternalScaleOrientation.vertical,
           containerMainAxisSize: rect.height,
+          containerCrossAxisSize: rect.width,
           scaleReferenceSize: this.scaleReferenceSize,
+          viewBoxThickness: this._viewBoxThickness,
         });
         // Report updated dimensions
         this.reportDimensions();

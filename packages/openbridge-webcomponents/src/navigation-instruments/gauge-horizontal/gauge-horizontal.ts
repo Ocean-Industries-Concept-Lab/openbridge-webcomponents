@@ -171,6 +171,9 @@ export class ObcGaugeHorizontal extends AdviceMixin(
   @state()
   private _scale = 1;
 
+  /** The drawing's height in viewBox units, kept from the last render for the scale measurement. */
+  private _viewBoxThickness = 0;
+
   // ResizeController automatically subscribes/unsubscribes based on component lifecycle
   // @ts-expect-error - Controller is used for side effects, not accessed directly
   private _resizeController = new ResizeController(this, {
@@ -180,14 +183,12 @@ export class ObcGaugeHorizontal extends AdviceMixin(
       const entry = entries[0];
       if (!entry) return;
 
-      // Use the centralized function that computes scale based on reference size
-      // For horizontal scales, compare container width to reference size
-      const containerMainAxisSize = entry.contentRect.width;
-
       const scale = computeFixedAspectRatioScale({
         orientation: ExternalScaleOrientation.horizontal,
-        containerMainAxisSize,
+        containerMainAxisSize: entry.contentRect.width,
+        containerCrossAxisSize: entry.contentRect.height,
         scaleReferenceSize: this.scaleReferenceSize,
+        viewBoxThickness: this._viewBoxThickness,
       });
       // Guard against zero-sized containers, but allow fractional scales < 1
       this._scale = scale > 0 ? scale : 1;
@@ -308,6 +309,7 @@ export class ObcGaugeHorizontal extends AdviceMixin(
     const layout = computeExternalScaleLayout(
       toExternalScaleLayoutConfig(config)
     );
+    this._viewBoxThickness = layout.thickness;
 
     const parts = renderExternalScale(config);
 
@@ -477,7 +479,9 @@ export class ObcGaugeHorizontal extends AdviceMixin(
         this._scale = computeFixedAspectRatioScale({
           orientation: ExternalScaleOrientation.horizontal,
           containerMainAxisSize: containerWidth,
+          containerCrossAxisSize: this.clientHeight,
           scaleReferenceSize: this.scaleReferenceSize,
+          viewBoxThickness: this._viewBoxThickness,
         });
         this.requestUpdate();
         this.reportDimensions();
