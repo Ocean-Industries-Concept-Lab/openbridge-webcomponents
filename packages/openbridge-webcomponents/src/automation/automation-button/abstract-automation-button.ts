@@ -175,6 +175,11 @@ export class ObcAbstractAutomationButton extends LitElement {
     return null;
   }
 
+  /** Whether the button is drawn grey; a subclass can add states of its own that are drawn the same way. */
+  get _static(): boolean {
+    return this.static;
+  }
+
   get _handlePosition(): AutomationButtonHandlePosition {
     return AutomationButtonHandlePosition.none;
   }
@@ -192,7 +197,7 @@ export class ObcAbstractAutomationButton extends LitElement {
     handle: ObcValveHandle
   ): HTMLTemplateResult | false {
     let state = this._on ? ValveHandleState.on : ValveHandleState.off;
-    if (this.static) {
+    if (this._static) {
       state = ValveHandleState.static;
     }
     return valveHandleIcon(
@@ -358,7 +363,7 @@ export class ObcAbstractAutomationButton extends LitElement {
       .orientation=${this._orientation}
       .hasBadgeSpacer=${this.getBadgeSpacer()}
       .handlePosition=${this._handlePosition}
-      .static=${this.static}
+      .static=${this._static}
       .handleSize=${this._handleSize}
       .positioning=${this.positioning}
       .selfActuationLine=${this._selfActuationLine}

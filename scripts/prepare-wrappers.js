@@ -11,6 +11,9 @@ const wrappers = [
     { path: "packages/openbridge-webcomponents-svelte" },
     { path: "packages/openbridge-webcomponents-react" },
     { path: "packages/openbridge-webcomponents-ng", publishFrom: "dist" },
+    // Not a wrapper, but released the same way: the core version, a ^version
+    // dependency on the core, and a build against the core's dist.
+    { path: "packages/openbridge-norvar" },
 ];
 
 for (const wrapper of wrappers) {

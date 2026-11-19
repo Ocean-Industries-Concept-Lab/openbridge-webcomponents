@@ -38,6 +38,7 @@
     ["@semantic-release/npm", { "pkgRoot": "./packages/openbridge-webcomponents-react" }],
     ["@semantic-release/npm", { "pkgRoot": "./packages/openbridge-webcomponents-ng/dist" }],
     ["@semantic-release/npm", { "pkgRoot": "./packages/openbridge-webcomponents/.full-bundle-publish" }],
+    ["@semantic-release/npm", { "pkgRoot": "./packages/openbridge-norvar", "npmPublish": false }],
     ["@semantic-release/github", {
       "successComment": false,
       "failComment": false
