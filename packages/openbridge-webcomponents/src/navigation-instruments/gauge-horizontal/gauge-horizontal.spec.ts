@@ -149,4 +149,21 @@ describe('obc-gauge-horizontal sizing', () => {
       90
     );
   });
+
+  it('leaves a consumer inline style alone in pixel mode', async () => {
+    const screen = render(
+      html`<obc-gauge-horizontal
+        style="display: none; width: 300px"
+        .minValue=${0}
+        .maxValue=${100}
+      ></obc-gauge-horizontal>`
+    );
+    const el = screen.container.querySelector(
+      'obc-gauge-horizontal'
+    ) as ObcGaugeHorizontal;
+    await el.updateComplete;
+    await frame();
+    expect(el.style.display).toBe('none');
+    expect(el.style.width).toBe('300px');
+  });
 });

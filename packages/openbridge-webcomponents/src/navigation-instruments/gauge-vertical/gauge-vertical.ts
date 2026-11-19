@@ -350,11 +350,13 @@ export class ObcGaugeVertical extends AdviceMixin(
   override updated(changed: PropertyValues) {
     super.updated(changed);
 
+    // Only the styles this element applied are removed: the first update
+    // lists every property, and a consumer's inline style is theirs.
     if (changed.has('fixedAspectRatio')) {
       if (this.fixedAspectRatio) {
         this._applyFixedAspectRatioStyles();
         this._updateScaleFromCurrentSize();
-      } else {
+      } else if (changed.get('fixedAspectRatio') === true) {
         this._removeFixedAspectRatioStyles();
         this._scale = 1;
       }

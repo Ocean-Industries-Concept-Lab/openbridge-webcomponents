@@ -149,4 +149,21 @@ describe('obc-gauge-vertical sizing', () => {
       90
     );
   });
+
+  it('leaves a consumer inline style alone in pixel mode', async () => {
+    const screen = render(
+      html`<obc-gauge-vertical
+        style="display: none; height: 300px"
+        .minValue=${0}
+        .maxValue=${100}
+      ></obc-gauge-vertical>`
+    );
+    const el = screen.container.querySelector(
+      'obc-gauge-vertical'
+    ) as ObcGaugeVertical;
+    await el.updateComplete;
+    await frame();
+    expect(el.style.display).toBe('none');
+    expect(el.style.height).toBe('300px');
+  });
 });
