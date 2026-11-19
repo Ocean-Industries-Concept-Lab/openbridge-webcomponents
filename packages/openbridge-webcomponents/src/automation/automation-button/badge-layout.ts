@@ -20,7 +20,7 @@
  *
  * @module
  */
-import type {ReactiveController, ReactiveControllerHost} from 'lit';
+import {notifyBadgeSettingsChanged} from './badge-settings-controller.js';
 
 export enum AutomationButtonBadgeKind {
   Control = 'control',
@@ -85,8 +85,6 @@ export function resolveBadgeLayout(
 let globalLayout: ResolvedAutomationButtonBadgeLayout = {
   ...defaultAutomationButtonBadgeLayout,
 };
-let globalVersion = 0;
-const hosts = new Set<ReactiveControllerHost>();
 
 /**
  * Sets the badge layout of every automation button on the page, and
@@ -96,39 +94,16 @@ export function setAutomationBadgeLayout(
   layout: AutomationButtonBadgeLayout | undefined
 ): void {
   globalLayout = resolveBadgeLayout(defaultAutomationButtonBadgeLayout, layout);
-  globalVersion++;
-  hosts.forEach((host) => host.requestUpdate());
+  notifyBadgeSettingsChanged();
 }
 
 export function getAutomationBadgeLayout(): ResolvedAutomationButtonBadgeLayout {
   return {...globalLayout};
 }
 
-/** Re-renders its host when the global badge layout changes. */
-export class BadgeLayoutController implements ReactiveController {
-  private renderedVersion = globalVersion;
-
-  constructor(private readonly host: ReactiveControllerHost) {
-    host.addController(this);
-  }
-
-  /** A layout set while the host was detached never reached it. */
-  hostConnected(): void {
-    hosts.add(this.host);
-    if (this.renderedVersion !== globalVersion) {
-      this.host.requestUpdate();
-    }
-  }
-
-  hostDisconnected(): void {
-    hosts.delete(this.host);
-  }
-
-  /** The global layout with the host's own corners on top. */
-  resolve(
-    local: AutomationButtonBadgeLayout | undefined
-  ): ResolvedAutomationButtonBadgeLayout {
-    this.renderedVersion = globalVersion;
-    return resolveBadgeLayout(globalLayout, local);
-  }
+/** The app-wide layout with a device's own corners on top. */
+export function currentBadgeLayout(
+  local: AutomationButtonBadgeLayout | undefined
+): ResolvedAutomationButtonBadgeLayout {
+  return resolveBadgeLayout(globalLayout, local);
 }
