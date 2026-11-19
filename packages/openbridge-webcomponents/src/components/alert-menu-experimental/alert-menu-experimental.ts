@@ -1,5 +1,6 @@
 import {TemplateResult, html, unsafeCSS} from 'lit';
 import {customElement} from '../../decorator.js';
+import {SignalWatcher} from '@lit-labs/signals';
 import compentStyle from './alert-menu-experimental.css?inline';
 import {ObcAlertMenu, type AlertMenuTab} from '../alert-menu/alert-menu.js';
 import '../../building-blocks/alert-list-experimental/alert-list-experimental.js';
@@ -7,7 +8,7 @@ import {
   ALERT_ACTION_ID_APPLIED_BY_ACK_VISIBLE_BUTTON,
   ownEntryOf,
 } from '../../alert-system/alert-standard.js';
-import {AlertStandardController} from '../../alert-system/configured-alert-standard.js';
+import {getAlertStandard} from '../../alert-system/configured-alert-standard.js';
 import {msg} from '@lit/localize';
 import '../../icons/icon-alerts.js';
 
@@ -56,20 +57,18 @@ export type ObcAlertMenuExperimentalAckAllVisibleClickEvent = CustomEvent<{
  * @experimental
  */
 @customElement('obc-alert-menu-experimental')
-export class ObcAlertMenuExperimental extends ObcAlertMenu {
-  private readonly alertStandardController = new AlertStandardController(this);
-
+export class ObcAlertMenuExperimental extends SignalWatcher(ObcAlertMenu) {
   protected override get offersAckAll(): boolean {
     return (
       ownEntryOf(
-        this.alertStandardController.standard?.actions,
+        getAlertStandard()?.actions,
         ALERT_ACTION_ID_APPLIED_BY_ACK_VISIBLE_BUTTON
       )?.canBeAppliedToSeveralAlertsAtOnce === true
     );
   }
 
   protected override get tabs(): AlertMenuTab[] {
-    const standard = this.alertStandardController.standard;
+    const standard = getAlertStandard();
     const tabsOfFilters = Object.entries(standard?.filters ?? {}).map(
       ([filterId, filter]) => ({
         name: filterId,
@@ -98,8 +97,7 @@ export class ObcAlertMenuExperimental extends ObcAlertMenu {
     content: TemplateResult
   ): TemplateResult {
     const tabIsAFilterOfTheStandard =
-      ownEntryOf(this.alertStandardController.standard?.filters, tab.name) !==
-      undefined;
+      ownEntryOf(getAlertStandard()?.filters, tab.name) !== undefined;
     return html`<obc-alert-list-experimental
       class="alert-list"
       .filterId=${tabIsAFilterOfTheStandard ? tab.name : undefined}

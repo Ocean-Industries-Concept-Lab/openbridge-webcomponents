@@ -140,10 +140,14 @@ in `iec-62923-alert-glyphs.ts`, apart from the IEC 62923 standard.
 - The bundle carries its own copy of the setting, so `bundle.ts` exports the
   `alert-system/` modules (`script/generate-bundle-entry.ts`) and a page
   using the bundle imports `setAlertStandard()` from it.
-- `AlertStandardController` re-renders a component when the standard
-  changes, also one that was disconnected while it changed, and reports the
-  change in `changedProperties` under `ALERT_STANDARD_CHANGE_KEY` so a list
-  filters again.
+- The standard is a signal (`@lit-labs/signals`, a Lit Labs package like
+  the `@lit-labs/observers` the library already ships), and every
+  experimental component extends `SignalWatcher`: a read while it updates
+  re-renders it when the standard changes, and the mixin requests an update
+  on every connect, so a component detached while the standard changed comes
+  back current. That update carries no changed property, so the lists
+  remember the standard their filter last ran under and compare. Nothing
+  sets the standard from inside an update, which would loop.
 - A story calls `setAlertStandard()` at the top of its `render`, next to the
   markup, so a reader copying the story copies the call too; the global
   `beforeEach` in `.storybook/preview.tsx` clears it first. A Docs page

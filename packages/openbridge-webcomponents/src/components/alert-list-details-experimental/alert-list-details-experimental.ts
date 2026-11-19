@@ -1,6 +1,7 @@
 import {LitElement, PropertyValues, html, unsafeCSS} from 'lit';
 import {ifDefined} from 'lit/directives/if-defined.js';
 import {customElement} from '../../decorator.js';
+import {SignalWatcher} from '@lit-labs/signals';
 import compentStyle from './alert-list-details-experimental.css?inline';
 import {localized, msg} from '@lit/localize';
 import {property, query, state} from 'lit/decorators.js';
@@ -16,11 +17,11 @@ import {
   initialsFromName,
 } from '../user-button/user-button.js';
 import type {StandardAlert} from '../../alert-system/standard-alert.js';
-import {ownEntryOf} from '../../alert-system/alert-standard.js';
 import {
-  ALERT_STANDARD_CHANGE_KEY,
-  AlertStandardController,
-} from '../../alert-system/configured-alert-standard.js';
+  ownEntryOf,
+  type AlertStandard,
+} from '../../alert-system/alert-standard.js';
+import {getAlertStandard} from '../../alert-system/configured-alert-standard.js';
 import {
   alertActionLabel,
   alertLabelOnTheDisplay,
@@ -517,7 +518,7 @@ export function getAlertRows(
  */
 @customElement('obc-alert-list-details-experimental')
 @localized()
-export class ObcAlertListDetailsExperimental extends LitElement {
+export class ObcAlertListDetailsExperimental extends SignalWatcher(LitElement) {
   // Reactive so a consumer changing the name re-renders the table.
   @property({type: String, attribute: 'aria-label'})
   override ariaLabel: string | null = null;
@@ -536,7 +537,9 @@ export class ObcAlertListDetailsExperimental extends LitElement {
   @property({type: Boolean, attribute: false}) defaultExpanded: boolean = true;
   @property({type: String}) selectedRowId?: string;
 
-  private readonly alertStandardController = new AlertStandardController(this);
+  // A standard change arrives as an update with no changed property, so the
+  // rows remember the standard they were last built under.
+  private alertStandardOfLastRows: AlertStandard | undefined;
 
   @query('obc-table')
   private alertList!: ObcTable;
@@ -560,10 +563,11 @@ export class ObcAlertListDetailsExperimental extends LitElement {
       !changed.has('columns') &&
       !changed.has('filterId') &&
       !changed.has('customFilter') &&
-      !(changed as PropertyValues).has(ALERT_STANDARD_CHANGE_KEY)
+      getAlertStandard() === this.alertStandardOfLastRows
     ) {
       return;
     }
+    this.alertStandardOfLastRows = getAlertStandard();
     const rows = getAlertRows(this.alerts, this.filterId, this.customFilter);
     this.allRowIds = new Set(rows.map((row) => row.rowId));
     const slotColumns = this.columns.filter(isSlotColumn);
@@ -760,7 +764,7 @@ export class ObcAlertListDetailsExperimental extends LitElement {
   }
 
   private get emptyState(): {icon: unknown; title: string} {
-    const standard = this.alertStandardController.standard;
+    const standard = getAlertStandard();
     if (standard === undefined) {
       return {
         icon: html`<obi-alerts></obi-alerts>`,

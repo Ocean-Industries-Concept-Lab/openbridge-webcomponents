@@ -1,11 +1,11 @@
 import {LitElement, html, nothing, unsafeCSS} from 'lit';
 import {property} from 'lit/decorators.js';
+import {SignalWatcher} from '@lit-labs/signals';
 import {customElement} from '../../decorator.js';
 import componentStyle from './alert-icon-experimental.css?inline';
 import {FlashingSpeed, type ResolvedFlashingSpeed} from '../../types.js';
 import {FlashingController} from '../../palettes/flashing-controller.js';
 import type {AlertStateDefinition} from '../../alert-system/alert-standard.js';
-import {AlertStandardController} from '../../alert-system/configured-alert-standard.js';
 import {findAlertStateDefinition} from '../../alert-system/read-standard-alert.js';
 
 /**
@@ -36,15 +36,11 @@ import {findAlertStateDefinition} from '../../alert-system/read-standard-alert.j
  * @experimental
  */
 @customElement('obc-alert-icon-experimental')
-export class ObcAlertIconExperimental extends LitElement {
+export class ObcAlertIconExperimental extends SignalWatcher(LitElement) {
   @property({type: String}) criticality = '';
   @property({type: String}) state = '';
   @property({type: String}) flashingSpeed: FlashingSpeed =
     FlashingSpeed.Default;
-
-  protected readonly alertStandardController = new AlertStandardController(
-    this
-  );
 
   protected readonly flashing = new FlashingController(
     this,

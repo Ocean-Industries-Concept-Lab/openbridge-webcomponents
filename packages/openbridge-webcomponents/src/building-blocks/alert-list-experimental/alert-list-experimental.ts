@@ -2,16 +2,17 @@ import {PropertyValues, unsafeCSS} from 'lit';
 import {property} from 'lit/decorators.js';
 import {localized, msg} from '@lit/localize';
 import {customElement} from '../../decorator.js';
+import {SignalWatcher} from '@lit-labs/signals';
 import compentStyle from './alert-list-experimental.css?inline';
 import {
   ObcAlertListBase,
   type AlertListEmptyFallback,
 } from '../alert-list/alert-list-base.js';
-import {ownEntryOf} from '../../alert-system/alert-standard.js';
 import {
-  ALERT_STANDARD_CHANGE_KEY,
-  AlertStandardController,
-} from '../../alert-system/configured-alert-standard.js';
+  ownEntryOf,
+  type AlertStandard,
+} from '../../alert-system/alert-standard.js';
+import {getAlertStandard} from '../../alert-system/configured-alert-standard.js';
 import {isAlertIncludedInFilter} from '../../alert-system/read-standard-alert.js';
 import type {AlertCriticalityAndState} from '../../alert-system/standard-alert.js';
 
@@ -61,11 +62,13 @@ function criticalityAndStateOfItem(
  */
 @customElement('obc-alert-list-experimental')
 @localized()
-export class ObcAlertListExperimental extends ObcAlertListBase {
+export class ObcAlertListExperimental extends SignalWatcher(ObcAlertListBase) {
   @property({type: String}) filterId?: string;
   @property({attribute: false}) customFilter?: (item: HTMLElement) => boolean;
 
-  private readonly alertStandardController = new AlertStandardController(this);
+  // A standard change arrives as an update with no changed property, so the
+  // filter remembers the standard it last ran under.
+  private alertStandardOfLastFilter: AlertStandard | undefined;
 
   protected override get observedItemAttributes(): string[] {
     return ['criticality', 'state'];
@@ -82,11 +85,12 @@ export class ObcAlertListExperimental extends ObcAlertListBase {
     return (
       changed.has('filterId') ||
       changed.has('customFilter') ||
-      changed.has(ALERT_STANDARD_CHANGE_KEY)
+      getAlertStandard() !== this.alertStandardOfLastFilter
     );
   }
 
   protected override applyFilter() {
+    this.alertStandardOfLastFilter = getAlertStandard();
     for (const item of this.alertItems) {
       item.hidden = !this.matchesFilter(item);
     }
@@ -94,7 +98,7 @@ export class ObcAlertListExperimental extends ObcAlertListBase {
   }
 
   protected override get emptyFallback(): AlertListEmptyFallback {
-    const standard = this.alertStandardController.standard;
+    const standard = getAlertStandard();
     if (standard === undefined) {
       return {title: msg('No alert standard is set')};
     }

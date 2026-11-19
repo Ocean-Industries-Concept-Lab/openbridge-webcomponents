@@ -1,6 +1,7 @@
 import {PropertyValues, html} from 'lit';
 import {property, query, state} from 'lit/decorators.js';
 import {customElement} from '../../decorator.js';
+import {SignalWatcher} from '@lit-labs/signals';
 import {
   ObcAlertListPageSmallBase,
   type AlertListPageMode,
@@ -10,7 +11,7 @@ import {
   ALERT_ACTION_ID_APPLIED_BY_ACK_VISIBLE_BUTTON,
   ownEntryOf,
 } from '../../alert-system/alert-standard.js';
-import {AlertStandardController} from '../../alert-system/configured-alert-standard.js';
+import {getAlertStandard} from '../../alert-system/configured-alert-standard.js';
 import {
   alertTimeFormatOnTheDisplay,
   isAlertActionOffered,
@@ -80,11 +81,11 @@ export type ObcAlertListPageSmallExperimentalRowClickEvent = CustomEvent<{
  * @experimental
  */
 @customElement('obc-alert-list-page-small-experimental')
-export class ObcAlertListPageSmallExperimental extends ObcAlertListPageSmallBase {
+export class ObcAlertListPageSmallExperimental extends SignalWatcher(
+  ObcAlertListPageSmallBase
+) {
   @property({type: String}) filterId?: string;
   @property({type: Array}) alerts: StandardAlert[] = [];
-
-  private readonly alertStandardController = new AlertStandardController(this);
 
   @state() private filterIdChosenInDropdown?: string;
 
@@ -98,7 +99,7 @@ export class ObcAlertListPageSmallExperimental extends ObcAlertListPageSmallBase
   }
 
   private get filterIdsOfStandard(): string[] {
-    return Object.keys(this.alertStandardController.standard?.filters ?? {});
+    return Object.keys(getAlertStandard()?.filters ?? {});
   }
 
   /** The chosen filter while the standard declares it, else the standard's first. */
@@ -111,7 +112,7 @@ export class ObcAlertListPageSmallExperimental extends ObcAlertListPageSmallBase
   }
 
   protected override get modes(): AlertListPageMode[] {
-    const filters = this.alertStandardController.standard?.filters ?? {};
+    const filters = getAlertStandard()?.filters ?? {};
     return Object.entries(filters).map(([filterId, filter]) => ({
       value: filterId,
       label: filter.label(),
@@ -129,7 +130,7 @@ export class ObcAlertListPageSmallExperimental extends ObcAlertListPageSmallBase
   protected override get offersAckAll(): boolean {
     return (
       ownEntryOf(
-        this.alertStandardController.standard?.actions,
+        getAlertStandard()?.actions,
         ALERT_ACTION_ID_APPLIED_BY_ACK_VISIBLE_BUTTON
       )?.canBeAppliedToSeveralAlertsAtOnce === true
     );

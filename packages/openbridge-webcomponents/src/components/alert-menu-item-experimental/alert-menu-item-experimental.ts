@@ -1,12 +1,12 @@
 import {LitElement, html, nothing, unsafeCSS} from 'lit';
 import {property} from 'lit/decorators.js';
+import {SignalWatcher} from '@lit-labs/signals';
 import {localized} from '@lit/localize';
 import componentStyle from './alert-menu-item-experimental.css?inline';
 import '../message-menu-item/message-menu-item.js';
 import '../alert-icon-experimental/alert-icon-experimental.js';
 import {ObcMessageMenuItemSize} from '../message-menu-item/message-menu-item.js';
 import {customElement} from '../../decorator.js';
-import {AlertStandardController} from '../../alert-system/configured-alert-standard.js';
 import {
   alertActionLabel,
   findAlertStateDefinition,
@@ -60,7 +60,7 @@ export type ObcAlertMenuItemExperimentalActionClickEvent = CustomEvent<{
  */
 @customElement('obc-alert-menu-item-experimental')
 @localized()
-export class ObcAlertMenuItemExperimental extends LitElement {
+export class ObcAlertMenuItemExperimental extends SignalWatcher(LitElement) {
   @property({type: String, reflect: true}) criticality = '';
   @property({type: String, reflect: true}) state = '';
   @property({type: String}) override title = '';
@@ -72,10 +72,6 @@ export class ObcAlertMenuItemExperimental extends LitElement {
   @property({type: String}) size: ObcMessageMenuItemSize =
     ObcMessageMenuItemSize.SingleLine;
   @property({type: Boolean}) animateIntro = false;
-
-  protected readonly alertStandardController = new AlertStandardController(
-    this
-  );
 
   private get stateDefinition() {
     return findAlertStateDefinition({

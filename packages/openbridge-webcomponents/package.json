@@ -78,6 +78,7 @@
   },
   "dependencies": {
     "@lit-labs/observers": "^2.1.0",
+    "@lit-labs/signals": "^0.3.0",
     "@lit/localize": "^0.12.2",
     "chart.js": "^4.6.1",
     "lit": "^3.3.3",

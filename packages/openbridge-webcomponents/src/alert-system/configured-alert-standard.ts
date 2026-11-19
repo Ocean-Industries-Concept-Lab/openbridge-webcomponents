@@ -7,6 +7,12 @@
  * own. Until then the components draw no alert, the lists and the menu say
  * that no standard is set, and the console says how to set one.
  *
+ * The standard is a signal (`@lit-labs/signals`). A component that extends
+ * `SignalWatcher` and reads it while it updates re-renders when it changes,
+ * and once more on every connect, so one detached while the standard
+ * changed comes back current. Nothing sets the standard from inside an
+ * update, which would loop.
+ *
  * Usage:
  * ```ts
  * import {setAlertStandard} from '.../alert-system/configured-alert-standard.js';
@@ -15,30 +21,24 @@
  * setAlertStandard(iec62923AlertStandard);
  * ```
  */
-import type {ReactiveController, ReactiveElement} from 'lit';
+import {signal} from '@lit-labs/signals';
 import type {AlertStandard} from './alert-standard.js';
 
-let configuredAlertStandard: AlertStandard | undefined;
-
-const listenersToAlertStandardChanges = new Set<
-  (previousAlertStandard: AlertStandard | undefined) => void
->();
+const configuredAlertStandard = signal<AlertStandard | undefined>(undefined);
 
 let missingAlertStandardWasReported = false;
 
 export function setAlertStandard(standard: AlertStandard | undefined): void {
-  if (standard === configuredAlertStandard) {
-    return;
-  }
-  const previousAlertStandard = configuredAlertStandard;
-  configuredAlertStandard = standard;
-  for (const listener of [...listenersToAlertStandardChanges]) {
-    listener(previousAlertStandard);
-  }
+  configuredAlertStandard.set(standard);
 }
 
+/** The configured standard; a read while none is set says once in the console how to set one. */
 export function getAlertStandard(): AlertStandard | undefined {
-  return configuredAlertStandard;
+  const standard = configuredAlertStandard.get();
+  if (standard === undefined) {
+    reportMissingAlertStandardOnce();
+  }
+  return standard;
 }
 
 function reportMissingAlertStandardOnce() {
@@ -51,59 +51,4 @@ function reportMissingAlertStandardOnce() {
       'Call setAlertStandard() from alert-system/configured-alert-standard.js with ' +
       'iec62923AlertStandard, isa182AlertStandard or a standard defined with defineAlertStandard().'
   );
-}
-
-/** The key under which a host's `changedProperties` reports a new alert standard. */
-export const ALERT_STANDARD_CHANGE_KEY = 'alertStandard';
-
-/**
- * Re-renders its host when the configured alert standard changes, also one
- * that was disconnected while it changed, and reports a missing one in the
- * console.
- */
-export class AlertStandardController implements ReactiveController {
-  /** What the host last rendered by, so a reconnect can tell whether it is stale. */
-  private alertStandardAtLastUpdate: AlertStandard | undefined;
-
-  private readonly requestHostUpdateWithPreviousAlertStandard = (
-    previousAlertStandard: AlertStandard | undefined
-  ) =>
-    this.host.requestUpdate(ALERT_STANDARD_CHANGE_KEY, previousAlertStandard, {
-      hasChanged: () => true,
-    });
-
-  constructor(private readonly host: ReactiveElement) {
-    host.addController(this);
-  }
-
-  get standard(): AlertStandard | undefined {
-    return configuredAlertStandard;
-  }
-
-  hostConnected() {
-    listenersToAlertStandardChanges.add(
-      this.requestHostUpdateWithPreviousAlertStandard
-    );
-    if (
-      this.host.hasUpdated &&
-      configuredAlertStandard !== this.alertStandardAtLastUpdate
-    ) {
-      this.requestHostUpdateWithPreviousAlertStandard(
-        this.alertStandardAtLastUpdate
-      );
-    }
-  }
-
-  hostDisconnected() {
-    listenersToAlertStandardChanges.delete(
-      this.requestHostUpdateWithPreviousAlertStandard
-    );
-  }
-
-  hostUpdate() {
-    this.alertStandardAtLastUpdate = configuredAlertStandard;
-    if (configuredAlertStandard === undefined) {
-      reportMissingAlertStandardOnce();
-    }
-  }
 }
