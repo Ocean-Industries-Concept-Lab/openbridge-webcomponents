@@ -15,6 +15,25 @@ const meta: Meta = {
   tags: ['autodocs', '6.0'],
   component: 'obc-gauge-horizontal',
   argTypes: {
+    // Fixed by design and not API; the manifest lists the fields, so the
+    // table would otherwise show dead controls.
+    width: {table: {disable: true}},
+    paddingLeft: {table: {disable: true}},
+    paddingRight: {table: {disable: true}},
+    barThickness: {table: {disable: true}},
+    tickThickness: {table: {disable: true}},
+    labelThickness: {table: {disable: true}},
+    scaleType: {table: {disable: true}},
+    frameStyle: {table: {disable: true}},
+    borderRadius: {table: {disable: true}},
+    hasBar: {table: {disable: true}},
+    hasScale: {table: {disable: true}},
+    scaleBackground: {table: {disable: true}},
+    advicePosition: {table: {disable: true}},
+    // Demonstrated by Fixed Aspect Ratio Comparison: it is the host's width
+    // that the fixed-aspect gauge fills, so the control alone shows little.
+    fixedAspectRatio: {control: false},
+    scaleReferenceSize: {control: false},
     minValue: {control: {type: 'range', min: -100, max: 100}},
     maxValue: {control: {type: 'range', min: 0, max: 1000}},
     reverse: {control: {type: 'boolean'}},
@@ -543,4 +562,88 @@ export const Reversed: Story = {
     primaryTickmarkInterval: 2,
     secondaryTickmarkInterval: 1,
   },
+};
+
+/**
+ * `obc-gauge-horizontal` is a fixed-config gauge: it draws at the design's 384 px
+ * reference width with the bar, tick and label bands at their design
+ * thickness. That number is where the drawing is 1:1, not a layout limit.
+ *
+ * - **fixedAspectRatio=false (default)**: a 384 px wide SVG, whatever the box does.
+ * - **fixedAspectRatio=true**: the whole gauge scales to the width of its host
+ *   like a vector image and the labels keep their font size; `scaleReferenceSize`
+ *   is the host width at which it is 1:1. Size the host, the gauge fills it.
+ *
+ * For a scale whose length follows the layout while the bands keep their design
+ * thickness, use `obc-bar-horizontal` with `width` from a ResizeObserver, as the
+ * table's bar cells and the chart slots do.
+ *
+ * Drag the corner of each box to resize it.
+ */
+export const FixedAspectRatioComparison: StoryObj = {
+  tags: ['skip-test'],
+  render: () => html`
+    <style>
+      .far-wrapper {
+        display: grid;
+        grid-template-rows: 1fr 1fr;
+        gap: 32px;
+        padding: 16px;
+        width: 600px;
+        height: 520px;
+      }
+      .far-box {
+        display: flex;
+        flex-direction: column;
+        padding: 16px;
+        border: 2px dashed var(--instrument-frame-tertiary-color);
+        resize: both;
+        overflow: auto;
+        min-width: 200px;
+        min-height: 100px;
+      }
+      .far-box-fixed {
+        border-color: var(--instrument-enhanced-primary-color);
+      }
+      .far-label {
+        flex-shrink: 0;
+        margin-bottom: 8px;
+        font-family: var(--font-family-main);
+        font-size: 14px;
+        color: var(--instrument-frame-tertiary-color);
+      }
+      .far-box-fixed .far-label {
+        color: var(--instrument-enhanced-primary-color);
+      }
+    </style>
+    <div class="far-wrapper">
+      <div class="far-box">
+        <div class="far-label">
+          fixedAspectRatio=false (default): 384 px wide, whatever the box does
+        </div>
+        <obc-gauge-horizontal
+          .minValue=${-20}
+          .maxValue=${120}
+          .value=${60}
+          .setpoint=${80}
+          .primaryTickmarkInterval=${20}
+          .priority=${Priority.regular}
+        ></obc-gauge-horizontal>
+      </div>
+      <div class="far-box far-box-fixed">
+        <div class="far-label">
+          fixedAspectRatio=true: fills the box width, labels keep their size
+        </div>
+        <obc-gauge-horizontal
+          .fixedAspectRatio=${true}
+          .minValue=${-20}
+          .maxValue=${120}
+          .value=${60}
+          .setpoint=${80}
+          .primaryTickmarkInterval=${20}
+          .priority=${Priority.enhanced}
+        ></obc-gauge-horizontal>
+      </div>
+    </div>
+  `,
 };
