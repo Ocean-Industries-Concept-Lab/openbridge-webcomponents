@@ -286,6 +286,8 @@ export class ObcAutomationBadge extends LitElement {
         ></obi-alert-off-filled
         ><obi-alert-off-filled class="icon"></obi-alert-off-filled>`;
     } else if (this.type === ObcAutomationBadgeType.AlertShelved) {
+      // TODO(designer): the sketch draws shelved as a diamond with a plus and
+      // the alert counter uses a timer; this badge keeps alerts-shelf (#1424)
       return html`<obi-alerts-shelf class="icon siluette"></obi-alerts-shelf
         ><obi-alerts-shelf class="icon"></obi-alerts-shelf>`;
     } else if (this.type === ObcAutomationBadgeType.Simulation) {
