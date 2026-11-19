@@ -82,6 +82,14 @@ export const WithBadges: Story = {
   },
 };
 
+export const WithSimulationBadge: Story = {
+  args: {
+    open: true,
+    value: 20,
+    badgeCommandLocked: AutomationButtonBadgeCommandLocked.Simulation,
+  },
+};
+
 export const ClosedWithHandle: Story = {
   args: {
     open: false,
