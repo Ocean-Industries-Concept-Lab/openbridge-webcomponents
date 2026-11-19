@@ -27,7 +27,7 @@ import type {
   AutomationButtonBadgeInterlock,
 } from './abstract-automation-button.js';
 import {ObcAutomationBadgeType} from '../automation-badge/automation-badge.js';
-import {notifyBadgeSettingsChanged} from './badge-settings-controller.js';
+import {GlobalSetting} from '../../internal/global-setting.js';
 
 /** The letters `obc-automation-badge` draws: `letter-a` to `letter-z`. */
 type LowercaseLetter = `${ObcAutomationBadgeType}` extends infer Type
@@ -140,7 +140,9 @@ export function mergeBadgeSymbolOverride(
   return result;
 }
 
-let globalOverride: AutomationBadgeSymbolOverride = {};
+/** The app-wide letters; a device re-renders on a change through `BadgeSettingsController`. */
+export const badgeSymbolOverrideSetting =
+  new GlobalSetting<AutomationBadgeSymbolOverride>({});
 
 /**
  * Sets the letters that replace badge symbols on every automation device on
@@ -150,17 +152,16 @@ let globalOverride: AutomationBadgeSymbolOverride = {};
 export function setAutomationBadgeSymbolOverride(
   override: AutomationBadgeSymbolOverride | undefined
 ): void {
-  globalOverride = mergeBadgeSymbolOverride(undefined, override);
-  notifyBadgeSettingsChanged();
+  badgeSymbolOverrideSetting.set(mergeBadgeSymbolOverride(undefined, override));
 }
 
 export function getAutomationBadgeSymbolOverride(): AutomationBadgeSymbolOverride {
-  return mergeBadgeSymbolOverride(undefined, globalOverride);
+  return mergeBadgeSymbolOverride(undefined, badgeSymbolOverrideSetting.get());
 }
 
 /** The app-wide letters with a device's own letters on top. */
 export function currentBadgeSymbolOverride(
   local: AutomationBadgeSymbolOverride | undefined
 ): AutomationBadgeSymbolOverride {
-  return mergeBadgeSymbolOverride(globalOverride, local);
+  return mergeBadgeSymbolOverride(badgeSymbolOverrideSetting.get(), local);
 }

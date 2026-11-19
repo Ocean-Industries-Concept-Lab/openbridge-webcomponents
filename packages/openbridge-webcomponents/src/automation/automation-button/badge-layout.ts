@@ -20,7 +20,7 @@
  *
  * @module
  */
-import {notifyBadgeSettingsChanged} from './badge-settings-controller.js';
+import {GlobalSetting} from '../../internal/global-setting.js';
 
 export enum AutomationButtonBadgeKind {
   Control = 'control',
@@ -82,9 +82,11 @@ export function resolveBadgeLayout(
   return result;
 }
 
-let globalLayout: ResolvedAutomationButtonBadgeLayout = {
-  ...defaultAutomationButtonBadgeLayout,
-};
+/** The app-wide layout; a device re-renders on a change through `BadgeSettingsController`. */
+export const badgeLayoutSetting =
+  new GlobalSetting<ResolvedAutomationButtonBadgeLayout>({
+    ...defaultAutomationButtonBadgeLayout,
+  });
 
 /**
  * Sets the badge layout of every automation button on the page, and
@@ -93,17 +95,18 @@ let globalLayout: ResolvedAutomationButtonBadgeLayout = {
 export function setAutomationBadgeLayout(
   layout: AutomationButtonBadgeLayout | undefined
 ): void {
-  globalLayout = resolveBadgeLayout(defaultAutomationButtonBadgeLayout, layout);
-  notifyBadgeSettingsChanged();
+  badgeLayoutSetting.set(
+    resolveBadgeLayout(defaultAutomationButtonBadgeLayout, layout)
+  );
 }
 
 export function getAutomationBadgeLayout(): ResolvedAutomationButtonBadgeLayout {
-  return {...globalLayout};
+  return {...badgeLayoutSetting.get()};
 }
 
 /** The app-wide layout with a device's own corners on top. */
 export function currentBadgeLayout(
   local: AutomationButtonBadgeLayout | undefined
 ): ResolvedAutomationButtonBadgeLayout {
-  return resolveBadgeLayout(globalLayout, local);
+  return resolveBadgeLayout(badgeLayoutSetting.get(), local);
 }
