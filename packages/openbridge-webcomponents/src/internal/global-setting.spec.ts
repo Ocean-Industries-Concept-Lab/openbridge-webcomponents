@@ -1,42 +1,47 @@
 import {beforeEach, describe, expect, it} from 'vitest';
-import {LitElement, html} from 'lit';
+import {LitElement, html, type PropertyValues} from 'lit';
 import {GlobalSetting} from './global-setting.js';
 
 const label = new GlobalSetting('one');
 
-class SettingHost extends LitElement {
-  private readonly label = label.controller(this);
-  renders = 0;
+type SettingHost = LitElement & {renders: number};
 
-  override render() {
-    this.renders++;
-    return html`${this.label.value}`;
+// Registered on first use rather than at module scope: the wrapper
+// generators read every module-level element definition, specs included.
+function settingHost(leavesDuringUpdate = false): SettingHost {
+  const tag = leavesDuringUpdate
+    ? 'test-global-setting-leaving-host'
+    : 'test-global-setting-host';
+  if (!customElements.get(tag)) {
+    const Host = class extends LitElement {
+      private readonly label = label.controller(this);
+      renders = 0;
+
+      override render() {
+        this.renders++;
+        return html`${this.label.value}`;
+      }
+    };
+    customElements.define(
+      tag,
+      leavesDuringUpdate
+        ? class extends Host {
+            private left = false;
+
+            /** Leaves the page from inside its own update, and changes the setting before the update completes. */
+            override update(changed: PropertyValues) {
+              super.update(changed);
+              if (!this.left) {
+                this.left = true;
+                this.remove();
+                label.set('two');
+              }
+            }
+          }
+        : Host
+    );
   }
-}
-customElements.define('test-global-setting-host', SettingHost);
-
-/** Leaves the page from inside its own update, and changes the setting before the update completes. */
-class SelfRemovingHost extends SettingHost {
-  private removedOnce = false;
-
-  override update(changed: Map<PropertyKey, unknown>) {
-    super.update(changed);
-    if (!this.removedOnce) {
-      this.removedOnce = true;
-      this.remove();
-      label.set('two');
-    }
-  }
-}
-customElements.define(
-  'test-global-setting-self-removing-host',
-  SelfRemovingHost
-);
-
-function mount(): SettingHost {
-  const host = document.createElement(
-    'test-global-setting-host'
-  ) as SettingHost;
+  const host = document.createElement(tag) as SettingHost;
   document.body.appendChild(host);
   return host;
 }
@@ -48,8 +53,8 @@ describe('GlobalSetting', () => {
   });
 
   it('renders the value, and set() re-renders every connected host', async () => {
-    const first = mount();
-    const second = mount();
+    const first = settingHost();
+    const second = settingHost();
     await first.updateComplete;
     await second.updateComplete;
     expect(first.shadowRoot!.textContent).toBe('one');
@@ -64,7 +69,7 @@ describe('GlobalSetting', () => {
   });
 
   it('does nothing when the same value is set again', async () => {
-    const host = mount();
+    const host = settingHost();
     await host.updateComplete;
 
     label.set('one');
@@ -74,7 +79,7 @@ describe('GlobalSetting', () => {
   });
 
   it('leaves a detached host alone and lets it catch up on reconnect', async () => {
-    const host = mount();
+    const host = settingHost();
     await host.updateComplete;
 
     host.remove();
@@ -89,10 +94,7 @@ describe('GlobalSetting', () => {
   });
 
   it('counts a change during a render that left the page as not rendered', async () => {
-    const host = document.createElement(
-      'test-global-setting-self-removing-host'
-    ) as SelfRemovingHost;
-    document.body.appendChild(host);
+    const host = settingHost(true);
     await host.updateComplete;
     expect(host.isConnected).toBe(false);
     expect(host.shadowRoot!.textContent).toBe('one');
@@ -105,7 +107,7 @@ describe('GlobalSetting', () => {
   });
 
   it('does not re-render a host reattached while nothing changed', async () => {
-    const host = mount();
+    const host = settingHost();
     await host.updateComplete;
 
     host.remove();
