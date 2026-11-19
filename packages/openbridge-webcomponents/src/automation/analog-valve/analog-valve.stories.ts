@@ -9,6 +9,7 @@ import {AutomationButtonReadoutStackSize} from '../../components/automation-butt
 import './analog-valve.js';
 import {crossDecorator} from '../../storybook-util.js';
 import '../automation-badge/automation-badge.js';
+import '../../icons/icon-pressure.js';
 import {argTypesAbstractAutomationButtonPassiveRound} from '../automation-button/abstract-automation-button-storybook-helpers.js';
 import {
   AutomationButtonBadgeAlert,
@@ -16,6 +17,7 @@ import {
   AutomationButtonBadgeControl,
   AutomationButtonBadgeInterlock,
 } from '../automation-button/abstract-automation-button.js';
+import {ObcAlertFrameType} from '../../components/alert-frame/alert-frame.js';
 
 const meta: Meta<typeof ObcAnalogValve> = {
   title: 'Automation/Automation Devices/Analog Valve',
@@ -80,6 +82,31 @@ export const WithBadges: Story = {
     badgeInterlock: AutomationButtonBadgeInterlock.Interlock,
     badgeCommandLocked: AutomationButtonBadgeCommandLocked.CommandLocked,
   },
+};
+
+export const AlertFrameWithIcon: Story = {
+  args: {
+    open: true,
+    value: 20,
+    alert: true,
+    alertFrameType: ObcAlertFrameType.LargeSideFlip,
+    showAlertIcon: true,
+  },
+  render: (args) => html`
+    <obc-analog-valve
+      .open=${args.open}
+      .value=${args.value}
+      .tag=${args.tag}
+      .readoutPosition=${args.readoutPosition}
+      .readoutSize=${args.readoutSize}
+      .showReadoutStack=${args.showReadoutStack}
+      ?alert=${args.alert}
+      .alertFrameType=${args.alertFrameType}
+      .showAlertIcon=${args.showAlertIcon}
+    >
+      <obi-pressure slot="alert-icon"></obi-pressure>
+    </obc-analog-valve>
+  `,
 };
 
 export const ClosedWithHandle: Story = {

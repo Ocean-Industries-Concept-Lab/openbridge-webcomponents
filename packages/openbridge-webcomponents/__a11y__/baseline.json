@@ -635,6 +635,9 @@
   "automation-tanks-tank--responsive": ["label-content-name-mismatch"],
   "automation-tanks-tank--rich": ["label-content-name-mismatch"],
   "automation-tanks-tank--with-alert-alarm": ["label-content-name-mismatch"],
+  "automation-tanks-tank--with-alert-bottom-flip": [
+    "label-content-name-mismatch"
+  ],
   "automation-tanks-tank--with-alert-caution-compact": [
     "label-content-name-mismatch"
   ],
