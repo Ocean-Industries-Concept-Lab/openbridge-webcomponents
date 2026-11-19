@@ -440,21 +440,33 @@ export class ObcGaugeHorizontal extends AdviceMixin(
     }
   }
 
+  /** The inline sizing the consumer had before fixedAspectRatio took the host. */
+  private _consumerSizing?: {display: string; width: string; height: string};
+
   /**
    * A custom element is inline by default, which gives the percentage-sized
    * SVG nothing to fill; in fixedAspectRatio mode the host is a block that
    * takes its container's width.
    */
   private _applyFixedAspectRatioStyles(): void {
+    if (!this._consumerSizing) {
+      this._consumerSizing = {
+        display: this.style.display,
+        width: this.style.width,
+        height: this.style.height,
+      };
+    }
     this.style.display = 'block';
     this.style.width = '100%';
     this.style.height = 'auto';
   }
 
   private _removeFixedAspectRatioStyles(): void {
-    this.style.display = '';
-    this.style.width = '';
-    this.style.height = '';
+    const saved = this._consumerSizing;
+    this._consumerSizing = undefined;
+    this.style.display = saved?.display ?? '';
+    this.style.width = saved?.width ?? '';
+    this.style.height = saved?.height ?? '';
   }
 
   /** Reads the host's width once layout has settled, then reports it. */

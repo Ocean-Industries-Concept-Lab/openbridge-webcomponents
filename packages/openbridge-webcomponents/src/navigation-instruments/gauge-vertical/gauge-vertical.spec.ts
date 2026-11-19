@@ -26,7 +26,7 @@ const scaleOf = (el: Element) =>
 /** Default bands and no setpoint: 48 bar + 24 ticks + 60 labels = 132 thick. */
 async function mount(fixedAspectRatio = false): Promise<ObcGaugeVertical> {
   const screen = render(
-    html`<div style="display: block; width: 200px; height: 600px">
+    html`<div style="display: block; width: 300px; height: 600px">
       <obc-gauge-vertical
         .minValue=${0}
         .maxValue=${100}
@@ -165,5 +165,29 @@ describe('obc-gauge-vertical sizing', () => {
     await frame();
     expect(el.style.display).toBe('none');
     expect(el.style.height).toBe('300px');
+  });
+
+  it('gives a consumer inline style back after a toggle cycle', async () => {
+    const screen = render(
+      html`<div style="display: block; width: 300px; height: 600px">
+        <obc-gauge-vertical
+          style="display: inline-block; height: 300px; width: 120px"
+          .minValue=${0}
+          .maxValue=${100}
+        ></obc-gauge-vertical>
+      </div>`
+    );
+    const el = screen.container.querySelector(
+      'obc-gauge-vertical'
+    ) as ObcGaugeVertical;
+    await el.updateComplete;
+    el.fixedAspectRatio = true;
+    await until(() => scaleOf(el) !== 1);
+    expect(el.style.height).toBe('100%');
+    el.fixedAspectRatio = false;
+    await el.updateComplete;
+    expect(el.style.display).toBe('inline-block');
+    expect(el.style.height).toBe('300px');
+    expect(el.style.width).toBe('120px');
   });
 });

@@ -26,7 +26,7 @@ const scaleOf = (el: Element) =>
 /** Default bands and no setpoint: 48 bar + 24 ticks + 60 labels = 132 thick. */
 async function mount(fixedAspectRatio = false): Promise<ObcGaugeHorizontal> {
   const screen = render(
-    html`<div style="display: block; width: 600px; height: 200px">
+    html`<div style="display: block; width: 600px; height: 260px">
       <obc-gauge-horizontal
         .minValue=${0}
         .maxValue=${100}
@@ -164,6 +164,30 @@ describe('obc-gauge-horizontal sizing', () => {
     await el.updateComplete;
     await frame();
     expect(el.style.display).toBe('none');
+    expect(el.style.width).toBe('300px');
+  });
+
+  it('gives a consumer inline style back after a toggle cycle', async () => {
+    const screen = render(
+      html`<div style="display: block; width: 600px; height: 260px">
+        <obc-gauge-horizontal
+          style="display: inline-block; height: 120px; width: 300px"
+          .minValue=${0}
+          .maxValue=${100}
+        ></obc-gauge-horizontal>
+      </div>`
+    );
+    const el = screen.container.querySelector(
+      'obc-gauge-horizontal'
+    ) as ObcGaugeHorizontal;
+    await el.updateComplete;
+    el.fixedAspectRatio = true;
+    await until(() => scaleOf(el) !== 1);
+    expect(el.style.width).toBe('100%');
+    el.fixedAspectRatio = false;
+    await el.updateComplete;
+    expect(el.style.display).toBe('inline-block');
+    expect(el.style.height).toBe('120px');
     expect(el.style.width).toBe('300px');
   });
 });
