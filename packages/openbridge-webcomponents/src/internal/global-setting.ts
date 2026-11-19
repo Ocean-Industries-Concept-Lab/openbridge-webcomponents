@@ -67,12 +67,14 @@ export class GlobalSetting<T> {
 /** Keeps one host rendered with the current value of a `GlobalSetting`. */
 export class GlobalSettingController<T> implements ReactiveController {
   private renderedVersion: number;
+  private renderingVersion: number;
 
   constructor(
     private readonly host: ReactiveControllerHost,
     private readonly setting: GlobalSetting<T>
   ) {
     this.renderedVersion = setting.version;
+    this.renderingVersion = setting.version;
     host.addController(this);
   }
 
@@ -92,7 +94,12 @@ export class GlobalSettingController<T> implements ReactiveController {
     this.setting.detach(this.host);
   }
 
+  /** The version a render starts from; a change while it runs detached must not count as rendered. */
+  hostUpdate(): void {
+    this.renderingVersion = this.setting.version;
+  }
+
   hostUpdated(): void {
-    this.renderedVersion = this.setting.version;
+    this.renderedVersion = this.renderingVersion;
   }
 }
