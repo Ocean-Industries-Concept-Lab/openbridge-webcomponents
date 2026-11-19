@@ -229,6 +229,8 @@ The abstract base exposes four **enum-driven** badge properties (defined in `abs
 
 Badge spacer logic is computed from readout position and which badges are present (enum-resolved or slotted). Do not hard-code spacer visibility.
 
+`obc-automation-badge` also draws one capital letter (`letter-a` to `letter-z`) as text in the body font, sized to the outlines of the design; no corner enum exposes the letters until their corner is settled (§ Open).
+
 `obc-automation-tank` mirrors the same four properties and the same enum imports, but rendering happens inside its own `.badges` cell — the corner-slot model does not apply there. When adding a new button-based device, spread `argTypesAbstractAutomationButton` (or one of its variant-specific re-exports) into the story meta so the four select controls are exposed in Storybook (see `analog-valve.stories.ts` for the canonical pattern).
 
 **Exception — the `obc-automation-button` primitive.** The badge enum API lives only on `ObcAbstractAutomationButton`. The underlying `obc-automation-button` element (`class ObcAutomationButton extends LitElement`) exposes only the four named slots (`badge-top-right`, `badge-top-left`, `badge-bottom-left`, `badge-bottom-right`) and has no `badgeControl`/`badgeAlert`/`badgeInterlock`/`badgeCommandLocked` properties. Do **not** spread `argTypesAbstractAutomationButton*` into `automation-button.stories.ts` — the toggles would be inert because the primitive cannot resolve enums to badges. Use the slot API directly there (see `ValveBadges` / `DamperBadges` for the pattern). The wrapper does the enum-to-badge resolution and projects `<obc-automation-badge>` into the primitive's slots.
@@ -254,3 +256,4 @@ Different components have different anchor points:
 - Shuffle selectors slide 100 ms on selection change; the Figma frames are WIP and specify no motion, so keep or remove is a designer call (#1171).
 - The abstract button base does not pass on the alert flap slots, so the 19 devices cannot fill a flap (#1334).
 - The analog valve's open symbol carries its own handle bar, turning with `value`; with `handle` set both show. Whether the bar stays, and whether 0 % takes the `twoway-analog-0` icon, is with the design side (#1416).
+- Which corner the simulated and letter badges take: the design sketch puts simulated top-left, where `badgeControl` lives; the four-corner model stays the standard until the alert-standards pattern (#1333) gives applications a way to override it (#1330).

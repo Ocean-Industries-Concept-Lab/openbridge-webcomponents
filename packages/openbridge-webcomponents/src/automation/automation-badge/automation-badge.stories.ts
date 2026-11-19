@@ -47,9 +47,35 @@ export const AllVariants: Story = {
       <div
         style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;"
       >
-        ${Object.values(ObcAutomationBadgeType).map((type) =>
-          Object.values(ObcAutomationBadgeMode).map(
-            (mode) => html`
+        ${Object.values(ObcAutomationBadgeType)
+          .filter((type) => !type.startsWith('letter-'))
+          .map((type) =>
+            Object.values(ObcAutomationBadgeMode).map(
+              (mode) => html`
+                <obc-automation-badge
+                  .mode=${mode}
+                  .type=${type}
+                ></obc-automation-badge>
+              `
+            )
+          )}
+      </div>
+    `;
+  },
+};
+
+export const Letters: Story = {
+  render() {
+    const letters = Object.values(ObcAutomationBadgeType).filter((type) =>
+      type.startsWith('letter-')
+    );
+    return html`
+      <div
+        style="display: grid; grid-template-columns: repeat(${letters.length}, auto); gap: 10px; justify-content: start;"
+      >
+        ${Object.values(ObcAutomationBadgeMode).map((mode) =>
+          letters.map(
+            (type) => html`
               <obc-automation-badge
                 .mode=${mode}
                 .type=${type}
@@ -107,6 +133,12 @@ export const AlertShelved: Story = {
 export const Simulation: Story = {
   args: {
     type: ObcAutomationBadgeType.Simulation,
+  },
+};
+
+export const Letter: Story = {
+  args: {
+    type: ObcAutomationBadgeType.LetterS,
   },
 };
 
