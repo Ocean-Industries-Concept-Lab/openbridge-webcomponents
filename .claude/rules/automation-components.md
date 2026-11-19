@@ -219,16 +219,18 @@ The abstract button base, `obc-automation-tank`, the specialty-tank base and `ob
 
 ## Badge Positioning
 
-The abstract base exposes four **enum-driven** badge properties (defined in `abstract-automation-button.ts`) that render an `<obc-automation-badge>` in a fixed corner slot. Each defaults to `None` (no badge); a non-`None` value resolves to a specific `ObcAutomationBadgeType`. The legacy `badge-top-*` / `badge-bottom-*` slots still work and override the enum default for backward compatibility.
+The abstract base exposes four **enum-driven** badge properties (defined in `abstract-automation-button.ts`) that render an `<obc-automation-badge>` in a corner slot. Each defaults to `None` (no badge); a non-`None` value resolves to a specific `ObcAutomationBadgeType`. The legacy `badge-top-*` / `badge-bottom-*` slots still work and override the enum default for backward compatibility.
 
-| Property             | Enum                                 | Values                                                         | Corner       |
-| -------------------- | ------------------------------------ | -------------------------------------------------------------- | ------------ |
-| `badgeControl`       | `AutomationButtonBadgeControl`       | `none`, `local`, `local-only`, `manual`, `manual-only`, `auto` | top-left     |
-| `badgeAlert`         | `AutomationButtonBadgeAlert`         | `none`, `silence`, `caution`, `warning`, `alarm`               | top-right    |
-| `badgeInterlock`     | `AutomationButtonBadgeInterlock`     | `none`, `interlock`, `interlock-inhibit`                       | bottom-left  |
-| `badgeCommandLocked` | `AutomationButtonBadgeCommandLocked` | `none`, `command-locked`                                       | bottom-right |
+| Property             | Enum                                 | Values                                                         | Default corner |
+| -------------------- | ------------------------------------ | -------------------------------------------------------------- | -------------- |
+| `badgeControl`       | `AutomationButtonBadgeControl`       | `none`, `local`, `local-only`, `manual`, `manual-only`, `auto` | top-left       |
+| `badgeAlert`         | `AutomationButtonBadgeAlert`         | `none`, `silence`, `caution`, `warning`, `alarm`               | top-right      |
+| `badgeInterlock`     | `AutomationButtonBadgeInterlock`     | `none`, `interlock`, `interlock-inhibit`                       | bottom-left    |
+| `badgeCommandLocked` | `AutomationButtonBadgeCommandLocked` | `none`, `command-locked`                                       | bottom-right   |
 
 Badge spacer logic is computed from readout position and which badges are present (enum-resolved or slotted). Do not hard-code spacer visibility.
+
+**The corners follow a badge layout** (`automation-button/badge-layout.ts`): a map from corner (`topLeft`, `topRight`, `bottomLeft`, `bottomRight`) to `AutomationButtonBadgeKind`. The app sets one for every device with `setAutomationBadgeLayout()`; a device's `badgeLayout` property changes single corners on top of it. A corner left out inherits, `null` empties it, and a kind moved to a new corner leaves the one it came from, so a badge never shows twice. The global value is a plain module setter whose `BadgeLayoutController` re-renders the connected devices, the same shape as `setLocale()`; `@lit-labs/signals` was passed over to keep a labs package and the TC39 polyfill out of the runtime. The slots stay named by corner, so a slotted badge overrides whatever the layout puts there. A story that sets the global layout resets it in its `beforeEach` cleanup, or it leaks into the next snapshot.
 
 `obc-automation-tank` mirrors the same four properties and the same enum imports, but rendering happens inside its own `.badges` cell — the corner-slot model does not apply there. When adding a new button-based device, spread `argTypesAbstractAutomationButton` (or one of its variant-specific re-exports) into the story meta so the four select controls are exposed in Storybook (see `analog-valve.stories.ts` for the canonical pattern).
 

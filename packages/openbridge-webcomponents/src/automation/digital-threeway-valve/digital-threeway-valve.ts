@@ -60,10 +60,10 @@ export enum DigitalThreewayValveVariant {
  * @property orientation - Side the stem points to.
  * @property flows - Readout rows, one per flow: an optional arrow direction with either a value and optional unit (default `%`) or `open` for an `Open`/`Closed` state.
  * @property variant - Visual style of the button surround.
- * @slot badge-top-right - Content projected into the top-right badge position; overrides `badgeAlert`.
- * @slot badge-top-left - Content projected into the top-left badge position; overrides `badgeControl`.
- * @slot badge-bottom-left - Content projected into the bottom-left badge position; overrides `badgeInterlock`.
- * @slot badge-bottom-right - Content projected into the bottom-right badge position; overrides `badgeCommandLocked`.
+ * @slot badge-top-right - Content projected into the top-right badge position; overrides the badge `badgeLayout` puts in that corner.
+ * @slot badge-top-left - Content projected into the top-left badge position; overrides the badge `badgeLayout` puts in that corner.
+ * @slot badge-bottom-left - Content projected into the bottom-left badge position; overrides the badge `badgeLayout` puts in that corner.
+ * @slot badge-bottom-right - Content projected into the bottom-right badge position; overrides the badge `badgeLayout` puts in that corner.
  * @fires click - Fired when the valve is clicked.
  * @experimental
  */
