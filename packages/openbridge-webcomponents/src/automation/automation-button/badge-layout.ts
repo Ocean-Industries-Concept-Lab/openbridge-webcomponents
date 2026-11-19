@@ -20,7 +20,11 @@
  *
  * @module
  */
-import type {ReactiveController, ReactiveControllerHost} from 'lit';
+import type {ReactiveControllerHost} from 'lit';
+import {
+  GlobalSetting,
+  GlobalSettingController,
+} from '../../internal/global-setting.js';
 
 export enum AutomationButtonBadgeKind {
   Control = 'control',
@@ -82,11 +86,9 @@ export function resolveBadgeLayout(
   return result;
 }
 
-let globalLayout: ResolvedAutomationButtonBadgeLayout = {
+const globalLayout = new GlobalSetting<ResolvedAutomationButtonBadgeLayout>({
   ...defaultAutomationButtonBadgeLayout,
-};
-let globalVersion = 0;
-const hosts = new Set<ReactiveControllerHost>();
+});
 
 /**
  * Sets the badge layout of every automation button on the page, and
@@ -95,40 +97,24 @@ const hosts = new Set<ReactiveControllerHost>();
 export function setAutomationBadgeLayout(
   layout: AutomationButtonBadgeLayout | undefined
 ): void {
-  globalLayout = resolveBadgeLayout(defaultAutomationButtonBadgeLayout, layout);
-  globalVersion++;
-  hosts.forEach((host) => host.requestUpdate());
+  globalLayout.set(
+    resolveBadgeLayout(defaultAutomationButtonBadgeLayout, layout)
+  );
 }
 
 export function getAutomationBadgeLayout(): ResolvedAutomationButtonBadgeLayout {
-  return {...globalLayout};
+  return {...globalLayout.get()};
 }
 
-/** Re-renders its host when the global badge layout changes. */
-export class BadgeLayoutController implements ReactiveController {
-  private renderedVersion = globalVersion;
-
-  constructor(private readonly host: ReactiveControllerHost) {
-    host.addController(this);
+/** Re-renders its host when the global badge layout changes, and puts the host's own corners on top of it. */
+export class BadgeLayoutController extends GlobalSettingController<ResolvedAutomationButtonBadgeLayout> {
+  constructor(host: ReactiveControllerHost) {
+    super(host, globalLayout);
   }
 
-  /** A layout set while the host was detached never reached it. */
-  hostConnected(): void {
-    hosts.add(this.host);
-    if (this.renderedVersion !== globalVersion) {
-      this.host.requestUpdate();
-    }
-  }
-
-  hostDisconnected(): void {
-    hosts.delete(this.host);
-  }
-
-  /** The global layout with the host's own corners on top. */
   resolve(
     local: AutomationButtonBadgeLayout | undefined
   ): ResolvedAutomationButtonBadgeLayout {
-    this.renderedVersion = globalVersion;
-    return resolveBadgeLayout(globalLayout, local);
+    return resolveBadgeLayout(this.value, local);
   }
 }
