@@ -220,16 +220,18 @@ The abstract button base, `obc-automation-tank`, the specialty-tank base and `ob
 
 The abstract base exposes four **enum-driven** badge properties (defined in `abstract-automation-button.ts`) that render an `<obc-automation-badge>` in a corner slot. Each defaults to `None` (no badge); a non-`None` value resolves to a specific `ObcAutomationBadgeType`. The legacy `badge-top-*` / `badge-bottom-*` slots still work and override the enum default for backward compatibility.
 
-| Property             | Enum                                 | Values                                                         | Default corner |
-| -------------------- | ------------------------------------ | -------------------------------------------------------------- | -------------- |
-| `badgeControl`       | `AutomationButtonBadgeControl`       | `none`, `local`, `local-only`, `manual`, `manual-only`, `auto` | top-left       |
-| `badgeAlert`         | `AutomationButtonBadgeAlert`         | `none`, `silence`, `caution`, `warning`, `alarm`               | top-right      |
-| `badgeInterlock`     | `AutomationButtonBadgeInterlock`     | `none`, `interlock`, `interlock-inhibit`                       | bottom-left    |
-| `badgeCommandLocked` | `AutomationButtonBadgeCommandLocked` | `none`, `command-locked`                                       | bottom-right   |
+| Property             | Enum                                 | Values                                                                                                                                       | Default corner |
+| -------------------- | ------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------- | -------------- |
+| `badgeControl`       | `AutomationButtonBadgeControl`       | `none`, `local`, `local-only`, `manual`, `manual-only`, `auto`                                                                               | top-left       |
+| `badgeAlert`         | `AutomationButtonBadgeAlert`         | `none`, `silence`, `shelved`, `caution`, `warning`, `alarm`, `level-critical`, `level-high`, `level-medium`, `level-low`, `level-diagnostic` | top-right      |
+| `badgeInterlock`     | `AutomationButtonBadgeInterlock`     | `none`, `interlock`, `interlock-inhibit`, `simulation`                                                                                       | bottom-left    |
+| `badgeCommandLocked` | `AutomationButtonBadgeCommandLocked` | `none`, `command-locked`, `simulation`                                                                                                       | bottom-right   |
 
 Badge spacer logic is computed from readout position and which badges are present (enum-resolved or slotted). Do not hard-code spacer visibility.
 
-**The corners follow a badge layout** (`automation-button/badge-layout.ts`): a map from corner (`topLeft`, `topRight`, `bottomLeft`, `bottomRight`) to `AutomationButtonBadgeKind`. The app sets one for every device with `setAutomationBadgeLayout()`; a device's `badgeLayout` property changes single corners on top of it. A corner left out inherits, `null` empties it, and a kind moved to a new corner leaves the one it came from, so a badge never shows twice. The global value is a plain module setter whose `BadgeLayoutController` re-renders the connected devices, the same shape as `setLocale()`; `@lit-labs/signals` was passed over to keep a labs package and the TC39 polyfill out of the runtime. The slots stay named by corner, so a slotted badge overrides whatever the layout puts there. A story that sets the global layout resets it in its `beforeEach` cleanup, or it leaks into the next snapshot.
+**The corners follow a badge layout** (`automation-button/badge-layout.ts`): a map from corner (`topLeft`, `topRight`, `bottomLeft`, `bottomRight`) to `AutomationButtonBadgeKind`. The app sets one for every device with `setAutomationBadgeLayout()`; a device's `badgeLayout` property changes single corners on top of it. A corner left out inherits, `null` empties it, and a kind moved to a new corner leaves the one it came from, so a badge never shows twice. The global value is a `GlobalSetting` (`internal/global-setting.ts`, shared with the alert standard) whose controller re-renders the connected devices. The slots stay named by corner, so a slotted badge overrides whatever the layout puts there. A story that sets the global layout resets it in its `beforeEach` cleanup, or it leaks into the next snapshot.
+
+`obc-automation-badge` also draws one capital letter (`letter-a` to `letter-z`) as text in the body font, sized to the outlines of the design; no corner enum exposes the letters and the layout has no kind for them (§ Open).
 
 `obc-automation-tank` mirrors the same four properties and the same enum imports, but rendering happens inside its own `.badges` cell — the corner-slot model does not apply there. When adding a new button-based device, spread `argTypesAbstractAutomationButton` (or one of its variant-specific re-exports) into the story meta so the four select controls are exposed in Storybook (see `analog-valve.stories.ts` for the canonical pattern).
 
@@ -256,3 +258,4 @@ Different components have different anchor points:
 - Shuffle selectors slide 100 ms on selection change; the Figma frames are WIP and specify no motion, so keep or remove is a designer call (#1171).
 - The abstract button base does not pass on the alert flap slots, so the 19 devices cannot fill a flap (#1334).
 - The analog valve's open symbol carries its own handle bar, turning with `value`; with `handle` set both show. Whether the bar stays, and whether 0 % takes the `twoway-analog-0` icon, is with the design side (#1416).
+- A letter badge has no `AutomationButtonBadgeKind`, so neither a corner enum nor the layout can place one; which kind it takes, and whether simulated moves to the control corner the sketch draws it in, is open (#1330).
