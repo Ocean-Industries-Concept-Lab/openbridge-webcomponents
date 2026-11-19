@@ -54,7 +54,7 @@ export {
  * ---
  *
  * ### Features
- * - **Fixed Layout:** Width (384px), padding (32px), bar/tick/label thicknesses, and border radius are fixed for consistent gauge appearance.
+ * - **Fixed Layout:** Width (384px), padding (32px), bar/tick/label thicknesses, and border radius are fixed for consistent gauge appearance. 384 px is the length the design is drawn at, not a layout limit: see `fixedAspectRatio`.
  * - **Scale Configuration:**
  *   - Configurable `minValue` and `maxValue` for the value range.
  *   - Optional main, primary, secondary, and tertiary tickmarks at specified intervals.
@@ -68,7 +68,7 @@ export {
  *   - Optional `setpoint` value displays a marker.
  *   - Automatic at-setpoint detection with configurable deadband.
  * - **Advice Overlays:** Render advice ranges with different types and hinted states.
- * - **Fixed Aspect Ratio:** When enabled, scales the component proportionally while keeping label font-size constant.
+ * - **Fixed Aspect Ratio:** `fixedAspectRatio` scales the whole gauge to its container like a vector image while the label font size stays put; `scaleReferenceSize` is the container width at which it draws 1:1.
  * - **Dimension Reporting:** Dispatches `scale-dimensions-changed` events for parent chart integration.
  *
  * ---
@@ -85,7 +85,6 @@ export {
  * - `hasBar`: true
  * - `hasScale`: true
  * - `scaleBackground`: true
- * - `fixedAspectRatio`: true (always scales proportionally)
  *
  * ---
  *
@@ -127,6 +126,9 @@ export {
  * @property maxValue - Maximum scale value
  * @property reverse - Plot `minValue` at the right so values grow leftward.
  * @property side - Which side of the chart area this scale lives on (top or bottom)
+ * @property fixedAspectRatio - Scale the whole gauge to its container like a vector image, keeping the label font size: the SVG fills the host, so size the host. Off, the gauge draws at its 384 px reference width.
+ * @property scaleReferenceSize - Container width at which a `fixedAspectRatio` gauge draws 1:1 with the design. A wider container enlarges the drawing proportionally, a narrower one shrinks it.
+ * @availableWhen scaleReferenceSize fixedAspectRatio==true
  * @property showLabels - Show numerical value labels at primary tickmarks
  * @property mainTickmarks - Array of values for main tickmarks. When undefined, no main tickmarks shown. When empty array [], defaults to [minValue, 0, maxValue].
  * @property primaryTickmarkInterval - Interval for primary (longest) tickmarks with labels
@@ -163,23 +165,8 @@ export class ObcGaugeHorizontal extends AdviceMixin(
 
   @property({type: String}) side: ExternalScaleSide = ExternalScaleSide.bottom;
 
-  /**
-   * When true, freezes all internal calculations and scales the entire component
-   * proportionally (like CSS transform:scale), except label font-size remains constant.
-   * When false (default), dimensions react to component properties.
-   *
-   * This property is intentionally not exposed as a public API or Storybook control.
-   * It can be set programmatically by parent components (e.g., GaugeTrend).
-   */
-  fixedAspectRatio = false;
-
-  /**
-   * Reference size for proportional scaling when fixedAspectRatio is true.
-   * At this width, the scale renders at native 1:1 (matches Figma design).
-   * Above this width, the scale grows proportionally; below, it shrinks.
-   * @default 384
-   */
-  scaleReferenceSize = 384;
+  @property({type: Boolean}) fixedAspectRatio = false;
+  @property({type: Number}) scaleReferenceSize = 384;
 
   @state()
   private _scale = 1;
@@ -260,10 +247,16 @@ export class ObcGaugeHorizontal extends AdviceMixin(
   @property({type: Boolean}) highlightCurrentValue = false;
 
   override render() {
+    // A chart pushes its own width to a slotted scale; in fixedAspectRatio
+    // mode the drawing keeps its reference length and the SVG scales it.
+    const effectiveLength = this.fixedAspectRatio
+      ? this.scaleReferenceSize
+      : this.width;
+
     const config: ExternalScaleConfig = {
       orientation: ExternalScaleOrientation.horizontal,
       side: this.side,
-      length: this.width,
+      length: effectiveLength,
       paddingStart: this.paddingLeft,
       paddingEnd: this.paddingRight,
       minValue: this.minValue,
@@ -319,7 +312,7 @@ export class ObcGaugeHorizontal extends AdviceMixin(
     const parts = renderExternalScale(config);
 
     const viewBox = computeExternalScaleViewBox(
-      {orientation: config.orientation, length: this.width},
+      {orientation: config.orientation, length: effectiveLength},
       layout
     );
     const preserveAspectRatio = this.fixedAspectRatio
@@ -357,14 +350,28 @@ export class ObcGaugeHorizontal extends AdviceMixin(
   override updated(changed: PropertyValues) {
     super.updated(changed);
 
-    // Report dimensions to parent chart
-    // In fixedAspectRatio mode, we report after resize events trigger _scale updates
-    // In regular mode, only emit when layout-affecting properties change
-    // Setpoint presence changes the reported thickness (reserved marker band),
-    // so it must re-report in both aspect-ratio modes.
+    if (changed.has('fixedAspectRatio')) {
+      if (this.fixedAspectRatio) {
+        this._applyFixedAspectRatioStyles();
+        this._updateScaleFromCurrentSize();
+      } else {
+        this._removeFixedAspectRatioStyles();
+        this._scale = 1;
+      }
+    }
+
+    if (changed.has('scaleReferenceSize') && this.fixedAspectRatio) {
+      this._updateScaleFromCurrentSize();
+    }
+
+    // The reported thickness follows the bands, the advice icons, the
+    // setpoint marker band and the mode, whichever mode is on; a resize
+    // re-reports through the ResizeController.
     if (
-      (!this.fixedAspectRatio &&
-        (changed.has('side') || changed.has('showLabels'))) ||
+      changed.has('fixedAspectRatio') ||
+      changed.has('side') ||
+      changed.has('showLabels') ||
+      changed.has('advices') ||
       this.setpointPresenceChanged(changed)
     ) {
       this.reportDimensions();
@@ -373,8 +380,9 @@ export class ObcGaugeHorizontal extends AdviceMixin(
 
   /**
    * Report scale dimensions to parent chart component.
-   * Always reports unscaled/reference dimensions so the parent chart can apply
-   * consistent proportional scaling in fixedAspectRatioScaling mode.
+   * When fixedAspectRatio=true, reports the actual visual (scaled) thickness
+   * so the chart can correctly reserve space for the scale.
+   * When fixedAspectRatio=false, reports the base/unscaled thickness.
    */
   private reportDimensions() {
     const effectiveBarThickness = computeExternalScaleEffectiveBarThickness({
@@ -393,7 +401,7 @@ export class ObcGaugeHorizontal extends AdviceMixin(
       barThickness: effectiveBarThickness,
       tickThickness: this.tickThickness,
       labelThickness: this.labelThickness,
-      length: this.width,
+      length: this.fixedAspectRatio ? this.scaleReferenceSize : this.width,
       scaleType: this.scaleType,
       hasAdviceIcon: !!this.advices?.some((a) => a.showIcon),
       hasSetpoint:
@@ -402,10 +410,14 @@ export class ObcGaugeHorizontal extends AdviceMixin(
         this.departingNewSetpoint !== undefined,
     });
 
-    // Always report unscaled/reference dimensions.
-    // The parent chart component handles proportional scaling consistently
-    // for both external scales and chart padding in fixedAspectRatioScaling mode.
-    const dimensions = baseDimensions;
+    // The chart lays out in visual pixels, so a scaled drawing reports its
+    // scaled thickness.
+    const dimensions = this.fixedAspectRatio
+      ? {
+          ...baseDimensions,
+          thickness: Math.round(baseDimensions.thickness * this._scale),
+        }
+      : baseDimensions;
 
     this.dispatchEvent(
       new CustomEvent('scale-dimensions-changed', {
@@ -417,6 +429,46 @@ export class ObcGaugeHorizontal extends AdviceMixin(
 
   protected override createRenderRoot() {
     return this;
+  }
+
+  override connectedCallback(): void {
+    super.connectedCallback();
+    if (this.fixedAspectRatio) {
+      this._applyFixedAspectRatioStyles();
+    }
+  }
+
+  /**
+   * A custom element is inline by default, which gives the percentage-sized
+   * SVG nothing to fill; in fixedAspectRatio mode the host is a block that
+   * takes its container's width.
+   */
+  private _applyFixedAspectRatioStyles(): void {
+    this.style.display = 'block';
+    this.style.width = '100%';
+    this.style.height = 'auto';
+  }
+
+  private _removeFixedAspectRatioStyles(): void {
+    this.style.display = '';
+    this.style.width = '';
+    this.style.height = '';
+  }
+
+  /** Reads the host's width once layout has settled, then reports it. */
+  private _updateScaleFromCurrentSize(): void {
+    requestAnimationFrame(() => {
+      const containerWidth = this.clientWidth;
+      if (containerWidth > 0) {
+        this._scale = computeFixedAspectRatioScale({
+          orientation: ExternalScaleOrientation.horizontal,
+          containerMainAxisSize: containerWidth,
+          scaleReferenceSize: this.scaleReferenceSize,
+        });
+        this.requestUpdate();
+        this.reportDimensions();
+      }
+    });
   }
 }
 
