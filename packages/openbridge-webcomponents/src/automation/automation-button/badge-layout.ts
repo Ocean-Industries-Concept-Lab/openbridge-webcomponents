@@ -50,7 +50,10 @@ export const defaultAutomationButtonBadgeLayout: Readonly<ResolvedAutomationButt
     bottomRight: AutomationButtonBadgeKind.CommandLocked,
   });
 
-/** The `base` layout with the corners `override` names put on top of it. */
+/**
+ * The `base` layout with the corners `override` names put on top of it.
+ * A kind `override` names twice stays in the first corner, in reading order.
+ */
 export function resolveBadgeLayout(
   base: ResolvedAutomationButtonBadgeLayout,
   override: AutomationButtonBadgeLayout | undefined
@@ -59,12 +62,20 @@ export function resolveBadgeLayout(
   if (!override) {
     return result;
   }
-  const named = corners.filter((corner) => override[corner] !== undefined);
-  const moved = new Set(named.map((corner) => override[corner]));
+  const placed = new Set<AutomationButtonBadgeKind>();
   for (const corner of corners) {
-    if (named.includes(corner)) {
-      result[corner] = override[corner]!;
-    } else if (result[corner] !== null && moved.has(result[corner])) {
+    const kind = override[corner];
+    if (kind === undefined) {
+      continue;
+    }
+    result[corner] = kind !== null && placed.has(kind) ? null : kind;
+    if (kind !== null) {
+      placed.add(kind);
+    }
+  }
+  for (const corner of corners) {
+    const kind = result[corner];
+    if (override[corner] === undefined && kind !== null && placed.has(kind)) {
       result[corner] = null;
     }
   }
@@ -74,6 +85,7 @@ export function resolveBadgeLayout(
 let globalLayout: ResolvedAutomationButtonBadgeLayout = {
   ...defaultAutomationButtonBadgeLayout,
 };
+let globalVersion = 0;
 const hosts = new Set<ReactiveControllerHost>();
 
 /**
@@ -84,6 +96,7 @@ export function setAutomationBadgeLayout(
   layout: AutomationButtonBadgeLayout | undefined
 ): void {
   globalLayout = resolveBadgeLayout(defaultAutomationButtonBadgeLayout, layout);
+  globalVersion++;
   hosts.forEach((host) => host.requestUpdate());
 }
 
@@ -93,12 +106,18 @@ export function getAutomationBadgeLayout(): ResolvedAutomationButtonBadgeLayout 
 
 /** Re-renders its host when the global badge layout changes. */
 export class BadgeLayoutController implements ReactiveController {
+  private renderedVersion = globalVersion;
+
   constructor(private readonly host: ReactiveControllerHost) {
     host.addController(this);
   }
 
+  /** A layout set while the host was detached never reached it. */
   hostConnected(): void {
     hosts.add(this.host);
+    if (this.renderedVersion !== globalVersion) {
+      this.host.requestUpdate();
+    }
   }
 
   hostDisconnected(): void {
@@ -109,6 +128,7 @@ export class BadgeLayoutController implements ReactiveController {
   resolve(
     local: AutomationButtonBadgeLayout | undefined
   ): ResolvedAutomationButtonBadgeLayout {
+    this.renderedVersion = globalVersion;
     return resolveBadgeLayout(globalLayout, local);
   }
 }

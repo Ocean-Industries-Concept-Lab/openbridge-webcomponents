@@ -40,6 +40,12 @@ describe('resolveBadgeLayout', () => {
     });
   });
 
+  it('keeps a kind named twice in the first corner only', () => {
+    expect(
+      resolveBadgeLayout(base, {topRight: Kind.Alert, bottomLeft: Kind.Alert})
+    ).toEqual({...base, bottomLeft: null});
+  });
+
   it('swaps two kinds when both corners are named', () => {
     expect(
       resolveBadgeLayout(base, {topLeft: Kind.Alert, topRight: Kind.Control})
@@ -111,6 +117,22 @@ describe('badge layout on a device', () => {
     const el = await mountPump();
     el.remove();
     setAutomationBadgeLayout({topLeft: null});
+    expect(el.isUpdatePending).toBe(false);
+  });
+
+  it('picks up a layout set while it was detached', async () => {
+    const el = await mountPump();
+    el.remove();
+    setAutomationBadgeLayout({topLeft: null});
+    document.body.appendChild(el);
+    await el.updateComplete;
+    expect(badgeIn(el, 'badge-top-left')).toBeNull();
+  });
+
+  it('does not re-render on reconnect when nothing changed', async () => {
+    const el = await mountPump();
+    el.remove();
+    document.body.appendChild(el);
     expect(el.isUpdatePending).toBe(false);
   });
 });
