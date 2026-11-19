@@ -53,6 +53,13 @@ describe('automationBadgeType', () => {
     );
   });
 
+  it('draws no badge for a value that is not a badge value, inherited keys included', () => {
+    expect(
+      automationBadgeType('control', 'toString', {control: {auto: 'a'}})
+    ).toBeNull();
+    expect(automationBadgeType('alert', 'constructor')).toBeNull();
+  });
+
   it('keeps no badge for none, whatever the override', () => {
     expect(
       automationBadgeType('commandLocked', 'none', {
@@ -73,6 +80,14 @@ describe('mergeBadgeSymbolOverride', () => {
       commandLocked: {simulation: 'x', 'command-locked': 'c'},
       interlock: {simulation: 'm'},
     });
+  });
+
+  it('keeps a global letter where the local value is undefined', () => {
+    const merged = mergeBadgeSymbolOverride(
+      {commandLocked: {simulation: 's'}},
+      {commandLocked: {simulation: undefined}}
+    );
+    expect(merged.commandLocked?.simulation).toBe('s');
   });
 
   it('lets a local null bring the symbol back', () => {

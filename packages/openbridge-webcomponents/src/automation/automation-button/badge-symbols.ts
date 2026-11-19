@@ -109,12 +109,12 @@ export function automationBadgeType(
   value: string,
   override?: AutomationBadgeSymbolOverride
 ): ObcAutomationBadgeType | null {
-  const symbol = (symbols[group] as Record<string, ObcAutomationBadgeType>)[
-    value
-  ];
-  if (!symbol) {
+  const table = symbols[group] as Record<string, ObcAutomationBadgeType>;
+  // A value from an attribute can name an inherited key such as `toString`.
+  if (!Object.prototype.hasOwnProperty.call(table, value)) {
     return null;
   }
+  const symbol = table[value];
   const letters = override?.[group] as
     Record<string, AutomationBadgeLetter | null | undefined> | undefined;
   const letter = letters?.[value];
@@ -133,9 +133,20 @@ export function mergeBadgeSymbolOverride(
     return result;
   }
   for (const group of groups) {
-    if (override[group]) {
-      Object.assign(result, {[group]: {...base?.[group], ...override[group]}});
+    const letters = override[group];
+    if (!letters) {
+      continue;
     }
+    // An entry set to `undefined` is left out, like a layout corner; `null` is kept.
+    const merged: Record<string, AutomationBadgeLetter | null> = {
+      ...base?.[group],
+    };
+    for (const [value, letter] of Object.entries(letters)) {
+      if (letter !== undefined) {
+        merged[value] = letter;
+      }
+    }
+    Object.assign(result, {[group]: merged});
   }
   return result;
 }
