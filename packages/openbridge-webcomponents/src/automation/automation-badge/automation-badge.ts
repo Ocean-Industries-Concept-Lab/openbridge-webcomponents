@@ -4,6 +4,7 @@ import compentStyle from './automation-badge.css?inline';
 import {classMap} from 'lit/directives/class-map.js';
 import {customElement} from '../../decorator.js';
 import '../../icons/icon-alert-off-filled.js';
+import '../../icons/icon-alerts-shelf.js';
 import '../../icons/icon-auto.js';
 import '../../icons/icon-manual.js';
 import '../../icons/icon-manual-only.js';
@@ -29,6 +30,8 @@ export enum ObcAutomationBadgeType {
   Interlock = 'interlock',
   InterlockInhibit = 'interlock-inhibit',
   AlertSilenced = 'alert-silenced',
+  AlertShelved = 'alert-shelved',
+  Simulation = 'simulation',
   Caution = 'caution',
   Warning = 'warning',
   Alarm = 'alarm',
@@ -37,6 +40,32 @@ export enum ObcAutomationBadgeType {
   LevelMedium = 'level-medium',
   LevelLow = 'level-low',
   LevelDiagnostic = 'level-diagnostic',
+  LetterA = 'letter-a',
+  LetterB = 'letter-b',
+  LetterC = 'letter-c',
+  LetterD = 'letter-d',
+  LetterE = 'letter-e',
+  LetterF = 'letter-f',
+  LetterG = 'letter-g',
+  LetterH = 'letter-h',
+  LetterI = 'letter-i',
+  LetterJ = 'letter-j',
+  LetterK = 'letter-k',
+  LetterL = 'letter-l',
+  LetterM = 'letter-m',
+  LetterN = 'letter-n',
+  LetterO = 'letter-o',
+  LetterP = 'letter-p',
+  LetterQ = 'letter-q',
+  LetterR = 'letter-r',
+  LetterS = 'letter-s',
+  LetterT = 'letter-t',
+  LetterU = 'letter-u',
+  LetterV = 'letter-v',
+  LetterW = 'letter-w',
+  LetterX = 'letter-x',
+  LetterY = 'letter-y',
+  LetterZ = 'letter-z',
 }
 
 const ALERT_BADGE_TYPES: ObcAutomationBadgeType[] = [
@@ -51,6 +80,47 @@ const ALERT_BADGE_TYPES: ObcAutomationBadgeType[] = [
 ];
 
 /**
+ * Letter badge geometry in the 16-unit badge box.
+ *
+ * The design outlines a 15.33 px capital on a 13.33 baseline, so the glyph
+ * fills the box the way the icon badges do (Figma 1188:55068).
+ */
+const LETTER_FONT_SIZE = 15.33;
+const LETTER_BASELINE = 13.33;
+
+/** The capital a `letter-<x>` type draws, `undefined` for every other type. */
+function badgeLetter(
+  type: ObcAutomationBadgeType | undefined
+): string | undefined {
+  return type?.match(/^letter-([a-z])$/)?.[1].toUpperCase();
+}
+
+/**
+ * Automation badge: one state glyph in the corner of a device button, tank
+ * or tile.
+ *
+ * ## Features
+ *
+ * - `type` picks the glyph: control mode (`auto`, `manual`, `manual-only`,
+ *   `local`, `local-only`), `command-locked`, `interlock`,
+ *   `interlock-inhibit`, `simulation`, `alert-silenced`, `alert-shelved`,
+ *   the alert categories (`caution`, `warning`, `alarm`), the alert levels
+ *   (`level-critical` to `level-diagnostic`) and one capital letter
+ *   (`letter-a` to `letter-z`).
+ * - `mode` picks the surface: `flat` draws the glyph with a silhouette
+ *   outline straight on the device, `regular` and `enhanced` put it on a
+ *   bordered or raised chip. Alert categories and levels carry their own
+ *   colour and render flat whatever the mode.
+ * - Without a built-in type the slots take a custom glyph.
+ *
+ * ## Usage
+ *
+ * Device buttons and tanks place it through `badgeControl`, `badgeAlert`,
+ * `badgeInterlock` and `badgeCommandLocked`; use the element directly for a
+ * badge outside those four corners.
+ *
+ * @property mode - Surface of the badge: `flat`, `regular` or `enhanced`.
+ * @property type - Built-in glyph to draw; unset renders the slots.
  * @slot icon-silhouette - Custom silhouette/outline icon, rendered behind the default slot content when no built-in badge type matches.
  * @slot - Default slot for custom badge content, rendered when no built-in badge type matches.
  * @stable
@@ -138,9 +208,53 @@ export class ObcAutomationBadge extends LitElement {
     </svg>`;
   }
 
+  /** The cube of the simulated badge, as the design draws it (Figma 1188:54997). */
+  private renderSimulationIcon(className: string) {
+    return html`<svg
+      class=${className}
+      viewBox="0 0 16 16"
+      fill="currentColor"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        d="M7.33333 14.4833V8.38333L2 5.3V10.65C2 10.8944 2.05833 11.1167 2.175 11.3167C2.29167 11.5167 2.45555 11.6778 2.66667 11.8L7.33333 14.4833ZM8.66667 14.4833L13.3333 11.8C13.5444 11.6778 13.7083 11.5167 13.825 11.3167C13.9417 11.1167 14 10.8944 14 10.65V5.3L8.66667 8.38333V14.4833Z"
+      />
+      <path
+        d="M13.2833 4.16667L8.66667 1.51667C8.45556 1.39444 8.23333 1.33333 8 1.33333C7.76667 1.33333 7.54444 1.39444 7.33333 1.51667L2.7 4.18333L8 7.23333L13.2833 4.16667Z"
+      />
+    </svg>`;
+  }
+
+  /** A letter badge: one capital of the body font, hidden from assistive technology because the badge draws it twice. */
+  private renderLetterIcon(letter: string, className: string) {
+    return html`<svg
+      class=${className}
+      viewBox="0 0 16 16"
+      fill="currentColor"
+      aria-hidden="true"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <text
+        class="letter"
+        x="8"
+        y=${LETTER_BASELINE}
+        font-size=${LETTER_FONT_SIZE}
+        text-anchor="middle"
+      >
+        ${letter}
+      </text>
+    </svg>`;
+  }
+
   // TODO(designer): rename the 'siluette' typo to 'silhouette', in Figma too
   private getIcon() {
-    if (this.type === ObcAutomationBadgeType.Auto) {
+    const letter = badgeLetter(this.type);
+    if (letter) {
+      return html`${this.renderLetterIcon(
+        letter,
+        'icon siluette'
+      )}${this.renderLetterIcon(letter, 'icon')}`;
+    } else if (this.type === ObcAutomationBadgeType.Auto) {
       return html`<obi-auto class="icon siluette"></obi-auto
         ><obi-auto class="icon"></obi-auto>`;
     } else if (this.type === ObcAutomationBadgeType.Manual) {
@@ -171,6 +285,15 @@ export class ObcAutomationBadge extends LitElement {
           class="icon siluette"
         ></obi-alert-off-filled
         ><obi-alert-off-filled class="icon"></obi-alert-off-filled>`;
+    } else if (this.type === ObcAutomationBadgeType.AlertShelved) {
+      // TODO(designer): the sketch draws shelved as a diamond with a plus and
+      // the alert counter uses a timer; this badge keeps alerts-shelf (#1424)
+      return html`<obi-alerts-shelf class="icon siluette"></obi-alerts-shelf
+        ><obi-alerts-shelf class="icon"></obi-alerts-shelf>`;
+    } else if (this.type === ObcAutomationBadgeType.Simulation) {
+      return html`${this.renderSimulationIcon(
+        'icon siluette'
+      )}${this.renderSimulationIcon('icon')}`;
     } else if (this.type === ObcAutomationBadgeType.LevelCritical) {
       return this.renderLevelCriticalIcon(
         this.effectiveMode === ObcAutomationBadgeMode.Flat

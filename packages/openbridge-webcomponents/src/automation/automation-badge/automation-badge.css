@@ -36,6 +36,12 @@
     height: 100%;
   }
 
+  .letter {
+    font-family: var(--global-typography-font-family);
+    /* the design outlines the letters at the bold weight */
+    font-weight: var(--font-weight-bold);
+  }
+
   &.flat .badge {
     width: var(--automation-components-badge-new-icon-size-flat);
     height: var(--automation-components-badge-new-icon-size-flat);
