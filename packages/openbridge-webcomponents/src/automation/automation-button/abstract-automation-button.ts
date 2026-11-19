@@ -36,6 +36,11 @@ import {AlertType} from '../../types.js';
 import '../automation-badge/automation-badge.js';
 import {ObcAutomationBadgeType} from '../automation-badge/automation-badge.js';
 import {CircularProgressMode} from '../../building-blocks/circular-progress/circular-progress.js';
+import {
+  AutomationButtonBadgeKind,
+  AutomationButtonBadgeLayout,
+  BadgeLayoutController,
+} from './badge-layout.js';
 
 export enum AutomationButtonBadgeAlert {
   None = 'none',
@@ -73,13 +78,18 @@ export enum AutomationButtonBadgeCommandLocked {
   Simulation = 'simulation',
 }
 
+type BadgeCorner = keyof AutomationButtonBadgeLayout;
+
 /**
  * Base class for the automation device buttons.
  *
  * Renders an `<obc-automation-button>` with the shared surface every device
  * button needs: the readout stack and its status row, the alert frame, the
- * circular progress indicator, and the four badge corners (control, alert,
- * interlock, command-locked) with their slots and enum-driven fallbacks.
+ * circular progress indicator, and the four badge corners with their slots and
+ * enum-driven fallbacks. Which badge goes in which corner follows the badge
+ * layout (`badge-layout.ts`): control top-left, alert top-right, interlock
+ * bottom-left and command-locked bottom-right unless the app or `badgeLayout`
+ * moves them.
  *
  * ## Usage Guidelines
  *
@@ -101,6 +111,7 @@ export enum AutomationButtonBadgeCommandLocked {
  * @availableWhen alertFrameMode alert==true
  * @availableWhen showAlertCategoryIcon alert==true && alertFrameType in [SmallSideFlip, LargeSideFlip, BottomFlip, TopFlip]
  * @availableWhen showAlertIcon alert==true && alertFrameType in [LargeSideFlip, BottomFlip, TopFlip]
+ * @property badgeLayout - Which badge kind each corner shows, on top of the app-wide layout set with `setAutomationBadgeLayout()`. A corner left out keeps the app-wide badge, `null` leaves it empty, and a badge moved here leaves the corner it came from.
  * @property progress - Shows a progress indicator, used to indicate that an user action is in progress
  * @availableWhen progressMode progress==true
  * @availableWhen progressValue progress==true && progressMode in [determinate, progressiveIndeterminate]
@@ -144,6 +155,10 @@ export class ObcAbstractAutomationButton extends LitElement {
     AutomationButtonBadgeInterlock.None;
   @property({type: String}) badgeAlert: AutomationButtonBadgeAlert =
     AutomationButtonBadgeAlert.None;
+  @property({attribute: false}) badgeLayout:
+    AutomationButtonBadgeLayout | undefined = undefined;
+
+  private readonly _badgeLayout = new BadgeLayoutController(this);
 
   get icon(): TemplateResult {
     throw new Error('Method "icon" must be implemented in subclass');
@@ -236,20 +251,19 @@ export class ObcAbstractAutomationButton extends LitElement {
     );
   }
 
-  private getBadgeSpacer(): boolean {
+  private getBadgeSpacer(
+    badges: Record<BadgeCorner, ObcAutomationBadgeType | null>
+  ): boolean {
     if (!this.showReadoutStack) {
       return false;
     }
 
-    const topLeft =
-      this.badgeTopLeft.length > 0 || this.getBadgeControlType() !== null;
-    const topRight =
-      this.badgeTopRight.length > 0 || this.getBadgeAlertType() !== null;
+    const topLeft = this.badgeTopLeft.length > 0 || badges.topLeft !== null;
+    const topRight = this.badgeTopRight.length > 0 || badges.topRight !== null;
     const bottomLeft =
-      this.badgeBottomLeft.length > 0 || this.getBadgeInterlockType() !== null;
+      this.badgeBottomLeft.length > 0 || badges.bottomLeft !== null;
     const bottomRight =
-      this.badgeBottomRight.length > 0 ||
-      this.getBadgeCommandLockedType() !== null;
+      this.badgeBottomRight.length > 0 || badges.bottomRight !== null;
     if (this._readoutPosition === AutomationButtonReadoutPosition.top) {
       return topRight || topLeft;
     } else if (
@@ -268,6 +282,23 @@ export class ObcAbstractAutomationButton extends LitElement {
 
   private handleBadgeSlotChange() {
     this.requestUpdate();
+  }
+
+  private getBadgeType(
+    kind: AutomationButtonBadgeKind | null
+  ): ObcAutomationBadgeType | null {
+    switch (kind) {
+      case AutomationButtonBadgeKind.Control:
+        return this.getBadgeControlType();
+      case AutomationButtonBadgeKind.Alert:
+        return this.getBadgeAlertType();
+      case AutomationButtonBadgeKind.Interlock:
+        return this.getBadgeInterlockType();
+      case AutomationButtonBadgeKind.CommandLocked:
+        return this.getBadgeCommandLockedType();
+      default:
+        return null;
+    }
   }
 
   private getBadgeAlertType(): ObcAutomationBadgeType | null {
@@ -341,10 +372,13 @@ export class ObcAbstractAutomationButton extends LitElement {
 
   override render() {
     const readouts: AutomationButtonReadoutStack[] = [...this.extraReadouts];
-    const badgeAlertType = this.getBadgeAlertType();
-    const badgeControlType = this.getBadgeControlType();
-    const badgeInterlockType = this.getBadgeInterlockType();
-    const badgeCommandLockedType = this.getBadgeCommandLockedType();
+    const layout = this._badgeLayout.resolve(this.badgeLayout);
+    const badges = {
+      topLeft: this.getBadgeType(layout.topLeft),
+      topRight: this.getBadgeType(layout.topRight),
+      bottomLeft: this.getBadgeType(layout.bottomLeft),
+      bottomRight: this.getBadgeType(layout.bottomRight),
+    };
 
     return html`<obc-automation-button
       .state=${
@@ -369,7 +403,7 @@ export class ObcAbstractAutomationButton extends LitElement {
       .variant=${this._variant}
       .direction=${this._direction}
       .orientation=${this._orientation}
-      .hasBadgeSpacer=${this.getBadgeSpacer()}
+      .hasBadgeSpacer=${this.getBadgeSpacer(badges)}
       .handlePosition=${this._handlePosition}
       .static=${this.static}
       .handleSize=${this._handleSize}
@@ -384,9 +418,9 @@ export class ObcAbstractAutomationButton extends LitElement {
         @slotchange=${this.handleBadgeSlotChange}
       >
         ${
-          badgeAlertType
+          badges.topRight
             ? html`<obc-automation-badge
-                .type=${badgeAlertType}
+                .type=${badges.topRight}
               ></obc-automation-badge>`
             : nothing
         }
@@ -397,9 +431,9 @@ export class ObcAbstractAutomationButton extends LitElement {
         @slotchange=${this.handleBadgeSlotChange}
       >
         ${
-          badgeControlType
+          badges.topLeft
             ? html`<obc-automation-badge
-                .type=${badgeControlType}
+                .type=${badges.topLeft}
               ></obc-automation-badge>`
             : nothing
         }
@@ -410,9 +444,9 @@ export class ObcAbstractAutomationButton extends LitElement {
         @slotchange=${this.handleBadgeSlotChange}
       >
         ${
-          badgeInterlockType
+          badges.bottomLeft
             ? html`<obc-automation-badge
-                .type=${badgeInterlockType}
+                .type=${badges.bottomLeft}
               ></obc-automation-badge>`
             : nothing
         }
@@ -423,9 +457,9 @@ export class ObcAbstractAutomationButton extends LitElement {
         @slotchange=${this.handleBadgeSlotChange}
       >
         ${
-          badgeCommandLockedType
+          badges.bottomRight
             ? html`<obc-automation-badge
-                .type=${badgeCommandLockedType}
+                .type=${badges.bottomRight}
               ></obc-automation-badge>`
             : nothing
         }

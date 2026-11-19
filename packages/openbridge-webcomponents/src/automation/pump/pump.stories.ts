@@ -10,6 +10,16 @@ import {
 } from '../automation-button/automation-button.js';
 import {AutomationButtonReadoutStackSize} from '../../components/automation-button-readout-stack/automation-button-readout-stack.js';
 import {argTypesAbstractAutomationButtonMotorized} from '../automation-button/abstract-automation-button-storybook-helpers.js';
+import {
+  AutomationButtonBadgeAlert,
+  AutomationButtonBadgeCommandLocked,
+  AutomationButtonBadgeControl,
+  AutomationButtonBadgeInterlock,
+} from '../automation-button/abstract-automation-button.js';
+import {
+  AutomationButtonBadgeKind,
+  setAutomationBadgeLayout,
+} from '../automation-button/badge-layout.js';
 
 const meta: Meta<typeof ObcPump> = {
   title: 'Automation/Automation Devices/Pump',
@@ -77,5 +87,54 @@ export const VariantDoubleSizeLarge: Story = {
   },
   globals: {
     componentSize: 'obc-component-size-large',
+  },
+};
+
+const allBadges = {
+  turnedOn: true,
+  vertical: false,
+  direction: AutomationButtonDirection.forward,
+  labelDirection: AutomationButtonLabelDirection.left,
+  badgeControl: AutomationButtonBadgeControl.Auto,
+  badgeAlert: AutomationButtonBadgeAlert.Alarm,
+  badgeInterlock: AutomationButtonBadgeInterlock.Interlock,
+  badgeCommandLocked: AutomationButtonBadgeCommandLocked.CommandLocked,
+};
+
+export const BadgeLayoutLocal: Story = {
+  args: {
+    ...allBadges,
+    badgeLayout: {
+      topLeft: AutomationButtonBadgeKind.Alert,
+      topRight: AutomationButtonBadgeKind.Control,
+      bottomRight: null,
+    },
+  },
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Alert and control swap corners on this pump only, and command-locked is hidden.',
+      },
+    },
+  },
+};
+
+export const BadgeLayoutGlobal: Story = {
+  args: allBadges,
+  beforeEach: () => {
+    setAutomationBadgeLayout({
+      topLeft: AutomationButtonBadgeKind.Interlock,
+      bottomLeft: AutomationButtonBadgeKind.Control,
+    });
+    return () => setAutomationBadgeLayout(undefined);
+  },
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'The app-wide layout from `setAutomationBadgeLayout()` puts interlock top-left and control bottom-left on every device.',
+      },
+    },
   },
 };

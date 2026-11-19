@@ -21,10 +21,10 @@ import {ObcAbstractAutomationButtonSquared} from '../automation-button/abstract-
  * Without a visible tag the button is named `Battery`, followed by the state
  * (`Battery On`) when the state row is shown.
  *
- * @slot badge-top-right - Content projected into the top-right badge position; overrides `badgeAlert`.
- * @slot badge-top-left - Content projected into the top-left badge position; overrides `badgeControl`.
- * @slot badge-bottom-left - Content projected into the bottom-left badge position; overrides `badgeInterlock`.
- * @slot badge-bottom-right - Content projected into the bottom-right badge position; overrides `badgeCommandLocked`.
+ * @slot badge-top-right - Content projected into the top-right badge position; overrides the badge `badgeLayout` puts in that corner.
+ * @slot badge-top-left - Content projected into the top-left badge position; overrides the badge `badgeLayout` puts in that corner.
+ * @slot badge-bottom-left - Content projected into the bottom-left badge position; overrides the badge `badgeLayout` puts in that corner.
+ * @slot badge-bottom-right - Content projected into the bottom-right badge position; overrides the badge `badgeLayout` puts in that corner.
  * @fires click - Fired when the battery is clicked.
  * @experimental
  */

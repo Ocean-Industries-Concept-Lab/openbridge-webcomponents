@@ -47,6 +47,9 @@ export const argTypesAbstractAutomationButton = {
     options: Object.values(AutomationButtonBadgeAlert),
     control: {type: 'select'},
   },
+  badgeLayout: {
+    control: {type: 'object'},
+  },
   progressMode: {
     options: Object.values(CircularProgressMode),
     control: {type: 'select'},
