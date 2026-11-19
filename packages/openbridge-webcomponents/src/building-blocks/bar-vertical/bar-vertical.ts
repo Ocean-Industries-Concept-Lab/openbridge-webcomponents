@@ -384,6 +384,9 @@ export class ObcBarVertical extends AdviceMixin(
       this.setpointPresenceChanged(changed);
 
     if (!this.fixedAspectRatio || layoutChanged) {
+      // A thinner or thicker drawing under the same box changes the painted
+      // scale without a resize event.
+      if (this.fixedAspectRatio) this._measureScale();
       this.reportDimensions();
     }
   }
@@ -500,6 +503,20 @@ export class ObcBarVertical extends AdviceMixin(
     this.style.width = '';
   }
 
+  /** Reads the host's size into the scale; false while the host has no size yet. */
+  private _measureScale(): boolean {
+    const containerHeight = this.clientHeight;
+    if (containerHeight <= 0) return false;
+    this._scale = computeFixedAspectRatioScale({
+      orientation: ExternalScaleOrientation.vertical,
+      containerMainAxisSize: containerHeight,
+      containerCrossAxisSize: this.clientWidth,
+      scaleReferenceSize: this.scaleReferenceSize,
+      viewBoxThickness: this._viewBoxThickness,
+    });
+    return true;
+  }
+
   /**
    * Calculate scale based on current element size.
    * Called when fixedAspectRatio is enabled or scaleReferenceSize changes.
@@ -507,15 +524,7 @@ export class ObcBarVertical extends AdviceMixin(
   private _updateScaleFromCurrentSize(): void {
     // Use requestAnimationFrame to ensure layout is complete
     requestAnimationFrame(() => {
-      const containerHeight = this.clientHeight;
-      if (containerHeight > 0) {
-        this._scale = computeFixedAspectRatioScale({
-          orientation: ExternalScaleOrientation.vertical,
-          containerMainAxisSize: containerHeight,
-          containerCrossAxisSize: this.clientWidth,
-          scaleReferenceSize: this.scaleReferenceSize,
-          viewBoxThickness: this._viewBoxThickness,
-        });
+      if (this._measureScale()) {
         this.requestUpdate();
         // Report updated dimensions to parent (matches pattern in ResizeController and _refreshBorderRadiusFromCssVar)
         this.reportDimensions();

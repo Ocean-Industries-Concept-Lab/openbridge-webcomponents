@@ -171,7 +171,7 @@ describe('obc-gauge-horizontal sizing', () => {
     const screen = render(
       html`<div style="display: block; width: 600px; height: 260px">
         <obc-gauge-horizontal
-          style="display: inline-block; height: 120px; width: 300px"
+          style="display: inline-block; height: 120px; width: 300px !important"
           .minValue=${0}
           .maxValue=${100}
         ></obc-gauge-horizontal>
@@ -189,6 +189,7 @@ describe('obc-gauge-horizontal sizing', () => {
     expect(el.style.display).toBe('inline-block');
     expect(el.style.height).toBe('120px');
     expect(el.style.width).toBe('300px');
+    expect(el.style.getPropertyPriority('width')).toBe('important');
   });
 
   it('follows the painted scale when the host is shorter than the drawing', async () => {
@@ -222,6 +223,35 @@ describe('obc-gauge-horizontal sizing', () => {
       12,
       1
     );
+    await until(() => reports[reports.length - 1] === 100);
+  });
+
+  it('re-measures the scale when the drawing thickness changes under the same box', async () => {
+    const screen = render(
+      html`<div style="display: flex; width: 600px; height: 100px">
+        <obc-gauge-horizontal
+          style="flex: 1"
+          .minValue=${0}
+          .maxValue=${100}
+          .value=${40}
+          .primaryTickmarkInterval=${20}
+          .fixedAspectRatio=${true}
+        ></obc-gauge-horizontal>
+      </div>`
+    );
+    const el = screen.container.querySelector(
+      'obc-gauge-horizontal'
+    ) as ObcGaugeHorizontal;
+    await el.updateComplete;
+    const reports: number[] = [];
+    el.addEventListener('scale-dimensions-changed', (e) =>
+      reports.push((e as CustomEvent<{thickness: number}>).detail.thickness)
+    );
+    await until(() => Math.abs(scaleOf(el) - 100 / 132) < 1e-3);
+    // 48 + 24 = 72 tall without labels, still more than 100 px at the width's
+    // 1.5625, so the height keeps deciding
+    el.showLabels = false;
+    await until(() => Math.abs(scaleOf(el) - 100 / 72) < 1e-3);
     await until(() => reports[reports.length - 1] === 100);
   });
 });

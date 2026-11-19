@@ -171,7 +171,7 @@ describe('obc-gauge-vertical sizing', () => {
     const screen = render(
       html`<div style="display: block; width: 300px; height: 600px">
         <obc-gauge-vertical
-          style="display: inline-block; height: 300px; width: 120px"
+          style="display: inline-block; height: 300px !important; width: 120px"
           .minValue=${0}
           .maxValue=${100}
         ></obc-gauge-vertical>
@@ -188,6 +188,7 @@ describe('obc-gauge-vertical sizing', () => {
     await el.updateComplete;
     expect(el.style.display).toBe('inline-block');
     expect(el.style.height).toBe('300px');
+    expect(el.style.getPropertyPriority('height')).toBe('important');
     expect(el.style.width).toBe('120px');
   });
 
@@ -222,5 +223,32 @@ describe('obc-gauge-vertical sizing', () => {
       1
     );
     await until(() => reports[reports.length - 1] === 120);
+  });
+
+  it('re-measures the scale when the drawing thickness changes under the same box', async () => {
+    const screen = render(
+      html`<div style="display: block; width: 120px; height: 600px">
+        <obc-gauge-vertical
+          .minValue=${0}
+          .maxValue=${100}
+          .value=${40}
+          .primaryTickmarkInterval=${20}
+          .fixedAspectRatio=${true}
+        ></obc-gauge-vertical>
+      </div>`
+    );
+    const el = screen.container.querySelector(
+      'obc-gauge-vertical'
+    ) as ObcGaugeVertical;
+    await el.updateComplete;
+    const reports: number[] = [];
+    el.addEventListener('scale-dimensions-changed', (e) =>
+      reports.push((e as CustomEvent<{thickness: number}>).detail.thickness)
+    );
+    await until(() => Math.abs(scaleOf(el) - 120 / 132) < 1e-3);
+    // 48 + 24 = 72 wide without labels: 120 px has room, the height decides
+    el.showLabels = false;
+    await until(() => Math.abs(scaleOf(el) - 600 / 384) < 1e-3);
+    await until(() => reports[reports.length - 1] === 113);
   });
 });

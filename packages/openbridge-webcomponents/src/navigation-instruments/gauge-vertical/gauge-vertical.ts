@@ -378,6 +378,9 @@ export class ObcGaugeVertical extends AdviceMixin(
       changed.has('advices') ||
       this.setpointPresenceChanged(changed)
     ) {
+      // A thinner or thicker drawing under the same box changes the painted
+      // scale without a resize event.
+      if (this.fixedAspectRatio) this._measureScale();
       this.reportDimensions();
     }
   }
@@ -442,8 +445,11 @@ export class ObcGaugeVertical extends AdviceMixin(
     }
   }
 
-  /** The inline sizing the consumer had before fixedAspectRatio took the host. */
-  private _consumerSizing?: {display: string; height: string; width: string};
+  /** The inline sizing, value and priority, the consumer had before fixedAspectRatio took the host. */
+  private _consumerSizing?: Record<
+    'display' | 'height' | 'width',
+    [value: string, priority: string]
+  >;
 
   /**
    * A custom element is inline by default, which gives the percentage-sized
@@ -452,10 +458,14 @@ export class ObcGaugeVertical extends AdviceMixin(
    */
   private _applyFixedAspectRatioStyles(): void {
     if (!this._consumerSizing) {
+      const snapshot = (name: string): [string, string] => [
+        this.style.getPropertyValue(name),
+        this.style.getPropertyPriority(name),
+      ];
       this._consumerSizing = {
-        display: this.style.display,
-        height: this.style.height,
-        width: this.style.width,
+        display: snapshot('display'),
+        height: snapshot('height'),
+        width: snapshot('width'),
       };
     }
     this.style.display = 'block';
@@ -466,23 +476,30 @@ export class ObcGaugeVertical extends AdviceMixin(
   private _removeFixedAspectRatioStyles(): void {
     const saved = this._consumerSizing;
     this._consumerSizing = undefined;
-    this.style.display = saved?.display ?? '';
-    this.style.height = saved?.height ?? '';
-    this.style.width = saved?.width ?? '';
+    for (const name of ['display', 'height', 'width'] as const) {
+      const [value, priority] = saved?.[name] ?? ['', ''];
+      this.style.setProperty(name, value, priority);
+    }
   }
 
-  /** Reads the host's height once layout has settled, then reports it. */
+  /** Reads the host's size into the scale; false while the host has no size yet. */
+  private _measureScale(): boolean {
+    const containerHeight = this.clientHeight;
+    if (containerHeight <= 0) return false;
+    this._scale = computeFixedAspectRatioScale({
+      orientation: ExternalScaleOrientation.vertical,
+      containerMainAxisSize: containerHeight,
+      containerCrossAxisSize: this.clientWidth,
+      scaleReferenceSize: this.scaleReferenceSize,
+      viewBoxThickness: this._viewBoxThickness,
+    });
+    return true;
+  }
+
+  /** Measures once layout has settled, then reports. */
   private _updateScaleFromCurrentSize(): void {
     requestAnimationFrame(() => {
-      const containerHeight = this.clientHeight;
-      if (containerHeight > 0) {
-        this._scale = computeFixedAspectRatioScale({
-          orientation: ExternalScaleOrientation.vertical,
-          containerMainAxisSize: containerHeight,
-          containerCrossAxisSize: this.clientWidth,
-          scaleReferenceSize: this.scaleReferenceSize,
-          viewBoxThickness: this._viewBoxThickness,
-        });
+      if (this._measureScale()) {
         this.requestUpdate();
         this.reportDimensions();
       }

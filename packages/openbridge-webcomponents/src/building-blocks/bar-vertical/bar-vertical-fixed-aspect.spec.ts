@@ -69,4 +69,17 @@ describe('obc-bar-vertical fixed aspect ratio', () => {
     );
     await until(() => reports[reports.length - 1] === 120);
   });
+
+  it('re-measures the scale when the drawing thickness changes under the same box', async () => {
+    const el = await mount('display: block; width: 120px; height: 600px');
+    const reports: number[] = [];
+    el.addEventListener('scale-dimensions-changed', (e) =>
+      reports.push((e as CustomEvent<{thickness: number}>).detail.thickness)
+    );
+    await until(() => Math.abs(scaleOf(el) - 120 / 132) < 1e-3);
+    // 180 + 24 + 60 = 264 wide: the same 120 px now holds less than half
+    el.barThickness = 180;
+    await until(() => Math.abs(scaleOf(el) - 120 / 264) < 1e-3);
+    await until(() => reports[reports.length - 1] === 120);
+  });
 });
