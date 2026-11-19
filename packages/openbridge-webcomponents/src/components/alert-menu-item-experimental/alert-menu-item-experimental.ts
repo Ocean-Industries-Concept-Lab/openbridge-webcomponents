@@ -1,6 +1,6 @@
 import {LitElement, html, nothing, unsafeCSS} from 'lit';
 import {property} from 'lit/decorators.js';
-import {SignalWatcher} from '@lit-labs/signals';
+import {observeAlertStandard} from '../../alert-system/configured-alert-standard.js';
 import {localized} from '@lit/localize';
 import componentStyle from './alert-menu-item-experimental.css?inline';
 import '../message-menu-item/message-menu-item.js';
@@ -60,7 +60,9 @@ export type ObcAlertMenuItemExperimentalActionClickEvent = CustomEvent<{
  */
 @customElement('obc-alert-menu-item-experimental')
 @localized()
-export class ObcAlertMenuItemExperimental extends SignalWatcher(LitElement) {
+export class ObcAlertMenuItemExperimental extends LitElement {
+  protected readonly alertStandard = observeAlertStandard(this);
+
   @property({type: String, reflect: true}) criticality = '';
   @property({type: String, reflect: true}) state = '';
   @property({type: String}) override title = '';

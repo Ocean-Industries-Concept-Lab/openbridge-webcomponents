@@ -7,11 +7,10 @@
  * own. Until then the components draw no alert, the lists and the menu say
  * that no standard is set, and the console says how to set one.
  *
- * The standard is a signal (`@lit-labs/signals`). A component that extends
- * `SignalWatcher` and reads it while it updates re-renders when it changes,
- * and once more on every connect, so one detached while the standard
- * changed comes back current. Nothing sets the standard from inside an
- * update, which would loop.
+ * The standard is a `GlobalSetting`: a component that holds the controller
+ * `observeAlertStandard()` gives it re-renders when the standard changes,
+ * and one detached while it changed comes back current on reconnect.
+ * Nothing sets the standard from inside an update, which would loop.
  *
  * Usage:
  * ```ts
@@ -21,15 +20,28 @@
  * setAlertStandard(iec62923AlertStandard);
  * ```
  */
-import {signal} from '@lit-labs/signals';
+import type {ReactiveControllerHost} from 'lit';
+import {
+  GlobalSetting,
+  type GlobalSettingController,
+} from '../internal/global-setting.js';
 import type {AlertStandard} from './alert-standard.js';
 
-const configuredAlertStandard = signal<AlertStandard | undefined>(undefined);
+const configuredAlertStandard = new GlobalSetting<AlertStandard | undefined>(
+  undefined
+);
 
 let missingAlertStandardWasReported = false;
 
 export function setAlertStandard(standard: AlertStandard | undefined): void {
   configuredAlertStandard.set(standard);
+}
+
+/** Re-renders `host` when the standard changes; create it once, as a field of the component. */
+export function observeAlertStandard(
+  host: ReactiveControllerHost
+): GlobalSettingController<AlertStandard | undefined> {
+  return configuredAlertStandard.controller(host);
 }
 
 /** The configured standard; a read while none is set says once in the console how to set one. */

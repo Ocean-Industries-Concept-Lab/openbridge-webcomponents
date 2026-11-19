@@ -2,7 +2,6 @@ import {PropertyValues, unsafeCSS} from 'lit';
 import {property} from 'lit/decorators.js';
 import {localized, msg} from '@lit/localize';
 import {customElement} from '../../decorator.js';
-import {SignalWatcher} from '@lit-labs/signals';
 import compentStyle from './alert-list-experimental.css?inline';
 import {
   ObcAlertListBase,
@@ -12,7 +11,10 @@ import {
   ownEntryOf,
   type AlertStandard,
 } from '../../alert-system/alert-standard.js';
-import {getAlertStandard} from '../../alert-system/configured-alert-standard.js';
+import {
+  getAlertStandard,
+  observeAlertStandard,
+} from '../../alert-system/configured-alert-standard.js';
 import {isAlertIncludedInFilter} from '../../alert-system/read-standard-alert.js';
 import type {AlertCriticalityAndState} from '../../alert-system/standard-alert.js';
 
@@ -62,7 +64,9 @@ function criticalityAndStateOfItem(
  */
 @customElement('obc-alert-list-experimental')
 @localized()
-export class ObcAlertListExperimental extends SignalWatcher(ObcAlertListBase) {
+export class ObcAlertListExperimental extends ObcAlertListBase {
+  protected readonly alertStandard = observeAlertStandard(this);
+
   @property({type: String}) filterId?: string;
   @property({attribute: false}) customFilter?: (item: HTMLElement) => boolean;
 

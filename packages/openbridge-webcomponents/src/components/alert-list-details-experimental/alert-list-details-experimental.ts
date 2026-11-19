@@ -1,7 +1,6 @@
 import {LitElement, PropertyValues, html, unsafeCSS} from 'lit';
 import {ifDefined} from 'lit/directives/if-defined.js';
 import {customElement} from '../../decorator.js';
-import {SignalWatcher} from '@lit-labs/signals';
 import compentStyle from './alert-list-details-experimental.css?inline';
 import {localized, msg} from '@lit/localize';
 import {property, query, state} from 'lit/decorators.js';
@@ -21,7 +20,10 @@ import {
   ownEntryOf,
   type AlertStandard,
 } from '../../alert-system/alert-standard.js';
-import {getAlertStandard} from '../../alert-system/configured-alert-standard.js';
+import {
+  getAlertStandard,
+  observeAlertStandard,
+} from '../../alert-system/configured-alert-standard.js';
 import {
   alertActionLabel,
   alertLabelOnTheDisplay,
@@ -518,7 +520,9 @@ export function getAlertRows(
  */
 @customElement('obc-alert-list-details-experimental')
 @localized()
-export class ObcAlertListDetailsExperimental extends SignalWatcher(LitElement) {
+export class ObcAlertListDetailsExperimental extends LitElement {
+  protected readonly alertStandard = observeAlertStandard(this);
+
   // Reactive so a consumer changing the name re-renders the table.
   @property({type: String, attribute: 'aria-label'})
   override ariaLabel: string | null = null;

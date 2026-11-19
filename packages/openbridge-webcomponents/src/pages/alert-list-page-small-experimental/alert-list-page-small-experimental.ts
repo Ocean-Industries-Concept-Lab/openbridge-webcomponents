@@ -1,7 +1,6 @@
 import {PropertyValues, html} from 'lit';
 import {property, query, state} from 'lit/decorators.js';
 import {customElement} from '../../decorator.js';
-import {SignalWatcher} from '@lit-labs/signals';
 import {
   ObcAlertListPageSmallBase,
   type AlertListPageMode,
@@ -11,7 +10,10 @@ import {
   ALERT_ACTION_ID_APPLIED_BY_ACK_VISIBLE_BUTTON,
   ownEntryOf,
 } from '../../alert-system/alert-standard.js';
-import {getAlertStandard} from '../../alert-system/configured-alert-standard.js';
+import {
+  getAlertStandard,
+  observeAlertStandard,
+} from '../../alert-system/configured-alert-standard.js';
 import {
   alertTimeFormatOnTheDisplay,
   isAlertActionOffered,
@@ -81,9 +83,9 @@ export type ObcAlertListPageSmallExperimentalRowClickEvent = CustomEvent<{
  * @experimental
  */
 @customElement('obc-alert-list-page-small-experimental')
-export class ObcAlertListPageSmallExperimental extends SignalWatcher(
-  ObcAlertListPageSmallBase
-) {
+export class ObcAlertListPageSmallExperimental extends ObcAlertListPageSmallBase {
+  protected readonly alertStandard = observeAlertStandard(this);
+
   @property({type: String}) filterId?: string;
   @property({type: Array}) alerts: StandardAlert[] = [];
 

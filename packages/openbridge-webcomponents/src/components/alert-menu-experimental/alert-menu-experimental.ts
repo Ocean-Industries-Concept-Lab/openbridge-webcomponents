@@ -1,6 +1,5 @@
 import {TemplateResult, html, unsafeCSS} from 'lit';
 import {customElement} from '../../decorator.js';
-import {SignalWatcher} from '@lit-labs/signals';
 import compentStyle from './alert-menu-experimental.css?inline';
 import {ObcAlertMenu, type AlertMenuTab} from '../alert-menu/alert-menu.js';
 import '../../building-blocks/alert-list-experimental/alert-list-experimental.js';
@@ -8,7 +7,10 @@ import {
   ALERT_ACTION_ID_APPLIED_BY_ACK_VISIBLE_BUTTON,
   ownEntryOf,
 } from '../../alert-system/alert-standard.js';
-import {getAlertStandard} from '../../alert-system/configured-alert-standard.js';
+import {
+  getAlertStandard,
+  observeAlertStandard,
+} from '../../alert-system/configured-alert-standard.js';
 import {msg} from '@lit/localize';
 import '../../icons/icon-alerts.js';
 
@@ -57,7 +59,9 @@ export type ObcAlertMenuExperimentalAckAllVisibleClickEvent = CustomEvent<{
  * @experimental
  */
 @customElement('obc-alert-menu-experimental')
-export class ObcAlertMenuExperimental extends SignalWatcher(ObcAlertMenu) {
+export class ObcAlertMenuExperimental extends ObcAlertMenu {
+  protected readonly alertStandard = observeAlertStandard(this);
+
   protected override get offersAckAll(): boolean {
     return (
       ownEntryOf(
