@@ -41,7 +41,7 @@ describe('renderStoriesGuide', () => {
     );
     expect(out).toContain('\n## Setpoint\n\nThe marker.');
     expect(out).toContain(
-      '- [NotEqual (Input ≠ Output)](https://openbridge-next-storybook.web.app/?path=/story/building-blocks-setpoint--notequal-input-≠-output): Full size.'
+      '- [NotEqual (Input ≠ Output)](https://openbridge-next-storybook.web.app/?path=/story/building-blocks-setpoint--not-equal): Full size.'
     );
     expect(out).toContain(
       '- [Flow](https://openbridge-next-storybook.web.app/?path=/story/building-blocks-setpoint--flow)\n'

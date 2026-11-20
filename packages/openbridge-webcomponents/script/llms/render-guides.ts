@@ -39,7 +39,7 @@ export function renderStoriesGuide(
       '',
       ...info.stories.map(
         (st) =>
-          `- [${st.name}](${storyPageUrl(channel, title, st.name)})${st.doc ? `: ${st.doc}` : ''}`
+          `- [${st.name}](${storyPageUrl(channel, title, st.exportName)})${st.doc ? `: ${st.doc}` : ''}`
       ),
       ''
     );

@@ -33,12 +33,16 @@ export function docsPageUrl(ch: Channel, title: string): string {
   return siteUrl(ch, `/?path=/docs/${sanitize(title)}--docs`);
 }
 
+/** Storybook derives a story's id from its export name, whatever `name:` says. */
 export function storyPageUrl(
   ch: Channel,
   title: string,
-  storyName: string
+  exportName: string
 ): string {
-  return siteUrl(ch, `/?path=/story/${toId(title, storyName)}`);
+  return siteUrl(
+    ch,
+    `/?path=/story/${toId(title, storyNameFromExport(exportName))}`
+  );
 }
 
 export function storiesIndex(

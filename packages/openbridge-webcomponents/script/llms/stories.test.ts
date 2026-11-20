@@ -134,13 +134,12 @@ describe('urls', () => {
       'https://openbridge-next-storybook.web.app/?path=/docs/bars-and-graphs-bar-vertical--docs'
     );
     expect(
-      storyPageUrl(
-        next,
-        'Bars and Graphs/Bar Vertical',
-        'Default (right side, bar, labels, advice)'
-      )
+      storyPageUrl(next, 'Bars and Graphs/Bar Vertical', 'DefaultRight')
     ).toBe(
-      'https://openbridge-next-storybook.web.app/?path=/story/bars-and-graphs-bar-vertical--default-right-side-bar-labels-advice'
+      'https://openbridge-next-storybook.web.app/?path=/story/bars-and-graphs-bar-vertical--default-right'
+    );
+    expect(storyPageUrl(next, 'Building Blocks/Setpoint', 'NotEqual')).toBe(
+      'https://openbridge-next-storybook.web.app/?path=/story/building-blocks-setpoint--not-equal'
     );
   });
 });

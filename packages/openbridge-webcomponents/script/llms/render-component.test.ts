@@ -39,6 +39,12 @@ const entry: ComponentEntry = {
         description: 'A | b',
         inheritedFrom: {name: 'Base'},
       },
+      {
+        kind: 'field',
+        name: 'mode',
+        type: {text: 'Mode | undefined'},
+        default: "'a' | 'b'",
+      },
       {kind: 'field', name: '_internal', type: {text: 'number'}},
       {kind: 'field', name: 'hidden', privacy: 'private'},
       {kind: 'field', name: 'styles', static: true},
@@ -75,7 +81,9 @@ const stories: StoriesInfo[] = [
     title: 'UI/X More',
     componentTag: 'obc-x',
     componentDocs: undefined,
-    stories: [{exportName: 'Dense', name: 'Dense', doc: undefined}],
+    stories: [
+      {exportName: 'DenseLayout', name: 'Dense (compact)', doc: undefined},
+    ],
   },
 ];
 
@@ -106,6 +114,9 @@ describe('renderComponentPage', () => {
     );
     expect(out).toContain('| value | value | `number` | `0` | The value. |');
     expect(out).toContain('| label |  | `string` |  | A \\| b |');
+    expect(out).toContain(
+      "| mode |  | `Mode \\| undefined` | `'a' \\| 'b'` |  |"
+    );
     expect(out).not.toContain('_internal');
     expect(out).not.toContain('| hidden');
     expect(out).not.toContain('| styles');
@@ -123,7 +134,7 @@ describe('renderComponentPage', () => {
       '- [Default](https://openbridge-next-storybook.web.app/?path=/story/ui-x--default): Shows the default.'
     );
     expect(out).toContain(
-      '- [Dense](https://openbridge-next-storybook.web.app/?path=/story/ui-x-more--dense)\n'
+      '- [Dense (compact)](https://openbridge-next-storybook.web.app/?path=/story/ui-x-more--dense-layout)\n'
     );
   });
 

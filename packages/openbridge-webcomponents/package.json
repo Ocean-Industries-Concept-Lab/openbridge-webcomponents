@@ -37,7 +37,7 @@
     "storybook:server": "http-server -p 6006 storybook-static",
     "preview": "vite preview",
     "prebuild-storybook": "npm run build:translations",
-    "postbuild-storybook": "node --eval \"fs.cpSync('llms', 'storybook-static', {recursive: true})\"",
+    "postbuild-storybook": "node --eval \"fs.cpSync('llms', 'storybook-static', {recursive: true}); fs.copyFileSync('custom-elements.json', 'storybook-static/custom-elements.json')\"",
     "🧩_COMPONENT_________________________________________________": "echo _____",
     "new:component": "tsx ./new-component.ts",
     "🧪_CHECKS____________________________________________________": "echo _____",
@@ -168,8 +168,7 @@
     "LICENSE.txt",
     "LICENSE-AGPL.txt",
     "LICENSE-APACHE.txt",
-    "llms",
-    "!llms/custom-elements.json"
+    "llms"
   ],
   "publishConfig": {
     "access": "public"

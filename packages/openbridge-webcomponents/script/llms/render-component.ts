@@ -19,8 +19,9 @@ export function escapeCell(text: string | undefined): string {
     .trim();
 }
 
+// GFM splits a table cell on a pipe even inside a code span unless it is escaped.
 const code = (text: string | undefined): string =>
-  text ? `\`${text.replace(/\n\s*/g, ' ')}\`` : '';
+  text ? `\`${text.replace(/\n\s*/g, ' ').replace(/\|/g, '\\|')}\`` : '';
 
 /** Shifts every heading outside fenced code so the shallowest one is `##`. */
 export function normalizeHeadings(markdown: string): string {
@@ -150,7 +151,7 @@ export function renderComponentPage(input: ComponentPageInput): string {
     s.title
       ? s.stories.map(
           (st) =>
-            `- [${st.name}](${storyPageUrl(channel, s.title!, st.name)})${st.doc ? `: ${escapeCell(st.doc)}` : ''}`
+            `- [${st.name}](${storyPageUrl(channel, s.title!, st.exportName)})${st.doc ? `: ${escapeCell(st.doc)}` : ''}`
         )
       : []
   );
