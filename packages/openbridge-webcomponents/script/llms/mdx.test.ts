@@ -30,6 +30,26 @@ describe('mdxToMarkdown', () => {
     expect(mdxToMarkdown(src, ctx())).toBe('# X\n\nText.');
   });
 
+  it('keeps a blank line inside a multi-line import', () => {
+    const src = `import {\n  Meta,\n\n  Markdown,\n} from '@storybook/addon-docs/blocks';\n\n# X\n\nText.`;
+    expect(mdxToMarkdown(src, ctx())).toBe('# X\n\nText.');
+  });
+
+  it('rewrites Storybook links inside an expanded partial, leaving its code alone', () => {
+    const docsRoute = (id: string) =>
+      id === 'components-pump' ? 'https://s/components/obc-pump.md' : undefined;
+    const raw =
+      '| [Pump](?path=/docs/components-pump--docs) | `{min: 1}` |\n|---|---|\n\n```\n[x](?path=/story/a--b)\n```';
+    expect(
+      mdxToMarkdown(
+        `import t from './t.md?raw';\n\n<Markdown>{t}</Markdown>`,
+        ctx({readRaw: () => raw, docsRoute})
+      )
+    ).toBe(
+      '| [Pump](https://s/components/obc-pump.md) | `{min: 1}` |\n|---|---|\n\n```\n[x](?path=/story/a--b)\n```'
+    );
+  });
+
   it('stops an unterminated import at the first blank line and warns', () => {
     const warn = vi.fn();
     expect(mdxToMarkdown(`import {\n  a,\n\n# X`, ctx({warn}))).toBe('# X');

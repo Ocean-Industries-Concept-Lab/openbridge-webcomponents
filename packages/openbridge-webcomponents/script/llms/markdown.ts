@@ -26,11 +26,8 @@ export function fenceState(): FenceState {
         open = {char, length};
         return true;
       }
-      if (
-        char === open.char &&
-        length >= open.length &&
-        /^\s*[`~]+\s*$/.test(line)
-      ) {
+      const closes = new RegExp(`^\\s*\\${open.char}{${open.length},}\\s*$`);
+      if (char === open.char && closes.test(line)) {
         open = undefined;
         return true;
       }

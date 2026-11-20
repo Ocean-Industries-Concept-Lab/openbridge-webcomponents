@@ -54,12 +54,16 @@ export function mdxToMarkdown(source: string, ctx: MdxContext): string {
     }
     if (IMPORT_START.test(line)) {
       let stmt = line;
+      // An import may wrap its bindings over blank lines; markdown that follows
+      // an unfinished one (a heading, a tag) is where the statement ends.
       while (!IMPORT_END.test(stmt) && i + 1 < lines.length) {
-        if (lines[i + 1].trim() === '') {
+        const next = lines[i + 1].trim();
+        if (/^(#|<)/.test(next)) {
           ctx.warn(`llms.txt: unterminated import dropped: ${line}`);
           break;
         }
-        stmt += ` ${lines[++i].trim()}`;
+        i++;
+        if (next) stmt += ` ${next}`;
       }
       const m = NAMESPACE_IMPORT.exec(stmt) ?? DEFAULT_IMPORT.exec(stmt);
       if (m) idents.set(m[1], m[2]);
@@ -73,8 +77,17 @@ export function mdxToMarkdown(source: string, ctx: MdxContext): string {
     const partial = MARKDOWN_PARTIAL.exec(line);
     if (partial) {
       const path = idents.get(partial[1]);
-      if (path) push(ctx.readRaw(path).replace(/\n$/, ''));
-      else
+      if (path) {
+        const partial = fenceState();
+        for (const raw of ctx.readRaw(path).replace(/\n$/, '').split('\n')) {
+          const delimiter = partial.update(raw);
+          push(
+            delimiter || partial.inFence
+              ? raw
+              : outsideCodeSpans(raw, (text) => storybookLinks(text, ctx))
+          );
+        }
+      } else
         ctx.warn(
           `llms.txt: <Markdown>{${partial[1]}}</Markdown> has no import`
         );
