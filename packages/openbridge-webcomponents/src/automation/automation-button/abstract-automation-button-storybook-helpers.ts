@@ -50,6 +50,9 @@ export const argTypesAbstractAutomationButton = {
   badgeLayout: {
     control: {type: 'object'},
   },
+  badgeSymbolOverride: {
+    control: {type: 'object'},
+  },
   progressMode: {
     options: Object.values(CircularProgressMode),
     control: {type: 'select'},

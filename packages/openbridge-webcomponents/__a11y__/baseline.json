@@ -618,8 +618,20 @@
     "aria-required-children",
     "aria-required-parent"
   ],
+  "automation-tanks-heat-exchanger--with-badge-letters": [
+    "label-content-name-mismatch"
+  ],
+  "automation-tanks-heat-pump--with-badge-letters": [
+    "label-content-name-mismatch"
+  ],
+  "automation-tanks-hydraulic-separator--with-badge-letters": [
+    "label-content-name-mismatch"
+  ],
   "automation-tanks-tank--activated": ["label-content-name-mismatch"],
   "automation-tanks-tank--advice-use-case": ["label-content-name-mismatch"],
+  "automation-tanks-tank--atmospheric-with-badge-letters": [
+    "label-content-name-mismatch"
+  ],
   "automation-tanks-tank--atmospheric-with-badges": [
     "label-content-name-mismatch"
   ],

@@ -20,6 +20,7 @@ import {
   AutomationButtonBadgeKind,
   setAutomationBadgeLayout,
 } from '../automation-button/badge-layout.js';
+import {setAutomationBadgeSymbolOverride} from '../automation-button/badge-symbols.js';
 
 const meta: Meta<typeof ObcPump> = {
   title: 'Automation/Automation Devices/Pump',
@@ -134,6 +135,49 @@ export const BadgeLayoutGlobal: Story = {
       description: {
         story:
           'The app-wide layout from `setAutomationBadgeLayout()` puts interlock top-left and control bottom-left on every device.',
+      },
+    },
+  },
+};
+
+const simulationBadges = {
+  ...allBadges,
+  badgeInterlock: AutomationButtonBadgeInterlock.Simulation,
+  badgeCommandLocked: AutomationButtonBadgeCommandLocked.Simulation,
+};
+
+export const BadgeSymbolsLocal: Story = {
+  args: {
+    ...simulationBadges,
+    badgeSymbolOverride: {
+      control: {auto: 'a'},
+      commandLocked: {simulation: 's'},
+    },
+  },
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'This pump draws A for auto and S for simulation on the command-locked corner; the interlock corner keeps the simulation cube.',
+      },
+    },
+  },
+};
+
+export const BadgeSymbolsGlobal: Story = {
+  args: simulationBadges,
+  beforeEach: () => {
+    setAutomationBadgeSymbolOverride({
+      interlock: {simulation: 's'},
+      commandLocked: {simulation: 's'},
+    });
+    return () => setAutomationBadgeSymbolOverride(undefined);
+  },
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'The app-wide override from `setAutomationBadgeSymbolOverride()` draws S for simulation on every device.',
       },
     },
   },

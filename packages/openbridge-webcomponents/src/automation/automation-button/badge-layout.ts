@@ -20,11 +20,7 @@
  *
  * @module
  */
-import type {ReactiveControllerHost} from 'lit';
-import {
-  GlobalSetting,
-  GlobalSettingController,
-} from '../../internal/global-setting.js';
+import {GlobalSetting} from '../../internal/global-setting.js';
 
 export enum AutomationButtonBadgeKind {
   Control = 'control',
@@ -86,9 +82,11 @@ export function resolveBadgeLayout(
   return result;
 }
 
-const globalLayout = new GlobalSetting<ResolvedAutomationButtonBadgeLayout>({
-  ...defaultAutomationButtonBadgeLayout,
-});
+/** The app-wide layout; a device re-renders on a change through `BadgeSettingsController`. */
+export const badgeLayoutSetting =
+  new GlobalSetting<ResolvedAutomationButtonBadgeLayout>({
+    ...defaultAutomationButtonBadgeLayout,
+  });
 
 /**
  * Sets the badge layout of every automation button on the page, and
@@ -97,24 +95,18 @@ const globalLayout = new GlobalSetting<ResolvedAutomationButtonBadgeLayout>({
 export function setAutomationBadgeLayout(
   layout: AutomationButtonBadgeLayout | undefined
 ): void {
-  globalLayout.set(
+  badgeLayoutSetting.set(
     resolveBadgeLayout(defaultAutomationButtonBadgeLayout, layout)
   );
 }
 
 export function getAutomationBadgeLayout(): ResolvedAutomationButtonBadgeLayout {
-  return {...globalLayout.get()};
+  return {...badgeLayoutSetting.get()};
 }
 
-/** Re-renders its host when the global badge layout changes, and puts the host's own corners on top of it. */
-export class BadgeLayoutController extends GlobalSettingController<ResolvedAutomationButtonBadgeLayout> {
-  constructor(host: ReactiveControllerHost) {
-    super(host, globalLayout);
-  }
-
-  resolve(
-    local: AutomationButtonBadgeLayout | undefined
-  ): ResolvedAutomationButtonBadgeLayout {
-    return resolveBadgeLayout(this.value, local);
-  }
+/** The app-wide layout with a device's own corners on top. */
+export function currentBadgeLayout(
+  local: AutomationButtonBadgeLayout | undefined
+): ResolvedAutomationButtonBadgeLayout {
+  return resolveBadgeLayout(badgeLayoutSetting.get(), local);
 }

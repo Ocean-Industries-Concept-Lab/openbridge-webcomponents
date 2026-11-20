@@ -33,6 +33,10 @@ interface SelectArgType {
   control: {type: 'radio' | 'select'};
 }
 
+interface ObjectArgType {
+  control: {type: 'object'};
+}
+
 /**
  * Shared story meta for the three specialty-tank tiles. Every public property
  * is bound in `render`, so a story can set any of them as an arg; the tag
@@ -40,7 +44,7 @@ interface SelectArgType {
  */
 export function specialtyTankMeta(tag: StaticValue): {
   args: Partial<SpecialtyTankStoryArgs>;
-  argTypes: Record<string, SelectArgType>;
+  argTypes: Record<string, SelectArgType | ObjectArgType>;
   decorators: (typeof crossDecorator)[];
   render: (args: SpecialtyTankStoryArgs) => TemplateResult;
 } {
@@ -90,6 +94,9 @@ export function specialtyTankMeta(tag: StaticValue): {
         options: Object.values(AutomationButtonBadgeCommandLocked),
         control: {type: 'select'},
       },
+      badgeSymbolOverride: {
+        control: {type: 'object'},
+      },
       ...argTypesAlertFrame,
     },
     decorators: [crossDecorator],
@@ -106,6 +113,7 @@ export function specialtyTankMeta(tag: StaticValue): {
         .badgeAlert=${args.badgeAlert}
         .badgeInterlock=${args.badgeInterlock}
         .badgeCommandLocked=${args.badgeCommandLocked}
+        .badgeSymbolOverride=${args.badgeSymbolOverride}
         ?alert=${args.alert}
         .alertFrameType=${args.alertFrameType}
         .alertFrameThickness=${args.alertFrameThickness}
@@ -132,6 +140,16 @@ export const specialtyTankStories: Record<string, SpecialtyTankStory> = {
       badgeAlert: AutomationButtonBadgeAlert.Silence,
       badgeInterlock: AutomationButtonBadgeInterlock.Interlock,
       badgeCommandLocked: AutomationButtonBadgeCommandLocked.CommandLocked,
+    },
+  },
+  WithBadgeLetters: {
+    args: {
+      medium: SpecialtyTankMedium.medium,
+      badgeControl: AutomationButtonBadgeControl.Auto,
+      badgeAlert: AutomationButtonBadgeAlert.Silence,
+      badgeInterlock: AutomationButtonBadgeInterlock.Simulation,
+      badgeCommandLocked: AutomationButtonBadgeCommandLocked.Simulation,
+      badgeSymbolOverride: {commandLocked: {simulation: 's'}},
     },
   },
   WithAlert: {args: {medium: SpecialtyTankMedium.medium, alert: true}},

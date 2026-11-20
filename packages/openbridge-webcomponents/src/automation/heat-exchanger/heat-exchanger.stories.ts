@@ -23,4 +23,6 @@ export const Medium: SpecialtyTankStory = specialtyTankStories.Medium;
 export const Static: SpecialtyTankStory = specialtyTankStories.Static;
 export const WithoutIcon: SpecialtyTankStory = specialtyTankStories.WithoutIcon;
 export const WithBadges: SpecialtyTankStory = specialtyTankStories.WithBadges;
+export const WithBadgeLetters: SpecialtyTankStory =
+  specialtyTankStories.WithBadgeLetters;
 export const WithAlert: SpecialtyTankStory = specialtyTankStories.WithAlert;
