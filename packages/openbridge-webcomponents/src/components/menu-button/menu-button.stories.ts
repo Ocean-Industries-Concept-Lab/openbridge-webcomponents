@@ -337,6 +337,22 @@ export const FlyoutMenuWithoutPersistentState: Story = {
   },
 };
 
+/** Logs each `item-click`; clicking File > New should log one event. */
+export const FlyoutChildItemClick: Story = {
+  args: FlyoutMenuWithoutPersistentState.args,
+  render: (args) => html`
+    <obc-menu-button
+      .label=${args.label}
+      .options=${args.options}
+      .selectedValues=${args.selectedValues}
+      .menuType=${args.menuType}
+      .multiSelect=${args.multiSelect}
+      @item-click=${(e: CustomEvent<{value: string}>) =>
+        console.log('item-click', e.detail)}
+    ></obc-menu-button>
+  `,
+};
+
 /** Per-group selection flyout menu with persistence. */
 export const FlyoutMenuWithPersistentState: Story = {
   args: {

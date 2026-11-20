@@ -679,6 +679,11 @@ export class ObcContextMenuInput extends LitElement {
   }
 
   private handleFlyoutGroupClick(option: ContextMenuOption, event: Event) {
+    // A click on one of the group's items bubbles here after the item has reported it (#1362).
+    const item = event
+      .composedPath()
+      .find((node) => node instanceof HTMLElement && node.dataset.menuItem);
+    if (item !== event.currentTarget) return;
     event.preventDefault();
     this.refreshAfterDisclosure(event.currentTarget as ObcNavigationItemGroup);
     this.dispatchEvent(
