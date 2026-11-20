@@ -11,6 +11,8 @@ src/generated
 *.style.ts
 
 storybook-static
+# written by npm run analyze (llms:generate); served from the Storybook root
+/llms
 node_modules
 dist
 dist-ssr

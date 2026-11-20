@@ -44,6 +44,8 @@ The Live Demo is an application showcase: it shows how components work together 
 | **Stable** (`stable` branch, npm `latest`) | [openbridge-storybook.web.app](https://openbridge-storybook.web.app)           | [openbridge-demo.web.app](https://openbridge-demo.web.app/)           |
 | **Develop** (`develop` branch, npm `next`) | [openbridge-next-storybook.web.app](https://openbridge-next-storybook.web.app) | [openbridge-next-demo.web.app](https://openbridge-next-demo.web.app/) |
 
+For AI agents and tools that read documentation as text, [openbridge-next-storybook.web.app/llms.txt](https://openbridge-next-storybook.web.app/llms.txt) indexes the guides, the component manifest and one line per component. The stable channel gets its copy at the next stable release.
+
 ## 👋 Hello World
 
 One file, no installation, no build step — a running OpenBridge app with a top

@@ -1,6 +1,13 @@
 {
   "name": "@oicl/openbridge-webcomponents",
   "version": "2.2.0-next.19",
+  "description": "OpenBridge design system implemented as Lit-based web components with support for all major frontend frameworks.",
+  "keywords": [
+    "web-components",
+    "lit",
+    "design-system",
+    "openbridge"
+  ],
   "type": "module",
   "repository": {
     "type": "git",
@@ -30,6 +37,7 @@
     "storybook:server": "http-server -p 6006 storybook-static",
     "preview": "vite preview",
     "prebuild-storybook": "npm run build:translations",
+    "postbuild-storybook": "node --eval \"fs.cpSync('llms', 'storybook-static', {recursive: true}); fs.copyFileSync('custom-elements.json', 'storybook-static/custom-elements.json')\"",
     "🧩_COMPONENT_________________________________________________": "echo _____",
     "new:component": "tsx ./new-component.ts",
     "🧪_CHECKS____________________________________________________": "echo _____",
@@ -69,7 +77,8 @@
     "wrappers:post-fix": "node fix-generated.cjs && tsx ./script/inject-docs.ts --svelte",
     "📜_SCRIPTS___________________________________________________": "echo _____",
     "download:icons": "tsx ./script/download-icons.ts",
-    "analyze": "cem analyze && tsx ./script/sort-custom-element-manifest.ts",
+    "analyze": "cem analyze && tsx ./script/sort-custom-element-manifest.ts && npm run llms:generate",
+    "llms:generate": "tsx ./script/generate-llms-txt.ts",
     "inject:dts": "tsx ./script/inject-docs.ts --dts",
     "analyze:watch": "cem analyze --watch",
     "clean": "rm -rf node_modules dist bundle custom-elements.json",
@@ -158,7 +167,8 @@
     "custom-elements.json",
     "LICENSE.txt",
     "LICENSE-AGPL.txt",
-    "LICENSE-APACHE.txt"
+    "LICENSE-APACHE.txt",
+    "llms"
   ],
   "publishConfig": {
     "access": "public"

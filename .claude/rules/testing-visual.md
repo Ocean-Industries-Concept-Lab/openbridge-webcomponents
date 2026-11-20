@@ -103,7 +103,7 @@ the lifecycle tags), `manager-head.html` (CSS injected into the manager UI, not
 into stories — it pins a minimum sidebar width so the badges stay on one line),
 `openbridgeTheme.ts`, and `vitest.setup.ts`, which wires the snapshot project.
 
-Two facts that bite:
+Three facts that bite:
 
 - **Run `npm run analyze` before testing a new component's stories.** Storybook
   resolves story args to element properties through `custom-elements.json`;
@@ -111,6 +111,11 @@ Two facts that bite:
 - **Lifecycle badges are derived, never hand-written.** `meta.tags` mirrors the
   class JSDoc — see [`jsdoc.md`](../../docs/agents/jsdoc.md). Tooling tags (`autodocs`,
   `skip-test`, `!snapshot`) and version tags (`6.0`, `6.1`) stay hand-written.
+- **`llms/` is build output, not a static dir.** `npm run analyze` writes it
+  and `postbuild-storybook` copies it into `storybook-static`, so the deployed
+  site serves `/llms.txt` and the markdown pages. A `staticDirs` entry at `/`
+  is not an option: the vitest addon mounts it with plain `sirv`, whose cached
+  `req._parsedUrl` breaks every module import in the test projects.
 
 ### `skip-test` or `!snapshot`
 
