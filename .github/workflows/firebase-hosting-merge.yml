@@ -98,6 +98,8 @@ jobs:
 
       - name: Analyze
         run: cd packages/openbridge-webcomponents && npm run analyze
+        env:
+          LLMS_CHANNEL: ${{ env.BRANCH == 'stable' && 'latest' || 'next' }}
 
       - name: Build storybook
         run: cd packages/openbridge-webcomponents && npm run build-storybook
