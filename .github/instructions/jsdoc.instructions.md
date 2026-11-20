@@ -14,7 +14,7 @@ carries the summary; `docs/agents/jsdoc.md` is the source of truth.
 
 Key points:
 
-1. **One-line summary** with the tag name and a brief description.
+1. **One-line summary** with the tag name and a brief description, as `` `<obc-x>` – … ``: the first sentence of that paragraph is what `llms.txt` and the component markdown pages show.
 2. **Features / Variants** — bullet list of capabilities and configuration options.
 3. **Usage Guidelines** — when and how to use the component; contrast with similar components.
 4. **Slots** — table of slot names, conditions, and purposes.
@@ -65,7 +65,9 @@ export class ObcReadout extends LitElement {}
 
 Put the tag **last** in the block, after `@slot` / `@fires`. It must be in a
 real JSDoc block (`/** … */`) — a plain `/* … */` comment is invisible to
-`cem analyze` and to the lint rules.
+`cem analyze` and to the lint rules. `npm run analyze` writes the tag as
+`lifecycle` on the manifest declaration (`script/cem-plugins/lifecycle.mjs`),
+which `llms.txt` and the component pages read.
 
 **Mapping to Storybook `meta.tags`:**
 

@@ -1,6 +1,10 @@
 import {describe, expect, it} from 'vitest';
 import {resolveChannel} from './channel.js';
-import {isModuleGuide, renderStoriesGuide} from './render-guides.js';
+import {
+  isModuleGuide,
+  renderLlmsFull,
+  renderStoriesGuide,
+} from './render-guides.js';
 import type {StoriesInfo} from './stories.js';
 
 const channel = resolveChannel('next', {});
@@ -63,5 +67,16 @@ describe('renderStoriesGuide', () => {
         () => undefined
       ).startsWith('# Thing\n')
     ).toBe(true);
+  });
+});
+
+describe('renderLlmsFull', () => {
+  it('joins the parts with a rule between them', () => {
+    expect(
+      renderLlmsFull([
+        {title: 'a', markdown: '# A\n\nx\n'},
+        {title: 'b', markdown: '# B'},
+      ])
+    ).toBe('# A\n\nx\n\n---\n\n# B\n');
   });
 });

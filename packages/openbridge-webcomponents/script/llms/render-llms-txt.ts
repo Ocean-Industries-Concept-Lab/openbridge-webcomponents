@@ -21,8 +21,6 @@ export interface LlmsTxtInput {
   extraReference?: {name: string; href: string; note: string}[];
 }
 
-const PACKAGE_DIR = 'packages/openbridge-webcomponents';
-
 const WRAPPER_LABELS: Record<(typeof WRAPPER_PACKAGES)[number], string> = {
   '@oicl/openbridge-webcomponents-react': 'React',
   '@oicl/openbridge-webcomponents-vue': 'Vue',
@@ -145,7 +143,6 @@ export function renderLlmsTxt(input: LlmsTxtInput): string {
     ...guides
       .filter((g) => g.optional)
       .map((g) => link(guideTitle(g), guideHref(g))),
-    link('Changelog', rawUrl(ch, `${PACKAGE_DIR}/CHANGELOG.md`)),
     link('Contributing', rawUrl(ch, 'CONTRIBUTING.md'), 'how to contribute'),
     link(
       'Implementation guidelines',

@@ -46,3 +46,10 @@ export function renderStoriesGuide(
   }
   return out.join('\n').replace(/\n+$/, '\n');
 }
+
+/** `llms-full.txt`: the README, every guide and every component page, in llms.txt order. */
+export function renderLlmsFull(
+  parts: {title: string; markdown: string}[]
+): string {
+  return `${parts.map((p) => p.markdown.replace(/\n+$/, '')).join('\n\n---\n\n')}\n`;
+}

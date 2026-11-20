@@ -67,6 +67,13 @@ const input: LlmsTxtInput = {
       optional: true,
       source: '',
     },
+    {
+      title: 'Introduction/Changelog',
+      file: 'Changelog.mdx',
+      slug: 'introduction-changelog',
+      optional: true,
+      source: '',
+    },
   ],
   agentDocs: [
     {
@@ -159,8 +166,9 @@ describe('renderLlmsTxt', () => {
       '- [Migration Guide](https://g/introduction-migration-guide)'
     );
     expect(optional).toContain(
-      '- [Changelog](https://raw.githubusercontent.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/develop/packages/openbridge-webcomponents/CHANGELOG.md)'
+      '- [Changelog](https://g/introduction-changelog)'
     );
+    expect(optional.match(/\[Changelog\]/g)).toHaveLength(1);
     expect(optional).toContain(
       '- [Contributing](https://raw.githubusercontent.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/develop/CONTRIBUTING.md)'
     );
