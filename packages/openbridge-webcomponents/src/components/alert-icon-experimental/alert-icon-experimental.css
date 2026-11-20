@@ -1,0 +1,45 @@
+.wrapper {
+  /* The frames stack on this box; they draw the glyphs at its full size. */
+  position: relative;
+  width: 100%;
+  height: 100%;
+
+  /* 0/1 from the flash-<tempo> classes; the off frame shows while the on frame fades. */
+  --frame-on: 1;
+  --frame-off: 0;
+
+  &.flash-fast {
+    --frame-on: var(--flash-fast-on);
+    --frame-off: var(--flash-fast-off);
+  }
+
+  &.flash-slow {
+    --frame-on: var(--flash-slow-on);
+    --frame-off: var(--flash-slow-off);
+  }
+
+  &.flash-very-slow {
+    --frame-on: var(--flash-very-slow-on);
+    --frame-off: var(--flash-very-slow-off);
+  }
+}
+
+.frame,
+.flash-frame {
+  position: absolute;
+  inset: 0;
+
+  > * {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+}
+
+.frame {
+  opacity: var(--frame-on);
+}
+
+.flash-frame {
+  opacity: var(--frame-off);
+}

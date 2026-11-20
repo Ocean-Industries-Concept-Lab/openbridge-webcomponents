@@ -34,7 +34,7 @@ Key points:
 
    A tag naming a property that does not exist is a ghost manifest member — `npm run lint:slots` fails on it. Mixin-provided properties (`svghelpers/setpoint-mixin.ts`, `svghelpers/setpoint-bundle.ts`) keep their inline docs.
 
-7. **Tone:** Do NOT mention "maritime", "industrial", "bridge", or domain qualifiers; keep text domain-agnostic.
+7. **Tone:** Keep generic behaviour domain-neutral: no "maritime", "industrial" or "bridge" as decoration. Where the behaviour comes from a domain or a standard, name it, citing the standard by number (`IEC 62923`, `ISA-18.2`).
 8. If purpose is unclear, insert `**TODO(designer)**` instead of guessing.
 9. **`@availableWhen` for conditional properties** — see below.
 10. **Exactly one lifecycle tag** on every `@customElement` class — see below.

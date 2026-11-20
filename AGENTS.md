@@ -97,7 +97,7 @@ Key points:
    `--fix` hoists them; an inline `@deprecated` / `@default` is the exception and keeps
    its description in the class block — [`docs/agents/jsdoc.md`](docs/agents/jsdoc.md)).
    A tag naming a property that does not exist fails `npm run lint:slots`.
-7. **Tone:** Do NOT mention "maritime", "industrial", "bridge", or domain qualifiers; keep text domain-agnostic.
+7. **Tone:** Keep generic behaviour domain-neutral: no "maritime", "industrial" or "bridge" as decoration. Where the behaviour comes from a domain or a standard, name it, citing the standard by number (`IEC 62923`, `ISA-18.2`).
 8. If purpose is unclear, insert `**TODO(designer)**` instead of guessing.
 9. **`@availableWhen` for conditional properties** — see [`docs/agents/jsdoc.md`](docs/agents/jsdoc.md).
 10. **Exactly one lifecycle tag** on every `@customElement` class — see [`docs/agents/jsdoc.md`](docs/agents/jsdoc.md).
@@ -143,6 +143,7 @@ The table below is generated too. Edit `docs/agents/*.md`, never this block.
 | --- | --- | --- |
 | [a11y](docs/agents/a11y.md) | `packages/openbridge-webcomponents/src/{components,automation,internal}/**` | Accessibility (WCAG 2.1 AA + 2.2 § 2.5.8 target size) — keyboard nav, ARIA, focus |
 | [advice](docs/agents/advice.md) | `packages/openbridge-webcomponents/src/svghelpers/{advice.ts,advice-linear.ts,advice-patterns.ts,advice-mixin.ts,advice-bundle.ts}`<br>`packages/openbridge-webcomponents/src/charthelpers/advice-area-plugin.ts`<br>`packages/openbridge-webcomponents/src/building-blocks/advice/**` | Advice design layer, mixin/bundle, the four renderers and the area plugin |
+| [alerts](docs/agents/alerts.md) | `packages/openbridge-webcomponents/src/alert-system/**`<br>`packages/openbridge-webcomponents/src/**/alert-*-experimental/**` | Alert standards and the experimental alert components drawn from them |
 | [ar](docs/agents/ar.md) | `packages/openbridge-webcomponents/src/ar/**` | Augmented-reality POI overlay — controller, layer stack, overlap resolution, and the POI composition chain |
 | [automation-components](docs/agents/automation-components.md) | `packages/openbridge-webcomponents/src/automation/**` | Automation devices, valves, lines, tanks, badges |
 | [building-blocks](docs/agents/building-blocks.md) | `packages/openbridge-webcomponents/src/{building-blocks,svghelpers}/**` | SVG-based building block components and shared utilities |
@@ -322,7 +323,7 @@ automatically when editing a `.css` file.
     ```
 14. **Keep the main context clean.** Delegate broad exploration to subagents; read a file in the main thread only to edit it or for a few lines.
 15. **Radial instrument geometry goes through `svghelpers/radial-frame.ts`.** One `computeRadialFrame()` result per render feeds both `<obc-watch .arcFrame=...>` and the overlay `viewBox`; never hand-mirror viewBox constants or paddings ([`docs/agents/watch-radial-instruments.md` § Shared frame computation](docs/agents/watch-radial-instruments.md)).
-16. **The readout family is four nested layers, not one component.** `obc-textbox` → `obc-readout-block` → `obc-readout-list-item` → `obc-readout-list`, plus `obc-readout` inside radial instruments; a lower-layer change reaches every layer above it, so re-run the instrument snapshots too ([`docs/agents/readout-components.md`](docs/agents/readout-components.md)).
+16. **The readout family is four nested layers**: a change to a lower one reaches every layer above it, so re-run the instrument snapshots too ([`docs/agents/readout-components.md`](docs/agents/readout-components.md)).
 17. **Never hand-edit `src/palettes/variables.css`, `src/mixins/fonts.css`, `script/figmavariables.json` or `src/icons/**`.** Regenerate them from Figma the way [`docs/agents/figma-refresh.md`](docs/agents/figma-refresh.md) describes.
 18. **Do not commit planning documents or specs.** Design notes, plans and scratch specs stay out of the repository, whatever directory an agent writes them to — the design record belongs in the pull request body, where reviewers read it and where it stays attached to the change.
 19. **Read the tracker before you start.** The issue, then open and closed

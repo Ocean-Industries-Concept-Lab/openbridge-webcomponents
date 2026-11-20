@@ -1,0 +1,23 @@
+:host {
+  --action-width: 82px;
+  --trailing-icon-size: var(--app-components-message-menu-item-icon-size-large);
+  display: block;
+}
+
+obc-message-menu-item::part(trailing-icon) {
+  width: var(--trailing-icon-size);
+  height: var(--trailing-icon-size);
+  flex-shrink: 0;
+}
+
+.glyph-shown-instead-of-actions {
+  display: block;
+  width: var(--trailing-icon-size);
+  height: var(--trailing-icon-size);
+
+  > * {
+    display: block; /* an icon element is inline, and would not take the size */
+    width: 100%;
+    height: 100%;
+  }
+}
