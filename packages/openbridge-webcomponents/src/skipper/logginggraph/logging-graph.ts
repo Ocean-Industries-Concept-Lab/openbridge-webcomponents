@@ -6,6 +6,7 @@ import { loggingGraphStyles } from './logging-graph-styles.js';
 
 /**
  * @stable
+ * @fires edit - Fired when the user edits the component.
 */
 @customElement('ob-logging-graph-skipper')
 export class LoggingGraph extends LitElement {
