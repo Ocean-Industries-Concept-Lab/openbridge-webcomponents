@@ -111,6 +111,7 @@ type BadgeCorner = keyof AutomationButtonBadgeLayout;
  * @availableWhen readoutSize showReadoutStack==true
  * @availableWhen tag showReadoutStack==true
  * @property activated - Enables the activated background color, used to indicate that the button is activated/selected.
+ * @property selected - Paints the button with the selected (blue) colors, used to mark the device the user has picked. Takes precedence over `activated`.
  * @availableWhen alertFrameType alert==true
  * @availableWhen alertFrameThickness alert==true
  * @availableWhen alertFrameStatus alert==true
@@ -137,6 +138,7 @@ export class ObcAbstractAutomationButton extends LitElement {
   @property({type: String}) positioning: AutomationButtonPositioning =
     AutomationButtonPositioning.point;
   @property({type: Boolean}) activated: boolean = false;
+  @property({type: Boolean}) selected: boolean = false;
   @property({type: Boolean}) alert: boolean = false;
   @property({type: String}) alertFrameType: ObcAlertFrameType =
     ObcAlertFrameType.SmallSideFlip;
@@ -368,6 +370,7 @@ export class ObcAbstractAutomationButton extends LitElement {
       .positioning=${this.positioning}
       .selfActuationLine=${this._selfActuationLine}
       ?activated=${this.activated}
+      ?selected=${this.selected}
     >
       ${this.icon}
       <slot

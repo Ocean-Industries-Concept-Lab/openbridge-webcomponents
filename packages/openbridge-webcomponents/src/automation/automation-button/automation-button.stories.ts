@@ -56,6 +56,9 @@ const meta: Meta<typeof ObcAutomationButton> = {
     activated: {
       control: {type: 'boolean'},
     },
+    selected: {
+      control: {type: 'boolean'},
+    },
     positioning: {
       options: Object.values(AutomationButtonPositioning),
       control: {type: 'select'},
@@ -157,6 +160,7 @@ export const ValveActivated: Story = {
       .variant=${args.variant}
       .positioning=${args.positioning}
       ?activated=${args.activated}
+      ?selected=${args.selected}
       ?alert=${args.alert}
       ?progress=${args.progress}
       .progressMode=${args.progressMode}
@@ -189,6 +193,7 @@ export const SwitchActivated: Story = {
       .variant=${args.variant}
       .positioning=${args.positioning}
       ?activated=${args.activated}
+      ?selected=${args.selected}
       ?alert=${args.alert}
       ?progress=${args.progress}
       .progressMode=${args.progressMode}
@@ -200,6 +205,21 @@ export const SwitchActivated: Story = {
         style="display: block; line-height: 0;"
       ></obi-switch-horizontal-on>
     </obc-automation-button>`;
+  },
+};
+
+export const ValveSelected: Story = {
+  ...ValveActivated,
+  args: {
+    selected: true,
+  },
+};
+
+export const SwitchSelected: Story = {
+  ...SwitchActivated,
+  args: {
+    selected: true,
+    variant: AutomationButtonVariant.square,
   },
 };
 
