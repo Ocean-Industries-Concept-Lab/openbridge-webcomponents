@@ -1,5 +1,11 @@
 import {rawUrl, type Channel} from './channel.js';
-import {docsPageUrl, storyPageUrl, type StoriesInfo} from './stories.js';
+import {fenceState} from './markdown.js';
+import {
+  docsPageUrl,
+  storyPageUrl,
+  type DocsRef,
+  type StoriesInfo,
+} from './stories.js';
 import type {ComponentEntry, ManifestNamed} from './types.js';
 
 export interface ComponentPageInput {
@@ -7,6 +13,7 @@ export interface ComponentPageInput {
   channel: Channel;
   stories: StoriesInfo[];
   seeAlso: {title: string; href: string}[];
+  resolveDocs?: (ref: DocsRef) => string | undefined;
 }
 
 const PACKAGE_DIR = 'packages/openbridge-webcomponents';
@@ -26,25 +33,20 @@ const code = (text: string | undefined): string =>
 /** Shifts every heading outside fenced code so the shallowest one is `##`. */
 export function normalizeHeadings(markdown: string): string {
   const lines = markdown.split('\n');
-  let inFence = false;
+  let fence = fenceState();
   let min = Infinity;
   for (const line of lines) {
-    if (/^\s*```/.test(line)) inFence = !inFence;
-    else if (!inFence) {
-      const m = /^(#{1,6})\s/.exec(line);
-      if (m) min = Math.min(min, m[1].length);
-    }
+    if (fence.update(line) || fence.inFence) continue;
+    const m = /^(#{1,6})\s/.exec(line);
+    if (m) min = Math.min(min, m[1].length);
   }
   if (min === Infinity || min === 2) return markdown;
   const shift = 2 - min;
-  inFence = false;
+  fence = fenceState();
   return lines
     .map((line) => {
-      if (/^\s*```/.test(line)) {
-        inFence = !inFence;
-        return line;
-      }
-      const m = !inFence && /^(#{1,6})(\s.*)$/.exec(line);
+      if (fence.update(line) || fence.inFence) return line;
+      const m = /^(#{1,6})(\s.*)$/.exec(line);
       return m ? '#'.repeat(m[1].length + shift) + m[2] : line;
     })
     .join('\n');
@@ -64,7 +66,7 @@ function named(items: ManifestNamed[]): string[][] {
 }
 
 export function renderComponentPage(input: ComponentPageInput): string {
-  const {entry, channel, stories, seeAlso} = input;
+  const {entry, channel, stories, seeAlso, resolveDocs} = input;
   const d = entry.declaration;
   const own = stories.filter((s) => s.componentTag === entry.tag);
   const docsTitle = own.find((s) => s.title)?.title;
@@ -86,8 +88,13 @@ export function renderComponentPage(input: ComponentPageInput): string {
 
   if (entry.description) out.push(normalizeHeadings(entry.description), '');
   for (const s of own) {
-    if (typeof s.componentDocs === 'string')
-      out.push(normalizeHeadings(s.componentDocs), '');
+    const docs =
+      typeof s.componentDocs === 'string'
+        ? s.componentDocs
+        : s.componentDocs && resolveDocs?.(s.componentDocs);
+    // A moduleDocs() of the component's own module is the description again.
+    if (docs && docs.trim() !== entry.description.trim())
+      out.push(normalizeHeadings(docs), '');
   }
 
   const attributeOf = new Map(

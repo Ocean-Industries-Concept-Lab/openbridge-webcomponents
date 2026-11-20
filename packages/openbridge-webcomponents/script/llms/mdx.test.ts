@@ -25,6 +25,40 @@ describe('mdxToMarkdown', () => {
     expect(mdxToMarkdown(src, ctx())).toBe('# X');
   });
 
+  it('ends an import at a trailing comment and never swallows prose', () => {
+    const src = `import {Meta} from '@storybook/addon-docs/blocks'; // docs blocks\n\n# X\n\nText.`;
+    expect(mdxToMarkdown(src, ctx())).toBe('# X\n\nText.');
+  });
+
+  it('stops an unterminated import at the first blank line and warns', () => {
+    const warn = vi.fn();
+    expect(mdxToMarkdown(`import {\n  a,\n\n# X`, ctx({warn}))).toBe('# X');
+    expect(warn).toHaveBeenCalledOnce();
+  });
+
+  it('maps a docs route to its generated page and leaves story routes on Storybook', () => {
+    const docsRoute = (id: string) =>
+      id === 'introduction-advice-system'
+        ? 'https://s/docs/introduction-advice-system.md'
+        : undefined;
+    expect(
+      mdxToMarkdown(
+        '[a](?path=/docs/introduction-advice-system--docs), [b](?path=/docs/unknown--docs), [c](?path=/story/x--y)',
+        ctx({docsRoute})
+      )
+    ).toBe(
+      '[a](https://s/docs/introduction-advice-system.md), [b](https://s/?path=/docs/unknown--docs), [c](https://s/?path=/story/x--y)'
+    );
+  });
+
+  it('normalises links and blank lines outside fenced code only', () => {
+    const src =
+      'A\n\n\n\nB\n\n```md\n[x](?path=/story/x--y)\n\n\n\nkeep\n```\n\n~~~\n[y](?path=/story/x--y)\n~~~';
+    expect(mdxToMarkdown(src, ctx())).toBe(
+      'A\n\nB\n\n```md\n[x](?path=/story/x--y)\n\n\n\nkeep\n```\n\n~~~\n[y](?path=/story/x--y)\n~~~'
+    );
+  });
+
   it('inlines a Markdown raw partial', () => {
     const src = `import categories from './x/categories.md?raw';\n\n## Categories\n\n<Markdown>{categories}</Markdown>`;
     expect(

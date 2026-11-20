@@ -142,6 +142,23 @@ describe('renderComponentPage', () => {
     expect(out).toContain('## See also\n\n- [Advice System](https://g/advice)');
   });
 
+  it('resolves a docs reference on a component stories file, once', () => {
+    const withRef: StoriesInfo[] = [
+      {...stories[0], componentDocs: {kind: 'classDocs', arg: 'ObcBase'}},
+      {...stories[1], componentDocs: {kind: 'moduleDocs', arg: 'x/x.ts'}},
+    ];
+    const page = renderComponentPage({
+      entry,
+      channel,
+      stories: withRef,
+      seeAlso: [],
+      resolveDocs: (ref) =>
+        ref.kind === 'classDocs' ? 'Base class docs.' : entry.description,
+    });
+    expect(page).toContain('Base class docs.');
+    expect(page.match(/Shows X\./g)).toHaveLength(2);
+  });
+
   it('renders a bare declaration without throwing', () => {
     const bare: ComponentEntry = {
       ...entry,
@@ -175,6 +192,16 @@ describe('normalizeHeadings', () => {
         '### Features\n\ntext\n\n#### Sub\n\n```md\n# in code\n```'
       )
     ).toBe('## Features\n\ntext\n\n### Sub\n\n```md\n# in code\n```');
+  });
+
+  it('leaves tilde fences and longer backtick fences alone', () => {
+    expect(
+      normalizeHeadings(
+        '### Features\n\n~~~sh\n# comment\n~~~\n\n````md\n# four\n```\n# still code\n````'
+      )
+    ).toBe(
+      '## Features\n\n~~~sh\n# comment\n~~~\n\n````md\n# four\n```\n# still code\n````'
+    );
   });
 
   it('demotes an H1 to ##', () => {

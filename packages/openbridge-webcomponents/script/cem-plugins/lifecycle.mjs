@@ -15,7 +15,9 @@ export function lifecyclePlugin() {
       if (!ts.isClassDeclaration(node) || !node.name) return;
       const tags = new Set();
       for (const raw of jsDocBlocks(ts, node)) {
-        const m = LIFECYCLE_TAG.exec(raw);
+        const m = LIFECYCLE_TAG.exec(
+          raw.replace(/^\/\*\*/, '').replace(/\*\/$/, '')
+        );
         if (m) tags.add(m[1]);
       }
       if (tags.size !== 1) return;

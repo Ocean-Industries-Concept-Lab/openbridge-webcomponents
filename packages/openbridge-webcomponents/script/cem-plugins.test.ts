@@ -273,6 +273,13 @@ describe('lifecyclePlugin', () => {
     expect(byName(m, 'ObcD').lifecycle).toBe('stable');
   });
 
+  it('reads a single-line JSDoc', () => {
+    const m = analyze({
+      'e.ts': `${lit}/** @beta */\n@customElement('obc-e')\nexport class ObcE extends LitElement {}`,
+    });
+    expect(byName(m, 'ObcE').lifecycle).toBe('beta');
+  });
+
   it('leaves a class without a tag alone', () => {
     const m = analyze({'c.ts': `/** Summary. */\nexport class Helper {}`});
     expect(byName(m, 'Helper').lifecycle).toBeUndefined();

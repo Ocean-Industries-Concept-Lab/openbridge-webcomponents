@@ -89,13 +89,21 @@ function moduleGuide(info: StoriesInfo): Guide {
 }
 
 /** Guides that name the component's tag or import its stories module. */
-function guidesMentioning(entry: ComponentEntry, guides: Guide[]): Guide[] {
+function guidesMentioning(
+  entry: ComponentEntry,
+  guides: Guide[],
+  pages: Map<Guide, string>
+): Guide[] {
   const tag = new RegExp(`${entry.tag}(?![\\w-])`);
   const storiesModule = entry.modulePath
     .replace(/^src\//, '')
     .replace(/\.ts$/, '.stories');
+  // The rendered page holds what the `?raw` partials name; the source holds the story imports.
   return guides.filter(
-    (g) => tag.test(g.source) || g.source.includes(storiesModule)
+    (g) =>
+      tag.test(g.source) ||
+      tag.test(pages.get(g) ?? '') ||
+      g.source.includes(storiesModule)
   );
 }
 
@@ -130,6 +138,16 @@ export function generate(options: GenerateOptions): string {
     siteUrl(channel, `/components/${e.tag}.md`);
 
   const resolveDocs = manifestDocs(manifest);
+  // A Storybook docs route inside a guide points at a generated page when one exists.
+  const docsRoute = (id: string): string | undefined => {
+    const guide = guides.find((g) => g.slug === id);
+    if (guide) return guideHref(guide);
+    const tag = stories.find(
+      (s) => s.title && sanitize(s.title) === id
+    )?.componentTag;
+    const entry = tag && entries.find((e) => e.tag === tag);
+    return entry ? componentHref(entry) : undefined;
+  };
   const guidePages = new Map<Guide, string>();
   for (const guide of guides) {
     if (guide.title === CHANGELOG_TITLE) continue;
@@ -143,6 +161,7 @@ export function generate(options: GenerateOptions): string {
               'utf8'
             ),
           storyLink: storyLinkFor(stories, channel, guide.file),
+          docsRoute,
           site: channel.site,
           vars: mdxVars(channel),
           warn,
@@ -156,10 +175,11 @@ export function generate(options: GenerateOptions): string {
         entry,
         channel,
         stories,
-        seeAlso: guidesMentioning(entry, guides).map((g) => ({
+        seeAlso: guidesMentioning(entry, guides, guidePages).map((g) => ({
           title: g.title.replace(/^Introduction\//, ''),
           href: guideHref(g),
         })),
+        resolveDocs,
       }),
     ])
   );

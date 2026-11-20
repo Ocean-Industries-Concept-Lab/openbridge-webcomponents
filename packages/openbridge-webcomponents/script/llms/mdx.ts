@@ -8,21 +8,24 @@
  * one rule here; fenced code is passed through untouched because the
  * migration guides quote framework markup there.
  */
+import {fenceState} from './markdown.js';
+
 export interface MdxContext {
   readRaw: (importPath: string) => string;
   storyLink: (
     storiesImportPath: string,
     exportName: string
   ) => string | undefined;
+  /** The generated page for a Storybook docs route id, when there is one. */
+  docsRoute?: (id: string) => string | undefined;
   site: string;
   vars: Record<string, string | boolean>;
   warn: (msg: string) => void;
 }
 
-const FENCE = /^\s*```/;
 const IMPORT_START = /^import\b/;
 const IMPORT_END =
-  /\bfrom\s+['"][^'"]+['"]\s*;?\s*$|^import\s+['"][^'"]+['"]\s*;?\s*$/;
+  /\bfrom\s+['"][^'"]+['"]\s*;?\s*(\/\/.*)?$|^import\s+['"][^'"]+['"]\s*;?\s*(\/\/.*)?$/;
 const DEFAULT_IMPORT = /^import\s+(\w+)\s+from\s+['"]([^'"]+)['"]/;
 const NAMESPACE_IMPORT = /^import\s+\*\s+as\s+(\w+)\s+from\s+['"]([^'"]+)['"]/;
 const MARKDOWN_PARTIAL = /^\s*<Markdown>\{(\w+)\}<\/Markdown>\s*$/;
@@ -36,23 +39,28 @@ export function mdxToMarkdown(source: string, ctx: MdxContext): string {
   const lines = source.split('\n');
   const idents = new Map<string, string>();
   const out: string[] = [];
-  let inFence = false;
+  const fence = fenceState();
+  // Prose keeps at most one blank line between blocks; code keeps its own.
+  const push = (line: string) => {
+    if (!fence.inFence && line === '' && out[out.length - 1] === '') return;
+    out.push(line);
+  };
 
   for (let i = 0; i < lines.length; i++) {
     const line = lines[i];
-    if (FENCE.test(line)) {
-      inFence = !inFence;
-      out.push(line);
-      continue;
-    }
-    if (inFence) {
+    if (fence.update(line) || fence.inFence) {
       out.push(line);
       continue;
     }
     if (IMPORT_START.test(line)) {
       let stmt = line;
-      while (!IMPORT_END.test(stmt) && i + 1 < lines.length)
+      while (!IMPORT_END.test(stmt) && i + 1 < lines.length) {
+        if (lines[i + 1].trim() === '') {
+          ctx.warn(`llms.txt: unterminated import dropped: ${line}`);
+          break;
+        }
         stmt += ` ${lines[++i].trim()}`;
+      }
       const m = NAMESPACE_IMPORT.exec(stmt) ?? DEFAULT_IMPORT.exec(stmt);
       if (m) idents.set(m[1], m[2]);
       continue;
@@ -65,7 +73,7 @@ export function mdxToMarkdown(source: string, ctx: MdxContext): string {
     const partial = MARKDOWN_PARTIAL.exec(line);
     if (partial) {
       const path = idents.get(partial[1]);
-      if (path) out.push(ctx.readRaw(path).replace(/\n$/, ''));
+      if (path) push(ctx.readRaw(path).replace(/\n$/, ''));
       else
         ctx.warn(
           `llms.txt: <Markdown>{${partial[1]}}</Markdown> has no import`
@@ -76,17 +84,27 @@ export function mdxToMarkdown(source: string, ctx: MdxContext): string {
     if (canvas) {
       const path = idents.get(canvas[1]);
       const link = path && ctx.storyLink(path, canvas[2]);
-      if (link) out.push(link);
+      if (link) push(link);
       continue;
     }
-    out.push(outsideCodeSpans(line, (text) => inlineExpressions(text, ctx)));
+    push(
+      outsideCodeSpans(line, (text) =>
+        storybookLinks(inlineExpressions(text, ctx), ctx)
+      )
+    );
   }
 
-  return out
-    .join('\n')
-    .replace(/\]\(\?path=/g, `](${ctx.site}/?path=`)
-    .replace(/\n{3,}/g, '\n\n')
-    .replace(/^\n+|\n+$/g, '');
+  return out.join('\n').replace(/^\n+|\n+$/g, '');
+}
+
+/** A docs route gets its generated page when there is one; every other `?path=` link becomes absolute. */
+function storybookLinks(text: string, ctx: MdxContext): string {
+  return text
+    .replace(/\]\(\?path=\/docs\/([\w-]+)--docs\)/g, (whole, id) => {
+      const page = ctx.docsRoute?.(id);
+      return page ? `](${page})` : whole;
+    })
+    .replace(/\]\(\?path=/g, `](${ctx.site}/?path=`);
 }
 
 /** Index of the last line of a `{ … }` block that starts at `start`; the block is JSX chrome and is dropped. */

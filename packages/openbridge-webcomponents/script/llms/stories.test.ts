@@ -99,6 +99,17 @@ describe('readStoriesFile', () => {
     expect(warn).toHaveBeenCalledOnce();
   });
 
+  it('keeps stories that reference a shared object', () => {
+    const file = write(
+      'f.stories.ts',
+      "import {shared} from './shared.js';\nexport default {title: 'X/F', component: 'obc-f'};\n/** The default. */\nexport const Default = shared.Default;\nexport const Whole = shared;\nexport const N = 5;"
+    );
+    expect(readStoriesFile(file, () => {}).stories).toEqual([
+      {exportName: 'Default', name: 'Default', doc: 'The default.'},
+      {exportName: 'Whole', name: 'Whole', doc: undefined},
+    ]);
+  });
+
   it('skips exports that are not story objects', () => {
     const file = write(
       'e.stories.ts',

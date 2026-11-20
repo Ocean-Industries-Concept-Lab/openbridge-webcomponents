@@ -87,6 +87,29 @@ describe('generate', () => {
     expect(warn).toHaveBeenCalledWith(expect.stringContaining('docs/agents'));
   });
 
+  it('links a guide from a component page when a raw partial names the tag', () => {
+    minimalPackage();
+    write(
+      'pkg/docs/B.mdx',
+      `import list from './b/list.md?raw';\n\n<Meta title="Introduction/B" />\n\n<Markdown>{list}</Markdown>`
+    );
+    write('pkg/docs/b/list.md', '| `obc-a` |\n|---|');
+    generate({
+      packageRoot: path.join(root, 'pkg'),
+      repoRoot: path.join(root, 'repo'),
+      out: path.join(root, 'pkg/llms'),
+      channel: resolveChannel('next', {}),
+      warn: () => {},
+    });
+    const page = fs.readFileSync(
+      path.join(root, 'pkg/llms/components/obc-a.md'),
+      'utf8'
+    );
+    expect(page).toContain(
+      '- [B](https://openbridge-next-storybook.web.app/docs/introduction-b.md)'
+    );
+  });
+
   it('links a story by the id Storybook derives from its export name', () => {
     minimalPackage();
     generate({

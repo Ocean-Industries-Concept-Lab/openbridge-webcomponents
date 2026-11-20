@@ -187,18 +187,17 @@ function exportedStories(sf: ts.SourceFile, text: string): StoryInfo[] {
     if (!stmt.modifiers?.some((m) => m.kind === ts.SyntaxKind.ExportKeyword))
       continue;
     for (const decl of stmt.declarationList.declarations) {
+      if (!ts.isIdentifier(decl.name) || !decl.initializer) continue;
       const obj = asObject(decl.initializer);
-      if (!obj || !ts.isIdentifier(decl.name)) continue;
+      // A story is an object literal, or a reference to one shared between files.
+      if (!obj && !isReference(unwrap(decl.initializer))) continue;
       const exportName = decl.name.text;
-      const nameNode = property(obj, 'name');
+      const nameNode = obj && property(obj, 'name');
       const name =
         (nameNode && stringValue(nameNode)) ?? storyNameFromExport(exportName);
-      const storyDocs = propertyPath(obj, [
-        'parameters',
-        'docs',
-        'description',
-        'story',
-      ]);
+      const storyDocs =
+        obj &&
+        propertyPath(obj, ['parameters', 'docs', 'description', 'story']);
       const doc =
         firstParagraph(leadingJsDoc(text, stmt)) ??
         firstParagraph(storyDocs && stringValue(storyDocs));
@@ -206,6 +205,10 @@ function exportedStories(sf: ts.SourceFile, text: string): StoryInfo[] {
     }
   }
   return stories;
+}
+
+function isReference(node: ts.Expression): boolean {
+  return ts.isIdentifier(node) || ts.isPropertyAccessExpression(node);
 }
 
 function leadingJsDoc(text: string, node: ts.Node): string | undefined {
