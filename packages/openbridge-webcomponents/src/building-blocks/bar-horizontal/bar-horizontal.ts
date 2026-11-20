@@ -23,6 +23,7 @@ import {
   computeExternalScaleEffectiveBarThickness,
   readExternalScaleBorderRadiusPx,
   startExternalScaleBorderRadiusObserver,
+  readContentBox,
   ScaleType,
   FillMode,
   AdvicePosition,
@@ -166,6 +167,9 @@ export class ObcBarHorizontal extends AdviceMixin(
   @state()
   private _scale = 1;
 
+  /** The drawing's height in viewBox units, kept from the last render for the scale measurement. */
+  private _viewBoxThickness = 0;
+
   // ResizeController automatically subscribes/unsubscribes based on component lifecycle
   // @ts-expect-error - Controller is used for side effects, not accessed directly
   private _resizeController = new ResizeController(this, {
@@ -175,14 +179,12 @@ export class ObcBarHorizontal extends AdviceMixin(
       const entry = entries[0];
       if (!entry) return;
 
-      // Use the centralized function that computes scale based on reference size
-      // For horizontal scales, compare container width to reference size
-      const containerMainAxisSize = entry.contentRect.width;
-
       this._scale = computeFixedAspectRatioScale({
         orientation: ExternalScaleOrientation.horizontal,
-        containerMainAxisSize,
+        containerMainAxisSize: entry.contentRect.width,
+        containerCrossAxisSize: entry.contentRect.height,
         scaleReferenceSize: this.scaleReferenceSize,
+        viewBoxThickness: this._viewBoxThickness,
       });
 
       // Report scaled dimensions to parent chart
@@ -320,6 +322,7 @@ export class ObcBarHorizontal extends AdviceMixin(
     const layout = computeExternalScaleLayout(
       toExternalScaleLayoutConfig(config)
     );
+    this._viewBoxThickness = layout.thickness;
 
     const parts = renderExternalScale(config);
 
@@ -393,6 +396,9 @@ export class ObcBarHorizontal extends AdviceMixin(
       this.setpointPresenceChanged(changed);
 
     if (!this.fixedAspectRatio || layoutChanged) {
+      // A thinner or thicker drawing under the same box changes the painted
+      // scale without a resize event.
+      if (this.fixedAspectRatio) this._measureScale();
       this.reportDimensions();
     }
   }
@@ -509,6 +515,20 @@ export class ObcBarHorizontal extends AdviceMixin(
     this.style.height = '';
   }
 
+  /** Reads the host's content box into the scale; false while the host has no size yet. */
+  private _measureScale(): boolean {
+    const {width, height} = readContentBox(this);
+    if (width <= 0) return false;
+    this._scale = computeFixedAspectRatioScale({
+      orientation: ExternalScaleOrientation.horizontal,
+      containerMainAxisSize: width,
+      containerCrossAxisSize: height,
+      scaleReferenceSize: this.scaleReferenceSize,
+      viewBoxThickness: this._viewBoxThickness,
+    });
+    return true;
+  }
+
   /**
    * Calculate scale based on current element size.
    * Called when fixedAspectRatio is enabled or scaleReferenceSize changes.
@@ -516,13 +536,7 @@ export class ObcBarHorizontal extends AdviceMixin(
   private _updateScaleFromCurrentSize(): void {
     // Use requestAnimationFrame to ensure layout is complete
     requestAnimationFrame(() => {
-      const containerWidth = this.clientWidth;
-      if (containerWidth > 0) {
-        this._scale = computeFixedAspectRatioScale({
-          orientation: ExternalScaleOrientation.horizontal,
-          containerMainAxisSize: containerWidth,
-          scaleReferenceSize: this.scaleReferenceSize,
-        });
+      if (this._measureScale()) {
         this.requestUpdate();
         // Report updated dimensions to parent (matches pattern in ResizeController and _refreshBorderRadiusFromCssVar)
         this.reportDimensions();
@@ -542,17 +556,8 @@ export class ObcBarHorizontal extends AdviceMixin(
 
     // In fixed-aspect-ratio mode, recompute scale when border radius changes
     // (border radius affects effective bar thickness and therefore viewBox)
-    if (this.fixedAspectRatio) {
-      const rect = this.getBoundingClientRect();
-      if (rect.width > 0) {
-        this._scale = computeFixedAspectRatioScale({
-          orientation: ExternalScaleOrientation.horizontal,
-          containerMainAxisSize: rect.width,
-          scaleReferenceSize: this.scaleReferenceSize,
-        });
-        // Report updated dimensions
-        this.reportDimensions();
-      }
+    if (this.fixedAspectRatio && this._measureScale()) {
+      this.reportDimensions();
     }
   }
 
