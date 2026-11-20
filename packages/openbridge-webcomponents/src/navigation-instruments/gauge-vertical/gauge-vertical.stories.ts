@@ -16,6 +16,23 @@ const meta: Meta = {
   tags: ['autodocs', '6.0'],
   component: 'obc-gauge-vertical',
   argTypes: {
+    // Fixed by design and not API; the manifest lists the fields, so the
+    // table would otherwise show dead controls.
+    height: {table: {disable: true}},
+    paddingTop: {table: {disable: true}},
+    paddingBottom: {table: {disable: true}},
+    barThickness: {table: {disable: true}},
+    tickThickness: {table: {disable: true}},
+    labelThickness: {table: {disable: true}},
+    scaleType: {table: {disable: true}},
+    frameStyle: {table: {disable: true}},
+    borderRadius: {table: {disable: true}},
+    hasBar: {table: {disable: true}},
+    hasScale: {table: {disable: true}},
+    scaleBackground: {table: {disable: true}},
+    advicePosition: {table: {disable: true}},
+    fixedAspectRatio: {control: {type: 'boolean'}},
+    scaleReferenceSize: {control: {type: 'range', min: 96, max: 768, step: 8}},
     minValue: {control: {type: 'range', min: -100, max: 100}},
     maxValue: {control: {type: 'range', min: 0, max: 1000}},
     reverse: {control: {type: 'boolean'}},
@@ -51,6 +68,8 @@ const meta: Meta = {
     advices: {control: {type: 'object'}},
   },
   args: {
+    fixedAspectRatio: false,
+    scaleReferenceSize: 384,
     minValue: 0,
     maxValue: 100,
     reverse: false,
@@ -75,8 +94,12 @@ const meta: Meta = {
     side: 'right',
     advices: [],
   },
-  render: (args) => html`
-    <obc-gauge-vertical
+  // A fixed-aspect gauge fills its host, so the toggle only shows something
+  // inside a sized box; off, the gauge renders bare and the baselines hold.
+  render: (args) => {
+    const gauge = html`<obc-gauge-vertical
+      .fixedAspectRatio=${args.fixedAspectRatio}
+      .scaleReferenceSize=${args.scaleReferenceSize ?? 384}
       .minValue=${args.minValue}
       .maxValue=${args.maxValue}
       .reverse=${args.reverse}
@@ -101,8 +124,11 @@ const meta: Meta = {
       .side=${args.side}
       .advices=${args.advices}
     >
-    </obc-gauge-vertical>
-  `,
+    </obc-gauge-vertical>`;
+    return args.fixedAspectRatio
+      ? html`<div style="height: 480px">${gauge}</div>`
+      : gauge;
+  },
 } satisfies Meta;
 
 export default meta;
@@ -595,4 +621,91 @@ export const Reversed: Story = {
     secondaryTickmarkInterval: 5,
     advices: [{min: 65, max: 75, type: AdviceType.caution, hinted: false}],
   },
+};
+
+/**
+ * `obc-gauge-vertical` is a fixed-config gauge: it draws at the design's 384 px
+ * reference height with the bar, tick and label bands at their design
+ * thickness. That number is where the drawing is 1:1, not a layout limit.
+ *
+ * - **fixedAspectRatio=false (default)**: a 384 px tall SVG, whatever the box does.
+ * - **fixedAspectRatio=true**: the whole gauge scales to the height of its host
+ *   like a vector image and the labels keep their font size; `scaleReferenceSize`
+ *   is the host height at which it is 1:1. Size the host, the gauge fills it.
+ *
+ * For a scale whose length follows the layout while the bands keep their design
+ * thickness, use `obc-bar-vertical` with `height` from a ResizeObserver, as the
+ * automation tank and the chart slots do.
+ *
+ * Drag the corner of each box to resize it.
+ */
+export const FixedAspectRatioComparison: StoryObj = {
+  tags: ['skip-test'],
+  render: () => html`
+    <style>
+      .far-wrapper {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 32px;
+        padding: 16px;
+        height: 600px;
+      }
+      .far-box {
+        display: flex;
+        flex-direction: column;
+        padding: 16px;
+        border: 2px dashed var(--instrument-frame-tertiary-color);
+        resize: both;
+        overflow: auto;
+        min-width: 100px;
+        min-height: 200px;
+      }
+      .far-box-fixed {
+        border-color: var(--instrument-enhanced-primary-color);
+      }
+      .far-label {
+        flex-shrink: 0;
+        margin-bottom: 8px;
+        font-family: var(--font-family-main);
+        font-size: 14px;
+        color: var(--instrument-frame-tertiary-color);
+      }
+      .far-box-fixed .far-label {
+        color: var(--instrument-enhanced-primary-color);
+      }
+      .far-box obc-gauge-vertical {
+        flex: 1;
+        min-height: 0; /* lets the fixed-aspect gauge shrink with the box */
+      }
+    </style>
+    <div class="far-wrapper">
+      <div class="far-box">
+        <div class="far-label">
+          fixedAspectRatio=false (default): 384 px tall, whatever the box does
+        </div>
+        <obc-gauge-vertical
+          .minValue=${-20}
+          .maxValue=${120}
+          .value=${60}
+          .setpoint=${80}
+          .primaryTickmarkInterval=${20}
+          .priority=${Priority.regular}
+        ></obc-gauge-vertical>
+      </div>
+      <div class="far-box far-box-fixed">
+        <div class="far-label">
+          fixedAspectRatio=true: fills the box height, labels keep their size
+        </div>
+        <obc-gauge-vertical
+          .fixedAspectRatio=${true}
+          .minValue=${-20}
+          .maxValue=${120}
+          .value=${60}
+          .setpoint=${80}
+          .primaryTickmarkInterval=${20}
+          .priority=${Priority.enhanced}
+        ></obc-gauge-vertical>
+      </div>
+    </div>
+  `,
 };

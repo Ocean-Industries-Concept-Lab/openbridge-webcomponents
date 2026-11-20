@@ -416,6 +416,10 @@ export const ScaleReferenceSizeComparison: StoryObj = {
           border: 2px dashed var(--instrument-frame-tertiary-color);
           padding: 0;
           box-sizing: content-box;
+          resize: both;
+          overflow: auto;
+          min-width: 120px;
+          min-height: 120px;
         }
         .scale-comparison-label {
           font-family: var(--font-family-main);
@@ -451,6 +455,10 @@ export const ScaleReferenceSizeComparison: StoryObj = {
             <li>
               <strong>Right:</strong> scaleReferenceSize=384, container=384px →
               Scale factor 1.0 (native size)
+            </li>
+            <li>
+              <strong>Drag a box corner:</strong> the drawing follows the box
+              width (height from the 1:1 ratio) while the label font stays put.
             </li>
           </ul>
         </div>
