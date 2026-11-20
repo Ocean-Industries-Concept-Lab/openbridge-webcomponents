@@ -122,6 +122,7 @@ const renderTankEl = (args: StoryArgs, slotted: unknown = nothing) => html`
     .badgeAlert=${args.badgeAlert}
     .badgeInterlock=${args.badgeInterlock}
     .badgeCommandLocked=${args.badgeCommandLocked}
+    .badgeSymbolOverride=${args.badgeSymbolOverride}
     .setpoint=${args.setpoint}
     .newSetpoint=${args.newSetpoint}
     .touching=${args.touching}
@@ -253,6 +254,9 @@ const meta: Meta<StoryArgs> = {
       options: Object.values(AutomationButtonBadgeCommandLocked),
       control: {type: 'select'},
     },
+    badgeSymbolOverride: {
+      control: {type: 'object'},
+    },
     setpoint: {
       control: {type: 'number', min: 0, max: 10_000},
       description:
@@ -295,6 +299,17 @@ export const AtmosphericWithBadges: Story = {
     badgeAlert: AutomationButtonBadgeAlert.Silence,
     badgeInterlock: AutomationButtonBadgeInterlock.Interlock,
     badgeCommandLocked: AutomationButtonBadgeCommandLocked.CommandLocked,
+  },
+};
+
+export const AtmosphericWithBadgeLetters: Story = {
+  args: {
+    type: TankType.atmospheric,
+    badgeControl: AutomationButtonBadgeControl.Auto,
+    badgeAlert: AutomationButtonBadgeAlert.Silence,
+    badgeInterlock: AutomationButtonBadgeInterlock.Simulation,
+    badgeCommandLocked: AutomationButtonBadgeCommandLocked.Simulation,
+    badgeSymbolOverride: {commandLocked: {simulation: 's'}},
   },
 };
 

@@ -39,8 +39,14 @@ import {CircularProgressMode} from '../../building-blocks/circular-progress/circ
 import {
   AutomationButtonBadgeKind,
   AutomationButtonBadgeLayout,
-  BadgeLayoutController,
+  currentBadgeLayout,
 } from './badge-layout.js';
+import {
+  AutomationBadgeSymbolOverride,
+  automationBadgeType,
+  currentBadgeSymbolOverride,
+} from './badge-symbols.js';
+import {BadgeSettingsController} from './badge-settings-controller.js';
 
 export enum AutomationButtonBadgeAlert {
   None = 'none',
@@ -112,6 +118,7 @@ type BadgeCorner = keyof AutomationButtonBadgeLayout;
  * @availableWhen showAlertCategoryIcon alert==true && alertFrameType in [SmallSideFlip, LargeSideFlip, BottomFlip, TopFlip]
  * @availableWhen showAlertIcon alert==true && alertFrameType in [LargeSideFlip, BottomFlip, TopFlip]
  * @property badgeLayout - Which badge kind each corner shows, on top of the app-wide layout set with `setAutomationBadgeLayout()`. A corner left out keeps the app-wide badge, `null` leaves it empty, and a badge moved here leaves the corner it came from.
+ * @property badgeSymbolOverride - Letters that replace badge symbols on this device, per badge property and value, on top of the app-wide ones set with `setAutomationBadgeSymbolOverride()`; for example `{commandLocked: {simulation: 's'}}`. `null` brings the symbol back.
  * @property progress - Shows a progress indicator, used to indicate that an user action is in progress
  * @availableWhen progressMode progress==true
  * @availableWhen progressValue progress==true && progressMode in [determinate, progressiveIndeterminate]
@@ -157,8 +164,14 @@ export class ObcAbstractAutomationButton extends LitElement {
     AutomationButtonBadgeAlert.None;
   @property({attribute: false}) badgeLayout:
     AutomationButtonBadgeLayout | undefined = undefined;
+  @property({attribute: false}) badgeSymbolOverride:
+    AutomationBadgeSymbolOverride | undefined = undefined;
 
-  private readonly _badgeLayout = new BadgeLayoutController(this);
+  constructor() {
+    super();
+    // Registers itself on the host; nothing else holds it.
+    new BadgeSettingsController(this);
+  }
 
   get icon(): TemplateResult {
     throw new Error('Method "icon" must be implemented in subclass');
@@ -285,99 +298,44 @@ export class ObcAbstractAutomationButton extends LitElement {
   }
 
   private getBadgeType(
-    kind: AutomationButtonBadgeKind | null
+    kind: AutomationButtonBadgeKind | null,
+    symbolOverride: AutomationBadgeSymbolOverride
   ): ObcAutomationBadgeType | null {
     switch (kind) {
       case AutomationButtonBadgeKind.Control:
-        return this.getBadgeControlType();
+        return automationBadgeType(
+          'control',
+          this.badgeControl,
+          symbolOverride
+        );
       case AutomationButtonBadgeKind.Alert:
-        return this.getBadgeAlertType();
+        return automationBadgeType('alert', this.badgeAlert, symbolOverride);
       case AutomationButtonBadgeKind.Interlock:
-        return this.getBadgeInterlockType();
+        return automationBadgeType(
+          'interlock',
+          this.badgeInterlock,
+          symbolOverride
+        );
       case AutomationButtonBadgeKind.CommandLocked:
-        return this.getBadgeCommandLockedType();
+        return automationBadgeType(
+          'commandLocked',
+          this.badgeCommandLocked,
+          symbolOverride
+        );
       default:
         return null;
     }
   }
 
-  private getBadgeAlertType(): ObcAutomationBadgeType | null {
-    if (this.badgeAlert === AutomationButtonBadgeAlert.Silence) {
-      return ObcAutomationBadgeType.AlertSilenced;
-    } else if (this.badgeAlert === AutomationButtonBadgeAlert.Shelved) {
-      return ObcAutomationBadgeType.AlertShelved;
-    } else if (this.badgeAlert === AutomationButtonBadgeAlert.Caution) {
-      return ObcAutomationBadgeType.Caution;
-    } else if (this.badgeAlert === AutomationButtonBadgeAlert.Warning) {
-      return ObcAutomationBadgeType.Warning;
-    } else if (this.badgeAlert === AutomationButtonBadgeAlert.Alarm) {
-      return ObcAutomationBadgeType.Alarm;
-    } else if (this.badgeAlert === AutomationButtonBadgeAlert.LevelCritical) {
-      return ObcAutomationBadgeType.LevelCritical;
-    } else if (this.badgeAlert === AutomationButtonBadgeAlert.LevelHigh) {
-      return ObcAutomationBadgeType.LevelHigh;
-    } else if (this.badgeAlert === AutomationButtonBadgeAlert.LevelMedium) {
-      return ObcAutomationBadgeType.LevelMedium;
-    } else if (this.badgeAlert === AutomationButtonBadgeAlert.LevelLow) {
-      return ObcAutomationBadgeType.LevelLow;
-    } else if (this.badgeAlert === AutomationButtonBadgeAlert.LevelDiagnostic) {
-      return ObcAutomationBadgeType.LevelDiagnostic;
-    }
-    return null;
-  }
-
-  private getBadgeControlType(): ObcAutomationBadgeType | null {
-    if (this.badgeControl === AutomationButtonBadgeControl.Local) {
-      return ObcAutomationBadgeType.Local;
-    } else if (this.badgeControl === AutomationButtonBadgeControl.LocalOnly) {
-      return ObcAutomationBadgeType.LocalOnly;
-    } else if (this.badgeControl === AutomationButtonBadgeControl.Manual) {
-      return ObcAutomationBadgeType.Manual;
-    } else if (this.badgeControl === AutomationButtonBadgeControl.ManualOnly) {
-      return ObcAutomationBadgeType.ManualOnly;
-    } else if (this.badgeControl === AutomationButtonBadgeControl.Auto) {
-      return ObcAutomationBadgeType.Auto;
-    }
-    return null;
-  }
-
-  private getBadgeInterlockType(): ObcAutomationBadgeType | null {
-    if (this.badgeInterlock === AutomationButtonBadgeInterlock.Interlock) {
-      return ObcAutomationBadgeType.Interlock;
-    } else if (
-      this.badgeInterlock === AutomationButtonBadgeInterlock.InterlockInhibit
-    ) {
-      return ObcAutomationBadgeType.InterlockInhibit;
-    } else if (
-      this.badgeInterlock === AutomationButtonBadgeInterlock.Simulation
-    ) {
-      return ObcAutomationBadgeType.Simulation;
-    }
-    return null;
-  }
-
-  private getBadgeCommandLockedType(): ObcAutomationBadgeType | null {
-    if (
-      this.badgeCommandLocked ===
-      AutomationButtonBadgeCommandLocked.CommandLocked
-    ) {
-      return ObcAutomationBadgeType.CommandLocked;
-    } else if (
-      this.badgeCommandLocked === AutomationButtonBadgeCommandLocked.Simulation
-    ) {
-      return ObcAutomationBadgeType.Simulation;
-    }
-    return null;
-  }
-
   override render() {
     const readouts: AutomationButtonReadoutStack[] = [...this.extraReadouts];
-    const layout = this._badgeLayout.resolve(this.badgeLayout);
+    const layout = currentBadgeLayout(this.badgeLayout);
+    const symbolOverride = currentBadgeSymbolOverride(this.badgeSymbolOverride);
     const badges = {
-      topLeft: this.getBadgeType(layout.topLeft),
-      topRight: this.getBadgeType(layout.topRight),
-      bottomLeft: this.getBadgeType(layout.bottomLeft),
-      bottomRight: this.getBadgeType(layout.bottomRight),
+      topLeft: this.getBadgeType(layout.topLeft, symbolOverride),
+      topRight: this.getBadgeType(layout.topRight, symbolOverride),
+      bottomLeft: this.getBadgeType(layout.bottomLeft, symbolOverride),
+      bottomRight: this.getBadgeType(layout.bottomRight, symbolOverride),
     };
 
     return html`<obc-automation-button

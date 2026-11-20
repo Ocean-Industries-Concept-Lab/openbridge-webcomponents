@@ -4,7 +4,12 @@ import {property, state} from 'lit/decorators.js';
 import {classMap} from 'lit/directives/class-map.js';
 import componentStyle from './specialty-tank.css?inline';
 import '../automation-badge/automation-badge.js';
-import {ObcAutomationBadgeType} from '../automation-badge/automation-badge.js';
+import {
+  AutomationBadgeSymbolOverride,
+  automationBadgeType,
+  currentBadgeSymbolOverride,
+} from '../automation-button/badge-symbols.js';
+import {BadgeSettingsController} from '../automation-button/badge-settings-controller.js';
 import {
   AutomationButtonBadgeAlert,
   AutomationButtonBadgeCommandLocked,
@@ -88,6 +93,7 @@ export enum SpecialtyTankFrame {
  * @property badgeAlert - Alert badge, second in the badge row.
  * @property badgeInterlock - Interlock badge, third in the badge row.
  * @property badgeCommandLocked - Command-locked badge, last in the badge row.
+ * @property badgeSymbolOverride - Letters that replace badge symbols on this device, per badge property and value, on top of the app-wide ones set with `setAutomationBadgeSymbolOverride()`; for example `{commandLocked: {simulation: 's'}}`. `null` brings the symbol back.
  * @property alert - Show an alert-frame overlay around the halo, mirroring `obc-automation-tank`.
  * @property alertFrameType - Shape of the alert frame.
  * @availableWhen alertFrameType alert==true
@@ -123,6 +129,14 @@ export class ObcAbstractSpecialtyTank extends LitElement {
   @property({type: String})
   badgeCommandLocked: AutomationButtonBadgeCommandLocked =
     AutomationButtonBadgeCommandLocked.None;
+  @property({attribute: false}) badgeSymbolOverride:
+    AutomationBadgeSymbolOverride | undefined = undefined;
+
+  constructor() {
+    super();
+    // Registers itself on the host; nothing else holds it.
+    new BadgeSettingsController(this);
+  }
 
   @property({type: Boolean}) alert: boolean = false;
   @property({type: String}) alertFrameType: ObcAlertFrameType =
@@ -154,74 +168,6 @@ export class ObcAbstractSpecialtyTank extends LitElement {
 
   protected get splitMode(): SpecialtyTankSplitMode {
     throw new Error('"splitMode" must be implemented in the subclass');
-  }
-
-  private _badgeControlType(): ObcAutomationBadgeType | null {
-    switch (this.badgeControl) {
-      case AutomationButtonBadgeControl.Local:
-        return ObcAutomationBadgeType.Local;
-      case AutomationButtonBadgeControl.LocalOnly:
-        return ObcAutomationBadgeType.LocalOnly;
-      case AutomationButtonBadgeControl.Manual:
-        return ObcAutomationBadgeType.Manual;
-      case AutomationButtonBadgeControl.ManualOnly:
-        return ObcAutomationBadgeType.ManualOnly;
-      case AutomationButtonBadgeControl.Auto:
-        return ObcAutomationBadgeType.Auto;
-      default:
-        return null;
-    }
-  }
-
-  private _badgeAlertType(): ObcAutomationBadgeType | null {
-    switch (this.badgeAlert) {
-      case AutomationButtonBadgeAlert.Silence:
-        return ObcAutomationBadgeType.AlertSilenced;
-      case AutomationButtonBadgeAlert.Shelved:
-        return ObcAutomationBadgeType.AlertShelved;
-      case AutomationButtonBadgeAlert.Caution:
-        return ObcAutomationBadgeType.Caution;
-      case AutomationButtonBadgeAlert.Warning:
-        return ObcAutomationBadgeType.Warning;
-      case AutomationButtonBadgeAlert.Alarm:
-        return ObcAutomationBadgeType.Alarm;
-      case AutomationButtonBadgeAlert.LevelCritical:
-        return ObcAutomationBadgeType.LevelCritical;
-      case AutomationButtonBadgeAlert.LevelHigh:
-        return ObcAutomationBadgeType.LevelHigh;
-      case AutomationButtonBadgeAlert.LevelMedium:
-        return ObcAutomationBadgeType.LevelMedium;
-      case AutomationButtonBadgeAlert.LevelLow:
-        return ObcAutomationBadgeType.LevelLow;
-      case AutomationButtonBadgeAlert.LevelDiagnostic:
-        return ObcAutomationBadgeType.LevelDiagnostic;
-      default:
-        return null;
-    }
-  }
-
-  private _badgeInterlockType(): ObcAutomationBadgeType | null {
-    switch (this.badgeInterlock) {
-      case AutomationButtonBadgeInterlock.Interlock:
-        return ObcAutomationBadgeType.Interlock;
-      case AutomationButtonBadgeInterlock.InterlockInhibit:
-        return ObcAutomationBadgeType.InterlockInhibit;
-      case AutomationButtonBadgeInterlock.Simulation:
-        return ObcAutomationBadgeType.Simulation;
-      default:
-        return null;
-    }
-  }
-
-  private _badgeCommandLockedType(): ObcAutomationBadgeType | null {
-    switch (this.badgeCommandLocked) {
-      case AutomationButtonBadgeCommandLocked.CommandLocked:
-        return ObcAutomationBadgeType.CommandLocked;
-      case AutomationButtonBadgeCommandLocked.Simulation:
-        return ObcAutomationBadgeType.Simulation;
-      default:
-        return null;
-    }
   }
 
   private _slotHasContent(e: Event): boolean {
@@ -290,10 +236,27 @@ export class ObcAbstractSpecialtyTank extends LitElement {
   }
 
   override render() {
-    const controlBadge = this._badgeControlType();
-    const alertBadge = this._badgeAlertType();
-    const interlockBadge = this._badgeInterlockType();
-    const commandLockedBadge = this._badgeCommandLockedType();
+    const symbolOverride = currentBadgeSymbolOverride(this.badgeSymbolOverride);
+    const controlBadge = automationBadgeType(
+      'control',
+      this.badgeControl,
+      symbolOverride
+    );
+    const alertBadge = automationBadgeType(
+      'alert',
+      this.badgeAlert,
+      symbolOverride
+    );
+    const interlockBadge = automationBadgeType(
+      'interlock',
+      this.badgeInterlock,
+      symbolOverride
+    );
+    const commandLockedBadge = automationBadgeType(
+      'commandLocked',
+      this.badgeCommandLocked,
+      symbolOverride
+    );
     const hasEnumBadges =
       controlBadge !== null ||
       alertBadge !== null ||

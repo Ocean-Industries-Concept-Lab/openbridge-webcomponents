@@ -11,7 +11,12 @@ import {property, state} from 'lit/decorators.js';
 import compentStyle from './automation-tank.css?inline';
 import {LineMedium} from '../index.js';
 import '../automation-badge/automation-badge.js';
-import {ObcAutomationBadgeType} from '../automation-badge/automation-badge.js';
+import {
+  AutomationBadgeSymbolOverride,
+  automationBadgeType,
+  currentBadgeSymbolOverride,
+} from '../automation-button/badge-symbols.js';
+import {BadgeSettingsController} from '../automation-button/badge-settings-controller.js';
 import {
   AutomationButtonBadgeAlert,
   AutomationButtonBadgeCommandLocked,
@@ -170,6 +175,7 @@ export enum TankChartMode {
  *   `<obc-automation-badge>` as fallback content for the `badges` slot, so any
  *   slotted content wins. The cell orders the four badges control, alert,
  *   interlock, commandLocked, left to right.
+ * @property badgeSymbolOverride - Letters that replace badge symbols on this device, per badge property and value, on top of the app-wide ones set with `setAutomationBadgeSymbolOverride()`; for example `{commandLocked: {simulation: 's'}}`. `null` brings the symbol back.
  * @slot badges - Custom badges to be displayed in the badge area.
  * @slot tag - Text or element for the tank's tag/label.
  * @slot readout - Replaces the entire readout content block.
@@ -244,6 +250,14 @@ export class ObcAutomationTank extends AdviceMixin(SetpointMixin(LitElement)) {
   @property({type: String})
   badgeCommandLocked: AutomationButtonBadgeCommandLocked =
     AutomationButtonBadgeCommandLocked.None;
+  @property({attribute: false}) badgeSymbolOverride:
+    AutomationBadgeSymbolOverride | undefined = undefined;
+
+  constructor() {
+    super();
+    // Registers itself on the host; nothing else holds it.
+    new BadgeSettingsController(this);
+  }
 
   @state() private _cellWidth = 0;
   @state() private _cellHeight = 0;
@@ -268,74 +282,6 @@ export class ObcAutomationTank extends AdviceMixin(SetpointMixin(LitElement)) {
 
   private get isCompact(): boolean {
     return this.compact || this.static;
-  }
-
-  private _badgeAlertType(): ObcAutomationBadgeType | null {
-    switch (this.badgeAlert) {
-      case AutomationButtonBadgeAlert.Silence:
-        return ObcAutomationBadgeType.AlertSilenced;
-      case AutomationButtonBadgeAlert.Shelved:
-        return ObcAutomationBadgeType.AlertShelved;
-      case AutomationButtonBadgeAlert.Caution:
-        return ObcAutomationBadgeType.Caution;
-      case AutomationButtonBadgeAlert.Warning:
-        return ObcAutomationBadgeType.Warning;
-      case AutomationButtonBadgeAlert.Alarm:
-        return ObcAutomationBadgeType.Alarm;
-      case AutomationButtonBadgeAlert.LevelCritical:
-        return ObcAutomationBadgeType.LevelCritical;
-      case AutomationButtonBadgeAlert.LevelHigh:
-        return ObcAutomationBadgeType.LevelHigh;
-      case AutomationButtonBadgeAlert.LevelMedium:
-        return ObcAutomationBadgeType.LevelMedium;
-      case AutomationButtonBadgeAlert.LevelLow:
-        return ObcAutomationBadgeType.LevelLow;
-      case AutomationButtonBadgeAlert.LevelDiagnostic:
-        return ObcAutomationBadgeType.LevelDiagnostic;
-      default:
-        return null;
-    }
-  }
-
-  private _badgeControlType(): ObcAutomationBadgeType | null {
-    switch (this.badgeControl) {
-      case AutomationButtonBadgeControl.Local:
-        return ObcAutomationBadgeType.Local;
-      case AutomationButtonBadgeControl.LocalOnly:
-        return ObcAutomationBadgeType.LocalOnly;
-      case AutomationButtonBadgeControl.Manual:
-        return ObcAutomationBadgeType.Manual;
-      case AutomationButtonBadgeControl.ManualOnly:
-        return ObcAutomationBadgeType.ManualOnly;
-      case AutomationButtonBadgeControl.Auto:
-        return ObcAutomationBadgeType.Auto;
-      default:
-        return null;
-    }
-  }
-
-  private _badgeInterlockType(): ObcAutomationBadgeType | null {
-    switch (this.badgeInterlock) {
-      case AutomationButtonBadgeInterlock.Interlock:
-        return ObcAutomationBadgeType.Interlock;
-      case AutomationButtonBadgeInterlock.InterlockInhibit:
-        return ObcAutomationBadgeType.InterlockInhibit;
-      case AutomationButtonBadgeInterlock.Simulation:
-        return ObcAutomationBadgeType.Simulation;
-      default:
-        return null;
-    }
-  }
-
-  private _badgeCommandLockedType(): ObcAutomationBadgeType | null {
-    switch (this.badgeCommandLocked) {
-      case AutomationButtonBadgeCommandLocked.CommandLocked:
-        return ObcAutomationBadgeType.CommandLocked;
-      case AutomationButtonBadgeCommandLocked.Simulation:
-        return ObcAutomationBadgeType.Simulation;
-      default:
-        return null;
-    }
   }
 
   private get _usesGaugeTrend(): boolean {
@@ -632,10 +578,27 @@ export class ObcAutomationTank extends AdviceMixin(SetpointMixin(LitElement)) {
     // Compact and static collapse their empty cells so the tank frame absorbs
     // the space; non-compact cells sit in the inner `.grid` and always reserve
     // their min-content rows (automation-components.md § Tank rendering).
-    const controlBadge = this._badgeControlType();
-    const alertBadge = this._badgeAlertType();
-    const interlockBadge = this._badgeInterlockType();
-    const commandLockedBadge = this._badgeCommandLockedType();
+    const symbolOverride = currentBadgeSymbolOverride(this.badgeSymbolOverride);
+    const controlBadge = automationBadgeType(
+      'control',
+      this.badgeControl,
+      symbolOverride
+    );
+    const alertBadge = automationBadgeType(
+      'alert',
+      this.badgeAlert,
+      symbolOverride
+    );
+    const interlockBadge = automationBadgeType(
+      'interlock',
+      this.badgeInterlock,
+      symbolOverride
+    );
+    const commandLockedBadge = automationBadgeType(
+      'commandLocked',
+      this.badgeCommandLocked,
+      symbolOverride
+    );
     const hasEnumBadges =
       controlBadge !== null ||
       alertBadge !== null ||
