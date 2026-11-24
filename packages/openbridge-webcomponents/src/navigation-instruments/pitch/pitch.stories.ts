@@ -3,6 +3,7 @@ import {ObcPitch, ObcPitchType} from './pitch.js';
 import './pitch.js';
 import {Priority} from '../types.js';
 import {widthDecorator} from '../../storybook-util.js';
+import {VesselImage} from '../watch/vessel.js';
 import {
   customVesselSidePngSrc,
   sideVessels,
@@ -92,5 +93,17 @@ export const WithCustomVesselImageZoomedIn: Story = {
   args: {
     vesselImageSideSrc: customVesselSidePngSrc,
     zoomToFitArc: true,
+  },
+};
+
+/**
+ * The fish cage seen from the side, the way Figma 47546:222683 shows it on the
+ * pitch instrument.
+ */
+export const FishCage: Story = {
+  args: {
+    vesselImageSide: VesselImage.fishCageSide,
+    type: ObcPitchType.dualScale,
+    priority: Priority.enhanced,
   },
 };

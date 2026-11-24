@@ -12,6 +12,8 @@ import * as cargoTop from './vessels/cargo-top.js';
 import * as cargoWindFore from './vessels/cargo-wind-fore.js';
 import cargoWindSide, {cargoWindSideFaded} from './vessels/cargo-wind-side.js';
 import * as cargoWindTop from './vessels/cargo-wind-top.js';
+import fishCageSide from './vessels/fish-cage-side.js';
+import fishCageTop from './vessels/fish-cage-top.js';
 import fishingVesselSide, {
   fishingVesselSideFaded,
 } from './vessels/fishing-vessel-side.js';
@@ -69,6 +71,8 @@ export enum VesselImage {
   cargoWindSide = 'cargo-wind-side',
   cargoWindSideFaded = 'cargo-wind-side-faded',
   cargoWindTop = 'cargo-wind-top',
+  fishCageSide = 'fish-cage-side',
+  fishCageTop = 'fish-cage-top',
   fishingVesselSide = 'fishing-vessel-side',
   fishingVesselSideFaded = 'fishing-vessel-side-faded',
   fishingVesselTop = 'fishing-vessel-top',
@@ -124,6 +128,8 @@ export const vesselImages: Record<VesselImage, SVGTemplateResult> = {
   [VesselImage.cargoWindSide]: cargoWindSide,
   [VesselImage.cargoWindSideFaded]: cargoWindSideFaded,
   [VesselImage.cargoWindTop]: cargoWindTop.default,
+  [VesselImage.fishCageSide]: fishCageSide,
+  [VesselImage.fishCageTop]: fishCageTop,
   [VesselImage.fishingVesselSide]: fishingVesselSide,
   [VesselImage.fishingVesselSideFaded]: fishingVesselSideFaded,
   [VesselImage.fishingVesselTop]: fishingVesselTop.default,
