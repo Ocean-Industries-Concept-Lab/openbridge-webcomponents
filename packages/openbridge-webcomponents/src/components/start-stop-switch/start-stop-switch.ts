@@ -222,10 +222,16 @@ export class ObcStartStopSwitch extends LitElement {
     const newPosition = startPosition + this.dragOffset;
     const percent = newPosition / maxOffset;
 
-    if (!this.checked && percent > DRAG_COMPLETE_THRESHOLD) {
+    // A switch disabled mid-drag ends the drag without a change, as a key press would.
+    const canCommit = !this.disabled;
+    if (canCommit && !this.checked && percent > DRAG_COMPLETE_THRESHOLD) {
       this.checked = true;
       this.dispatchChangeEvent();
-    } else if (this.checked && percent < 1 - DRAG_COMPLETE_THRESHOLD) {
+    } else if (
+      canCommit &&
+      this.checked &&
+      percent < 1 - DRAG_COMPLETE_THRESHOLD
+    ) {
       this.checked = false;
       this.dispatchChangeEvent();
     }

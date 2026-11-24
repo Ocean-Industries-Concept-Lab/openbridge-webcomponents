@@ -4,7 +4,6 @@
     :soft-dismiss="softDismiss"
     :open="open"
     :in-command="demoConfigStore.hasCommand"
-    :show-location="!demoConfigStore.hasCommand"
     @change="$emit('change', $event)"
     @close="$emit('close')"
   >
