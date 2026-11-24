@@ -72,6 +72,7 @@ const stories: StoriesInfo[] = [
     title: 'UI/X',
     componentTag: 'obc-x',
     componentDocs: 'Extra story-file docs.',
+    docsPage: true,
     stories: [
       {exportName: 'Default', name: 'Default', doc: 'Shows the default.'},
     ],
@@ -81,6 +82,7 @@ const stories: StoriesInfo[] = [
     title: 'UI/X More',
     componentTag: 'obc-x',
     componentDocs: undefined,
+    docsPage: true,
     stories: [
       {exportName: 'DenseLayout', name: 'Dense (compact)', doc: undefined},
     ],
@@ -135,6 +137,48 @@ describe('renderComponentPage', () => {
     );
     expect(out).toContain(
       '- [Dense (compact)](https://openbridge-next-storybook.web.app/?path=/story/ui-x-more--dense-layout)\n'
+    );
+  });
+
+  it('keeps a story description whole, pipes as written', () => {
+    const page = renderComponentPage({
+      entry,
+      channel,
+      seeAlso: [],
+      stories: [
+        {
+          ...stories[0],
+          stories: [
+            {
+              exportName: 'Fixed',
+              name: 'Fixed',
+              doc: 'Shrinks when `|value − setpoint|` is small,\nper the deadband.\n\n- **false**: reacts\n- **true**: scales\n\nBoth side by side.',
+            },
+          ],
+        },
+      ],
+    });
+    expect(page).toContain(
+      '- [Fixed](https://openbridge-next-storybook.web.app/?path=/story/ui-x--fixed): Shrinks when `|value − setpoint|` is small, per the deadband.\n\n  - **false**: reacts\n  - **true**: scales\n\n  Both side by side.\n'
+    );
+  });
+
+  it('links the first story when no stories file has a docs page', () => {
+    const noDocs = {...stories[0], docsPage: false};
+    expect(
+      renderComponentPage({entry, channel, seeAlso: [], stories: [noDocs]})
+    ).toContain(
+      'Lifecycle: beta. [Storybook](https://openbridge-next-storybook.web.app/?path=/story/ui-x--default) · [Source]'
+    );
+    expect(
+      renderComponentPage({
+        entry,
+        channel,
+        seeAlso: [],
+        stories: [noDocs, stories[1]],
+      })
+    ).toContain(
+      'Lifecycle: beta. [Storybook](https://openbridge-next-storybook.web.app/?path=/docs/ui-x-more--docs) · [Source]'
     );
   });
 

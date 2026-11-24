@@ -26,11 +26,24 @@ export interface StoriesInfo {
   title: string | undefined;
   componentTag: string | undefined;
   componentDocs: string | DocsRef | undefined;
+  /** False when `meta.tags` carries `!autodocs`; the preview turns autodocs on for every other file. */
+  docsPage: boolean;
   stories: StoryInfo[];
 }
 
 export function docsPageUrl(ch: Channel, title: string): string {
   return siteUrl(ch, `/?path=/docs/${sanitize(title)}--docs`);
+}
+
+/** The file's docs page, or its first story when Storybook builds no docs page for it. */
+export function storybookUrl(
+  ch: Channel,
+  info: StoriesInfo
+): string | undefined {
+  if (!info.title) return undefined;
+  if (info.docsPage) return docsPageUrl(ch, info.title);
+  const first = info.stories[0];
+  return first && storyPageUrl(ch, info.title, first.exportName);
 }
 
 /** Storybook derives a story's id from its export name, whatever `name:` says. */
@@ -76,12 +89,20 @@ export function readStoriesFile(
   const docsNode =
     meta &&
     propertyPath(meta, ['parameters', 'docs', 'description', 'component']);
+  const tagsNode = meta && property(meta, 'tags');
+  const tags =
+    tagsNode && ts.isArrayLiteralExpression(unwrap(tagsNode))
+      ? (unwrap(tagsNode) as ts.ArrayLiteralExpression).elements.map(
+          stringValue
+        )
+      : [];
 
   return {
     file,
     title,
     componentTag: componentNode ? stringValue(componentNode) : undefined,
     componentDocs: docsNode ? docsValue(docsNode) : undefined,
+    docsPage: !tags.includes('!autodocs'),
     stories: exportedStories(sf, text),
   };
 }
@@ -199,8 +220,8 @@ function exportedStories(sf: ts.SourceFile, text: string): StoryInfo[] {
         obj &&
         propertyPath(obj, ['parameters', 'docs', 'description', 'story']);
       const doc =
-        firstParagraph(leadingJsDoc(text, stmt)) ??
-        firstParagraph(storyDocs && stringValue(storyDocs));
+        storyDoc(leadingJsDoc(text, stmt)) ??
+        storyDoc(storyDocs && stringValue(storyDocs));
       stories.push({exportName, name, doc});
     }
   }
@@ -225,14 +246,11 @@ function leadingJsDoc(text: string, node: ts.Node): string | undefined {
     .join('\n');
 }
 
-function firstParagraph(text: string | undefined): string | undefined {
-  if (!text) return undefined;
-  const paragraph = text
-    .trim()
-    .split(/\n\s*\n/)[0]
-    .split('\n')
-    .map((l) => l.trim())
-    .filter(Boolean)
-    .join(' ');
-  return paragraph || undefined;
+function storyDoc(text: string | undefined): string | undefined {
+  const doc = text
+    ?.split('\n')
+    .map((l) => l.trimEnd())
+    .join('\n')
+    .trim();
+  return doc || undefined;
 }

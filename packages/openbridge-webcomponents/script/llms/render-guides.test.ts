@@ -13,6 +13,7 @@ const base: StoriesInfo = {
   title: 'Building Blocks/Setpoint',
   componentTag: undefined,
   componentDocs: '# Setpoint\n\nThe marker.',
+  docsPage: true,
   stories: [
     {
       exportName: 'NotEqual',
@@ -45,6 +46,28 @@ describe('renderStoriesGuide', () => {
     );
     expect(out).toContain(
       '- [Flow](https://openbridge-next-storybook.web.app/?path=/story/building-blocks-setpoint--flow)\n'
+    );
+  });
+
+  it('keeps a story description whole', () => {
+    const out = renderStoriesGuide(
+      {...base, stories: [{exportName: 'Flow', name: 'Flow', doc: 'A.\n\nB.'}]},
+      channel,
+      () => undefined
+    );
+    expect(out).toContain(
+      '- [Flow](https://openbridge-next-storybook.web.app/?path=/story/building-blocks-setpoint--flow): A.\n\n  B.\n'
+    );
+  });
+
+  it('links the first story when the file has no docs page', () => {
+    const out = renderStoriesGuide(
+      {...base, docsPage: false},
+      channel,
+      () => undefined
+    );
+    expect(out).toContain(
+      '[Storybook](https://openbridge-next-storybook.web.app/?path=/story/building-blocks-setpoint--not-equal)'
     );
   });
 

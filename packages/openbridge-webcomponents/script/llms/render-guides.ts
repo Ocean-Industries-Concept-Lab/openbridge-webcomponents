@@ -1,7 +1,7 @@
 import type {Channel} from './channel.js';
-import {normalizeHeadings} from './render-component.js';
+import {normalizeHeadings, storyItem} from './render-component.js';
 import {
-  docsPageUrl,
+  storybookUrl,
   storyPageUrl,
   type DocsRef,
   type StoriesInfo,
@@ -26,20 +26,16 @@ export function renderStoriesGuide(
     typeof info.componentDocs === 'string'
       ? info.componentDocs
       : info.componentDocs && resolveDocs(info.componentDocs);
-  const out = [
-    `# ${title.split('/').pop()}`,
-    '',
-    `[Storybook](${docsPageUrl(channel, title)})`,
-    '',
-  ];
+  const storybook = storybookUrl(channel, info);
+  const out = [`# ${title.split('/').pop()}`, ''];
+  if (storybook) out.push(`[Storybook](${storybook})`, '');
   if (docs) out.push(normalizeHeadings(docs.trim()), '');
   if (info.stories.length) {
     out.push(
       '## Stories',
       '',
-      ...info.stories.map(
-        (st) =>
-          `- [${st.name}](${storyPageUrl(channel, title, st.exportName)})${st.doc ? `: ${st.doc}` : ''}`
+      ...info.stories.map((st) =>
+        storyItem(st.name, storyPageUrl(channel, title, st.exportName), st.doc)
       ),
       ''
     );

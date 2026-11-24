@@ -55,15 +55,52 @@ describe('readStoriesFile', () => {
       title: 'Bars and Graphs/Bar Vertical',
       componentTag: 'obc-bar-vertical',
       componentDocs: 'Comp docs',
+      docsPage: true,
       stories: [
         {
           exportName: 'WithAdviceIcons',
           name: 'With Advice Icons',
-          doc: 'Each band carries its icon.',
+          doc: 'Each band carries its icon.\n\nMore.',
         },
         {exportName: 'Named', name: 'Default (right side)', doc: 'Story docs'},
       ],
     });
+  });
+
+  it('keeps every paragraph of a story description', () => {
+    const file = write(
+      'g.stories.ts',
+      [
+        "export default {title: 'X/G', component: 'obc-g'};",
+        '/**',
+        ' * Scales like a vector.',
+        ' *',
+        ' * - **false**: reacts to properties',
+        ' * - **true**: scales as a whole',
+        ' */',
+        'export const Fixed = {args: {}};',
+        'export const Params = {',
+        "  parameters: {docs: {description: {story: 'One.\\n\\nTwo.'}}},",
+        '};',
+      ].join('\n')
+    );
+    expect(readStoriesFile(file, () => {}).stories.map((s) => s.doc)).toEqual([
+      'Scales like a vector.\n\n- **false**: reacts to properties\n- **true**: scales as a whole',
+      'One.\n\nTwo.',
+    ]);
+  });
+
+  it('records whether Storybook builds a docs page for the file', () => {
+    const on = write(
+      'h.stories.ts',
+      "export default {title: 'X/H', component: 'obc-h', tags: ['beta']};"
+    );
+    const off = write(
+      'i.stories.ts',
+      "const meta = {title: 'X/I', component: 'obc-i', tags: ['!autodocs', '6.0']};\nexport default meta;"
+    );
+    expect(readStoriesFile(on, () => {}).docsPage).toBe(true);
+    expect(readStoriesFile(off, () => {}).docsPage).toBe(false);
   });
 
   it('does not take description.component for the component tag', () => {

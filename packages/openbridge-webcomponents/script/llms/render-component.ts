@@ -1,7 +1,7 @@
 import {rawUrl, type Channel} from './channel.js';
 import {fenceState} from './markdown.js';
 import {
-  docsPageUrl,
+  storybookUrl,
   storyPageUrl,
   type DocsRef,
   type StoriesInfo,
@@ -24,6 +24,23 @@ export function escapeCell(text: string | undefined): string {
     .replace(/\s*\n\s*/g, ' ')
     .replace(/\|/g, '\\|')
     .trim();
+}
+
+/** A story as a list item: its first paragraph on the line, the rest indented under it. */
+export function storyItem(
+  name: string,
+  url: string,
+  doc: string | undefined
+): string {
+  const [first, ...rest] = doc ? doc.split(/\n\s*\n/) : [];
+  const line = `- [${name}](${url})${first ? `: ${first.replace(/\s*\n\s*/g, ' ')}` : ''}`;
+  const more = rest.map((p) =>
+    p
+      .split('\n')
+      .map((l) => (l.trim() ? `  ${l}` : ''))
+      .join('\n')
+  );
+  return [line, ...more].join('\n\n');
 }
 
 // GFM splits a table cell on a pipe even inside a code span unless it is escaped.
@@ -69,7 +86,9 @@ export function renderComponentPage(input: ComponentPageInput): string {
   const {entry, channel, stories, seeAlso, resolveDocs} = input;
   const d = entry.declaration;
   const own = stories.filter((s) => s.componentTag === entry.tag);
-  const docsTitle = own.find((s) => s.title)?.title;
+  const linked =
+    own.find((s) => s.title && s.docsPage) ?? own.find((s) => s.title);
+  const storybook = linked && storybookUrl(channel, linked);
   const out: string[] = [
     `# \`<${entry.tag}>\``,
     '',
@@ -78,7 +97,7 @@ export function renderComponentPage(input: ComponentPageInput): string {
   ];
 
   const links = [
-    docsTitle ? `[Storybook](${docsPageUrl(channel, docsTitle)})` : undefined,
+    storybook ? `[Storybook](${storybook})` : undefined,
     `[Source](${rawUrl(channel, `${PACKAGE_DIR}/${entry.modulePath}`)})`,
   ].filter(Boolean);
   out.push(
@@ -156,9 +175,12 @@ export function renderComponentPage(input: ComponentPageInput): string {
 
   const storyLines = own.flatMap((s) =>
     s.title
-      ? s.stories.map(
-          (st) =>
-            `- [${st.name}](${storyPageUrl(channel, s.title!, st.exportName)})${st.doc ? `: ${escapeCell(st.doc)}` : ''}`
+      ? s.stories.map((st) =>
+          storyItem(
+            st.name,
+            storyPageUrl(channel, s.title!, st.exportName),
+            st.doc
+          )
         )
       : []
   );
