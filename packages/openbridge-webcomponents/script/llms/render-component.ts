@@ -26,21 +26,32 @@ export function escapeCell(text: string | undefined): string {
     .trim();
 }
 
-/** A story as a list item: its first paragraph on the line, the rest indented under it. */
+// A list, fence, quote, heading or table line: it keeps its own line.
+const BLOCK_START = /^\s*([-*+]\s|\d+[.)]\s|`{3,}|~{3,}|>|#{1,6}\s|\|)/;
+
+/** A story as a list item: its opening prose on the line, everything after it indented under it. */
 export function storyItem(
   name: string,
   url: string,
   doc: string | undefined
 ): string {
-  const [first, ...rest] = doc ? doc.split(/\n\s*\n/) : [];
-  const line = `- [${name}](${url})${first ? `: ${first.replace(/\s*\n\s*/g, ' ')}` : ''}`;
-  const more = rest.map((p) =>
-    p
-      .split('\n')
-      .map((l) => (l.trim() ? `  ${l}` : ''))
-      .join('\n')
-  );
-  return [line, ...more].join('\n\n');
+  const link = `- [${name}](${url})`;
+  if (!doc) return link;
+  const lines = doc.split('\n');
+  let end = lines.findIndex((l) => !l.trim() || BLOCK_START.test(l));
+  if (end === -1) end = lines.length;
+  const prose = lines
+    .slice(0, end)
+    .map((l) => l.trim())
+    .join(' ');
+  const body = lines
+    .slice(end)
+    .map((l) => (l.trim() ? `  ${l}` : ''))
+    .join('\n')
+    .replace(/^\n+/, '');
+  return [prose ? `${link}: ${prose}` : link, body]
+    .filter(Boolean)
+    .join('\n\n');
 }
 
 // GFM splits a table cell on a pipe even inside a code span unless it is escaped.

@@ -4,6 +4,7 @@ import {
   escapeCell,
   normalizeHeadings,
   renderComponentPage,
+  storyItem,
 } from './render-component.js';
 import type {StoriesInfo} from './stories.js';
 import type {ComponentEntry} from './types.js';
@@ -226,6 +227,28 @@ describe('renderComponentPage', () => {
     expect(page).not.toContain('## CSS parts');
     expect(page).not.toContain('## Stories');
     expect(page).not.toContain('## See also');
+  });
+});
+
+describe('storyItem', () => {
+  it('indents a description that opens with a list', () => {
+    expect(storyItem('L', 'u', '- First\n- Second\n\nMore.')).toBe(
+      '- [L](u)\n\n  - First\n  - Second\n\n  More.'
+    );
+  });
+
+  it('indents a fenced example line by line, blank lines included', () => {
+    expect(
+      storyItem('F', 'u', '```html\n<obc-x></obc-x>\n\n<obc-y></obc-y>\n```')
+    ).toBe(
+      '- [F](u)\n\n  ```html\n  <obc-x></obc-x>\n\n  <obc-y></obc-y>\n  ```'
+    );
+  });
+
+  it('ends the inline prose where a list starts without a blank line', () => {
+    expect(storyItem('M', 'u', 'Two modes:\n- a\n- b')).toBe(
+      '- [M](u): Two modes:\n\n  - a\n  - b'
+    );
   });
 });
 
