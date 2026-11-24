@@ -30,7 +30,7 @@ const meta: Meta<typeof ObcHeave> = {
     draftOffset: {control: {type: 'range', min: -10, max: 10, step: 0.1}},
     vesselImage: {
       control: 'select',
-      options: foreVessels,
+      options: [...foreVessels, VesselImage.fishCageSide],
     },
     priority: {control: 'select', options: Object.values(Priority)},
     type: {control: 'select', options: Object.values(ObcHeaveType)},
@@ -102,5 +102,16 @@ export const AdviceIcons: Story = {
       {min: -10, max: -2, category: 'caution', showIcon: true},
       {min: 2, max: 10, category: 'caution', showIcon: true},
     ],
+  },
+};
+
+/**
+ * The fish cage seen from the side, the way Figma 47546:222683 shows it on the
+ * heave instrument.
+ */
+export const FishCage: Story = {
+  args: {
+    vesselImage: VesselImage.fishCageSide,
+    priority: Priority.enhanced,
   },
 };

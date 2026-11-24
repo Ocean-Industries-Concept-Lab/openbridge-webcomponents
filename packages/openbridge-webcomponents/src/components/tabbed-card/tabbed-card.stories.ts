@@ -85,7 +85,7 @@ export const DefaultSlotOnly: Story = {
         <div class="content-box">
           <h3>Overview Content</h3>
           <p>
-            This is the only tab content. The consumer should then toogle
+            This is the only tab content. The consumer should then toggle
             content based on the selected tab.
           </p>
         </div>

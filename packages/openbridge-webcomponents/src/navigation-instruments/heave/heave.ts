@@ -38,6 +38,19 @@ const VESSEL_VIEW_BOX = '-200 -200 400 400';
 const BAR_VIEW_BOX = '-64 -192 128 384';
 
 /**
+ * Floating objects at inclinometer size
+ *
+ * The fore silhouettes are drawn small in their 160 box, so heave zooms them
+ * ×3. The floating objects fill the box, so heave draws them at the 224/160
+ * the inclinometers use, centred on the face (Figma 47546:223140).
+ */
+const FLOATING_OBJECTS: ReadonlySet<VesselImage> = new Set([
+  VesselImage.fishCageSide,
+  VesselImage.fishCageTop,
+]);
+const FLOATING_OBJECT_ZOOM = 224 / 160;
+
+/**
  * `<obc-heave>` — Vertical heave indicator.
  *
  * Shows `heave` on a linear scale with a trend band, optional advice zones and
@@ -116,6 +129,14 @@ export class ObcHeave extends AdviceMixin(LitElement) {
   }
 
   private renderVessel(): SVGTemplateResult {
+    const art = vesselArt(this.vesselImage, this.vesselImageSrc);
+    const y = this._toTranslatedValue(
+      (-this.heave + this.draftOffset) / this.gainScale
+    );
+    const transform =
+      'vesselImage' in art && FLOATING_OBJECTS.has(art.vesselImage)
+        ? `translate(${-this._gaugeWidth / 2}, ${y}) scale(${FLOATING_OBJECT_ZOOM}) translate(-80, -80)`
+        : `translate(0, ${y}) scale(3) translate(${-this._gaugeWidth / 2 - 80 / 1.5} , ${-80})`;
     return svg`
           <defs>
             <clipPath id="heaveClip">
@@ -128,13 +149,8 @@ export class ObcHeave extends AdviceMixin(LitElement) {
             </clipPath>
           </defs>
           <g clip-path="url(#heaveClip)">
-            <g
-              transform="translate(0, ${this._toTranslatedValue(
-                (-this.heave + this.draftOffset) / this.gainScale
-              )}) scale(3)
-            translate(${-this._gaugeWidth / 2 - 80 / 1.5} , ${-80})"
-            >
-              ${this.vesselImage ? renderVesselArt(vesselArt(this.vesselImage, this.vesselImageSrc), this._palette.current) : nothing}
+            <g transform=${transform}>
+              ${this.vesselImage ? renderVesselArt(art, this._palette.current) : nothing}
             </g>
           </g>
     `;
