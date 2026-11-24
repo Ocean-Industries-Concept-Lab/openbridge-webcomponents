@@ -25,7 +25,7 @@ const meta: Meta<typeof ObcRoll> = {
     scaleForeImage: {control: {type: 'range', min: 0, max: 2, step: 0.01}},
     vesselImageFore: {
       control: 'select',
-      options: foreVessels,
+      options: [...foreVessels, VesselImage.fishCageTop],
     },
     type: {control: 'select', options: Object.values(ObcRollType)},
     priority: {control: 'select', options: Object.values(Priority)},
@@ -84,6 +84,18 @@ export const DualScale: Story = {
 
 export const Enhanced: Story = {
   args: {
+    priority: Priority.enhanced,
+  },
+};
+
+/**
+ * The fish cage seen from above, the way Figma 47546:222683 shows it on the
+ * roll instrument.
+ */
+export const FishCage: Story = {
+  args: {
+    vesselImageFore: VesselImage.fishCageTop,
+    type: ObcRollType.dualScale,
     priority: Priority.enhanced,
   },
 };
