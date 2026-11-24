@@ -1,6 +1,7 @@
 import {Meta, Markdown} from '@storybook/addon-docs/blocks';
 import adviceInput from './migration-guide-2-2/advice-input.md?raw';
 import renamedProperties from './migration-guide-2-2/renamed-properties.md?raw';
+import renamedSlots from './migration-guide-2-2/renamed-slots.md?raw';
 import renamedTypes from './migration-guide-2-2/renamed-types.md?raw';
 
 <Meta title="Introduction/Migration Guide 2.1 to 2.2" />
@@ -16,8 +17,9 @@ Coming from 2.0? Read [Migrating from 2.0 to 2.1](?path=/docs/introduction-migra
 1. [Advice Input](#advice-input)
 2. [Renamed Properties](#renamed-properties)
 3. [Renamed Types](#renamed-types)
-4. [Behaviour Changes](#behaviour-changes)
-5. [What Moved on Screen](#what-moved-on-screen)
+4. [Renamed Slots](#renamed-slots)
+5. [Behaviour Changes](#behaviour-changes)
+6. [What Moved on Screen](#what-moved-on-screen)
 
 ## Advice Input
 
@@ -50,6 +52,12 @@ Unchanged: `advices` on the watch, the bars and gauges, the thruster, the radial
 The instrument-specific types are aliases of the two shared ones and are deprecated. Deep imports keep resolving.
 
 <Markdown>{renamedTypes}</Markdown>
+
+## Renamed Slots
+
+Five slots of `obc-command-menu` were spelled `toogle-…`. The `toggle-…` names replace them; an old name still renders while its new slot is empty, and goes in the next major release ([#1370](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/issues/1370)).
+
+<Markdown>{renamedSlots}</Markdown>
 
 ## Behaviour Changes
 

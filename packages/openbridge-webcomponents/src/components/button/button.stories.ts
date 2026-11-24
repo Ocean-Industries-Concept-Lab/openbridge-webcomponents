@@ -3,6 +3,7 @@ import {ButtonVariant, ObcButton, segmentPosition} from './button.js';
 import './button.js';
 import {iconIds, iconIdToIconHtml} from '../../storybook-util.js';
 import {html} from 'lit';
+import {ifDefined} from 'lit/directives/if-defined.js';
 
 const meta: Meta<typeof ObcButton> = {
   title: 'UI Components/Buttons/Button',
@@ -70,6 +71,7 @@ const meta: Meta<typeof ObcButton> = {
       .showTrailingIcon=${args.showTrailingIcon}
       .disabled=${args.disabled}
       .segmentPosition=${args.segmentPosition}
+      aria-label=${ifDefined(args.ariaLabel ?? undefined)}
     >
       ${
         args.showLeadingIcon
