@@ -96,3 +96,62 @@ describe('obc-start-stop-switch drag under CSS zoom (#1371)', () => {
     });
   }
 });
+
+describe('obc-start-stop-switch disabled mid-drag', () => {
+  it('ends the drag without a change when disabled before release', async () => {
+    const {toggle, thumb, track, changes} = await mount(1, false);
+    const x = await press(toggle, thumb);
+    await moveTo(toggle, x + track.getBoundingClientRect().width);
+
+    toggle.disabled = true;
+    await toggle.updateComplete;
+    await release(toggle);
+
+    expect(toggle.checked).toBe(false);
+    expect(changes).toEqual([]);
+  });
+});
+
+describe('obc-start-stop-switch semantics', () => {
+  async function mountSwitch(props: Partial<ObcStartStopSwitch>) {
+    const toggle = document.createElement(
+      'obc-start-stop-switch'
+    ) as ObcStartStopSwitch;
+    Object.assign(toggle, props);
+    document.body.append(toggle);
+    cleanup.push(() => toggle.remove());
+    await toggle.updateComplete;
+    return toggle;
+  }
+
+  function switchRole(toggle: ObcStartStopSwitch) {
+    return toggle.shadowRoot!.querySelector<HTMLElement>('[role="switch"]')!;
+  }
+
+  for (const disabled of [false, true]) {
+    it(`holds no control inside the switch${disabled ? ' while disabled' : ''}`, async () => {
+      const toggle = await mountSwitch({disabled});
+
+      const inner = switchRole(toggle).querySelectorAll(
+        'button, a[href], input, select, textarea, [tabindex]'
+      );
+      expect(inner).toHaveLength(0);
+    });
+  }
+
+  it('describes the switch with its description', async () => {
+    const toggle = await mountSwitch({
+      hasDescription: true,
+      description: 'Take command',
+    });
+
+    const id = switchRole(toggle).getAttribute('aria-describedby')!;
+    expect(toggle.shadowRoot!.getElementById(id)?.textContent?.trim()).toBe(
+      'Take command'
+    );
+
+    toggle.hasDescription = false;
+    await toggle.updateComplete;
+    expect(switchRole(toggle).hasAttribute('aria-describedby')).toBe(false);
+  });
+});
