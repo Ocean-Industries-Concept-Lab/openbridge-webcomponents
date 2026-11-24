@@ -4,7 +4,7 @@
     :soft-dismiss="softDismiss"
     :open="open"
     :in-command="demoConfigStore.hasCommand"
-    :hide-location="demoConfigStore.hasCommand"
+    :show-location="!demoConfigStore.hasCommand"
     @change="$emit('change', $event)"
     @close="$emit('close')"
   >
@@ -19,10 +19,10 @@
       {{ demoConfigStore.hasCommand ? 'Lillestrøm' : 'CMD at ROC' }}
     </div>
     <div slot="command-location">Ålesund</div>
-    <div slot="toogle-action-to-in-command-label">Take</div>
-    <div slot="toogle-action-to-no-command-label">Release</div>
-    <div slot="toogle-state-in-command-label">In CMD</div>
-    <div slot="toogle-state-no-command-label">ROC</div>
+    <div slot="toggle-action-to-in-command-label">Take</div>
+    <div slot="toggle-action-to-no-command-label">Release</div>
+    <div slot="toggle-state-in-command-label">In CMD</div>
+    <div slot="toggle-state-no-command-label">ROC</div>
   </ObcCommandMenu>
 </template>
 

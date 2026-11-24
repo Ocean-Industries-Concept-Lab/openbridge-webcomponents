@@ -79,6 +79,7 @@ export enum segmentPosition {
  * - `href` (string): If set, renders as an anchor link.
  * - `target` (string): Link target (only applies when `href` is set).
  * - `segmentPosition` (segmentPosition): Visual grouping for segmented button layouts.
+ * - `ariaLabel` (string): Accessible name of the button, in place of its slotted text.
  *
  * ### Best Practices
  * - Always provide a clear label for accessibility, even if using only icons.
@@ -110,6 +111,11 @@ export enum segmentPosition {
  * @property segmentPosition - Position within a segmented button group: `single` stands alone, `start`,
  *   `middle` and `end` shape the button for the first, an inner and the last
  *   segment.
+ * @property ariaLabel - Accessible name forwarded to the inner `<button>` or `<a>`, mapped to the
+ *   `aria-label` attribute. It replaces the slotted text as the name, for a button whose text
+ *   describes a state rather than the action it takes. Start it with the visible text, so a user
+ *   who speaks the label they see still reaches the button. `aria-labelledby` is not supported:
+ *   ID references cannot cross the shadow boundary.
  * @fires click - Fired when the button is clicked (if not disabled).
  *
  * @slot - Default slot for button label text (required for accessibility)
@@ -135,6 +141,9 @@ export class ObcButton extends LitElement {
 
   @property({type: String}) segmentPosition: segmentPosition =
     segmentPosition.single;
+
+  @property({type: String, attribute: 'aria-label'})
+  override ariaLabel: string | null = null;
 
   private renderLeadingIcon() {
     if (this.showLeadingIcon) {
@@ -174,6 +183,7 @@ export class ObcButton extends LitElement {
         ?disabled=${this.disabled}
         href=${ifDefined(this.href)}
         target=${ifDefined(this.target)}
+        aria-label=${ifDefined(this.ariaLabel ?? undefined)}
         part="wrapper"
       >
         <div class="visible-wrapper" part="visible-wrapper">

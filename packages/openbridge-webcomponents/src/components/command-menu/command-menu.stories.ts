@@ -20,6 +20,9 @@ import '../../icons/icon-joystick.js';
  *   Default: `false`.
  * @property showLocation - Forwarded to `<obc-command-menu>` to
  *   hide or show the command location slot. Default: `true`.
+ * @property disabled - Forwarded to `<obc-command-menu>`.
+ * @property hasActionDescription - Forwarded to `<obc-command-menu>`.
+ * @property actionDescription - Forwarded to `<obc-command-menu>`.
  *
  * @example
  * ```html
@@ -32,6 +35,9 @@ import '../../icons/icon-joystick.js';
 class CommandMenuStoryWrapper extends LitElement {
   @property({type: Boolean}) inCommand = false;
   @property({type: Boolean, attribute: false}) showLocation: boolean = true;
+  @property({type: Boolean}) disabled = false;
+  @property({type: Boolean}) hasActionDescription = false;
+  @property({type: String}) actionDescription = 'Action description';
 
   override createRenderRoot() {
     return this;
@@ -46,6 +52,9 @@ class CommandMenuStoryWrapper extends LitElement {
       <obc-command-menu
         .inCommand=${this.inCommand}
         .showLocation=${this.showLocation}
+        .disabled=${this.disabled}
+        .hasActionDescription=${this.hasActionDescription}
+        .actionDescription=${this.actionDescription}
         @change=${this.onCommandChange}
       >
         <div slot="command-icon">
@@ -62,10 +71,10 @@ class CommandMenuStoryWrapper extends LitElement {
           ${this.inCommand ? 'DP' : 'CMD at DP'}
         </div>
         <div slot="command-location">Aft Bridge</div>
-        <div slot="toogle-action-to-in-command-label">Take</div>
-        <div slot="toogle-action-to-no-command-label">Release</div>
-        <div slot="toogle-state-in-command-label">In CMD</div>
-        <div slot="toogle-state-no-command-label">DP Aft Bridge</div>
+        <div slot="toggle-action-to-in-command-label">Take</div>
+        <div slot="toggle-action-to-no-command-label">Release</div>
+        <div slot="toggle-state-in-command-label">In CMD</div>
+        <div slot="toggle-state-no-command-label">DP Aft Bridge</div>
       </obc-command-menu>
     `;
   }
@@ -78,6 +87,9 @@ const meta: Meta<typeof ObcCommandMenu> = {
   component: 'obc-command-menu',
   args: {
     showLocation: true,
+    disabled: false,
+    hasActionDescription: false,
+    actionDescription: 'Action description',
   },
 
   render: (args) => {
@@ -85,6 +97,9 @@ const meta: Meta<typeof ObcCommandMenu> = {
       <command-menu-story-wrapper
         .inCommand=${args.inCommand}
         .showLocation=${args.showLocation}
+        .disabled=${args.disabled}
+        .hasActionDescription=${args.hasActionDescription}
+        .actionDescription=${args.actionDescription}
       ></command-menu-story-wrapper>
     `;
   },
@@ -102,6 +117,28 @@ export const InCommand: Story = {
 export const NoCommand: Story = {
   args: {
     inCommand: false,
+  },
+};
+
+export const WithActionDescription: Story = {
+  args: {
+    inCommand: false,
+    hasActionDescription: true,
+    actionDescription: 'Take command of the DP system',
+  },
+};
+
+export const Disabled: Story = {
+  args: {
+    inCommand: false,
+    disabled: true,
+  },
+};
+
+export const DisabledInCommand: Story = {
+  args: {
+    inCommand: true,
+    disabled: true,
   },
 };
 

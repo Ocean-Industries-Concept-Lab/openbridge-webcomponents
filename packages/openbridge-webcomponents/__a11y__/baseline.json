@@ -253,15 +253,6 @@
   ],
   "application-components-menus-command-button--in-command": ["button-name"],
   "application-components-menus-command-button--no-command": ["button-name"],
-  "application-components-menus-command-menu--in-command": [
-    "nested-interactive"
-  ],
-  "application-components-menus-command-menu--keyboard-toggle": [
-    "nested-interactive"
-  ],
-  "application-components-menus-command-menu--no-command": [
-    "nested-interactive"
-  ],
   "application-components-menus-navigation-menu--compact": [
     "landmark-unique",
     "list"
@@ -1164,60 +1155,6 @@
   ],
   "ui-components-selection-controls-and-switches-radio-button--without-label": [
     "label"
-  ],
-  "ui-components-selection-controls-and-switches-start-stop-switch--all-disabled-variants": [
-    "button-name"
-  ],
-  "ui-components-selection-controls-and-switches-start-stop-switch--all-variants": [
-    "nested-interactive"
-  ],
-  "ui-components-selection-controls-and-switches-start-stop-switch--checked": [
-    "nested-interactive"
-  ],
-  "ui-components-selection-controls-and-switches-start-stop-switch--cmd-example": [
-    "nested-interactive"
-  ],
-  "ui-components-selection-controls-and-switches-start-stop-switch--disabled-loading": [
-    "button-name"
-  ],
-  "ui-components-selection-controls-and-switches-start-stop-switch--disabled-running": [
-    "button-name"
-  ],
-  "ui-components-selection-controls-and-switches-start-stop-switch--keyboard-disabled": [
-    "button-name"
-  ],
-  "ui-components-selection-controls-and-switches-start-stop-switch--keyboard-toggle": [
-    "nested-interactive"
-  ],
-  "ui-components-selection-controls-and-switches-start-stop-switch--loading": [
-    "nested-interactive"
-  ],
-  "ui-components-selection-controls-and-switches-start-stop-switch--loading-to-running": [
-    "nested-interactive"
-  ],
-  "ui-components-selection-controls-and-switches-start-stop-switch--running": [
-    "nested-interactive"
-  ],
-  "ui-components-selection-controls-and-switches-start-stop-switch--size-large": [
-    "nested-interactive"
-  ],
-  "ui-components-selection-controls-and-switches-start-stop-switch--size-large-checked": [
-    "nested-interactive"
-  ],
-  "ui-components-selection-controls-and-switches-start-stop-switch--size-large-disabled": [
-    "button-name"
-  ],
-  "ui-components-selection-controls-and-switches-start-stop-switch--size-large-disabled-checked": [
-    "button-name"
-  ],
-  "ui-components-selection-controls-and-switches-start-stop-switch--unchecked": [
-    "nested-interactive"
-  ],
-  "ui-components-selection-controls-and-switches-start-stop-switch--with-alert": [
-    "nested-interactive"
-  ],
-  "ui-components-selection-controls-and-switches-start-stop-switch--with-description": [
-    "nested-interactive"
   ],
   "ui-components-selection-controls-and-switches-toggle-button-horizontal--icon": [
     "button-name"

@@ -24,6 +24,8 @@ export type ObcCommandMenuChangeEvent = CustomEvent<{inCommand: boolean}>;
  * - **Customizable Labels:** All action and state labels for the toggle can be customized via slots.
  * - **Visual Feedback:** The component visually distinguishes between "in command" and "no command" states, including color and icon changes.
  * - **Location Support:** Optionally displays the location of the command if `showLocation` is true.
+ * - **Action Description:** A caption under the toggle, shown when `hasActionDescription` is true.
+ * - **Disabled State:** `disabled` greys out the toggle and stops it from being used, for a menu with nothing to take or release, for example while a request is pending.
  *
  * ---
  *
@@ -41,17 +43,22 @@ export type ObcCommandMenuChangeEvent = CustomEvent<{inCommand: boolean}>;
  * | `command-status`                      | Always                        | Status label (e.g., "Joystick", "NO CMD").                      |
  * | `command-description`                 | Always                        | Description of the command state (e.g., "DP", "CMD at DP").     |
  * | `command-location`                    | `showLocation` is true        | Location label for the command (e.g., "Aft Bridge").            |
- * | `toogle-action-to-in-command-label`   | Always                        | Label for the action to take command (toggle to "in command").  |
- * | `toogle-action-to-no-command-label`   | Always                        | Label for the action to release command (toggle to "no command").|
- * | `toogle-state-in-command-label`       | Always                        | Status label when in "in command" state.                        |
- * | `toogle-state-no-command-label`       | Always                        | Status label when in "no command" state.                        |
- * | `toogle-state-in-command-icon`        | Always                        | Icon for the "in command" state (defaults to `<obi-command-in>`).|
+ * | `toggle-action-to-in-command-label`   | Always                        | Label for the action to take command (toggle to "in command").  |
+ * | `toggle-action-to-no-command-label`   | Always                        | Label for the action to release command (toggle to "no command").|
+ * | `toggle-state-in-command-label`       | Always                        | Status label when in "in command" state.                        |
+ * | `toggle-state-no-command-label`       | Always                        | Status label when in "no command" state.                        |
+ * | `toggle-state-in-command-icon`        | Always                        | Icon for the "in command" state (defaults to `<obi-command-in>`).|
+ *
+ * The misspelled `toogle-…` names of these five slots are deprecated aliases: each is read only while its `toggle-…` slot is empty, and goes in the next major release (#1370).
  *
  * ---
  *
  * ### Properties and Attributes
  * - **`inCommand`** (`boolean`): Whether the menu is in the "in command" state. Controls the toggle and visual state. (Default: `false`)
  * - **`showLocation`** (`boolean`): Whether to display the location slot. If `false`, the location is omitted. (Default: `true`)
+ * - **`disabled`** (`boolean`): Disables the toggle. (Default: `false`)
+ * - **`hasActionDescription`** (`boolean`): Shows `actionDescription` under the toggle. (Default: `false`)
+ * - **`actionDescription`** (`string`): Caption under the toggle. (Default: `'Action description'`)
  *
  * ---
  *
@@ -76,10 +83,10 @@ export type ObcCommandMenuChangeEvent = CustomEvent<{inCommand: boolean}>;
  *   <div slot="command-status">Joystick</div>
  *   <div slot="command-description">DP</div>
  *   <div slot="command-location">Aft Bridge</div>
- *   <div slot="toogle-action-to-in-command-label">Take</div>
- *   <div slot="toogle-action-to-no-command-label">Release</div>
- *   <div slot="toogle-state-in-command-label">In CMD</div>
- *   <div slot="toogle-state-no-command-label">DP Aft Bridge</div>
+ *   <div slot="toggle-action-to-in-command-label">Take</div>
+ *   <div slot="toggle-action-to-no-command-label">Release</div>
+ *   <div slot="toggle-state-in-command-label">In CMD</div>
+ *   <div slot="toggle-state-no-command-label">DP Aft Bridge</div>
  * </obc-command-menu>
  * ```
  *
@@ -90,15 +97,26 @@ export type ObcCommandMenuChangeEvent = CustomEvent<{inCommand: boolean}>;
  * @property softDismiss - Lets the menu close itself on a click outside it, on `Escape`, or when another menu opens. The page is covered while the menu is open, so the closing click reaches nothing there; only the top bar's strip stays clickable, which is how its buttons switch or close menus in one click. Wire it with three bindings: set `softDismiss`, bind `open` to a flag you keep, and reset that flag on `close`. The button that opens the menu needs no wiring of its own: flip the flag from its click, or from the button event of `obc-top-bar` or `obc-integration-bar`. The user menu's *Soft Dismiss From A Bar Button* story shows that wiring, the brilliance menu's *Soft Dismiss* story the one for a button you hold yourself (`bindPopoverTrigger`), and the vue demo runs its top bar this way. Leave it off to show and hide the menu yourself.
  * @property open - Whether the menu is showing. Bind it to a flag you keep rather than toggling it from the menu's own value: when the menu closes itself, `open` is written back to `false` before the button's click reaches your handler, so `menu.open = !menu.open` gets out of step. Reset the flag on `close`.
  * @availableWhen open softDismiss==true
+ * @property disabled - Disables the toggle, for a menu with nothing to offer: no user signed in, a request
+ *   already pending, or a user who holds the command and may not release it. The toggle then hides its
+ *   thumb and shows only the current side's state label.
+ * @property hasActionDescription - Shows `actionDescription` as a caption under the toggle.
+ * @property actionDescription - Caption under the toggle that says what taking or releasing the command does.
+ * @availableWhen actionDescription hasActionDescription==true
  * @slot command-icon - Main icon representing the current command state.
  * @slot command-status - Status label (e.g., "Joystick", "NO CMD").
  * @slot command-description - Description of the command state.
  * @slot command-location - Location label for the command (shown if `showLocation` is true).
- * @slot toogle-action-to-in-command-label - Label for the action to take command.
- * @slot toogle-action-to-no-command-label - Label for the action to release command.
- * @slot toogle-state-in-command-label - Status label when in "in command" state.
- * @slot toogle-state-no-command-label - Status label when in "no command" state.
- * @slot toogle-state-in-command-icon - Icon for the "in command" state (defaults to `<obi-command-in>`).
+ * @slot toggle-action-to-in-command-label - Label for the action to take command.
+ * @slot toggle-action-to-no-command-label - Label for the action to release command.
+ * @slot toggle-state-in-command-label - Status label when in "in command" state.
+ * @slot toggle-state-no-command-label - Status label when in "no command" state.
+ * @slot toggle-state-in-command-icon - Icon for the "in command" state (defaults to `<obi-command-in>`).
+ * @slot toogle-action-to-in-command-label - Deprecated: use `toggle-action-to-in-command-label`. Read only while that slot is empty.
+ * @slot toogle-action-to-no-command-label - Deprecated: use `toggle-action-to-no-command-label`. Read only while that slot is empty.
+ * @slot toogle-state-in-command-label - Deprecated: use `toggle-state-in-command-label`. Read only while that slot is empty.
+ * @slot toogle-state-no-command-label - Deprecated: use `toggle-state-no-command-label`. Read only while that slot is empty.
+ * @slot toogle-state-in-command-icon - Deprecated: use `toggle-state-in-command-icon`. Read only while that slot is empty.
  * @fires {CustomEvent<{inCommand: boolean}>} change - Fired when the command state is toggled.
  * @fires {CustomEvent<void>} close - Fired when the menu closed on its own, from a click outside, `Escape`, or another menu opening. `open` is already `false` by the time it arrives; reset the flag you bind to `open` here, or the next click on the button finds it still set and asks a closed menu to close.
  * @beta
@@ -114,6 +132,12 @@ export class ObcCommandMenu extends LitElement {
   @property({type: Boolean}) inCommand = false;
 
   @property({type: Boolean, attribute: false}) showLocation: boolean = true;
+
+  @property({type: Boolean}) disabled = false;
+
+  @property({type: Boolean}) hasActionDescription = false;
+
+  @property({type: String}) actionDescription = 'Action description';
 
   override render() {
     return html`
@@ -155,23 +179,36 @@ export class ObcCommandMenu extends LitElement {
               @change=${this.onChange}
               .checked=${this.inCommand}
               .size=${'large'}
+              .disabled=${this.disabled}
+              .hasDescription=${this.hasActionDescription}
+              .description=${this.actionDescription}
             >
               <div slot="to-checked-action-label">
-                <slot name="toogle-action-to-in-command-label"></slot>
+                <slot name="toggle-action-to-in-command-label">
+                  <slot name="toogle-action-to-in-command-label"></slot>
+                </slot>
               </div>
               <div slot="to-unchecked-action-label">
-                <slot name="toogle-action-to-no-command-label"></slot>
+                <slot name="toggle-action-to-no-command-label">
+                  <slot name="toogle-action-to-no-command-label"></slot>
+                </slot>
               </div>
               <div slot="checked-state-label">
-                <slot name="toogle-state-in-command-label"></slot>
+                <slot name="toggle-state-in-command-label">
+                  <slot name="toogle-state-in-command-label"></slot>
+                </slot>
               </div>
               <div slot="checked-state-icon">
-                <slot name="toogle-state-in-command-icon">
-                  <obi-command-in></obi-command-in>
+                <slot name="toggle-state-in-command-icon">
+                  <slot name="toogle-state-in-command-icon">
+                    <obi-command-in></obi-command-in>
+                  </slot>
                 </slot>
               </div>
               <div slot="unchecked-state-label">
-                <slot name="toogle-state-no-command-label"></slot>
+                <slot name="toggle-state-no-command-label">
+                  <slot name="toogle-state-no-command-label"></slot>
+                </slot>
               </div>
             </obc-start-stop-switch>
           </div>

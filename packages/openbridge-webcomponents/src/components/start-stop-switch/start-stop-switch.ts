@@ -101,8 +101,9 @@ const DRAG_COMPLETE_THRESHOLD = 0.9;
  *
  * ### Keyboard
  * [APG Switch](https://www.w3.org/WAI/ARIA/apg/patterns/switch/): `Space` and
- * `Enter` toggle it. The knob inside is a drag handle for pointers and stays
- * out of the tab sequence.
+ * `Enter` toggle it. The knob inside is a drag handle for pointers, not a
+ * control of its own: a switch announces its content as one name, so nothing
+ * inside it may take focus. The description, when shown, describes the switch.
  *
  * Left out: nothing.
  *
@@ -352,18 +353,19 @@ export class ObcStartStopSwitch extends LitElement {
                   aria-checked=${isChecked ? 'true' : 'false'}
                   aria-disabled=${this.disabled ? 'true' : 'false'}
                   aria-label=${ifDefined(forwardedAriaLabel)}
+                  aria-describedby=${ifDefined(
+                    this.hasDescription ? 'description' : undefined
+                  )}
                   @keydown=${this.handleKeydown}
                 >
                   <div class="button-track">
-                    <button
+                    <div
                       class="button"
                       style=${this.getButtonStyle()}
                       @mousedown=${this.disabled ? undefined : this.onDragStart}
                       @touchstart=${
                         this.disabled ? undefined : this.onDragStart
                       }
-                      ?disabled=${this.disabled}
-                      tabindex="-1"
                     >
                       ${
                         !this.disabled
@@ -386,7 +388,7 @@ export class ObcStartStopSwitch extends LitElement {
                             `
                           : ''
                       }
-                    </button>
+                    </div>
                     ${
                       !this.disabled
                         ? html`<div class="button-track-checked"></div>`
@@ -409,7 +411,9 @@ export class ObcStartStopSwitch extends LitElement {
                 </div>
                 ${
                   this.hasDescription
-                    ? html`<div class="description">${this.description}</div>`
+                    ? html`<div class="description" id="description">
+                        ${this.description}
+                      </div>`
                     : ''
                 }
               </div>
