@@ -149,6 +149,11 @@ drawn under a reflection, so its hatch is mirrored back (`mirrorPattern`).
 Canvas units, the 8-unit band on every path; the responsive sets' 4-unit
 band is read for its styles, not as a second sizing tier (the instruments keep
 `faceDiameter`, `zoomToFitArc`, `fixedAspectRatio` and the size classes).
+Under `fixedAspectRatio` the linear band is CSS pixels: the pill, its 4
+offset, the 16 / 24 column, the point markers and the hatch tile are divided
+by the painted scale (`fixedAspectRatioScale` in the external-scale config),
+so they keep one on-screen size while the bar, tick and label bands scale
+with the drawing, the way `--scale` keeps the labels (#1433).
 
 | Constant                     | Value                      | Where                                                                                                                                                                                                                                                                             |
 | ---------------------------- | -------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
