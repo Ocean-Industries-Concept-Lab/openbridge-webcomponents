@@ -10,6 +10,7 @@ import {
   AdvicePosition,
   EXTERNAL_SCALE_MAX_TICKS,
   computeExternalScaleLayout,
+  computeFixedAspectRatioScale,
   type ExternalScaleConfig,
   type ExternalScaleLayoutConfig,
 } from './external-scale.js';
@@ -328,5 +329,88 @@ describe('advice overlays', () => {
       adviceMaskPrefix: 'bar-7',
     });
     expect(out).toContain('id="bar-7-0"');
+  });
+});
+
+describe('advice geometry under fixedAspectRatio', () => {
+  const layout = (overrides: Partial<ExternalScaleLayoutConfig>) =>
+    computeExternalScaleLayout({
+      orientation: ExternalScaleOrientation.vertical,
+      side: ExternalScaleSide.right,
+      length: 200,
+      hasBar: true,
+      hasScale: false,
+      labels: false,
+      barThickness: 24,
+      tickThickness: 24,
+      labelThickness: 60,
+      scaleType: ScaleType.regular,
+      hasAdvice: true,
+      ...overrides,
+    });
+
+  it('reserves the advice column in pixels, so the viewBox share grows as the drawing shrinks', () => {
+    expect(layout({fixedAspectRatioScale: 0.5}).viewBoxThickness).toBe(24 + 32);
+    expect(layout({fixedAspectRatioScale: 2}).viewBoxThickness).toBe(24 + 8);
+    expect(
+      layout({advicePosition: AdvicePosition.outer, fixedAspectRatioScale: 0.5})
+        .viewBoxThickness
+    ).toBe(24 + 48);
+    expect(
+      layout({hasAdviceIcon: true, fixedAspectRatioScale: 0.5}).viewBoxThickness
+    ).toBe(24 + 32 + 16);
+  });
+
+  it('paints the pill 8 px thick and 4 px off the bar at every scale', () => {
+    const host = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    document.body.appendChild(host);
+    const band = (scale: number) => {
+      render(
+        svg`${
+          renderExternalScale(
+            bottomScale({
+              advices: [{min: 20, max: 40, category: 'optimal'}],
+              hasBar: true,
+              barThickness: 24,
+              hasScale: false,
+              labels: false,
+              fixedAspectRatioScale: scale,
+            })
+          ).adviceOverlays
+        }`,
+        host
+      );
+      const boxes = [...host.querySelectorAll('path')].map((p) =>
+        (p as SVGPathElement).getBBox()
+      );
+      const y = Math.min(...boxes.map((b) => b.y));
+      const height = Math.max(...boxes.map((b) => b.height));
+      return {y, height};
+    };
+    try {
+      // The bar ends at 24 on a bottom scale; 8 and 4 are CSS px, so in
+      // viewBox units they are divided by the painted scale.
+      expect(band(1)).toEqual({y: 24 + 4, height: 8});
+      expect(band(0.5)).toEqual({y: 24 + 8, height: 16});
+      expect(band(2)).toEqual({y: 24 + 2, height: 4});
+    } finally {
+      host.remove();
+    }
+  });
+
+  it('caps the scale by the cross axis with the pixel column held out of the ratio', () => {
+    // 48 scaled units plus a 16 px column: the drawing fits a 60 px host at
+    // (60 - 16) / 48, not at 60 / 64.
+    const thickness = (scale: number) => 48 + 16 / scale;
+    const scale = (containerCrossAxisSize: number) =>
+      computeFixedAspectRatioScale({
+        orientation: ExternalScaleOrientation.vertical,
+        containerMainAxisSize: 600,
+        scaleReferenceSize: 384,
+        containerCrossAxisSize,
+        viewBoxThickness: thickness,
+      });
+    expect(scale(400)).toBeCloseTo(600 / 384, 4);
+    expect(scale(60)).toBeCloseTo((60 - 16) / 48, 3);
   });
 });

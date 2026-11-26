@@ -137,6 +137,7 @@ import {
   resolveAdvices,
   type AdviceInput,
   type ResolvedAdvice,
+  ADVICE_BAND_THICKNESS,
   ADVICE_ICON_SIZE_LINEAR,
 } from '../../svghelpers/advice.js';
 import {
@@ -597,6 +598,14 @@ export interface ExternalScaleConfig {
   scaleReferenceSize?: number;
 
   /**
+   * The painted scale under `fixedAspectRatio`, which the wrapper measures
+   * from its host. The advice pill, its offset and its column are CSS pixels
+   * divided by it, so they keep one on-screen size while the bands scale;
+   * unset or 1 in pixel mode.
+   */
+  fixedAspectRatioScale?: number;
+
+  /**
    * When true, the component is used inside an instrument (e.g., gauge-trend).
    * In this mode, only label font size responds to .obc-component-size-* CSS classes.
    * Border radius uses the explicit `borderRadius` property value (or defaults to 8px regular / 4px condensed),
@@ -708,6 +717,13 @@ export type ExternalScaleLayoutConfig = Pick<
    * extra band so the marker is not clipped by the viewBox.
    */
   hasSetpoint?: boolean;
+  /**
+   * The painted scale under `fixedAspectRatio` (1, the default, in pixel
+   * mode). The advice pill, its offset and the column reserved for it are CSS
+   * pixels divided by it, so they keep one on-screen size at every host size
+   * while the bar, tick and label bands scale with the drawing.
+   */
+  fixedAspectRatioScale?: number;
 };
 
 export interface ExternalScaleViewBox {
@@ -739,7 +755,14 @@ export function toExternalScaleLayoutConfig(
       config.setpoint !== undefined ||
       config.newSetpoint !== undefined ||
       config.departingNewSetpoint !== undefined,
+    fixedAspectRatioScale: config.fixedAspectRatioScale,
   };
+}
+
+/** ViewBox units per CSS pixel of the advice geometry: 1 outside fixedAspectRatio. */
+function advicePx(config: {fixedAspectRatioScale?: number}): number {
+  const scale = config.fixedAspectRatioScale;
+  return scale !== undefined && scale > 0 ? 1 / scale : 1;
 }
 
 /**
@@ -799,8 +822,12 @@ export interface FixedAspectRatioScaleConfig {
    * `xMidYMid meet` does once the container is narrower than the drawing.
    */
   containerCrossAxisSize?: number;
-  /** The drawing's cross-axis size in viewBox units (`computeExternalScaleLayout().thickness`). */
-  viewBoxThickness?: number;
+  /**
+   * The drawing's cross-axis size in viewBox units
+   * (`computeExternalScaleLayout().thickness`), or a function of the scale
+   * when part of it is pixel-fixed, as the advice column is.
+   */
+  viewBoxThickness?: number | ((scale: number) => number);
 }
 
 /**
@@ -848,34 +875,48 @@ export function computeFixedAspectRatioScale(
   // e.g., container=288px, reference=384px => scale=0.75 (zoom out)
   const mainScale = containerMainAxisSize / scaleReferenceSize;
 
+  const thicknessAt =
+    typeof viewBoxThickness === 'function'
+      ? viewBoxThickness
+      : () => viewBoxThickness ?? 0;
   if (
     containerCrossAxisSize === undefined ||
     containerCrossAxisSize <= 0 ||
-    viewBoxThickness === undefined ||
-    viewBoxThickness <= 0
+    thicknessAt(mainScale) <= 0
   ) {
     return mainScale;
   }
 
   // Integer client sizes round an unconstrained box down by under a pixel;
   // that is not a constraint.
-  if (containerCrossAxisSize + 1 >= viewBoxThickness * mainScale) {
+  if (containerCrossAxisSize + 1 >= thicknessAt(mainScale) * mainScale) {
     return mainScale;
   }
 
-  return config.orientation === ExternalScaleOrientation.vertical
-    ? computeMeetScale(
-        viewBoxThickness,
-        scaleReferenceSize,
-        containerCrossAxisSize,
-        containerMainAxisSize
-      )
-    : computeMeetScale(
-        scaleReferenceSize,
-        viewBoxThickness,
-        containerMainAxisSize,
-        containerCrossAxisSize
-      );
+  const meet = (thickness: number) =>
+    config.orientation === ExternalScaleOrientation.vertical
+      ? computeMeetScale(
+          thickness,
+          scaleReferenceSize,
+          containerCrossAxisSize,
+          containerMainAxisSize
+        )
+      : computeMeetScale(
+          scaleReferenceSize,
+          thickness,
+          containerMainAxisSize,
+          containerCrossAxisSize
+        );
+
+  // A pixel-fixed part grows in viewBox units as the scale falls, so the
+  // cap is a fixed point: iterate until the scale settles.
+  let scale = meet(thicknessAt(mainScale));
+  for (let i = 0; i < 8; i++) {
+    const next = meet(thicknessAt(scale));
+    if (Math.abs(next - scale) < 1e-4) return next;
+    scale = next;
+  }
+  return scale;
 }
 
 /**
@@ -965,7 +1006,7 @@ export function computeExternalScaleLayout(
 function computeAdviceBandThickness(
   config: Pick<
     ExternalScaleLayoutConfig,
-    'hasAdvice' | 'advicePosition' | 'hasBar'
+    'hasAdvice' | 'advicePosition' | 'hasBar' | 'fixedAspectRatioScale'
   >
 ): number {
   if (!config.hasAdvice) return 0;
@@ -973,8 +1014,9 @@ function computeAdviceBandThickness(
     ? (config.advicePosition ?? AdvicePosition.inner)
     : AdvicePosition.inner;
   if (position === AdvicePosition.center) return 0;
-  if (position === AdvicePosition.outer) return 24;
-  return 16;
+  const px = advicePx(config);
+  if (position === AdvicePosition.outer) return 24 * px;
+  return 16 * px;
 }
 
 /**
@@ -996,6 +1038,7 @@ export function computeOutsideBarThickness(
     | 'hasAdviceIcon'
     | 'advicePosition'
     | 'hasSetpoint'
+    | 'fixedAspectRatioScale'
   >
 ): number {
   const scaleSpace = config.hasScale
@@ -1030,6 +1073,7 @@ function adviceIconStart(
     | 'tickThickness'
     | 'scaleType'
     | 'advicePosition'
+    | 'fixedAspectRatioScale'
   >
 ): number {
   const scaleSpace = config.hasScale
@@ -2792,25 +2836,23 @@ function singleSidedTickmark(
 function advicePerpStart(config: ExternalScaleConfig): number {
   const tickBase = tickBasePerp(config);
   const position = config.hasBar ? config.advicePosition : 'inner';
-  const offset = 4;
+  // The pill's own geometry is in CSS px; the bar it sits beside is not.
+  const px = advicePx(config);
+  const offset = 4 * px;
   const outward = isOutwardPositive(config);
   if (position === 'center') {
-    const centerOffset = config.barThickness / 2 - 4;
-    return (
-      (outward ? centerOffset : -config.barThickness + centerOffset) -
-      4 +
-      offset
-    );
+    const centerOffset = config.barThickness / 2 - 4 * px;
+    return outward ? centerOffset : -config.barThickness + centerOffset;
   }
   if (position === 'inner') {
-    return (outward ? tickBase : tickBase - 16) + offset;
+    return (outward ? tickBase : tickBase - 16 * px) + offset;
   }
   return (
     (outward
-      ? config.barThickness + 10
+      ? config.barThickness + 10 * px
       : -config.barThickness -
         computeExternalScaleEffectiveTickThickness(config) +
-        14) + offset
+        14 * px) + offset
   );
 }
 
@@ -2858,20 +2900,24 @@ function renderAdvice(
     if (!advice.point && advice.max < config.maxValue) dash(advice.max);
   }
 
+  const px = advicePx(config);
   const marker = advice.point
     ? renderLinearAdvicePoint({
         vertical,
         main: mainStart,
-        perpCenter: perpStart + 4,
+        perpCenter: perpStart + 4 * px,
         advice,
+        unitsPerPx: px,
       })
     : renderLinearAdviceBand({
         vertical,
         mainStart,
         mainEnd,
         perpStart,
+        thickness: ADVICE_BAND_THICKNESS * px,
         advice,
         maskId,
+        unitsPerPx: px,
       });
 
   const icon = advice.showIcon

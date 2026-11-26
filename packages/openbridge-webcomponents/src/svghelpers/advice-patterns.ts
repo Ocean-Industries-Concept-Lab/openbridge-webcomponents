@@ -26,12 +26,19 @@ export function stripePattern(
   id: string,
   color: string,
   width: number = ADVICE_STRIPE.width,
-  mirrored = false
+  mirrored = false,
+  unitsPerPx = 1
 ): SVGTemplateResult {
   const t = STRIPE_TILE;
   // A group drawn under a reflection shows the stripe sloping the other way;
-  // mirroring the tile back keeps every band on the same slope.
-  const transform = mirrored ? 'scale(-1 1)' : nothing;
+  // mirroring the tile back keeps every band on the same slope. A band that
+  // is pixel-fixed inside a scaled drawing enlarges the tile by the same
+  // factor, so the stripes keep the design pitch on screen.
+  const transforms = [
+    mirrored ? 'scale(-1 1)' : '',
+    unitsPerPx !== 1 ? `scale(${unitsPerPx})` : '',
+  ].filter(Boolean);
+  const transform = transforms.length ? transforms.join(' ') : nothing;
   return svg`<pattern id=${id} patternUnits="userSpaceOnUse" width=${t} height=${t} patternTransform=${transform}>
     <path d="M 0 0 L ${t} ${t} M ${t / 2} ${-t / 2} L ${(3 * t) / 2} ${t / 2} M ${-t / 2} ${t / 2} L ${t / 2} ${(3 * t) / 2}" stroke=${color} stroke-width=${width} stroke-linecap="square"/>
   </pattern>`;
@@ -41,9 +48,10 @@ export function stripePattern(
 export function hairlinePattern(
   id: string,
   color: string,
-  mirrored = false
+  mirrored = false,
+  unitsPerPx = 1
 ): SVGTemplateResult {
-  return stripePattern(id, color, ADVICE_HAIRLINE_WIDTH, mirrored);
+  return stripePattern(id, color, ADVICE_HAIRLINE_WIDTH, mirrored, unitsPerPx);
 }
 
 /** The alarm lattice: square dots on a grid, every other row shifted by half a pitch. */
