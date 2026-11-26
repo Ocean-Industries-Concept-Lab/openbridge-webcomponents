@@ -309,4 +309,31 @@ describe('obc-gauge-vertical sizing', () => {
     await until(() => Math.abs(scaleOf(el) - 600 / 384) < 1e-3);
     expect(pillPx(el)).toBeCloseTo(8, 1);
   });
+
+  it('reports the advice column when it is the widest band outside the bar', async () => {
+    const screen = render(
+      html`<div style="display: block; width: 480px; height: 192px">
+        <obc-gauge-vertical
+          .minValue=${0}
+          .maxValue=${100}
+          .value=${40}
+          .primaryTickmarkInterval=${20}
+          .showLabels=${false}
+          .advices=${[{min: 20, max: 40, category: 'optimal'}]}
+          .fixedAspectRatio=${true}
+        ></obc-gauge-vertical>
+      </div>`
+    );
+    const el = screen.container.querySelector(
+      'obc-gauge-vertical'
+    ) as ObcGaugeVertical;
+    const reports: number[] = [];
+    el.addEventListener('scale-dimensions-changed', (e) =>
+      reports.push((e as CustomEvent<{thickness: number}>).detail.thickness)
+    );
+    await el.updateComplete;
+    // At scale 0.5 the 16 px column is 32 units, past the 24 unit ticks:
+    // (48 + 32) × 0.5, not (48 + 24) × 0.5.
+    await until(() => reports[reports.length - 1] === 40);
+  });
 });

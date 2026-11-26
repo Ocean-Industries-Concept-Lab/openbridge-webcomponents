@@ -72,13 +72,17 @@ function bandPath(o: LinearAdviceBandOptions, advice: ResolvedAdvice) {
   const hi = Math.max(o.mainStart, o.mainEnd);
   const capLo = ascending ? caps.start : caps.end;
   const capHi = ascending ? caps.end : caps.start;
-  const edgeLo = capLo === AdviceCap.pill ? lo + ADVICE_CAP_INSET : lo;
-  const edgeHi = capHi === AdviceCap.pill ? hi - ADVICE_CAP_INSET : hi;
+  // The caps are pixel geometry like the band: a scaled drawing holds them
+  // in the band's own units.
+  const u = o.unitsPerPx ?? 1;
+  const inset = ADVICE_CAP_INSET * u;
+  const edgeLo = capLo === AdviceCap.pill ? lo + inset : lo;
+  const edgeHi = capHi === AdviceCap.pill ? hi - inset : hi;
   const radius = (cap: AdviceCap) =>
     cap === AdviceCap.pill
       ? t / 2
       : cap === AdviceCap.square
-        ? ADVICE_ALERT_CORNER_RADIUS
+        ? ADVICE_ALERT_CORNER_RADIUS * u
         : 0;
   const rLo = radius(capLo);
   const rHi = radius(capHi);

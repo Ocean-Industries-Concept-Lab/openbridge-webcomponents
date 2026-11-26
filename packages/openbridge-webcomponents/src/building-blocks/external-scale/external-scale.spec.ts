@@ -361,10 +361,11 @@ describe('advice geometry under fixedAspectRatio', () => {
     ).toBe(24 + 32 + 16);
   });
 
-  it('paints the pill 8 px thick and 4 px off the bar at every scale', () => {
+  /** Bounding box of the advice bands a scale paints, in viewBox units. */
+  const bandBox = (overrides: Partial<ExternalScaleConfig>) => {
     const host = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
     document.body.appendChild(host);
-    const band = (scale: number) => {
+    try {
       render(
         svg`${
           renderExternalScale(
@@ -374,28 +375,72 @@ describe('advice geometry under fixedAspectRatio', () => {
               barThickness: 24,
               hasScale: false,
               labels: false,
-              fixedAspectRatioScale: scale,
+              ...overrides,
             })
           ).adviceOverlays
         }`,
         host
       );
-      const boxes = [...host.querySelectorAll('path')].map((p) =>
+      const boxes = [...host.querySelectorAll('path.advice-band')].map((p) =>
         (p as SVGPathElement).getBBox()
       );
-      const y = Math.min(...boxes.map((b) => b.y));
-      const height = Math.max(...boxes.map((b) => b.height));
-      return {y, height};
-    };
-    try {
-      // The bar ends at 24 on a bottom scale; 8 and 4 are CSS px, so in
-      // viewBox units they are divided by the painted scale.
-      expect(band(1)).toEqual({y: 24 + 4, height: 8});
-      expect(band(0.5)).toEqual({y: 24 + 8, height: 16});
-      expect(band(2)).toEqual({y: 24 + 2, height: 4});
+      return {
+        x: Math.min(...boxes.map((b) => b.x)),
+        y: Math.min(...boxes.map((b) => b.y)),
+        width: Math.max(...boxes.map((b) => b.width)),
+        height: Math.max(...boxes.map((b) => b.height)),
+      };
     } finally {
       host.remove();
     }
+  };
+  const perp = ({y, height}: ReturnType<typeof bandBox>) => ({y, height});
+
+  it('paints the pill 8 px thick and 4 px off the bar at every scale', () => {
+    // The bar ends at 24 on a bottom scale; 8 and 4 are CSS px, so in
+    // viewBox units they are divided by the painted scale.
+    expect(perp(bandBox({fixedAspectRatioScale: 1}))).toEqual({
+      y: 24 + 4,
+      height: 8,
+    });
+    expect(perp(bandBox({fixedAspectRatioScale: 0.5}))).toEqual({
+      y: 24 + 8,
+      height: 16,
+    });
+    expect(perp(bandBox({fixedAspectRatioScale: 2}))).toEqual({
+      y: 24 + 2,
+      height: 4,
+    });
+  });
+
+  it('mirrors the outer pill across the bar: 14 px off its edge on a top scale as on a bottom one', () => {
+    const outer = {advicePosition: AdvicePosition.outer};
+    expect(perp(bandBox({...outer, fixedAspectRatioScale: 1}))).toEqual({
+      y: 24 + 14,
+      height: 8,
+    });
+    const top = {...outer, side: ExternalScaleSide.top};
+    expect(perp(bandBox({...top, fixedAspectRatioScale: 1}))).toEqual({
+      y: -24 - 14 - 8,
+      height: 8,
+    });
+    expect(perp(bandBox({...top, fixedAspectRatioScale: 0.5}))).toEqual({
+      y: -24 - 28 - 16,
+      height: 16,
+    });
+  });
+
+  it('keeps the pill tip inset and the alert corners in pixels', () => {
+    // The pill's tips sit 4 px inside the range at every scale.
+    const span = (scale: number) => bandBox({fixedAspectRatioScale: scale});
+    expect(span(1).width).toBeCloseTo(span(2).width - 4, 3);
+    // A no-go band 2.7 units long has room for 2 px corners at scale 3 only
+    // when the radius is pixels too: 2 corners of 2 units would not fit.
+    const short = {
+      advices: [{min: 20, max: 20.5, category: 'caution'}],
+      fixedAspectRatioScale: 3,
+    };
+    expect(bandBox(short).height).toBeCloseTo(8 / 3, 3);
   });
 
   it('caps the scale by the cross axis with the pixel column held out of the ratio', () => {
@@ -412,5 +457,27 @@ describe('advice geometry under fixedAspectRatio', () => {
       });
     expect(scale(400)).toBeCloseTo(600 / 384, 4);
     expect(scale(60)).toBeCloseTo((60 - 16) / 48, 3);
+  });
+
+  it('settles the cap in a host barely wider than the pixel column', () => {
+    // A 48 unit bar beside a 24 px outer column: in a 30 px host only
+    // (30 - 24) / 48 paints at itself. A 20 px host has no such scale and
+    // keeps the estimate from the main axis.
+    const thickness = (scale: number) =>
+      layout({
+        barThickness: 48,
+        advicePosition: AdvicePosition.outer,
+        fixedAspectRatioScale: scale,
+      }).viewBoxThickness;
+    const scale = (containerCrossAxisSize: number) =>
+      computeFixedAspectRatioScale({
+        orientation: ExternalScaleOrientation.vertical,
+        containerMainAxisSize: 600,
+        scaleReferenceSize: 384,
+        containerCrossAxisSize,
+        viewBoxThickness: thickness,
+      });
+    expect(scale(30)).toBeCloseTo((30 - 24) / 48, 6);
+    expect(scale(20)).toBeCloseTo(20 / (48 + 24 / (600 / 384)), 6);
   });
 });

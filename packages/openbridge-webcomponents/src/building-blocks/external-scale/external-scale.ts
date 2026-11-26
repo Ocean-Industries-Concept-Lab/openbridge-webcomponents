@@ -908,15 +908,18 @@ export function computeFixedAspectRatioScale(
           containerCrossAxisSize
         );
 
-  // A pixel-fixed part grows in viewBox units as the scale falls, so the
-  // cap is a fixed point: iterate until the scale settles.
-  let scale = meet(thicknessAt(mainScale));
-  for (let i = 0; i < 8; i++) {
-    const next = meet(thicknessAt(scale));
-    if (Math.abs(next - scale) < 1e-4) return next;
-    scale = next;
+  // A pixel-fixed part grows in viewBox units as the scale falls, so the cap
+  // is the scale that paints at itself: bisected, since the paint rises with
+  // the laid-out scale. A host narrower than the pixel part alone has none.
+  const painted = (scale: number) => meet(thicknessAt(scale));
+  let lo = 0;
+  let hi = mainScale;
+  for (let i = 0; i < 48; i++) {
+    const mid = (lo + hi) / 2;
+    if (painted(mid) >= mid) lo = mid;
+    else hi = mid;
   }
-  return scale;
+  return lo > 0 ? lo : painted(mainScale);
 }
 
 /**
@@ -2829,9 +2832,9 @@ function singleSidedTickmark(
 
 /**
  * The perpendicular coordinate of the advice band's near edge for the
- * configured position: `inner` sits on the tick band 4 off the bar edge,
- * `outer` on the far side of the tick band, `center` in the middle of the
- * bar. Without a bar the band is always `inner`.
+ * configured position: `inner` sits on the tick band 4 px off the bar edge,
+ * `outer` 14 px off it, `center` in the middle of the bar; the same on
+ * either side of the bar. Without a bar the band is always `inner`.
  */
 function advicePerpStart(config: ExternalScaleConfig): number {
   const tickBase = tickBasePerp(config);
@@ -2847,13 +2850,10 @@ function advicePerpStart(config: ExternalScaleConfig): number {
   if (position === 'inner') {
     return (outward ? tickBase : tickBase - 16 * px) + offset;
   }
-  return (
-    (outward
-      ? config.barThickness + 10 * px
-      : -config.barThickness -
-        computeExternalScaleEffectiveTickThickness(config) +
-        14 * px) + offset
-  );
+  const outerGap = 14 * px;
+  return outward
+    ? config.barThickness + outerGap
+    : -config.barThickness - outerGap - ADVICE_BAND_THICKNESS * px;
 }
 
 function renderAdvice(

@@ -423,6 +423,8 @@ export class ObcGaugeVertical extends AdviceMixin(
       labelThickness: this.labelThickness,
       length: this.fixedAspectRatio ? this.scaleReferenceSize : this.height,
       scaleType: this.scaleType,
+      advicePosition: this.advicePosition,
+      hasAdvice: !!this.advices && this.advices.length > 0,
       hasAdviceIcon: !!this.advices?.some((a) => a.showIcon),
       hasSetpoint:
         this.setpoint !== undefined ||
