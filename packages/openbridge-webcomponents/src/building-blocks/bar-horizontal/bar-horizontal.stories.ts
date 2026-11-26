@@ -1063,6 +1063,9 @@ export const FixedAspectRatioComparison: StoryObj = {
     barNormal.fillMode = FillMode.fill;
     barNormal.priority = Priority.regular;
     barNormal.primaryTickmarkInterval = 20;
+    barNormal.advices = [
+      {min: 60, max: 80, type: AdviceType.caution, hinted: true},
+    ];
     barNormal.fixedAspectRatio = false;
     barNormal.style.cssText = 'flex: 1; height: 100%;';
 
@@ -1092,6 +1095,9 @@ export const FixedAspectRatioComparison: StoryObj = {
     barFixed.fillMode = FillMode.fill;
     barFixed.priority = Priority.enhanced;
     barFixed.primaryTickmarkInterval = 20;
+    barFixed.advices = [
+      {min: 60, max: 80, type: AdviceType.caution, hinted: true},
+    ];
     barFixed.fixedAspectRatio = true;
     barFixed.style.cssText = 'flex: 1; height: 100%;';
 
