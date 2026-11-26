@@ -23,6 +23,13 @@ const svgOf = (el: Element) => el.querySelector('svg')!;
 const scaleOf = (el: Element) =>
   parseFloat(svgOf(el).style.getPropertyValue('--scale'));
 
+/** The painted thickness of the first advice band, in CSS px. */
+const pillPx = (el: Element) => {
+  const svg = svgOf(el);
+  const band = svg.querySelector('path.advice-band') as SVGPathElement;
+  return +(band.getBBox().width * svg.getScreenCTM()!.a).toFixed(2);
+};
+
 /** Default bands and no setpoint: 48 bar + 24 ticks + 60 labels = 132 thick. */
 async function mount(fixedAspectRatio = false): Promise<ObcGaugeVertical> {
   const screen = render(
@@ -280,5 +287,26 @@ describe('obc-gauge-vertical sizing', () => {
     el.showLabels = false;
     await until(() => Math.abs(scaleOf(el) - 80 / 72) < 1e-3);
     await until(() => reports[reports.length - 1] === 80);
+  });
+
+  it('keeps the advice pill at 8 px at every scale', async () => {
+    const screen = render(
+      html`<div style="display: block; width: 480px; height: 600px">
+        <obc-gauge-vertical
+          .minValue=${0}
+          .maxValue=${100}
+          .value=${40}
+          .primaryTickmarkInterval=${20}
+          .advices=${[{min: 20, max: 40, category: 'optimal'}]}
+          .fixedAspectRatio=${true}
+        ></obc-gauge-vertical>
+      </div>`
+    );
+    const el = screen.container.querySelector(
+      'obc-gauge-vertical'
+    ) as ObcGaugeVertical;
+    await el.updateComplete;
+    await until(() => Math.abs(scaleOf(el) - 600 / 384) < 1e-3);
+    expect(pillPx(el)).toBeCloseTo(8, 1);
   });
 });

@@ -125,7 +125,7 @@ export function renderLinearAdviceBand(
   const d = bandPath(o, advice);
   if (d === null) return nothing;
   if (style.pattern === 'none') {
-    return svg`<path d=${d} fill=${style.fill} stroke=${style.stroke} stroke-width="1" vector-effect="non-scaling-stroke"/>`;
+    return svg`<path class="advice-band" d=${d} fill=${style.fill} stroke=${style.stroke} stroke-width="1" vector-effect="non-scaling-stroke"/>`;
   }
   const t = o.thickness ?? ADVICE_BAND_THICKNESS;
   const lo = Math.min(o.mainStart, o.mainEnd);
@@ -154,7 +154,7 @@ export function renderLinearAdviceBand(
       </mask>
     </defs>
     <g mask="url(#${o.maskId})">${cover}</g>
-    <path d=${d} fill="none" stroke=${style.stroke} stroke-width="1" vector-effect="non-scaling-stroke"/>`;
+    <path class="advice-band" d=${d} fill="none" stroke=${style.stroke} stroke-width="1" vector-effect="non-scaling-stroke"/>`;
 }
 
 /** Where a point marker sits: on the band centreline at its value. */

@@ -819,6 +819,10 @@ export class ObcAutomationTank extends AdviceMixin(SetpointMixin(LitElement)) {
           this.hasAdvice && !!this.advices?.some((a) => a.showIcon),
         advicePosition: AdvicePosition.inner,
         hasSetpoint: hasSetpointMarker,
+        // The advice column is pixels; in viewBox units it is those pixels
+        // over the cell's own scale.
+        fixedAspectRatioScale:
+          Math.max(1, this._cellHeight) / SCALE_REFERENCE_SIZE,
       });
       const safeCellHeight = Math.max(1, this._cellHeight);
       const viewBoxCross =
