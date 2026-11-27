@@ -12,7 +12,10 @@ import {
 } from '../../navigation-instruments/types.js';
 import {AdviceMixin} from '../../svghelpers/advice-mixin.js';
 import {nextAdviceMaskId} from '../../svghelpers/advice.js';
-import type {ExternalScaleConfig} from '../external-scale/external-scale.js';
+import type {
+  ExternalScaleConfig,
+  ExternalScaleLayoutConfig,
+} from '../external-scale/external-scale.js';
 import {
   computeExternalScaleViewBox,
   computeFixedAspectRatioScale,
@@ -167,8 +170,17 @@ export class ObcBarHorizontal extends AdviceMixin(
   @state()
   private _scale = 1;
 
-  /** The drawing's height in viewBox units, kept from the last render for the scale measurement. */
-  private _viewBoxThickness = 0;
+  /** The last render's layout inputs, for the scale measurement. */
+  private _layoutConfig?: ExternalScaleLayoutConfig;
+
+  /** The drawing's height in viewBox units at a scale: the advice column is pixels, so it depends on it. */
+  private _thicknessAt = (scale: number): number =>
+    this._layoutConfig
+      ? computeExternalScaleLayout({
+          ...this._layoutConfig,
+          fixedAspectRatioScale: scale,
+        }).thickness
+      : 0;
 
   // ResizeController automatically subscribes/unsubscribes based on component lifecycle
   // @ts-expect-error - Controller is used for side effects, not accessed directly
@@ -184,7 +196,7 @@ export class ObcBarHorizontal extends AdviceMixin(
         containerMainAxisSize: entry.contentRect.width,
         containerCrossAxisSize: entry.contentRect.height,
         scaleReferenceSize: this.scaleReferenceSize,
-        viewBoxThickness: this._viewBoxThickness,
+        viewBoxThickness: this._thicknessAt,
       });
 
       // Report scaled dimensions to parent chart
@@ -315,14 +327,14 @@ export class ObcBarHorizontal extends AdviceMixin(
       adviceEmphasis: this.adviceEmphasis,
       adviceMaskPrefix: this._adviceMaskPrefix,
       fixedAspectRatio: this.fixedAspectRatio,
+      fixedAspectRatioScale: this.fixedAspectRatio ? this._scale : 1,
       instrumentMode: this.instrumentMode,
       highlightCurrentValue: this.highlightCurrentValue,
     };
 
-    const layout = computeExternalScaleLayout(
-      toExternalScaleLayoutConfig(config)
-    );
-    this._viewBoxThickness = layout.thickness;
+    const layoutConfig = toExternalScaleLayoutConfig(config);
+    const layout = computeExternalScaleLayout(layoutConfig);
+    this._layoutConfig = layoutConfig;
 
     const parts = renderExternalScale(config);
 
@@ -441,6 +453,7 @@ export class ObcBarHorizontal extends AdviceMixin(
         this.setpoint !== undefined ||
         this.newSetpoint !== undefined ||
         this.departingNewSetpoint !== undefined,
+      fixedAspectRatioScale: this.fixedAspectRatio ? this._scale : 1,
     });
 
     // When fixedAspectRatio=true, the SVG scales proportionally via preserveAspectRatio="meet".
@@ -524,7 +537,7 @@ export class ObcBarHorizontal extends AdviceMixin(
       containerMainAxisSize: width,
       containerCrossAxisSize: height,
       scaleReferenceSize: this.scaleReferenceSize,
-      viewBoxThickness: this._viewBoxThickness,
+      viewBoxThickness: this._thicknessAt,
     });
     return true;
   }

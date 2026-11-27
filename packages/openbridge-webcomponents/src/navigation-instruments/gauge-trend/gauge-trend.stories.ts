@@ -291,6 +291,7 @@ export const CompactRangeLabels: Story = {
     rangeLabels: 'xy',
     hasBar: true,
     hasScale: true,
+    hasAdvice: true,
   },
 };
 
@@ -486,6 +487,11 @@ export const ScaleReferenceSizeComparison: StoryObj = {
               .hasBar=${true}
               .hasScale=${true}
               .secondaryTickmarkInterval=${5}
+              .hasAdvice=${true}
+              .advice=${[
+                {min: 25, max: 45, type: AdviceType.caution, hinted: true},
+                {min: 55, max: 75, type: AdviceType.advice, hinted: false},
+              ]}
             ></obc-gauge-trend>
           </div>
           <div class="scale-comparison-sublabel">Scale factor: 1.0</div>
@@ -514,6 +520,11 @@ export const ScaleReferenceSizeComparison: StoryObj = {
               .hasBar=${true}
               .hasScale=${true}
               .secondaryTickmarkInterval=${5}
+              .hasAdvice=${true}
+              .advice=${[
+                {min: 25, max: 45, type: AdviceType.caution, hinted: true},
+                {min: 55, max: 75, type: AdviceType.advice, hinted: false},
+              ]}
             ></obc-gauge-trend>
           </div>
           <div class="scale-comparison-sublabel">Scale factor: 1.6</div>
@@ -542,6 +553,11 @@ export const ScaleReferenceSizeComparison: StoryObj = {
               .hasBar=${true}
               .hasScale=${true}
               .secondaryTickmarkInterval=${5}
+              .hasAdvice=${true}
+              .advice=${[
+                {min: 25, max: 45, type: AdviceType.caution, hinted: true},
+                {min: 55, max: 75, type: AdviceType.advice, hinted: false},
+              ]}
             ></obc-gauge-trend>
           </div>
           <div class="scale-comparison-sublabel">Scale factor: 1.0</div>
@@ -997,6 +1013,10 @@ export const FixedAspectRatioScalingComparison: StoryObj = {
               .primaryTickmarkInterval=${10}
               .secondaryTickmarkInterval=${5}
               .tertiaryTickmarkInterval=${1}
+              .advices=${[
+                {min: 25, max: 45, type: AdviceType.caution, hinted: true},
+                {min: 55, max: 75, type: AdviceType.advice, hinted: false},
+              ]}
               .scaleBackground=${true}
               .fixedAspectRatio=${false}
               .priority=${Priority.regular}
@@ -1027,6 +1047,11 @@ export const FixedAspectRatioScalingComparison: StoryObj = {
             .primaryTickmarkInterval=${10}
             .secondaryTickmarkInterval=${5}
             .tertiaryTickmarkInterval=${1}
+            .hasAdvice=${true}
+            .advice=${[
+              {min: 25, max: 45, type: AdviceType.caution, hinted: true},
+              {min: 55, max: 75, type: AdviceType.advice, hinted: false},
+            ]}
           ></obc-gauge-trend>
         </div>
       </div>

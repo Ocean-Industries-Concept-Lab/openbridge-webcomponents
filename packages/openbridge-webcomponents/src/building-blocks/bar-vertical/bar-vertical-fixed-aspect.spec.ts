@@ -20,6 +20,13 @@ const svgOf = (el: Element) => el.querySelector('svg')!;
 const scaleOf = (el: Element) =>
   parseFloat(svgOf(el).style.getPropertyValue('--scale'));
 
+/** The painted thickness of the first advice band, in CSS px. */
+const pillPx = (el: Element) => {
+  const svg = svgOf(el);
+  const band = svg.querySelector('path.advice-band') as SVGPathElement;
+  return +(band.getBBox().width * svg.getScreenCTM()!.a).toFixed(2);
+};
+
 /** Bar, ticks and labels with no setpoint: 48 + 24 + 60 = 132 thick. */
 async function mount(boxStyle: string): Promise<ObcBarVertical> {
   const screen = render(
@@ -97,5 +104,47 @@ describe('obc-bar-vertical fixed aspect ratio', () => {
     el.barThickness = 180;
     await until(() => Math.abs(scaleOf(el) - 80 / 264) < 1e-3);
     await until(() => reports[reports.length - 1] === 80);
+  });
+
+  it('keeps the advice pill at 8 px and its column at 16 px at every scale', async () => {
+    const mountWithAdvice = async (boxStyle: string) => {
+      const screen = render(
+        html`<div style=${boxStyle}>
+          <obc-bar-vertical
+            .minValue=${0}
+            .maxValue=${100}
+            .value=${40}
+            .hasBar=${true}
+            .hasScale=${false}
+            .showLabels=${false}
+            .barThickness=${48}
+            .advices=${[{min: 20, max: 40, category: 'optimal'}]}
+            .fixedAspectRatio=${true}
+          ></obc-bar-vertical>
+        </div>`
+      );
+      const el = screen.container.querySelector(
+        'obc-bar-vertical'
+      ) as ObcBarVertical;
+      await el.updateComplete;
+      const reports: number[] = [];
+      el.addEventListener('scale-dimensions-changed', (e) =>
+        reports.push((e as CustomEvent<{thickness: number}>).detail.thickness)
+      );
+      return {el, reports};
+    };
+    // 400 px of width has room: the height decides, 48 × 1.5625 + 16 = 91
+    const wide = await mountWithAdvice(
+      'display: block; width: 400px; height: 600px'
+    );
+    await until(() => wide.reports[wide.reports.length - 1] === 91);
+    expect(pillPx(wide.el)).toBeCloseTo(8, 1);
+    // 60 px of width: (60 - 16) / 48 is the scale the bar can still have
+    const narrow = await mountWithAdvice(
+      'display: block; width: 60px; height: 600px'
+    );
+    await until(() => Math.abs(scaleOf(narrow.el) - (60 - 16) / 48) < 1e-3);
+    await until(() => narrow.reports[narrow.reports.length - 1] === 60);
+    expect(pillPx(narrow.el)).toBeCloseTo(8, 1);
   });
 });

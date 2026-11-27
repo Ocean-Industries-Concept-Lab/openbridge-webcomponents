@@ -689,6 +689,7 @@ export const FixedAspectRatioComparison: StoryObj = {
           .value=${60}
           .setpoint=${80}
           .primaryTickmarkInterval=${20}
+          .advices=${[{min: 60, max: 80, type: AdviceType.caution, hinted: true}]}
           .priority=${Priority.regular}
         ></obc-gauge-vertical>
       </div>
@@ -703,6 +704,7 @@ export const FixedAspectRatioComparison: StoryObj = {
           .value=${60}
           .setpoint=${80}
           .primaryTickmarkInterval=${20}
+          .advices=${[{min: 60, max: 80, type: AdviceType.caution, hinted: true}]}
           .priority=${Priority.enhanced}
         ></obc-gauge-vertical>
       </div>

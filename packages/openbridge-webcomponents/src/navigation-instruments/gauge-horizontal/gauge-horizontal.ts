@@ -10,7 +10,10 @@ import {
   BorderRadiusPosition,
   Priority,
 } from '../types.js';
-import type {ExternalScaleConfig} from '../../building-blocks/external-scale/external-scale.js';
+import type {
+  ExternalScaleConfig,
+  ExternalScaleLayoutConfig,
+} from '../../building-blocks/external-scale/external-scale.js';
 import {
   computeExternalScaleViewBox,
   computeFixedAspectRatioScale,
@@ -172,8 +175,17 @@ export class ObcGaugeHorizontal extends AdviceMixin(
   @state()
   private _scale = 1;
 
-  /** The drawing's height in viewBox units, kept from the last render for the scale measurement. */
-  private _viewBoxThickness = 0;
+  /** The last render's layout inputs, for the scale measurement. */
+  private _layoutConfig?: ExternalScaleLayoutConfig;
+
+  /** The drawing's height in viewBox units at a scale: the advice column is pixels, so it depends on it. */
+  private _thicknessAt = (scale: number): number =>
+    this._layoutConfig
+      ? computeExternalScaleLayout({
+          ...this._layoutConfig,
+          fixedAspectRatioScale: scale,
+        }).thickness
+      : 0;
 
   // ResizeController automatically subscribes/unsubscribes based on component lifecycle
   // @ts-expect-error - Controller is used for side effects, not accessed directly
@@ -189,7 +201,7 @@ export class ObcGaugeHorizontal extends AdviceMixin(
         containerMainAxisSize: entry.contentRect.width,
         containerCrossAxisSize: entry.contentRect.height,
         scaleReferenceSize: this.scaleReferenceSize,
-        viewBoxThickness: this._viewBoxThickness,
+        viewBoxThickness: this._thicknessAt,
       });
       // Guard against zero-sized containers, but allow fractional scales < 1
       this._scale = scale > 0 ? scale : 1;
@@ -301,16 +313,16 @@ export class ObcGaugeHorizontal extends AdviceMixin(
       adviceEmphasis: this.adviceEmphasis,
       adviceMaskPrefix: this._adviceMaskPrefix,
       fixedAspectRatio: this.fixedAspectRatio,
+      fixedAspectRatioScale: this.fixedAspectRatio ? this._scale : 1,
       // Gauges are always in instrument mode - they use fixed borderRadius (8px)
       // and don't respond to .obc-component-size-* CSS classes for border radius
       instrumentMode: true,
       highlightCurrentValue: this.highlightCurrentValue,
     };
 
-    const layout = computeExternalScaleLayout(
-      toExternalScaleLayoutConfig(config)
-    );
-    this._viewBoxThickness = layout.thickness;
+    const layoutConfig = toExternalScaleLayoutConfig(config);
+    const layout = computeExternalScaleLayout(layoutConfig);
+    this._layoutConfig = layoutConfig;
 
     const parts = renderExternalScale(config);
 
@@ -411,11 +423,14 @@ export class ObcGaugeHorizontal extends AdviceMixin(
       labelThickness: this.labelThickness,
       length: this.fixedAspectRatio ? this.scaleReferenceSize : this.width,
       scaleType: this.scaleType,
+      advicePosition: this.advicePosition,
+      hasAdvice: !!this.advices && this.advices.length > 0,
       hasAdviceIcon: !!this.advices?.some((a) => a.showIcon),
       hasSetpoint:
         this.setpoint !== undefined ||
         this.newSetpoint !== undefined ||
         this.departingNewSetpoint !== undefined,
+      fixedAspectRatioScale: this.fixedAspectRatio ? this._scale : 1,
     });
 
     // The chart lays out in visual pixels, so a scaled drawing reports its
@@ -492,7 +507,7 @@ export class ObcGaugeHorizontal extends AdviceMixin(
       containerMainAxisSize: width,
       containerCrossAxisSize: height,
       scaleReferenceSize: this.scaleReferenceSize,
-      viewBoxThickness: this._viewBoxThickness,
+      viewBoxThickness: this._thicknessAt,
     });
     return true;
   }

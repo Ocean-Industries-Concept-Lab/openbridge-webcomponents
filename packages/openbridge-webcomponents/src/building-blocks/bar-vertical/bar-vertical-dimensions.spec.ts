@@ -74,3 +74,39 @@ describe('scale-dimensions-changed', () => {
     expect(leaked).toBe(0);
   });
 });
+
+/** The bar fills its cell exactly; the advice column beside it is 16 px at every cell size. */
+describe('automation-tank bar mode advice column', () => {
+  it('keeps the pill at 8 px and no gutter at two cell sizes', async () => {
+    for (const [w, h] of [
+      [140, 320],
+      [280, 640],
+    ]) {
+      const screen = render(
+        html`<obc-automation-tank
+          style="display: block; width: ${w}px; height: ${h}px"
+          .chartMode=${'bar'}
+          .value=${40}
+          .max=${100}
+          .hasAdvice=${true}
+          .advices=${[{min: 20, max: 40, category: 'optimal'}]}
+        ></obc-automation-tank>`
+      );
+      const tank = screen.container.querySelector(
+        'obc-automation-tank'
+      ) as ObcAutomationTank;
+      await tank.updateComplete;
+      const bar = await tankBar(tank);
+      await bar.updateComplete;
+      for (let i = 0; i < 20; i++) await frame();
+      const svg = bar.querySelector('svg')!;
+      const scale = svg.getScreenCTM()!.a;
+      const band = svg.querySelector('path.advice-band') as SVGPathElement;
+      expect(+(band.getBBox().width * scale).toFixed(1)).toBeCloseTo(8, 1);
+      // the viewBox is sized to the cell: the painted width is the cell's
+      expect(
+        Math.abs(svg.viewBox.baseVal.width * scale - bar.clientWidth)
+      ).toBeLessThan(1.5);
+    }
+  });
+});

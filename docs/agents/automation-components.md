@@ -153,7 +153,9 @@ of its invariants are invisible in the template.
   size everywhere. Because `xMidYMid meet` scales the viewBox uniformly,
   `barThickness` is expressed in viewBox units, and the cross-axis size is
   picked as `cellWidth * 384 / cellHeight` so width-fit and height-fit match
-  and no horizontal gutter appears.
+  and no horizontal gutter appears. The advice column beside the bar is
+  pixels, so its reserve is converted with the cell's own scale
+  (`fixedAspectRatioScale`) before it comes off that cross-axis size.
 - **Graph mode forwards the measured cell size** as gauge-trend's width and
   height, which it reads as an aspect-ratio reference; its own ResizeObserver
   then takes the wrapper's `clientWidth` and derives the height. Rendering

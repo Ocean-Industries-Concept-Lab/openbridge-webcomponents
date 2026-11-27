@@ -48,6 +48,11 @@ export interface LinearAdviceBandOptions {
   maskId: string;
   /** The band is drawn under a reflection, so the hatch is mirrored back. */
   mirrorPattern?: boolean;
+  /**
+   * ViewBox units per CSS pixel when the band is pixel-fixed inside a scaled
+   * drawing: the hatch tile is enlarged by it so the stripes keep their pitch.
+   */
+  unitsPerPx?: number;
 }
 
 const point = (vertical: boolean, main: number, perp: number) =>
@@ -67,13 +72,17 @@ function bandPath(o: LinearAdviceBandOptions, advice: ResolvedAdvice) {
   const hi = Math.max(o.mainStart, o.mainEnd);
   const capLo = ascending ? caps.start : caps.end;
   const capHi = ascending ? caps.end : caps.start;
-  const edgeLo = capLo === AdviceCap.pill ? lo + ADVICE_CAP_INSET : lo;
-  const edgeHi = capHi === AdviceCap.pill ? hi - ADVICE_CAP_INSET : hi;
+  // The caps are pixel geometry like the band: a scaled drawing holds them
+  // in the band's own units.
+  const u = o.unitsPerPx ?? 1;
+  const inset = ADVICE_CAP_INSET * u;
+  const edgeLo = capLo === AdviceCap.pill ? lo + inset : lo;
+  const edgeHi = capHi === AdviceCap.pill ? hi - inset : hi;
   const radius = (cap: AdviceCap) =>
     cap === AdviceCap.pill
       ? t / 2
       : cap === AdviceCap.square
-        ? ADVICE_ALERT_CORNER_RADIUS
+        ? ADVICE_ALERT_CORNER_RADIUS * u
         : 0;
   const rLo = radius(capLo);
   const rHi = radius(capHi);
@@ -120,21 +129,23 @@ export function renderLinearAdviceBand(
   const d = bandPath(o, advice);
   if (d === null) return nothing;
   if (style.pattern === 'none') {
-    return svg`<path d=${d} fill=${style.fill} stroke=${style.stroke} stroke-width="1" vector-effect="non-scaling-stroke"/>`;
+    return svg`<path class="advice-band" d=${d} fill=${style.fill} stroke=${style.stroke} stroke-width="1" vector-effect="non-scaling-stroke"/>`;
   }
   const t = o.thickness ?? ADVICE_BAND_THICKNESS;
   const lo = Math.min(o.mainStart, o.mainEnd);
   const hi = Math.max(o.mainStart, o.mainEnd);
   const patternId = `${o.maskId}-pattern`;
   const mirrored = o.mirrorPattern ?? false;
+  const unitsPerPx = o.unitsPerPx ?? 1;
   const pattern =
     style.pattern === 'hairline'
-      ? hairlinePattern(patternId, style.patternColor, mirrored)
+      ? hairlinePattern(patternId, style.patternColor, mirrored, unitsPerPx)
       : stripePattern(
           patternId,
           style.patternColor,
           ADVICE_STRIPE.width,
-          mirrored
+          mirrored,
+          unitsPerPx
         );
   const cover = o.vertical
     ? svg`<rect x=${o.perpStart} y=${lo} width=${t} height=${hi - lo} fill=${style.fill}/><rect x=${o.perpStart} y=${lo} width=${t} height=${hi - lo} fill="url(#${patternId})"/>`
@@ -147,7 +158,7 @@ export function renderLinearAdviceBand(
       </mask>
     </defs>
     <g mask="url(#${o.maskId})">${cover}</g>
-    <path d=${d} fill="none" stroke=${style.stroke} stroke-width="1" vector-effect="non-scaling-stroke"/>`;
+    <path class="advice-band" d=${d} fill="none" stroke=${style.stroke} stroke-width="1" vector-effect="non-scaling-stroke"/>`;
 }
 
 /** Where a point marker sits: on the band centreline at its value. */
@@ -158,6 +169,8 @@ export interface LinearAdvicePointOptions {
   /** Perpendicular coordinate of the band centreline. */
   perpCenter: number;
   advice: AdviceInput | ResolvedAdvice;
+  /** ViewBox units per CSS pixel when the marker is pixel-fixed inside a scaled drawing. */
+  unitsPerPx?: number;
 }
 
 /**
@@ -172,8 +185,9 @@ export function renderLinearAdvicePoint(
   const style = adviceStyle(advice.category, advice.state);
   const cx = o.vertical ? o.perpCenter : o.main;
   const cy = o.vertical ? o.main : o.perpCenter;
+  const u = o.unitsPerPx ?? 1;
   if (isGoToCategory(advice.category)) {
-    return svg`<circle cx=${cx} cy=${cy} r=${ADVICE_POINT_DOT_DIAMETER / 2} fill=${style.fill} stroke=${style.stroke} stroke-width="1" vector-effect="non-scaling-stroke"/>`;
+    return svg`<circle cx=${cx} cy=${cy} r=${(ADVICE_POINT_DOT_DIAMETER / 2) * u} fill=${style.fill} stroke=${style.stroke} stroke-width="1" vector-effect="non-scaling-stroke"/>`;
   }
   const grey =
     advice.category === AdviceCategory.caution
@@ -182,9 +196,9 @@ export function renderLinearAdvicePoint(
         : style.stroke
       : undefined;
   const {length, thickness, radius} = ADVICE_POINT_TICK;
-  const w = o.vertical ? length : thickness;
-  const h = o.vertical ? thickness : length;
-  return svg`<rect x=${cx - w / 2} y=${cy - h / 2} width=${w} height=${h} rx=${radius} fill=${grey ?? style.fill} stroke=${grey ?? style.stroke} stroke-width="1" vector-effect="non-scaling-stroke"/>`;
+  const w = (o.vertical ? length : thickness) * u;
+  const h = (o.vertical ? thickness : length) * u;
+  return svg`<rect x=${cx - w / 2} y=${cy - h / 2} width=${w} height=${h} rx=${radius * u} fill=${grey ?? style.fill} stroke=${grey ?? style.stroke} stroke-width="1" vector-effect="non-scaling-stroke"/>`;
 }
 
 /** Where an area sits: the advice's range along the main axis, the bar across it. */
