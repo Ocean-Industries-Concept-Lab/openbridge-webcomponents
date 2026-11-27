@@ -64,7 +64,11 @@ const UPRIGHT_ANGLE: Record<string, number> = {
   [AutomationButtonHandlePosition.left]: 90,
 };
 
-function stem(color: string, top: number, bottom = 24): SVGTemplateResult {
+export function stem(
+  color: string,
+  top: number,
+  bottom = 24
+): SVGTemplateResult {
   return svg`<path
     d="M12 ${bottom}V${top}"
     stroke-linecap="round"
@@ -74,7 +78,7 @@ function stem(color: string, top: number, bottom = 24): SVGTemplateResult {
 }
 
 /** The letter stays upright on every side, so it can be read when the handle turns. */
-function letter(
+export function letter(
   text: string,
   color: string,
   position: AutomationButtonHandlePosition
