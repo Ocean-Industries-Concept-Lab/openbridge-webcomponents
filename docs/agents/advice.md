@@ -179,7 +179,10 @@ with the 2-unit corner, a chained end is cut flat. The free ends follow the
 boundary tick: with a tick at the end a no-go band is cut flush and a go-to
 band inset by its cap; `hideMinTickmark` / `hideMaxTickmark` leave both
 rounded. A band shorter than the two insets is still drawn: the earlier pill
-trim dropped it.
+trim dropped it. The insets give way first (`bandPath()` shares what is left
+beyond the caps between the pill ends), so only a range shorter than its own
+caps is dropped. Under `fixedAspectRatio` the insets and the pill are pixels,
+so without that a small tank dropped every range under 16 px (#1433).
 
 Areas: linear, between the limits across the bar (external scale: between
 the dashed guides when `showArea` and `hasBar`); radial, a wedge r ≤ 160;
