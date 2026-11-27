@@ -6,6 +6,7 @@ import {
   parseCondition,
 } from './cem-plugins/available-when.mjs';
 import {moduleDocsPlugin} from './cem-plugins/module-docs.mjs';
+import {lifecyclePlugin} from './cem-plugins/lifecycle.mjs';
 // `create()` alone never registers a tagName or builds `attributes[]` for a
 // `@customElement()`-decorated class — that wiring lives entirely in the lit
 // framework plugin, which the real `analyze` script loads via `litelement:
@@ -30,7 +31,12 @@ const sf = (name: string, code: string) =>
 const analyze = (files: Record<string, string>) =>
   create({
     modules: Object.entries(files).map(([n, c]) => sf(n, c)),
-    plugins: [...litPlugin(), availableWhenPlugin(), moduleDocsPlugin()],
+    plugins: [
+      ...litPlugin(),
+      availableWhenPlugin(),
+      moduleDocsPlugin(),
+      lifecyclePlugin(),
+    ],
     context: {dev: false},
   }) as Manifest;
 
@@ -42,7 +48,10 @@ interface Member {
   availableWhenIf?: unknown;
 }
 interface Declaration {
+  name?: string;
   tagName?: string;
+  lifecycle?: string;
+  deprecated?: string | boolean;
   members?: Member[];
   attributes?: {fieldName?: string; description?: string}[];
 }
@@ -232,5 +241,47 @@ describe('moduleDocsPlugin', () => {
     });
     expect(m.modules[0].summary).toBe('External Scale');
     expect(m.modules[0].description).toBe('Renders scales.');
+  });
+});
+
+describe('lifecyclePlugin', () => {
+  const byName = (m: Manifest, name: string): Declaration =>
+    m.modules
+      .flatMap((x) => x.declarations ?? [])
+      .find((d) => d.name === name)!;
+  const lit = `import {LitElement} from 'lit';\n`;
+
+  it('writes the lifecycle tag on the class declaration', () => {
+    const m = analyze({
+      'a.ts': `${lit}/** Summary.\n * @beta */\n@customElement('obc-a')\nexport class ObcA extends LitElement {}`,
+    });
+    expect(byName(m, 'ObcA').lifecycle).toBe('beta');
+  });
+
+  it("keeps CEM's deprecated field beside lifecycle", () => {
+    const m = analyze({
+      'b.ts': `${lit}/** Summary.\n * @deprecated Use obc-c. */\n@customElement('obc-b')\nexport class ObcB extends LitElement {}`,
+    });
+    expect(byName(m, 'ObcB').lifecycle).toBe('deprecated');
+    expect(byName(m, 'ObcB').deprecated).toBe('Use obc-c.');
+  });
+
+  it('reads a JSDoc that sits between two decorators', () => {
+    const m = analyze({
+      'd.ts': `${lit}@localized()\n/** Summary.\n * @stable */\n@customElement('obc-d')\nexport class ObcD extends LitElement {}`,
+    });
+    expect(byName(m, 'ObcD').lifecycle).toBe('stable');
+  });
+
+  it('reads a single-line JSDoc', () => {
+    const m = analyze({
+      'e.ts': `${lit}/** @beta */\n@customElement('obc-e')\nexport class ObcE extends LitElement {}`,
+    });
+    expect(byName(m, 'ObcE').lifecycle).toBe('beta');
+  });
+
+  it('leaves a class without a tag alone', () => {
+    const m = analyze({'c.ts': `/** Summary. */\nexport class Helper {}`});
+    expect(byName(m, 'Helper').lifecycle).toBeUndefined();
   });
 });

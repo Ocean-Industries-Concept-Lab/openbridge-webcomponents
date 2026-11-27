@@ -45,6 +45,7 @@ const fullBundlePackage = {
     'src',
     'docs',
     'custom-elements.json',
+    'llms',
     'custom-elements-manifest.config.mjs',
     'tsconfig.json',
     'eslint.config.mjs',
