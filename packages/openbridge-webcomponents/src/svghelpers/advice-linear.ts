@@ -75,9 +75,6 @@ function bandPath(o: LinearAdviceBandOptions, advice: ResolvedAdvice) {
   // The caps are pixel geometry like the band: a scaled drawing holds them
   // in the band's own units.
   const u = o.unitsPerPx ?? 1;
-  const inset = ADVICE_CAP_INSET * u;
-  const edgeLo = capLo === AdviceCap.pill ? lo + inset : lo;
-  const edgeHi = capHi === AdviceCap.pill ? hi - inset : hi;
   const radius = (cap: AdviceCap) =>
     cap === AdviceCap.pill
       ? t / 2
@@ -86,7 +83,17 @@ function bandPath(o: LinearAdviceBandOptions, advice: ResolvedAdvice) {
         : 0;
   const rLo = radius(capLo);
   const rHi = radius(capHi);
-  if (edgeHi - edgeLo < rLo + rHi) return null;
+  if (hi - lo < rLo + rHi) return null;
+  // The pill tips give way before the pill: a range too short for both
+  // insets shares what is left beyond the caps between its pill ends, so a
+  // pixel-fixed pill in a small drawing still marks a short range.
+  const pills =
+    Number(capLo === AdviceCap.pill) + Number(capHi === AdviceCap.pill);
+  const inset = pills
+    ? Math.min(ADVICE_CAP_INSET * u, (hi - lo - rLo - rHi) / pills)
+    : 0;
+  const edgeLo = capLo === AdviceCap.pill ? lo + inset : lo;
+  const edgeHi = capHi === AdviceCap.pill ? hi - inset : hi;
   const p0 = o.perpStart;
   const p1 = o.perpStart + t;
   const v = o.vertical;

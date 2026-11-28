@@ -443,6 +443,21 @@ describe('advice geometry under fixedAspectRatio', () => {
     expect(bandBox(short).height).toBeCloseTo(8 / 3, 3);
   });
 
+  it('gives up the pill tip inset before the pill on a short range', () => {
+    // 20 to 26.5 is 34.84 units, 13.9 px at scale 0.4: room for the 8 px
+    // pill, not for its 4 px tips as well. The default tank tile paints a
+    // fifth of its range this short.
+    const lo = 32 + 20 * 5.36;
+    const hi = 32 + 26.5 * 5.36;
+    const box = bandBox({
+      advices: [{min: 20, max: 26.5, category: 'optimal'}],
+      fixedAspectRatioScale: 0.4,
+    });
+    expect(box.width).toBeGreaterThanOrEqual(8 / 0.4 - 1e-3);
+    expect(box.x).toBeGreaterThanOrEqual(lo - 1e-3);
+    expect(box.x + box.width).toBeLessThanOrEqual(hi + 1e-3);
+  });
+
   it('caps the scale by the cross axis with the pixel column held out of the ratio', () => {
     // 48 scaled units plus a 16 px column: the drawing fits a 60 px host at
     // (60 - 16) / 48, not at 60 / 64.
